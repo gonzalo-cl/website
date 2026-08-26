@@ -1,0 +1,77 @@
+<section id="history" class="section section-muted" aria-labelledby="historyTitle">
+        <div class="wide">
+          <header class="section-heading">
+            <div><span>01</span><p>History and formulations</p></div>
+            <div>
+              <h2 id="historyTitle">One problem in three forms</h2>
+              <p>Pompeiu's integral question, a Fourier zero condition, and Schiffer's boundary-value problem are linked formulations. For the domains considered here, a Schiffer solution gives the Fourier zero circle and hence failure of the Pompeiu property.</p>
+            </div>
+          </header>
+
+          <ol class="timeline">
+            <li><time datetime="1929">1929</time><div><h3>Pompeiu's integral problem</h3><p>Pompeiu asked whether a planar set can be recognised from the integrals of a function over all translated and rotated copies of that set.</p></div></li>
+            <li><time datetime="1944">1944</time><div><h3>The disc exception</h3><p>Chakalov observed that a disc fails the property. Its Fourier transform is radial, and a positive zero of \(J_1\) gives an entire circle of Fourier zeros.</p></div></li>
+            <li><time datetime="1973">1973–76</time><div><h3>Fourier and spectral reformulations</h3><p>Brown, Schreiber and Taylor gave the Fourier–Laplace characterisation; Williams related it to the overdetermined eigenvalue problem now associated with Schiffer.</p></div></li>
+            <li><time datetime="2026">2026</time><div><h3>Planar counterexamples</h3><p>The two Schiffer papers above construct bounded simply connected noncircular domains, one by a computer-assisted proof and the other by bifurcation theory. A companion computer-assisted paper treats the complementary Berenstein problem.</p></div></li>
+          </ol>
+
+          <figure class="everyday-shapes">
+            <figcaption>
+              <p class="small-label">A visual aside</p>
+              <h3>Two familiar nearly circular shapes</h3>
+              <p>A shortcake biscuit and a Hong Kong two-dollar coin both have repeating undulations around otherwise round boundaries. Their resemblance to the type of domains is striking.</p>
+            </figcaption>
+            <div class="everyday-objects" role="group" aria-label="Two familiar objects with wavy, nearly circular outlines">
+              <div class="everyday-object everyday-object-shortcake">
+                <div class="everyday-object-photo">
+                  <img src="shortcake-hong-kong-coin.png?v=20260826" width="1200" height="654" alt="A round shortcake biscuit with repeating bumps around its edge" loading="lazy" decoding="async">
+                </div>
+                <p><strong>Shortcake biscuit</strong></p>
+              </div>
+              <div class="everyday-object everyday-object-coin">
+                <div class="everyday-object-photo">
+                  <img src="shortcake-hong-kong-coin.png?v=20260826" width="1200" height="654" alt="A Hong Kong two-dollar coin with repeating bumps around its edge" loading="lazy" decoding="async">
+                </div>
+                <p><strong>Hong Kong two-dollar coin</strong></p>
+              </div>
+            </div>
+          </figure>
+
+          <div class="formulations" aria-label="Three formulations of the problem">
+            <article>
+              <p class="small-label">Integral formulation</p>
+              <h3>Failure of the Pompeiu property</h3>
+              <div class="equation compact">\[\int_{\sigma(\Omega)} f(x)\,\mathrm dx=0.\]</div>
+              <p>Here \(f\not\equiv0\), and the equality holds for every rigid motion \(\sigma\).</p>
+            </article>
+            <article>
+              <p class="small-label">Fourier formulation</p>
+              <h3>A zero circle</h3>
+              <div class="equation compact">\[\widehat{\mathbf 1_\Omega}(k\omega)=0\qquad(\omega\in S^1).\]</div>
+              <p>The Fourier transform of the indicator of \(\Omega\) vanishes on a complete circle of radius \(k\).</p>
+            </article>
+            <article>
+              <p class="small-label">Spectral formulation</p>
+              <h3>The Schiffer problem</h3>
+              <div class="equation compact">
+                \[
+                \begin{aligned}
+                -\Delta u&amp;=\lambda u &amp;&amp;\text{in }\Omega,\\
+                u&amp;=1,\quad \partial_\nu u=0 &amp;&amp;\text{on }\partial\Omega.
+                \end{aligned}
+                \]
+              </div>
+              <p>The boundary value and normal derivative are prescribed simultaneously, so solutions occur only at special domains and frequencies.</p>
+            </article>
+          </div>
+
+          <aside class="plain-note">
+            <div><p class="small-label">The obstruction at the disc</p><h3>Direct nonradial bifurcation is spectrally blocked.</h3></div>
+            <div>
+              <p>Linearising at a disc shows that a genuine nonradial deformation would require two distinct integer-order Bessel functions to share a positive zero. They do not. The remaining kernel directions are the geometric changes coming from translation and dilation.</p>
+              <div class="equation compact">\[J_1(\rho)=0,\qquad J_n(\rho)=0,\qquad n\ne1.\]</div>
+              <p>The first paper solves the full nonlinear equation near a computed domain. The second temporarily allows the Bessel order to be real.</p>
+            </div>
+          </aside>
+        </div>
+      </section>

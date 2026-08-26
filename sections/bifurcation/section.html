@@ -1,0 +1,58 @@
+<section id="bifurcation" class="section section-muted" aria-labelledby="bifurcationTitle">
+        <div class="wide">
+          <header class="section-heading paper-heading">
+            <div><span>03</span><p>Cao-Labora · de Dios Pont</p></div>
+            <div><h2 id="bifurcationTitle">The bifurcation proof</h2><p>The proof changes the parameter in which bifurcation is performed. Rotational order is first allowed to be real, giving access to Bessel crossings that are unavailable at integer order. Uniform estimates then show that selected branches return to an integer.</p></div>
+          </header>
+
+          <article class="theorem">
+            <p class="small-label">Main theorem</p>
+            <h3>There are infinitely many bounded, simply connected, noncircular star-shaped Schiffer domains with real-analytic boundaries.</h3>
+            <p>Their rotational orders are unbounded. Each planar domain is obtained only after the auxiliary real-order branch reaches an integer value.</p>
+          </article>
+
+          <div class="proof-steps">
+            <article>
+              <span>1</span><h3>Quotient by rotational symmetry.</h3>
+              <div><p>An \(N\)-fold planar domain is reduced to one fundamental sector. After rescaling its angular coordinate to period \(2\pi\), the quotient carries the cone metric</p><div class="equation compact">\[g_R=dr^2+\frac{r^2}{R^2}\,d\psi^2.\]</div><p>For a planar quotient \(R=N\) is an integer, but the equation and metric make sense for real \(R\).</p></div>
+            </article>
+            <article>
+              <span>2</span><h3>Work on a fixed collar without discarding the core.</h3>
+              <div><p>A neighbourhood of the boundary is straightened to \([0,L]\times\mathbb T\). The omitted interior is represented exactly by its Dirichlet-to-Neumann map. On the cosine mode \(k\),</p><div class="equation compact">\[\begin{aligned}\mathcal D_R[\cos(k\psi)]&amp;=\tau_k(R)\cos(k\psi),\\z_R&amp;=\sqrt\lambda(R-L),\\\tau_k(R)&amp;=\sqrt\lambda\,\frac{J'_{kR}(z_R)}{J_{kR}(z_R)}.\end{aligned}\]</div><p>This interface condition matches both the value and normal derivative, so a collar solution extends regularly through the cone point.</p></div>
+            </article>
+            <article>
+              <span>3</span><h3>Bifurcate at a real Bessel crossing.</h3>
+              <div><p>Fix a zero \(\rho\) of \(J_1\). A real order \(R_*\) is chosen so that</p><div class="equation compact">\[J_1(\rho)=J_{R_*}(\rho)=0.\]</div><p>The linearised collar equation then has a one-dimensional even kernel. Transversality gives a local branch \((R(s),v(s))\) with first boundary wave \(v'(0)=\Phi_*(y)\cos\psi\).</p></div>
+            </article>
+            <article>
+              <span>4</span><h3>Prove that every selected branch moves down in order.</h3>
+              <div><p>Symmetry gives \(R'(0)=0\). The cubic solvability calculation and uniform Bessel estimates give a negative second derivative, while uniform \(C^3\) control bounds the remainder:</p><div class="equation compact">\[\begin{aligned}R(s)&amp;=R_*+\frac12R''(0)s^2+O(|s|^3),\\R''(0)&amp;\le -c&lt;0.\end{aligned}\]</div><p>The constants and the size of the branch are uniform along the required sequence of large crossings.</p></div>
+            </article>
+            <article>
+              <span>5</span><h3>Choose a crossing just above an integer and lift it.</h3>
+              <div><p>Uniform Debye asymptotics reduce the location of large real-order zeros to a phase condition. An irrational rotation argument supplies crossings \(R_*=N+\delta\) with arbitrarily small \(\delta&gt;0\). The uniform decrease along the branch exceeds this gap, so continuity gives a point with \(R(s_N)=N\).</p><p>At integer order, exactly \(N\) copies of the quotient close in the plane. The nonzero first boundary harmonic makes the reconstructed domain noncircular.</p></div>
+            </article>
+          </div>
+
+          <div class="figure-grid">
+            <figure class="interactive-figure" aria-labelledby="quotientFigureTitle">
+              <figcaption><p class="small-label">Quotient and reconstruction</p><h3 id="quotientFigureTitle">Why real order is useful, and why integer order is required</h3><p>The four views separate the planar domain, its quotient, the auxiliary collar problem, and the final lift. The drawing is schematic.</p></figcaption>
+              <div class="step-buttons" role="group" aria-label="Stages of the quotient construction"><button type="button" data-quotient-stage="0" aria-pressed="true">Planar domain</button><button type="button" data-quotient-stage="1" aria-pressed="false">One sector</button><button type="button" data-quotient-stage="2" aria-pressed="false">Real-order collar</button><button type="button" data-quotient-stage="3" aria-pressed="false">Integer lift</button></div>
+              <canvas id="quotientCanvas" role="img" aria-label="Schematic of quotienting a rotationally symmetric domain and reconstructing it at integer order">The selected stage is described below.</canvas>
+              <p id="quotientStatus" class="figure-status" aria-live="polite">An \(N\)-fold domain is made from repeated sectors.</p>
+            </figure>
+
+            <figure class="interactive-figure" aria-labelledby="crossingFigureTitle">
+              <figcaption><p class="small-label">Integer recovery</p><h3 id="crossingFigureTitle">Negative curvature closes a small integer gap</h3><p>This normalized quadratic model shows the final continuity argument. It is not a numerical continuation of a particular branch.</p></figcaption>
+              <div class="control-row"><label for="branchGap">Initial gap \(\delta=R_*-N\)</label><input id="branchGap" type="range" min="2" max="20" value="8" step="1"><output id="branchGapValue" for="branchGap">0.08</output></div>
+              <canvas id="branchCanvas" role="img" aria-label="Quadratic model of a real-order branch crossing an integer level">The selected gap and crossing amplitude are reported below.</canvas>
+              <p id="branchStatus" class="figure-status" aria-live="polite">In the normalized model \(R(s)-N=\delta-s^2\), the branch reaches \(N\) at \(|s|=\sqrt\delta\).</p>
+            </figure>
+          </div>
+
+          <details class="technical-note">
+            <summary>What turns the quadratic picture into a proof?</summary>
+            <div><p>The paper proves one branch size and one definite decrease that work uniformly for all sufficiently large crossings in a fixed spectral window. Separately, its near-integer proposition uses uniform Debye asymptotics and density modulo one to find crossings closer to an integer than that decrease. The intermediate-value theorem then produces the required integer point on each selected branch.</p><p><a href="https://arxiv.org/abs/2608.05114">Paper</a> · <a href="https://github.com/jaumededios/Schiffer">Lean formalisation</a></p></div>
+          </details>
+        </div>
+      </section>

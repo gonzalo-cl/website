@@ -1,0 +1,983 @@
+:root {
+  --background: #ffffff;
+  --heading: #162831;
+  --text: #31434b;
+  --muted: #607178;
+  --accent: #275f9e;
+  --accent-hover: #174a82;
+  --accent-soft: #f3f6fa;
+  --section: #f5f7f7;
+  --rule: #d4dfdc;
+  --rule-dark: #aebfbb;
+  --sans: Aptos, "Segoe UI", Helvetica, Arial, sans-serif;
+  --serif: Georgia, "Times New Roman", serif;
+}
+
+* {
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+html {
+  color-scheme: light;
+  scroll-behavior: smooth;
+  scroll-padding-top: 76px;
+  background: var(--background);
+}
+
+body {
+  margin: 0;
+  color: var(--text);
+  background: var(--background);
+  font: 17px/1.65 var(--sans);
+  text-rendering: optimizeLegibility;
+}
+
+body,
+button,
+input,
+output {
+  font-family: var(--sans);
+}
+
+.katex {
+  font-size: 1em;
+}
+
+a {
+  color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+a:hover {
+  color: var(--accent-hover);
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+summary:focus-visible {
+  outline: 3px solid rgba(0, 116, 125, .3);
+  outline-offset: 3px;
+}
+
+p,
+li {
+  text-wrap: pretty;
+}
+
+h1,
+h2,
+h3 {
+  margin-top: 0;
+  color: var(--heading);
+  font-family: var(--serif);
+  text-wrap: balance;
+}
+
+h1 {
+  max-width: 980px;
+  margin-bottom: 28px;
+  font-size: clamp(42px, 5vw, 64px);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -.025em;
+}
+
+h2 {
+  font-size: clamp(32px, 3.2vw, 42px);
+  line-height: 1.14;
+  letter-spacing: -.018em;
+}
+
+h3 {
+  font-size: 23px;
+  line-height: 1.28;
+}
+
+.wide {
+  width: min(1160px, calc(100% - 48px));
+  margin-inline: auto;
+}
+
+.skip-link {
+  position: fixed;
+  z-index: 100;
+  top: 10px;
+  left: 10px;
+  padding: 9px 12px;
+  color: #fff;
+  background: var(--heading);
+  transform: translateY(-160%);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+.site-header {
+  position: sticky;
+  z-index: 20;
+  top: 0;
+  border-bottom: 1px solid var(--rule);
+  background: rgba(255, 255, 255, .97);
+}
+
+.header-inner {
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.site-name {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--heading);
+  font: 700 18px/1.2 var(--serif);
+  text-decoration: none;
+}
+
+.site-logo {
+  display: block;
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+
+.site-header nav {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin-left: auto;
+}
+
+.site-header nav a {
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.site-header nav a:hover {
+  color: var(--accent);
+}
+
+.hero {
+  padding: 90px 0 78px;
+}
+
+.section-label,
+.small-label {
+  margin: 0 0 12px;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .075em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.hero-lead {
+  max-width: 790px;
+  margin: 0 0 52px;
+  color: var(--text);
+  font: 22px/1.58 var(--serif);
+}
+
+.hero-lead a { color: inherit; text-decoration-color: color-mix(in srgb, currentColor 45%, transparent); text-underline-offset: 2px; }
+
+.shared-statement {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(400px, .95fr);
+  gap: 64px;
+  align-items: center;
+  margin: 0 0 62px;
+  padding: 36px 0;
+  border-top: 1px solid var(--rule-dark);
+  border-bottom: 1px solid var(--rule-dark);
+}
+
+.shared-statement h2 {
+  margin-bottom: 14px;
+  font-size: 30px;
+}
+
+.shared-statement p:last-child {
+  margin-bottom: 0;
+}
+
+.hero-results {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  margin: 0 0 72px;
+}
+
+.hero-result {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0 46px 0 0;
+}
+
+.hero-result + .hero-result {
+  padding-right: 0;
+  padding-left: 46px;
+  border-left: 1px solid var(--rule);
+}
+
+.hero-result-media {
+  width: min(100%, 500px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 30px;
+}
+
+.hero-result img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: 50% 50%;
+}
+
+.hero-results > .hero-result:first-child img { width: 93%; height: 93%; }
+
+.hero-result figcaption {
+  width: min(100%, 48ch);
+  margin-inline: auto;
+}
+
+.hero-result h2 {
+  margin-bottom: 18px;
+  font-size: 28px;
+}
+
+.hero-result figcaption > p:not(.small-label) {
+  margin: 0 0 15px;
+}
+
+.hero-result figcaption > p:last-child {
+  margin-bottom: 0;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.paper-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  border-top: 3px solid var(--heading);
+}
+
+.paper-summary {
+  padding: 32px 38px 0 0;
+}
+
+.paper-summary + .paper-summary {
+  padding-right: 0;
+  padding-left: 38px;
+  border-left: 1px solid var(--rule);
+}
+
+.paper-summary h2 {
+  min-height: 3.5em;
+  margin-bottom: 18px;
+  font-size: 27px;
+  line-height: 1.18;
+}
+
+.paper-summary .authors {
+  color: var(--heading);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.paper-summary > p:not(.small-label):not(.authors):not(.paper-links) {
+  max-width: 62ch;
+}
+
+.paper-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  margin-top: 24px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.section {
+  padding: 88px 0 92px;
+}
+
+.section-muted {
+  background: var(--section);
+}
+
+.section-heading {
+  display: grid;
+  grid-template-columns: 175px minmax(0, 760px);
+  gap: 56px;
+  margin-bottom: 58px;
+}
+
+.section-heading > div:first-child {
+  padding-top: 8px;
+}
+
+.section-heading > div:first-child span {
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.section-heading > div:first-child p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.section-heading h2 {
+  margin-bottom: 16px;
+}
+
+.section-heading > div:last-child > p {
+  max-width: 70ch;
+  margin-bottom: 0;
+  font-size: 18px;
+}
+
+@@include:sections/history/styles.css@@.theorem {
+  max-width: 930px;
+  margin: 0 0 58px 231px;
+  padding: 32px 36px;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+}
+
+.section-muted .theorem {
+  background: #fff;
+}
+
+.theorem h3 {
+  margin-bottom: 12px;
+  font-size: 27px;
+}
+
+.theorem p:last-child {
+  margin-bottom: 0;
+}
+
+.chapter-intro {
+  max-width: 930px;
+  margin: -24px 0 46px 231px;
+}
+
+.proof-steps {
+  max-width: 930px;
+  margin-left: 231px;
+  border-top: 1px solid var(--rule-dark);
+}
+
+.proof-steps article {
+  display: grid;
+  grid-template-columns: 42px 235px minmax(0, 1fr);
+  gap: 26px;
+  padding: 30px 0 34px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.proof-steps article > span {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.proof-steps h3 {
+  margin: 0;
+  font-size: 21px;
+}
+
+.proof-steps article > div > p:first-child {
+  margin-top: 0;
+}
+
+.proof-steps article > div > p:last-child {
+  margin-bottom: 0;
+}
+
+.equation {
+  max-width: 100%;
+  margin: 20px 0;
+  color: var(--heading);
+}
+
+.equation .katex-display {
+  max-width: 100%;
+  margin: 0;
+  text-align: left;
+}
+
+.equation .katex-display > .katex {
+  max-width: 100%;
+  text-align: left;
+}
+
+.equation.compact {
+  margin: 15px 0;
+}
+
+.shared-equation .katex-display {
+  text-align: center;
+}
+
+.figure-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 34px;
+  margin-top: 70px;
+}
+
+.interactive-figure {
+  margin: 0;
+  border-top: 3px solid var(--heading);
+  border-bottom: 1px solid var(--rule-dark);
+  background: #fff;
+}
+
+.interactive-figure figcaption {
+  min-height: 255px;
+  padding: 28px 28px 24px;
+}
+
+.interactive-figure figcaption h3 {
+  margin-bottom: 13px;
+}
+
+.interactive-figure figcaption p:last-child {
+  margin-bottom: 0;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.control-row {
+  min-height: 78px;
+  display: grid;
+  grid-template-columns: minmax(120px, auto) minmax(130px, 1fr) auto;
+  gap: 18px;
+  align-items: center;
+  padding: 15px 22px;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  background: var(--accent-soft);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
+output {
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+}
+
+.interactive-figure canvas {
+  width: 100%;
+  height: 350px;
+  display: block;
+  background: #fff;
+}
+
+@@include:sections/computer-assisted/certificate.css@@@@include:sections/bifurcation/styles.css@@@@include:sections/computer-assisted/berenstein.css@@.technical-note,
+.references {
+  max-width: 930px;
+  margin: 58px 0 0 231px;
+  border-top: 1px solid var(--rule-dark);
+  border-bottom: 1px solid var(--rule-dark);
+}
+
+.technical-note summary,
+.references summary {
+  padding: 18px 4px;
+  color: var(--heading);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.technical-note > div,
+.references > ul {
+  max-width: 75ch;
+  margin: 0;
+  padding: 0 4px 24px;
+}
+
+.comparison-table {
+  margin-top: 8px;
+  border-top: 3px solid var(--heading);
+}
+
+.comparison-row {
+  display: grid;
+  grid-template-columns: 170px repeat(2, minmax(0, 1fr));
+  border-bottom: 1px solid var(--rule);
+}
+
+.comparison-row > div {
+  padding: 20px 24px;
+}
+
+.comparison-row > div + div {
+  border-left: 1px solid var(--rule);
+}
+
+.comparison-head {
+  color: var(--heading);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.comparison-row [role="rowheader"] {
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.source-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  border-top: 3px solid var(--heading);
+}
+
+.source-grid article { padding: 28px 28px 4px; }
+.source-grid article:first-child { padding-left: 0; }
+.source-grid article:last-child { padding-right: 0; }
+
+.source-grid article + article {
+  border-left: 1px solid var(--rule);
+}
+
+.source-grid h3 {
+  margin-bottom: 12px;
+}
+
+.references ul {
+  padding-left: 24px;
+}
+
+.references li + li {
+  margin-top: 8px;
+}
+
+.site-footer {
+  padding: 38px 0;
+  color: #dce6e4;
+  background: var(--heading);
+  font-size: 14px;
+}
+
+.site-footer .wide {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.site-footer p {
+  margin: 0;
+}
+
+.site-footer a {
+  color: #fff;
+}
+
+@media (max-width: 1040px) {
+  .site-header nav {
+    gap: 16px;
+  }
+
+  .section-heading {
+    grid-template-columns: 145px minmax(0, 1fr);
+    gap: 38px;
+  }
+
+  .timeline,
+  .everyday-shapes,
+  .theorem,
+  .chapter-intro,
+  .proof-steps,
+  .technical-note,
+  .berenstein-extension,
+  .references {
+    margin-left: 183px;
+  }
+
+  .proof-steps article {
+    grid-template-columns: 42px minmax(0, 1fr);
+  }
+
+  .proof-steps h3,
+  .proof-steps article > div {
+    grid-column: 2;
+  }
+
+  .proof-steps h3 {
+    margin-bottom: 8px;
+  }
+
+  .proof-steps article > span {
+    grid-row: 1 / span 2;
+  }
+
+  .berenstein-grid { grid-template-columns: 1fr; gap: 34px; }
+  .berenstein-figure { width: min(100%, 680px); justify-self: center; }
+}
+
+@media (max-width: 860px) {
+  html {
+    scroll-padding-top: 108px;
+  }
+
+  .header-inner {
+    min-height: 0;
+    display: block;
+    padding: 14px 0 10px;
+  }
+
+  .site-name {
+    display: inline-flex;
+    margin-bottom: 10px;
+  }
+
+  .site-header nav {
+    margin: 0;
+    padding-bottom: 4px;
+    overflow-x: auto;
+  }
+
+  .shared-statement {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+
+  .hero-results {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+
+  .hero-result {
+    padding: 0;
+  }
+
+  .hero-result + .hero-result {
+    padding: 48px 0 0;
+    border-top: 1px solid var(--rule);
+    border-left: 0;
+  }
+
+  .hero-result-media {
+    width: min(100%, 520px);
+  }
+
+  .hero-result figcaption {
+    width: min(100%, 680px);
+  }
+
+  .paper-grid,
+  .figure-grid,
+  .source-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .paper-summary h2 {
+    min-height: 0;
+  }
+
+  .paper-summary,
+  .paper-summary + .paper-summary,
+  .source-grid article,
+  .source-grid article + article {
+    padding: 28px 0;
+    border-left: 0;
+  }
+
+  .paper-summary + .paper-summary,
+  .source-grid article + article {
+    border-top: 1px solid var(--rule);
+  }
+
+  .formulations {
+    grid-template-columns: 1fr;
+  }
+
+  .formulations h3 {
+    min-height: 0;
+  }
+
+  .plain-note {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .figure-grid {
+    gap: 54px;
+  }
+
+  .interactive-figure figcaption {
+    min-height: 0;
+  }
+
+  .comparison-row {
+    grid-template-columns: 130px repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  .wide {
+    width: min(100% - 32px, 1160px);
+  }
+
+  body {
+    font-size: 16px;
+  }
+
+  .site-logo {
+    width: 42px;
+    height: 42px;
+  }
+
+  .hero {
+    padding: 62px 0 54px;
+  }
+
+  .hero-lead {
+    font-size: 19px;
+  }
+
+  .hero-results {
+    margin-bottom: 58px;
+  }
+
+  .hero-result h2 {
+    font-size: 27px;
+  }
+
+  .section {
+    padding: 62px 0 66px;
+  }
+
+  .section-heading {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 42px;
+  }
+
+  .section-heading > div:first-child {
+    padding-top: 0;
+  }
+
+  .section-heading > div:last-child > p {
+    font-size: 17px;
+  }
+
+  .site-header nav {
+    flex-wrap: wrap;
+    gap: 5px 16px;
+    padding-bottom: 2px;
+    overflow: visible;
+  }
+
+  .site-header nav a {
+    font-size: 13px;
+  }
+
+  .timeline,
+  .everyday-shapes,
+  .theorem,
+  .chapter-intro,
+  .proof-steps,
+  .technical-note,
+  .berenstein-extension,
+  .references {
+    margin-left: 0;
+  }
+
+  .timeline li {
+    grid-template-columns: 70px minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .everyday-shapes {
+    padding: 30px 0 34px;
+  }
+
+  .everyday-shapes figcaption {
+    max-width: 600px;
+    margin-bottom: 26px;
+  }
+
+  .everyday-objects {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+  }
+
+  .theorem {
+    padding: 26px 24px;
+  }
+
+  .proof-steps article {
+    grid-template-columns: 36px minmax(0, 1fr);
+    gap: 15px;
+  }
+
+  .proof-steps article > span {
+    width: 30px;
+    height: 30px;
+  }
+
+  .control-row {
+    grid-template-columns: 1fr auto;
+    gap: 8px 14px;
+  }
+
+  .control-row input {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .step-buttons {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .step-buttons button:nth-child(2) {
+    border-right: 0;
+  }
+
+  .step-buttons button:nth-child(-n+2) {
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .comparison-head {
+    display: none;
+  }
+
+  .comparison-row {
+    grid-template-columns: 1fr;
+    padding: 12px 0;
+  }
+
+  .comparison-row > div {
+    padding: 8px 4px;
+  }
+
+  .comparison-row > div + div {
+    border-left: 0;
+  }
+
+  .comparison-row [role="cell"]::before {
+    display: block;
+    margin-bottom: 3px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .comparison-row [role="cell"]:nth-child(2)::before {
+    content: "Computer-assisted proof";
+  }
+
+  .comparison-row [role="cell"]:nth-child(3)::before {
+    content: "Bifurcation proof";
+  }
+
+  .site-footer .wide {
+    display: block;
+  }
+
+  .site-footer p + p {
+    margin-top: 12px;
+  }
+}
+
+@media (max-width: 460px) {
+  h1 {
+    font-size: 38px;
+  }
+
+  h2 {
+    font-size: 31px;
+  }
+
+  .shared-statement h2,
+  .theorem h3 {
+    font-size: 25px;
+  }
+
+  .paper-summary h2 {
+    font-size: 24px;
+  }
+
+  .plain-note {
+    padding: 26px 22px;
+  }
+
+  .interactive-figure figcaption {
+    padding: 24px 20px 20px;
+  }
+
+  .interactive-figure canvas {
+    height: 300px;
+  }
+
+  .certificate-readout {
+    grid-template-columns: 1fr;
+  }
+
+  .certificate-readout p:nth-child(2) {
+    border-top: 1px solid var(--rule);
+    border-left: 0;
+  }
+
+  #certificateVerdict {
+    grid-column: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+@media print {
+  .site-header,
+  .control-row,
+  .step-buttons {
+    display: none;
+  }
+
+  .section,
+  .hero {
+    padding: 28px 0;
+  }
+
+  .section-muted {
+    background: #fff;
+  }
+}

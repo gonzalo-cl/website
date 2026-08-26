@@ -1,0 +1,107 @@
+<section id="computer-assisted" class="section" aria-labelledby="computerTitle">
+        <div class="wide">
+          <header class="section-heading paper-heading">
+            <div><span>02</span><p>Colbrook · Stepaniants</p></div>
+            <div>
+              <h2 id="computerTitle">The computer-assisted proof</h2>
+              <p>The moving boundary is encoded by a conformal map of the unit disc. The PDE and both boundary conditions then become one equation in a weighted coefficient space, where an a posteriori contraction argument proves the existence of an exact zero.</p>
+            </div>
+          </header>
+
+          <article class="theorem">
+            <p class="small-label">Main theorem</p>
+            <h3>There is a bounded, simply connected, noncircular \(D_{10}\)-symmetric Schiffer domain with real-analytic boundary.</h3>
+            <p>The numerical approximation locates the construction. The theorem follows from exact identities, interval enclosures, exhaustive finite enumeration, analytic tail bounds, and a final exact-rational check.</p>
+          </article>
+
+          <p class="chapter-intro"><strong>How the centre is found.</strong> Before validation, numerical continuation solves the related constant-flux problem \(\partial_\nu u=c\), starting from a known solution with \(c\ne0\) and following the branch towards \(c=0\). This produces the approximate conformal coefficients. It does not establish the theorem: the proof begins by bounding the residual of the fixed-disc equation and then closes the full-space certificate described below.</p>
+
+          <div class="proof-steps">
+            <article>
+              <span>1</span><h3>Put the unknown domain on the unit disc.</h3>
+              <div><p>A ten-fold symmetric conformal map is written as</p><div class="equation compact">\[\phi_p(z)=p_0z+\sum_{j\ge1}p_jz^{10j+1}.\]</div><p>The coefficients \(p_j\) describe the boundary. Pulling the PDE back by \(\phi_p\) replaces the moving domain by a fixed disc and introduces the coefficient \(|\phi_p'|^2\).</p></div>
+            </article>
+            <article>
+              <span>2</span><h3>Build both boundary conditions into the inverse.</h3>
+              <div><p>Write \(g=\Delta(U-1)\). An explicit compatible inverse \(K\) is chosen so that \(Kg\) and its radial derivative vanish on the unit circle. Thus</p><div class="equation compact">\[U=1+Kg\]</div><p>already has the required Dirichlet and Neumann traces. This is the reason for the disk-polynomial basis used in the paper.</p></div>
+            </article>
+            <article>
+              <span>3</span><h3>Solve one coefficient equation.</h3>
+              <div><p>Substitution into the pulled-back Helmholtz equation gives a cubic equation</p><div class="equation compact">\[F(g,p)=0.\]</div><p>The weighted coefficient norm is a Banach algebra. It controls multiplication, uniform convergence on the closed disc, and the analytic tails omitted from the finite computation.</p></div>
+            </article>
+            <article>
+              <span>4</span><h3>Validate a contraction on the full space.</h3>
+              <div><p>A numerical approximation supplies the centre and a finite approximate inverse. The proof joins this finite block to analytic tail estimates and bounds the Newton-like map \(T(x)=x-\mathcal A F(x)\). The released certificate produces</p><div class="equation compact">\[\mathcal R(t)=Y+(Z-1)t+C_2t^2+C_3t^3.\]</div><p>At \(r=10^{-6}\), the strict inequalities \(\mathcal R(r)&lt;0\) and \(\mathcal R'(r)&lt;0\) make the coefficient ball invariant and contractive.</p></div>
+            </article>
+            <article>
+              <span>5</span><h3>Return to a physical domain.</h3>
+              <div><p>The certified coefficient bounds prove that the conformal map is injective, extends analytically across the unit circle, and is not a linear map. The exact coefficient zero therefore reconstructs a noncircular real-analytic domain carrying the required Schiffer solution.</p></div>
+            </article>
+          </div>
+
+          <div class="figure-grid">
+            <figure class="interactive-figure" aria-labelledby="boundaryFigureTitle">
+              <figcaption><p class="small-label">Numerical centre</p><h3 id="boundaryFigureTitle">The conformal boundary used to centre the proof</h3><p>The solid curve uses the printed conformal coefficients. The inset enlarges the marked crest, using the same scale in both coordinate directions. The exact domain is proved to lie in a small coefficient ball around this centre; the drawing itself is not the certificate.</p></figcaption>
+              <div class="control-row"><label for="boundaryModes">Coefficients shown</label><input id="boundaryModes" type="range" min="1" max="30" value="30" step="1"><output id="boundaryModesValue" for="boundaryModes">30 of 30</output></div>
+              <canvas id="boundaryCanvas" role="img" aria-label="Numerical ten-fold conformal boundary and a magnified detail, compared with the unit circle">The control reports how many printed coefficients are included; the inset magnifies the boundary near an outward crest.</canvas>
+            </figure>
+
+            <figure class="interactive-figure" aria-labelledby="certificateFigureTitle">
+              <figcaption><p class="small-label">Certificate</p><h3 id="certificateFigureTitle">The final two sign conditions</h3><p>Move the radius to see where the released upper bounds close. The plot is explanatory; the pass or fail decision below is evaluated with exact rational arithmetic.</p></figcaption>
+              <div class="control-row"><label for="certificateRadius">Radius in units of \(10^{-6}\)</label><input id="certificateRadius" type="range" min="0" max="2" value="1" step="0.001"><output id="certificateRadiusValue" for="certificateRadius">1.000</output></div>
+              <canvas id="certificateCanvas" role="img" aria-label="Radii-polynomial upper bound and selected coefficient radius">The exact sign readout is given below the plot.</canvas>
+              <div class="certificate-readout" aria-live="polite"><p><span>Ball condition</span><strong id="certificateValue">—</strong></p><p><span>Contraction condition</span><strong id="certificateDerivative">—</strong></p><p id="certificateVerdict">—</p></div>
+            </figure>
+          </div>
+
+          <details class="technical-note">
+            <summary>What is checked beyond the plotted polynomial?</summary>
+            <div><p>The finite derivative block has 2,471 variables. The certificate also reconstructs every omitted residual row, enumerates the adjacent field-source and shape tails, and bounds the remote tails by monotone analytic estimates. Directed MPFR interval computations produce the leaves; a separate exact-rational checker derives the final inequalities and the geometric reconstruction bounds.</p><p><a href="https://doi.org/10.5281/zenodo.21765287">Archived certificate</a> · <a href="https://github.com/MColbrook/Pompeiu_Schiffer">Source and verifier</a></p></div>
+          </details>
+
+          <section id="berenstein-extension" class="berenstein-extension" aria-labelledby="berensteinTitle">
+            <header class="berenstein-heading">
+              <p class="small-label">Companion computer-assisted result · Colbrook · Sadeghi · Stepaniants</p>
+              <h2 id="berensteinTitle">The complementary Dirichlet endpoint</h2>
+              <p>The conformal fixed-disc and validated-tail framework was subsequently adapted to the planar Berenstein conjecture. Here the boundary datum that vanishes is exchanged:</p>
+              <div class="equation">
+                \[
+                \begin{aligned}
+                (\Delta+k^2)u&amp;=0 &amp;&amp;\text{in }\Omega,\\
+                u&amp;=0,\qquad \partial_\nu u=1 &amp;&amp;\text{on }\partial\Omega.
+                \end{aligned}
+                \]
+              </div>
+              <p>The planar Berenstein conjecture asserted that these zero Dirichlet and constant nonzero Neumann data force \(\Omega\) to be a disc. In Fourier language, the cancellation now concerns boundary arclength measure \(\sigma_{\partial\Omega}\), rather than the area measure \(\mathbf 1_\Omega\,dx\) in the Pompeiu formulation.</p>
+              <p>The paper constructs a bounded simply connected \(D_{13}\)-symmetric domain with real-analytic Jordan boundary and a solution \(u\in C^\omega(\overline\Omega)\), at a frequency satisfying \(27.4381178838&lt;k&lt;27.4381198839\). The domain is neither a disc nor centrally symmetric, and \(u\) changes sign. The sign change is essential: a solution of one sign would fall under Serrin's symmetry theorem. Equivalently, \(\widehat{\sigma_{\partial\Omega}}(k\omega)=0\) for every \(\omega\in\mathbb S^1\).</p>
+            </header>
+
+            <div class="berenstein-grid">
+              <figure class="berenstein-figure">
+                <img src="berenstein-domain-solution.png?v=20260826" width="1890" height="1560" alt="Nearly circular thirteenfold-symmetric domain coloured by a finite-centre field, with eight closed interior zero contours and a dark outer boundary" loading="lazy" decoding="async">
+                <figcaption><strong>Finite-centre approximation.</strong> Colour represents the finite-centre field \(u^\circ\); the eight interior curves are its zero level sets and the heavy outer curve is \(\partial\Omega^\circ\). Under the normalised conformal parametrisations, the pulled-back field differs uniformly from the exact one by at most \(2.5\times10^{-7}\), while the displayed and exact boundaries differ pointwise by less than \(4.67\times10^{-10}\).</figcaption>
+              </figure>
+
+              <div class="berenstein-method">
+                <p class="small-label">What changes, and how it is handled</p>
+                <p>Set \(a=\phi'\), \(U=u\circ\phi\), and \(g=\Delta U\). The full zero-Dirichlet inverse \(K_D\) and its Neumann trace \(N\) give the coupled fixed-disc system</p>
+                <div class="equation compact">
+                  \[
+                  \begin{aligned}
+                  g+k^2|a|^2K_Dg&amp;=0,\\
+                  (Ng)^2-|a|^2&amp;=0.
+                  \end{aligned}
+                  \]
+                </div>
+                <dl class="berenstein-differences">
+                  <div><dt>The source space is larger.</dt><dd>For Schiffer, both traces of \(U-1\) vanish and the harmonic source modes disappear, leaving the single equation \(g+|p_{\mathrm S}|^2(1+Kg)=0\). The nonzero Berenstein flux keeps those modes, so the proof constructs and bounds both \(K_D\) and \(N\).</dd></div>
+                  <div><dt>The boundary condition is a second equation.</dt><dd>Squaring \(Ng=|a|\) makes the system polynomial but also admits the wrong sign. A certified positive lower bound for \(Ng\) recovers the unsquared condition.</dd></div>
+                  <div><dt>Global extension must be retained.</dt><dd>Analytic Cauchy data determine a solution near the boundary, but not necessarily throughout the enclosed region. The \(K_D\)-system constructs the solution on the whole disc; a separate continuation argument extends it analytically across the unit circle.</dd></div>
+                  <div><dt>The finite-tail split is rebuilt.</dt><dd>The trace \(N\) annihilates every disk-polynomial mode with radial index \(s\ge1\); only the harmonic \(s=0\) modes contribute. Exact support separation then joins an 882-variable finite block to analytic tail bounds and a full-space contraction certificate.</dd></div>
+                </dl>
+                <p class="paper-links"><a href="https://arxiv.org/abs/2608.08953">Read the paper</a><a href="https://github.com/sgstepaniants/Berenstein">Source and verifier</a><a href="https://doi.org/10.5281/zenodo.21865020">Archived certificate</a></p>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
