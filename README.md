@@ -45,7 +45,8 @@ observable numerical or geometric evidence, the precise theorem it suggests,
 and an expandable derivation. The large-cone transfer uses a fixed-radius
 two-panel Bessel comparison in the margin; the branch-family plot introduces
 both the uniform second variation and the near-integer phase argument; the
-separate landing dashboards have been removed from the reading path.
+final global/collar animation closes the argument by showing an explicit
+near-integer cone branch reach an integral order.
 
 The HTML supplies semantic sections, statements, disclosures, figures and
 controls. Page measures are owned by

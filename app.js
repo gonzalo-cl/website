@@ -1984,7 +1984,7 @@ function modesDrawGlobal(context, rect, solution, fieldValue) {
   const aspectScaleX = Math.min(rect.width, rect.height) / rect.width;
   const aspectScaleY = Math.min(rect.width, rect.height) / rect.height;
   const physicalGap = Math.max(0, TWO_PI * (1 - coneNumerics.targetN / solution.R));
-  const displayGap = Math.min(.22, physicalGap * 2);
+  const displayGap = Math.min(.22, physicalGap * 3);
   const raster = modesRaster(rect, (u, v) => {
     const dx = (u - localPlot.cx) / (localPlot.radius * aspectScaleX);
     const dy = (localPlot.cy - v) / (localPlot.radius * aspectScaleY);
@@ -2040,16 +2040,19 @@ function modesDrawGlobal(context, rect, solution, fieldValue) {
   context.shadowBlur = 0;
 
   if (displayGap > 1e-7) {
-    context.strokeStyle = SCHIFFER_VISUAL_THEME.background;
-    context.lineWidth = 2.4;
-    [-displayGap / 2, displayGap / 2].forEach((angle) => {
-      const inner = modesPolarPoint(plot, 0, angle, solution.R);
-      const outer = modesPolarPoint(plot, solution.R * 1.06, angle, solution.R);
-      context.beginPath();
-      context.moveTo(inner.x, inner.y);
-      context.lineTo(outer.x, outer.y);
-      context.stroke();
-    });
+    /* Cut an angular sector out of the assembled field.  Filling the sector,
+       rather than drawing two thick radial strokes, preserves the geometry:
+       the gap closes to a point at r=0 and widens towards the boundary. */
+    context.beginPath();
+    context.moveTo(plot.cx, plot.cy);
+    for (let index = 0; index <= 16; index++) {
+      const angle = -displayGap / 2 + index / 16 * displayGap;
+      const point = modesPolarPoint(plot, solution.R * 1.08, angle, solution.R);
+      context.lineTo(point.x, point.y);
+    }
+    context.closePath();
+    context.fillStyle = SCHIFFER_VISUAL_THEME.background;
+    context.fill();
   }
 
   const cropAngle = modesState.crop * TWO_PI;
@@ -2067,8 +2070,6 @@ function modesDrawGlobal(context, rect, solution, fieldValue) {
     if (index === 0) context.moveTo(point.x, point.y); else context.lineTo(point.x, point.y);
   });
   context.closePath();
-  context.fillStyle = "rgba(77,162,163,.11)";
-  context.fill();
   context.strokeStyle = MODES_COLORS.cyan;
   context.lineWidth = 1.7;
   context.stroke();
@@ -2080,8 +2081,15 @@ function modesDrawGlobal(context, rect, solution, fieldValue) {
     context.fillStyle = MODES_COLORS.cyan;
     context.fillText("ONE WAVELENGTH", cropPoints[1].x + 5, cropPoints[1].y - 5);
   }
+  const [cropTop, cropBottom] = [cropPoints[1], cropPoints[2]]
+    .sort((first, second) => first.y - second.y);
   context.restore();
-  return { plot, cropPoints, gap: physicalGap };
+  return {
+    plot,
+    cropPoints,
+    cropAnchors: { top: cropTop, bottom: cropBottom },
+    gap: physicalGap,
+  };
 }
 
 function modesPatchCoordinates(solution, centerAngle, tangent) {
@@ -2341,9 +2349,9 @@ function renderModesNestedZoom() {
     context.lineWidth = 1;
     context.setLineDash([4, 5]);
     context.beginPath();
-    context.moveTo(global.cropPoints[1].x, global.cropPoints[1].y);
+    context.moveTo(global.cropAnchors.top.x, global.cropAnchors.top.y);
     context.lineTo(patchPlot.left, patchPlot.top);
-    context.moveTo(global.cropPoints[2].x, global.cropPoints[2].y);
+    context.moveTo(global.cropAnchors.bottom.x, global.cropAnchors.bottom.y);
     context.lineTo(patchPlot.left, patchPlot.top + patchPlot.height);
     context.stroke();
     context.restore();

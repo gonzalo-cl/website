@@ -246,6 +246,16 @@
         || expectedProofSectionOrder.some((id, index) => actualProofSectionOrder[index] !== id)) {
       errors.push("Section V proof subsections do not follow source reading order");
     }
+    const transferSection = document.querySelector("#debye-experiment");
+    const collarComparison = document.querySelector("[data-figure='collar-coordinate-comparison']");
+    const uniformConeTheorem = document.querySelector("[data-label='uniform-cone-bifurcation']");
+    if (!transferSection || !collarComparison || !uniformConeTheorem
+        || !(collarComparison.compareDocumentPosition(uniformConeTheorem) & Node.DOCUMENT_POSITION_FOLLOWING)) {
+      errors.push("the large-cone comparison must precede the uniform cone theorem");
+    }
+    if (transferSection?.lastElementChild !== uniformConeTheorem) {
+      errors.push("the uniform cone theorem must close the transfer subsection");
+    }
 
     const expectedHeadingContract = [
       ["1", "Pompeiu’s problem: When does a measuring probe lose information?", "#introduction", "section"],
@@ -259,8 +269,9 @@
       ["5", "The bifurcation proof", "#experiment", "section"],
       ["5.1", "Uniform half-cylinder bifurcation for 2 ≤ λ ≤ 3", "#half-cylinder-strategy", "proof-subsection"],
       ["5.2", "Transfer from the half-cylinder to large cones", "#debye-experiment", "proof-subsection"],
-      ["5.3", "A visualization of the cone bifurcations", "#phase-story", "proof-subsection"],
+      ["5.3", "Exploring the cone bifurcation", "#phase-story", "proof-subsection"],
       ["5.4", "Equidistributed phases supply near-integer crossing orders", "#abundance-experiment", "proof-subsection"],
+      ["5.5", "Closing the argument", "#modes-experiment", "proof-subsection"],
       ["", "References", "#references", "section"],
     ];
     const headingContract = Array.from(document.querySelectorAll(headingSelector), (heading) => {

@@ -1120,32 +1120,7 @@
             <figcaption id="debyeProfileCaption">At \(R=28\), the exact regular Bessel profiles (cyan) are compared with their half-cylinder limits (orange) on the fixed collar. The Neumann channel \(k=1\) is fixed above; choose an evanescent channel below.</figcaption>
           </figure>
           <p>A cone with a very large boundary radius looks flat on any collar of fixed depth. In the local coordinate \(x=r-R\), its separated Bessel modes therefore approach the trigonometric and exponential modes of the half-cylinder. The marginal plots show that comparison at \(R=28\); the four-panel figure below shows the same limit in the original geometry.</p>
-          <p>This is the transfer required by the proof. At a crossing the cone radius and Bessel order are the same real number: \(\lambda=\rho^2/R^2\) and \(\sqrt\lambda R=\rho\). Because the estimates hold uniformly for \(2\le\lambda\le3\), the half-cylinder bifurcation persists on every sufficiently large cone.</p>
         </div>
-
-        <article id="uniformConeBifurcation" class="math-statement" data-kind="theorem" data-label="uniform-cone-bifurcation" aria-labelledby="uniformConeBifurcationTitle">
-          <header class="math-statement-header"><span>Theorem</span><small id="uniformConeBifurcationTitle">uniform cone bifurcation</small></header>
-          <div class="math-statement-body">
-            <p>There are constants \(R_{\mathrm{unif}},s_*,C_3&gt;0\) such that every sufficiently large real crossing</p>
-            <div class="tex-display">
-              \[
-              \begin{gathered}
-              R_*\ge R_{\mathrm{unif}},\qquad J_1(\rho)=J_{R_*}(\rho)=0,\\
-              2\le\lambda_*:=\dfrac{\rho^2}{R_*^2}\le3
-              \end{gathered}
-              \]
-            </div>
-            <p>has a nontrivial \(C^3\) cone branch \(s\mapsto(R(s),u_s,h_s)\), defined for the same interval \(|s|\le s_*\), with</p>
-            <div class="tex-display">
-              \[
-              \begin{aligned}
-              R(0)&amp;=R_*,\qquad h_s(\psi)=s\cos\psi+O(s^2),\\
-              \sup_{|s|\le s_*}|R'''(s)|&amp;\le C_3.
-              \end{aligned}
-              \]
-            </div>
-          </div>
-        </article>
 
         <details class="proof-details transfer-proof-details">
           <summary><span>Why the cylinder estimates transfer uniformly</span><i>expand +</i></summary>
@@ -1273,6 +1248,10 @@
           <figcaption class="collar-field-caption">The disk and half-cylinder are shown at one geometric scale. Their outlined five-unit collars are magnified in the neighbouring views, using the same local coordinates and colour scale.</figcaption>
         </figure>
 
+        <div class="debye-lead paper-copy transfer-conclusion">
+          <p>The four views in <a class="xref" data-ref="collar-coordinate-comparison"></a> express the transfer required by the proof. At a crossing the cone radius and Bessel order are the same real number: \(\lambda=\rho^2/R^2\) and \(\sqrt\lambda R=\rho\). Because the estimates are uniform for \(2\le\lambda\le3\), the Crandall–Rabinowitz conclusion persists on every sufficiently large cone, with a perturbation interval that does not shrink as \(R\to\infty\).</p>
+        </div>
+
         <details class="proof-details collar-coordinate-details">
           <summary><span>Mode normalization and the angular quotient</span><i>expand +</i></summary>
           <div class="proof-details-body">
@@ -1300,11 +1279,34 @@
         <div class="real-order-setup paper-copy">
           <p>The cone metric \(g_R=dr^2+(r^2/R^2)d\psi^2\) and its regular separated modes \(J_{kR}\) are defined for every real \(R&gt;0\). A planar \(N\)-fold quotient is obtained at an integer value \(R=N\), when the cone is unfolded into the plane.</p>
         </div>
+
+        <article id="uniformConeBifurcation" class="math-statement" data-kind="theorem" data-label="uniform-cone-bifurcation" aria-labelledby="uniformConeBifurcationTitle">
+          <header class="math-statement-header"><span>Theorem</span><small id="uniformConeBifurcationTitle">uniform Crandall–Rabinowitz theorem on large cones</small></header>
+          <div class="math-statement-body">
+            <p>There are constants \(R_{\mathrm{unif}},s_*&gt;0\) such that, at every sufficiently large real crossing</p>
+            <div class="tex-display">
+              \[
+              \begin{gathered}
+              R_*\ge R_{\mathrm{unif}},\qquad J_1(\rho)=J_{R_*}(\rho)=0,\\
+              2\le\lambda_*:=\dfrac{\rho^2}{R_*^2}\le3
+              \end{gathered}
+              \]
+            </div>
+            <p>the Crandall–Rabinowitz hypotheses hold with constants independent of the crossing: after fixing the rotational gauge, the kernel is one-dimensional, the complementary inverse is uniformly bounded, and the transversality constant is uniformly separated from zero.</p>
+            <p>Consequently, every such Dirichlet–Neumann coincidence produces a nontrivial cone branch \(s\mapsto(R(s),u_s,h_s)\), defined on the same interval \(|s|\le s_*\), with</p>
+            <div class="tex-display">
+              \[
+              R(0)=R_*,\qquad h_s(\psi)=s\cos\psi+O(s^2).
+              \]
+            </div>
+            <p>The family depends \(C^3\)-smoothly on \(s\), with uniform \(C^3\) bounds in the Banach spaces used for the boundary and the field. Thus the size and regularity of the perturbation do not deteriorate as \(R_*\to\infty\).</p>
+          </div>
+        </article>
       </section>
 
       <section id="phase-story" class="phase-story">
-        <header class="section-heading" data-title="A visualization of the cone bifurcations" data-toc="proof-subsection">
-          <h3>A visualization of the cone bifurcations</h3>
+        <header class="section-heading" data-title="Exploring the cone bifurcation" data-toc="proof-subsection">
+          <h3>Exploring the cone bifurcation</h3>
         </header>
         <div class="phase-story-lead paper-copy">
           <p>Each point in the plot below is a noninteger order \(R_*\) at which the cone problem bifurcates. The curve issuing from it is the predicted two-jet of the corresponding branch, \(R(s)=R_*+\tfrac12R''(0)s^2\). This puts the two ingredients of the planar construction in one picture.</p>
@@ -1561,8 +1563,12 @@
       </section>
 
       <section id="modes-experiment" class="modes-experiment">
+        <header class="section-heading" data-title="Closing the argument" data-toc="proof-subsection">
+          <h3>Closing the argument</h3>
+        </header>
         <div class="modes-lead">
-          <p>The complete \(D_{28}\)-symmetric field and its seam-centred one-wavelength collar give global and local coordinate views of the same branch. The crop box on the disk is enlarged at right in the coordinates \(x=r-R\) and \(\psi=R\phi\); move the slider to watch the blank seam close as \(R\) reaches \(28\).</p>
+          <p>Choose the gap in <a class="xref" data-ref="near-integer-crossings"></a> smaller than the uniform decrease \(\eta_*\) supplied by <a class="xref" data-ref="uniform-cone-decrease"></a>. The corresponding branch begins at \(R(0)=R_*&gt;N\) and reaches a value below \(N\). Continuity therefore gives a nonzero parameter \(s_N\) with \(R(s_N)=N\). At this integer order the cone unfolds into a noncircular \(N\)-fold planar domain, proving <a class="xref" data-ref="main-result"></a>.</p>
+          <p>The animation follows the concrete \(D_{28}\) branch from the noninteger crossing \(R_*=28.026\ldots\) to the closing value \(R=28\). The complete field and its seam-centred one-wavelength collar are global and local views of the same solution; the crop box is enlarged at right in the coordinates \(x=r-R\) and \(\psi=R\phi\).</p>
         </div>
 
         <figure class="modes-laboratory interactive-plate figure-band" data-figure="global-collar-zoom">
@@ -1621,12 +1627,9 @@
               <canvas id="modesCanvas" role="img" aria-label="A 28-fold global domain and a seam-centered one-wavelength flat collar zoom"></canvas>
             </div>
           </section>
-          <figcaption>The crop box and its connector lines identify the same one-wavelength boundary collar in the global and local views. The blank wedge is shown at twice its angular width so that the closing seam remains legible.</figcaption>
+          <figcaption>The crop box and its connector lines identify the same one-wavelength boundary collar in the global and local views. The missing angular sector is slightly exaggerated so that its closure remains legible.</figcaption>
         </figure>
 
-        <div class="landing-close paper-copy">
-          <p><strong>At the endpoint \(R=N\), the seam closes.</strong> The complete field consists of \(N\) copies of the quotient solution, while the smaller view shows one wavelength in the coordinates established in <a class="xref" data-ref="debye-experiment"></a>. Together they give the promised noncircular \(N\)-fold planar Schiffer domain.</p>
-        </div>
       </section>
       </section>
 
@@ -1694,13 +1697,13 @@
     <script defer src="cone-data.js"></script>
     <script defer src="debye-data.js?v=20260828.1"></script>
     <script defer src="abundance-data.js"></script>
-    <script defer src="app.js?v=20260828.6"></script>
+    <script defer src="app.js?v=20260828.7"></script>
     <script defer src="story.js?v=20260828.5"></script>
     <script defer src="abundance.js?v=20260828.2"></script>
     <script defer src="pompeiu.js?v=20260828.4"></script>
     <script defer src="computer-assisted.js?v=20260828.2"></script>
     <script defer src="applet-layout.js?v=20260828.1"></script>
     <script defer src="document-structure.js?v=20260828.1"></script>
-    <script defer src="tufte/layout-contract.js?v=20260828.12"></script>
+    <script defer src="tufte/layout-contract.js?v=20260828.13"></script>
   </body>
 </html>
