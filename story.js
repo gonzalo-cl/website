@@ -594,15 +594,20 @@
 
   function drawConeCylinder(context, width, height, cylinderAmount, waveAmount, returning = false) {
     const t = ease(cylinderAmount);
-    const tip = lerp(width * .16, width * .08, t);
+    /* At the cylindrical endpoint the cone point has genuinely gone past the
+       viewport.  The surface is an exact cylinder whose left end is clipped
+       behind the stage key, rather than a long finite cone squeezed into the
+       drawing. */
+    const tip = lerp(width * .34, -width * .62, t);
+    const axisLeft = -width * .62;
     const sheet = geometrySheetState(width, height, {
       tip,
-      right: width * .84,
-      surfaceLeft: tip,
+      right: width * .97,
+      surfaceLeft: lerp(tip, axisLeft, t),
       half: Math.min(118, height * .23),
       fold: 1,
       cylinder: t,
-      axisLeft: width * .08,
+      axisLeft,
       wave: waveAmount,
     });
     drawGeometrySheet(context, sheet);

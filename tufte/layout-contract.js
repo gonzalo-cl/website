@@ -207,6 +207,7 @@
       "disk-not-pompeiu",
       "schiffer-property",
       "schiffer-pompeiu-equivalence",
+      "pompeiu-star-shaped",
     ];
     const actualLeanStatements = Array.from(document.querySelectorAll("details.lean-statement"), (statement) => statement.dataset.statement);
     if (actualLeanStatements.length !== expectedLeanStatements.length
@@ -238,6 +239,7 @@
       "debye-experiment",
       "phase-story",
       "abundance-experiment",
+      "modes-experiment",
     ];
     const actualProofSectionOrder = Array.from(document.querySelectorAll("#experiment > section[id]:not([hidden])"), (section) => section.id);
     if (actualProofSectionOrder.length !== expectedProofSectionOrder.length
@@ -246,20 +248,20 @@
     }
 
     const expectedHeadingContract = [
-      ["I", "Pompeiu’s problem: When does a measuring probe lose information?", "#introduction", "section"],
-      ["I.1", "Schiffer’s problem: Can a membrane vibrate with constant amplitude along its boundary?", "#schiffer-problem", "subsection"],
-      ["II", "The disk counterexample admits no first-order perturbations.", "#linear-rigidity", "section"],
-      ["II.1", "Changing the ambient geometry: what if linear rigidity fails?", "#borrow-flexibility", "subsection"],
-      ["III", "Two ways of finding a bifurcation when it doesn't exist", "#geometric-escape", "section"],
+      ["1", "Pompeiu’s problem: When does a measuring probe lose information?", "#introduction", "section"],
+      ["1.1", "Schiffer’s problem: Can a membrane vibrate with constant amplitude along its boundary?", "#schiffer-problem", "subsection"],
+      ["2", "Linear rigidity", "#linear-rigidity", "section"],
+      ["2.1", "Changing the ambient geometry: what if linear rigidity fails?", "#borrow-flexibility", "subsection"],
+      ["3", "Finding a bifurcation that doesn't exist", "#geometric-escape", "section"],
       ["3.1", "Numerically: continue an easier boundary problem", "#numerical-route", "proof-subsection"],
       ["3.2", "Geometrically: pass through the half-cylinder", "#cone-route", "proof-subsection"],
-      ["IV", "The computer-assisted proof", "#computer-assisted-proof", "section"],
-      ["V", "The bifurcation proof", "#experiment", "section"],
+      ["4", "The computer-assisted proof", "#computer-assisted-proof", "section"],
+      ["5", "The bifurcation proof", "#experiment", "section"],
       ["5.1", "Uniform half-cylinder bifurcation for 2 ≤ λ ≤ 3", "#half-cylinder-strategy", "proof-subsection"],
       ["5.2", "Transfer from the half-cylinder to large cones", "#debye-experiment", "proof-subsection"],
       ["5.3", "A visualization of the cone bifurcations", "#phase-story", "proof-subsection"],
       ["5.4", "Equidistributed phases supply near-integer crossing orders", "#abundance-experiment", "proof-subsection"],
-      ["R", "References", "#references", "section"],
+      ["", "References", "#references", "section"],
     ];
     const headingContract = Array.from(document.querySelectorAll(headingSelector), (heading) => {
       const title = headingTitleElement(heading);
@@ -291,6 +293,29 @@
     if (document.querySelector(".section-number, .subsection-number")) {
       errors.push("legacy hand-authored section number spans returned");
     }
+    if (!window.SCHIFFER_DOCUMENT_STRUCTURE) {
+      errors.push("semantic document registry was not initialized");
+    }
+    document.querySelectorAll("a.xref[data-ref]").forEach((reference) => {
+      if (reference.dataset.referenceError || !reference.getAttribute("href") || !normalizeText(reference.textContent)) {
+        errors.push(`cross-reference ${reference.dataset.ref || "without label"} did not resolve`);
+      }
+    });
+    document.querySelectorAll("article.math-statement[data-kind]").forEach((statement, index) => {
+      const numbered = ["theorem", "lemma", "proposition", "corollary", "criterion"].includes(statement.dataset.kind);
+      if (numbered && !statement.dataset.label) errors.push(`numbered statement ${index + 1} has no semantic label`);
+      if (numbered && !statement.dataset.number) errors.push(`numbered statement ${statement.dataset.label || index + 1} has no generated number`);
+    });
+    document.querySelectorAll(".tex-display[data-equation], figure[data-figure], aside[data-aside]").forEach((object, index) => {
+      if (!object.closest("[hidden], [aria-hidden='true']") && !object.dataset.number) {
+        errors.push(`referable document object ${index + 1} has no generated number`);
+      }
+    });
+    document.querySelectorAll("body.tufte-site main figure:has(> figcaption)").forEach((figure, index) => {
+      if (!figure.closest("[hidden], [aria-hidden='true']") && !figure.dataset.figure) {
+        errors.push(`captioned figure ${index + 1} has no stable semantic label`);
+      }
+    });
     document.querySelectorAll(".section-heading").forEach((heading) => {
       if (heading.querySelector(".eyebrow")) errors.push("section heading contains a redundant eyebrow");
       if (heading.querySelector(":scope > :not(h2):not(h3)")) {
@@ -779,6 +804,7 @@
       const visualBox = visual.getBoundingClientRect();
       const plateBox = plate.getBoundingClientRect();
       [controls, visual].forEach((child, childIndex) => {
+        if (child === controls && plate.classList.contains("annotated-plate")) return;
         const childStyle = getComputedStyle(child);
         if ([childStyle.borderTopWidth, childStyle.borderRightWidth, childStyle.borderBottomWidth, childStyle.borderLeftWidth]
           .some((value) => parseFloat(value) > 0)) {
@@ -794,19 +820,32 @@
           errors.push(`interactive plate ${index + 1} controls do not fill the narrow measure`);
         }
       } else {
-        if (controlBox.left < visualBox.right - 1) errors.push(`interactive plate ${index + 1} controls are not to the right of its visual`);
-        if (Math.abs(controlBox.top - visualBox.top) > 1) errors.push(`interactive plate ${index + 1} control and visual tops do not align`);
-        const expectedVisualWidth = plateBox.width * (plate.classList.contains("compact-plate") ? compactVisual : reading);
-        const expectedControlWidth = plateBox.width * aside;
-        const expectedGap = plateBox.width * gutter;
-        if (Math.abs(visualBox.width - expectedVisualWidth) > 2) {
-          errors.push(`interactive plate ${index + 1} visual is not on the reading measure`);
-        }
-        if (Math.abs(controlBox.width - expectedControlWidth) > 2) {
-          errors.push(`interactive plate ${index + 1} controls are not on the canonical aside measure`);
-        }
-        if (Math.abs(controlBox.left - (visualBox.right + expectedGap)) > 2) {
-          errors.push(`interactive plate ${index + 1} does not preserve the reading-gutter-aside rhythm`);
+        if (plate.classList.contains("annotated-plate")) {
+          if (Math.abs(visualBox.width - plateBox.width) > 2) {
+            errors.push(`annotated plate ${index + 1} visual does not fill its measure`);
+          }
+          if (controlBox.left < plateBox.left || controlBox.right > plateBox.right
+              || controlBox.top < visualBox.top || controlBox.bottom > visualBox.bottom) {
+            errors.push(`annotated plate ${index + 1} apparatus is not contained by its visual`);
+          }
+          if (controlBox.width > plateBox.width * .34) {
+            errors.push(`annotated plate ${index + 1} apparatus is too wide`);
+          }
+        } else {
+          if (controlBox.left < visualBox.right - 1) errors.push(`interactive plate ${index + 1} controls are not to the right of its visual`);
+          if (Math.abs(controlBox.top - visualBox.top) > 1) errors.push(`interactive plate ${index + 1} control and visual tops do not align`);
+          const expectedVisualWidth = plateBox.width * (plate.classList.contains("compact-plate") ? compactVisual : reading);
+          const expectedControlWidth = plateBox.width * aside;
+          const expectedGap = plateBox.width * gutter;
+          if (Math.abs(visualBox.width - expectedVisualWidth) > 2) {
+            errors.push(`interactive plate ${index + 1} visual is not on the reading measure`);
+          }
+          if (Math.abs(controlBox.width - expectedControlWidth) > 2) {
+            errors.push(`interactive plate ${index + 1} controls are not on the canonical aside measure`);
+          }
+          if (Math.abs(controlBox.left - (visualBox.right + expectedGap)) > 2) {
+            errors.push(`interactive plate ${index + 1} does not preserve the reading-gutter-aside rhythm`);
+          }
         }
       }
 

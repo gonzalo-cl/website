@@ -168,12 +168,17 @@
     context.fillRect(0, 0, width, height);
 
     const sideBySide = width >= 500;
-    const overview = sideBySide
-      ? { x: 18, y: 28, width: width * .48, height: height - 60 }
-      : { x: 20, y: 14, width: width - 40, height: Math.min(width - 40, height * .48) };
     const detail = sideBySide
       ? { x: width * .54, y: 72, width: width * .42, height: 156 }
-      : { x: 20, y: height - 158, width: width - 40, height: 140 };
+      : { x: 20, y: 30, width: width - 40, height: Math.min(145, height * .27) };
+    const overview = sideBySide
+      ? { x: 18, y: 28, width: width * .48, height: height - 60 }
+      : {
+          x: 20,
+          y: detail.y + detail.height + 34,
+          width: width - 40,
+          height: Math.min(width - 40, height - detail.height - 92),
+        };
     const centerX = overview.x + overview.width / 2;
     const centerY = overview.y + overview.height / 2;
     const scale = Math.min(overview.width, overview.height) * .46 / 1.075;
@@ -243,6 +248,19 @@
       size: 11,
       weight: 700,
     });
+
+    if (!sideBySide) {
+      context.strokeStyle = colors.ruleDark;
+      context.lineWidth = 1;
+      context.setLineDash([3, 4]);
+      context.beginPath();
+      context.moveTo(detail.x + detail.width * .22, detail.y + detail.height);
+      context.lineTo(focusX, focusY);
+      context.moveTo(detail.x + detail.width * .78, detail.y + detail.height);
+      context.lineTo(focusX + focusWidth, focusY + focusHeight);
+      context.stroke();
+      context.setLineDash([]);
+    }
 
     drawLabel(context, "dashed: unit circle", 20, height - 14, { size: 11 });
     drawLabel(context, `solid: ${cutoff} printed coefficient${cutoff === 1 ? "" : "s"}`, width - 20, height - 14, {

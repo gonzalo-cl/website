@@ -84,6 +84,18 @@
         "  sorry",
       ].join("\n"),
     }),
+    "pompeiu-star-shaped": Object.freeze({
+      title: "Pompeiu_Star_Shaped",
+      source: [
+        "theorem Pompeiu_Star_Shaped :",
+        "  ∃ (Ω : Set Plane),",
+        "    IsBounded Ω ∧ Nonempty Ω ∧",
+        "    StarConvex ℝ 0 Ω ∧ HasC2Boundary Ω ∧",
+        "    ¬ IsEuclideanDisk Ω ∧",
+        "    ¬ HasPompeiuProperty Ω := by",
+        "  sorry",
+      ].join("\n"),
+    }),
   });
 
   // highlightjs-lean 1.2 ships the maintained Lean grammar, but its keyword

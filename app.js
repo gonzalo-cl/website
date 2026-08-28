@@ -469,6 +469,16 @@ function colorFor(value) {
   return left.rgb.map((channel, i) => Math.round(channel + (right.rgb[i] - channel) * local));
 }
 
+/* WebGL surfaces lose some apparent chroma through antialiasing and their
+   oblique projected area.  Boost only the mesh vertices, leaving the shared
+   scalar-to-colour map and every flat plot unchanged. */
+function vividMeshColor(rgb) {
+  const luminance = .2126 * rgb[0] + .7152 * rgb[1] + .0722 * rgb[2];
+  return rgb.map((channel) => Math.max(0, Math.min(255,
+    Math.round(luminance + 1.38 * (channel - luminance))
+  )));
+}
+
 function buildCylinderMeshData(solution, axialSegments = 160, angularSegments = 96) {
   const positions = [];
   const colors = [];
@@ -486,7 +496,7 @@ function buildCylinderMeshData(solution, axialSegments = 160, angularSegments = 
       const fraction = axialIndex / axialSegments;
       const x = THREE_X_MIN + fraction * (wall - THREE_X_MIN);
       positions.push(x, radius * cosine, radius * sine);
-      const color = colorFor(fieldValue(x, theta, solution));
+      const color = vividMeshColor(colorFor(fieldValue(x, theta, solution)));
       colors.push(color[0] / 255, color[1] / 255, color[2] / 255);
     }
     rim.push(wall, radius * cosine, radius * sine);
@@ -1310,7 +1320,7 @@ function buildConeMeshData(solution, depth, radialSegments = 96, angularSegments
       const embeddedRadius = radius / solution.R;
       const axial = (radius - centerRadius) * axialFactor;
       positions.push(axial, embeddedRadius * Math.cos(psi), embeddedRadius * Math.sin(psi));
-      const color = coneColorFor(coneFieldValue(radius, psi, solution));
+      const color = vividMeshColor(coneColorFor(coneFieldValue(radius, psi, solution)));
       colors.push(color[0] / 255, color[1] / 255, color[2] / 255);
     }
     const wallEmbedded = wallRadius / solution.R;
@@ -1973,19 +1983,25 @@ function modesDrawGlobal(context, rect, solution, fieldValue) {
   };
   const aspectScaleX = Math.min(rect.width, rect.height) / rect.width;
   const aspectScaleY = Math.min(rect.width, rect.height) / rect.height;
+  const physicalGap = Math.max(0, TWO_PI * (1 - coneNumerics.targetN / solution.R));
+  const displayGap = Math.min(.22, physicalGap * 2);
   const raster = modesRaster(rect, (u, v) => {
     const dx = (u - localPlot.cx) / (localPlot.radius * aspectScaleX);
     const dy = (localPlot.cy - v) / (localPlot.radius * aspectScaleY);
     const radius = Math.hypot(dx, dy) * solution.R;
     if (radius > solution.R + .75) return SCHIFFER_VISUAL_THEME.backgroundRgb;
-    const coordinates = unfoldedCoordinates(Math.atan2(dy, dx), solution);
+    const angle = Math.atan2(dy, dx);
+    if (displayGap > 1e-7 && Math.abs(angle) < displayGap / 2) {
+      return SCHIFFER_VISUAL_THEME.backgroundRgb;
+    }
+    const coordinates = unfoldedCoordinates(angle, solution);
     if (!coordinates) return radius <= solution.R + .45
       ? SCHIFFER_VISUAL_THEME.backgroundAltRgb
       : SCHIFFER_VISUAL_THEME.backgroundRgb;
     const wallRadius = solution.R - coneBoundaryGraph(coordinates.psi, solution);
     if (radius > wallRadius) return SCHIFFER_VISUAL_THEME.backgroundAltRgb;
     return coneColorFor(fieldValue(radius, coordinates.psi));
-  }, .58);
+  }, 1.08);
   context.save();
   context.imageSmoothingEnabled = true;
   context.drawImage(raster, rect.left, rect.top, rect.width, rect.height);
@@ -2004,6 +2020,11 @@ function modesDrawGlobal(context, rect, solution, fieldValue) {
   let drawing = false;
   for (let index = 0; index <= 1120; index++) {
     const angle = index / 1120 * TWO_PI;
+    const signedAngle = Math.atan2(Math.sin(angle), Math.cos(angle));
+    if (displayGap > 1e-7 && Math.abs(signedAngle) < displayGap / 2) {
+      drawing = false;
+      continue;
+    }
     const coordinates = unfoldedCoordinates(angle, solution);
     if (!coordinates) { drawing = false; continue; }
     const wallRadius = solution.R - coneBoundaryGraph(coordinates.psi, solution);
@@ -2018,12 +2039,11 @@ function modesDrawGlobal(context, rect, solution, fieldValue) {
   context.stroke();
   context.shadowBlur = 0;
 
-  const gap = Math.max(0, TWO_PI * (1 - coneNumerics.targetN / solution.R));
-  if (gap > 1e-7) {
-    context.strokeStyle = MODES_COLORS.orange;
-    context.lineWidth = 1.4;
-    [-gap / 2, gap / 2].forEach((angle) => {
-      const inner = modesPolarPoint(plot, solution.R * .62, angle, solution.R);
+  if (displayGap > 1e-7) {
+    context.strokeStyle = SCHIFFER_VISUAL_THEME.background;
+    context.lineWidth = 2.4;
+    [-displayGap / 2, displayGap / 2].forEach((angle) => {
+      const inner = modesPolarPoint(plot, 0, angle, solution.R);
       const outer = modesPolarPoint(plot, solution.R * 1.06, angle, solution.R);
       context.beginPath();
       context.moveTo(inner.x, inner.y);
@@ -2061,7 +2081,7 @@ function modesDrawGlobal(context, rect, solution, fieldValue) {
     context.fillText("ONE WAVELENGTH", cropPoints[1].x + 5, cropPoints[1].y - 5);
   }
   context.restore();
-  return { plot, cropPoints, gap };
+  return { plot, cropPoints, gap: physicalGap };
 }
 
 function modesPatchCoordinates(solution, centerAngle, tangent) {
@@ -2177,7 +2197,7 @@ function modesDrawRadialComparison(context, rect, solution, depth, comparison) {
 function modesDrawPatch(context, rect, solution, fieldValue, options) {
   const compact = Boolean(options.compact);
   const labelHeight = compact ? 24 : 39;
-  const footerHeight = compact ? 111 : 122;
+  const footerHeight = compact ? 27 : 31;
   const plot = {
     left: rect.left + (compact ? 8 : 12),
     top: rect.top + labelHeight,
@@ -2244,14 +2264,6 @@ function modesDrawPatch(context, rect, solution, fieldValue, options) {
   context.font = SCHIFFER_VISUAL_THEME.labelFont;
   context.fillText(options.title, rect.left + (compact ? 8 : 12), rect.top + (compact ? 15 : 17));
   context.restore();
-  const comparisonRect = {
-    left: plot.left,
-    top: plot.top + plot.height + (compact ? 18 : 22),
-    width: plot.width,
-    height: compact ? 87 : 94,
-  };
-  modesDrawRadialComparison(context, comparisonRect, solution, options.depth, options.comparison);
-  plot.comparisonRect = comparisonRect;
   return plot;
 }
 
@@ -2279,15 +2291,7 @@ function updateModesCanvasFormulas(globalRect, patchRect, patchPlot, solution, c
     left: patchPlot.left + patchPlot.width, top: patchPlot.top + patchPlot.height + 5,
     transform: "translateX(-100%)", color: formulaColor,
   });
-  const comparisonRect = patchPlot.comparisonRect;
-  if (comparisonRect && !SCHIFFER_VISUAL_THEME.paperEdition) {
-    setCanvasFormula("#modesCanvasWrap", "modesRadialFormula", `\\Delta\\xi=${comparison.phaseDegrees.toFixed(3)}^{\\circ},\\quad\\delta=${comparison.exactPhaseDegrees.toFixed(3)}^{\\circ}`, {
-      left: comparisonRect.left + comparisonRect.width,
-      top: comparisonRect.top + comparisonRect.height - 14,
-      transform: "translateX(-100%)",
-      color: formulaColor,
-    });
-  }
+  removeCanvasFormula("modesRadialFormula");
 }
 
 function modesCropContainsSeam(solution) {
@@ -2309,11 +2313,11 @@ function renderModesNestedZoom() {
   let globalRect;
   let patchRect;
   if (compact) {
-    globalRect = { left: 12, top: 10, width: width - 24, height: height * .42 };
-    patchRect = { left: 12, top: height * .45, width: width - 24, height: height * .53 };
+    globalRect = { left: 12, top: 10, width: width - 24, height: height * .54 };
+    patchRect = { left: 12, top: height * .58, width: width - 24, height: height * .39 };
   } else {
-    globalRect = { left: 16, top: 18, width: width * .405, height: height - 36 };
-    patchRect = { left: width * .455, top: 42, width: width * .515, height: height - 84 };
+    globalRect = { left: 16, top: 18, width: width * .54, height: height - 36 };
+    patchRect = { left: width * .62, top: height * .17, width: width * .34, height: height * .66 };
   }
 
   const global = modesDrawGlobal(context, globalRect, solution, fieldValue);
@@ -2347,8 +2351,8 @@ function renderModesNestedZoom() {
 
   const gapDegrees = Math.max(0, 360 * (1 - coneNumerics.targetN / solution.R));
   canvas.setAttribute("aria-label", SCHIFFER_VISUAL_THEME.paperEdition
-    ? "The cone quotient assembled in 28 copies, a seam-centered one-wavelength flat collar crop, and a comparison of the regular Bessel radial mode with its Debye sine-cosine cylinder mode."
-    : `The cone quotient at order ${solution.R.toFixed(6)} assembled in 28 copies, a seam-centered one-wavelength flat collar crop showing a ${gapDegrees.toFixed(3)} degree mismatch, and a comparison of the regular Bessel radial mode with its Debye sine-cosine cylinder mode at phase shift ${comparison.phaseDegrees.toFixed(2)} degrees.`);
+    ? "The cone quotient assembled in 28 copies and a seam-centered one-wavelength flat collar crop of the same field."
+    : `The cone quotient at order ${solution.R.toFixed(6)} assembled in 28 copies, with a seam-centered one-wavelength flat collar crop showing a ${gapDegrees.toFixed(3)} degree mismatch.`);
 }
 
 function updateModesReadouts() {

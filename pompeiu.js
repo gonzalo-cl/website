@@ -25,8 +25,8 @@
   const NS = "http://www.w3.org/2000/svg";
   const CX = 310;
   const CY = 195;
-  const RADIUS = 121;
-  const DISPLACEMENT = 28;
+  const RADIUS = 142;
+  const DISPLACEMENT = 31;
   const ARROW_SCALE = 50;
 
   // A smooth, deliberately asymmetric profile. It is fixed throughout the
@@ -98,7 +98,7 @@
     pointLabelBox.setAttribute("y", (moved.y - 23).toFixed(2));
     window.SchifferMath?.render(pointLabel, tau === 0 ? "p_0" : "p_t", { serif: true });
     window.SchifferMath?.render(domainLabel, tau === 0 ? "\\Omega_0" : "\\Omega_t", { serif: true });
-    reference.style.opacity = tau === 0 ? ".24" : ".88";
+    reference.style.opacity = tau === 0 ? ".52" : ".72";
 
     const source = tau === 0 ? "t=0" : `t=${tau > 0 ? "+" : ""}${tau.toFixed(2)}\\varepsilon`;
     window.SchifferMath?.render(output, source);
@@ -106,7 +106,7 @@
     const low = Math.min(50, position).toFixed(2);
     const high = Math.max(50, position).toFixed(2);
     slider.style.background = `linear-gradient(to right, rgba(19,33,38,.16) 0%, rgba(19,33,38,.16) ${low}%, var(--orange) ${low}%, var(--orange) ${high}%, rgba(19,33,38,.16) ${high}%, rgba(19,33,38,.16) 100%)`;
-    svg.setAttribute("aria-label", `Normal deformation at t divided by epsilon equal to ${tau.toFixed(2)}. The dashed reference boundary and orange current boundary are shown with fixed normal-velocity arrows.`);
+    svg.setAttribute("aria-label", `Normal deformation at t equal to ${tau.toFixed(2)} epsilon. The lightly dashed reference circle at t equals zero and the orange current boundary are shown with fixed normal-velocity arrows.`);
   }
 
   slider.addEventListener("input", () => update(slider.value));

@@ -48,9 +48,14 @@ both the uniform second variation and the near-integer phase argument; the
 separate landing dashboards have been removed from the reading path.
 
 The HTML supplies semantic sections, statements, disclosures, figures and
-controls. Page measures and numbering are owned by
+controls. Page measures are owned by
 [tufte/tufte-port.css](tufte/tufte-port.css), so authored content does not
-choose ad hoc widths.
+choose ad hoc widths. [document-structure.js](document-structure.js) owns the
+document counters and cross-reference registry: sections are numbered from
+DOM order, while statements, equations, figures and asides use stable semantic
+labels such as `data-label="half-cylinder-bifurcation"`. References use
+`<a class="xref" data-ref="half-cylinder-bifurcation"></a>` and therefore
+survive editorial reordering without hand-maintained numbers.
 
 ## Local development
 
@@ -75,6 +80,7 @@ Before publishing, run:
     node --check applet-layout.js
     node --check abundance.js
     node --check computer-assisted.js
+    node --check document-structure.js
     node --check lean-statements.js
     node --check math.js
     node --check pompeiu.js
