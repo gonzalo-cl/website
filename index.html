@@ -20,7 +20,7 @@
     <script defer src="math.js?v=20260827.9"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tufte-css@1.9.0/tufte.min.css">
     <link rel="stylesheet" href="styles.css?v=20260828.2">
-    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260828.8">
+    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260828.9">
   </head>
   <body class="tufte-site">
     <div class="noise" aria-hidden="true"></div>
@@ -1443,6 +1443,10 @@
               <button class="view-button cone-view-button" data-cone-view="unfolded" type="button" aria-pressed="false">Planar lift</button>
             </div>
 
+            <div class="cone-branch-plot">
+              <canvas id="coneBranchPlot" role="img" aria-label="The continued cone order R decreases from the selected crossing to the integer N equals 28"></canvas>
+            </div>
+
             <div class="crossing-card" aria-label="Numerically selected cone crossing" hidden aria-hidden="true">
               <div><span>initial real order</span><strong>28.026397</strong></div>
               <div><span>integral order</span><strong>28</strong></div>
@@ -1452,20 +1456,11 @@
             <div class="control-block primary-control">
               <div class="control-label">
                 <label for="coneProgressRange">continue branch</label>
-                <output id="coneProgressValue" for="coneProgressRange">0%</output>
+                <output id="coneProgressValue" for="coneProgressRange">R = 28.026397</output>
               </div>
               <input id="coneProgressRange" type="range" min="0" max="1" value="0" step="0.002">
-              <div class="range-scale"><span>crossing \(R_*\)</span><span>integer \(N\)</span></div>
+              <div class="range-scale"><span>\(s=0\)</span><span>\(R=N\)</span></div>
               <p hidden aria-hidden="true">This control interpolates the computed collocation solutions. Along the branch, the boundary amplitude changes to <span class="formula" id="coneSInline">\(s=0\)</span> while the computed value of \(R\) decreases.</p>
-            </div>
-
-            <div class="control-block primary-control">
-              <div class="control-label">
-                <label for="coneZoomRange">cone depth</label>
-                <output id="coneZoomValue" for="coneZoomRange">boundary</output>
-              </div>
-              <input id="coneZoomRange" type="range" min="0" max="1" value="0.08" step="0.005">
-              <div class="range-scale"><span>5-unit collar</span><span>cone point</span></div>
             </div>
 
             <button id="conePlayButton" class="play-button" type="button"><span id="conePlayIcon">▶</span><span id="conePlayLabel">Animate</span></button>
@@ -1489,7 +1484,7 @@
             </div>
             <div class="passive-script-targets" hidden aria-hidden="true"><span id="coneAxisLeft">\(x=-5\)</span><span id="coneAxisDescription">\(\psi\in[-\pi,\pi]\)</span><span id="coneAxisRight">\(x=0\) (boundary)</span></div>
           </section>
-          <figcaption>The boundary-collar view uses the quotient coordinates \(x=r-R\) and \(\psi\in[-\pi,\pi]\). The cone view embeds the same data; the planar view repeats its fundamental sector twenty-eight times, exposing the seam until \(R=28\).</figcaption>
+          <figcaption>The margin graph follows the computed continuation \(R(s)\) from the nonintegral crossing to \(R=N\). The boundary-collar view uses the quotient coordinates \(x=r-R\) and \(\psi\in[-\pi,\pi]\); the three-dimensional view shows the complete cone down to its point; and the planar view repeats its fundamental sector twenty-eight times, exposing the seam until \(R=28\).</figcaption>
         </figure>
       </section>
 
@@ -1632,7 +1627,7 @@
     <script defer src="cone-data.js"></script>
     <script defer src="debye-data.js?v=20260827.3"></script>
     <script defer src="abundance-data.js"></script>
-    <script defer src="app.js?v=20260828.3"></script>
+    <script defer src="app.js?v=20260828.4"></script>
     <script defer src="story.js?v=20260828.3"></script>
     <script defer src="abundance.js?v=20260828.2"></script>
     <script defer src="pompeiu.js?v=20260828.3"></script>

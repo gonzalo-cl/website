@@ -974,24 +974,18 @@
               <p>Smallest crossing below 100 with <span class="formula">\(1&lt;\lambda&lt;4\)</span> and fractional gap below 0.1.</p>
             </div>
 
-            <div class="control-block primary-control">
-              <div class="control-label">
-                <label for="coneProgressRange">continue branch</label>
-                <output id="coneProgressValue" for="coneProgressRange">0%</output>
-              </div>
-              <input id="coneProgressRange" type="range" min="0" max="1" value="0" step="0.002">
-              <div class="range-scale"><span>crossing \(R_*\)</span><span>integer \(N\)</span></div>
-              <p>This control interpolates the computed collocation solutions. Along the branch, the boundary amplitude changes to <span class="formula" id="coneSInline">\(s=0\)</span> while the computed value of \(R\) decreases.</p>
+            <div class="cone-branch-plot">
+              <canvas id="coneBranchPlot" role="img" aria-label="The continued cone order R decreases from the selected crossing to the integer N equals 28"></canvas>
             </div>
 
             <div class="control-block primary-control">
               <div class="control-label">
-                <label for="coneZoomRange">cone depth</label>
-                <output id="coneZoomValue" for="coneZoomRange">boundary</output>
+                <label for="coneProgressRange">continue branch</label>
+                <output id="coneProgressValue" for="coneProgressRange">R = 28.026397</output>
               </div>
-              <input id="coneZoomRange" type="range" min="0" max="1" value="0.08" step="0.005">
-              <div class="range-scale"><span>5-unit collar</span><span>cone point</span></div>
-              <p>The initial 3D view shows the boundary collar, where the cone is approximately cylindrical. Increasing the displayed depth extends the view toward the cone point.</p>
+              <input id="coneProgressRange" type="range" min="0" max="1" value="0" step="0.002">
+              <div class="range-scale"><span>\(s=0\)</span><span>\(R=N\)</span></div>
+              <p>This control interpolates the computed collocation solutions. Along the branch, the boundary amplitude changes to <span class="formula" id="coneSInline">\(s=0\)</span> while the computed value of \(R\) decreases.</p>
             </div>
 
             <button id="conePlayButton" class="play-button" type="button"><span id="conePlayIcon">▶</span><span id="conePlayLabel">Animate the continuation</span></button>
@@ -1024,7 +1018,7 @@
               <canvas id="coneCanvas" role="img" aria-label="Numerical field on a cone boundary collar or its planar sectors"></canvas>
               <div id="coneThreeWrap" class="three-wrap" role="img" aria-label="Rotatable three-dimensional cone colored by the numerical field" hidden>
                 <div id="coneThreeLoading" class="three-loading">loading 3D renderer…</div>
-                <div class="three-help">drag to rotate · scroll to zoom · depth slider extends toward the cone point</div>
+                <div class="three-help">complete cone · drag to rotate · scroll to zoom</div>
               </div>
               <div class="cone-data-badge">13 Bessel modes · 112 fit angles · 512-point validation</div>
             </div>

@@ -1429,6 +1429,15 @@ body.tufte-site main .cone-view-switch .view-button.active {
   border-bottom-color: var(--orange);
   box-shadow: none;
 }
+body.tufte-site main .cone-branch-plot {
+  width: 100%;
+  margin: .35rem 0 .65rem;
+}
+body.tufte-site main .cone-branch-plot canvas {
+  display: block;
+  width: 100%;
+  height: 8.25rem;
+}
 
 /* Paper demonstrations keep only the manipulable variables and, when useful,
    one concise action. Explanatory prose lives in captions and surrounding

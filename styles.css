@@ -398,6 +398,8 @@ input[type="range"]::-moz-range-thumb { width: 9px; height: 9px; border: 3px sol
 .crossing-card strong { color: var(--paper); font: 11px var(--mono); }
 .crossing-card p { margin: 12px 0 0; color: rgba(241,238,229,.44); font-size: 11px; line-height: 1.55; }
 .cone-readout { padding-top: 20px; }
+.cone-branch-plot { width: 100%; margin: 18px 0 4px; }
+.cone-branch-plot canvas { display: block; width: 100%; height: 132px; }
 .cone-canvas-panel { grid-template-rows: 58px minmax(590px, 1fr) 36px; }
 .cone-canvas-wrap { background: radial-gradient(circle at 50% 48%, #233b42 0, #101b20 66%); }
 #coneCanvas { display: block; width: 100%; height: 100%; }

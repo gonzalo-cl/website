@@ -37,6 +37,7 @@ const SCHIFFER_VISUAL_THEME = (() => {
     faint: "rgba(17,17,17,.34)",
     panel: "rgba(255,255,248,0)",
     tooltip: "rgba(255,255,248,.96)",
+    accent: "#a00000",
     ...typography,
   } : {
     paperEdition: false,
@@ -53,6 +54,7 @@ const SCHIFFER_VISUAL_THEME = (() => {
     faint: "rgba(241,238,229,.34)",
     panel: "rgba(12,22,27,.65)",
     tooltip: "rgba(10,19,23,.96)",
+    accent: "#ff7449",
     ...typography,
   };
   window.SCHIFFER_VISUAL_THEME = Object.freeze(theme);
@@ -1000,13 +1002,14 @@ setView(state.view);
 const coneNumerics = window.CONE_NUMERICS;
 const coneState = {
   progress: 0,
-  depth: .08,
   view: "slice",
   solution: null,
   updateFrame: null,
   playing: false,
   playFrame: null,
 };
+
+const CONE_MESH_DEPTH = 1;
 
 const coneThreeState = {
   renderer: null,
@@ -1351,6 +1354,77 @@ function buildConeMeshData(solution, depth, radialSegments = 96, angularSegments
   return { positions, colors, indices, rim, referenceRim, rings, generators, collarDepth };
 }
 
+function drawConeBranchPlot() {
+  const canvas = $("#coneBranchPlot");
+  if (!canvas || !coneState.solution) return;
+  const rectangle = canvas.getBoundingClientRect();
+  if (rectangle.width < 80 || rectangle.height < 60) return;
+  const ratio = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = Math.max(1, Math.round(rectangle.width * ratio));
+  canvas.height = Math.max(1, Math.round(rectangle.height * ratio));
+  const context = canvas.getContext("2d");
+  context.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+  const width = rectangle.width;
+  const height = rectangle.height;
+  const plot = { left: 30, right: width - 8, top: 16, bottom: height - 23 };
+  const orderSpan = coneNumerics.RStar - coneNumerics.targetN;
+  const minimumOrder = coneNumerics.targetN - orderSpan * .08;
+  const maximumOrder = coneNumerics.RStar + orderSpan * .08;
+  const xAt = (s) => plot.left + s / coneNumerics.landingS * (plot.right - plot.left);
+  const yAt = (order) => plot.bottom - (order - minimumOrder) / (maximumOrder - minimumOrder) * (plot.bottom - plot.top);
+
+  context.clearRect(0, 0, width, height);
+  context.fillStyle = SCHIFFER_VISUAL_THEME.background;
+  context.fillRect(0, 0, width, height);
+
+  const integerY = yAt(coneNumerics.targetN);
+  context.save();
+  context.strokeStyle = SCHIFFER_VISUAL_THEME.lineStrong;
+  context.setLineDash([3, 4]);
+  context.beginPath();
+  context.moveTo(plot.left, integerY);
+  context.lineTo(plot.right, integerY);
+  context.stroke();
+  context.restore();
+
+  context.beginPath();
+  coneNumerics.records.forEach((record, index) => {
+    const x = xAt(Math.min(record.s, coneNumerics.landingS));
+    const y = yAt(record.R);
+    if (index === 0) context.moveTo(x, y);
+    else context.lineTo(x, y);
+  });
+  context.strokeStyle = SCHIFFER_VISUAL_THEME.accent;
+  context.lineWidth = 1.6;
+  context.stroke();
+
+  const markerX = xAt(coneState.solution.s);
+  const markerY = yAt(coneState.solution.R);
+  context.beginPath();
+  context.arc(markerX, markerY, 3.5, 0, TWO_PI);
+  context.fillStyle = SCHIFFER_VISUAL_THEME.background;
+  context.fill();
+  context.strokeStyle = SCHIFFER_VISUAL_THEME.accent;
+  context.lineWidth = 1.6;
+  context.stroke();
+
+  context.fillStyle = SCHIFFER_VISUAL_THEME.muted;
+  context.font = SCHIFFER_VISUAL_THEME.labelFont;
+  context.textBaseline = "top";
+  context.fillText("R(s)", 0, 0);
+  context.fillText(`N=${coneNumerics.targetN}`, 0, Math.max(16, integerY - 6));
+  context.textBaseline = "bottom";
+  context.fillText("0", plot.left - 2, height);
+  context.textAlign = "right";
+  context.fillText("sₙ", plot.right, height);
+
+  canvas.setAttribute(
+    "aria-label",
+    `Along the computed continuation, the cone order has decreased from ${coneNumerics.RStar.toFixed(6)} to ${coneState.solution.R.toFixed(6)}; the planar lift occurs at N equals ${coneNumerics.targetN}.`
+  );
+}
+
 function resizeConeThreeRenderer() {
   if (!coneThreeState.renderer || !coneThreeState.camera) return;
   const wrap = $("#coneThreeWrap");
@@ -1429,7 +1503,7 @@ function updateConeThreeMesh() {
     coneThreeState.group.remove(child);
     disposeThreeObject(child);
   }
-  const data = buildConeMeshData(coneState.solution, coneState.depth);
+  const data = buildConeMeshData(coneState.solution, CONE_MESH_DEPTH);
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute("position", new THREE.Float32BufferAttribute(data.positions, 3));
   geometry.setAttribute("color", new THREE.Float32BufferAttribute(data.colors, 3));
@@ -1441,7 +1515,7 @@ function updateConeThreeMesh() {
   data.generators.forEach((points) => coneThreeState.group.add(threeLine(THREE, points, SCHIFFER_VISUAL_THEME.inkHex, .10)));
   coneThreeState.group.add(threeLine(THREE, data.referenceRim, 0x7f9293, .45));
   coneThreeState.group.add(threeLine(THREE, data.rim, SCHIFFER_VISUAL_THEME.inkHex, 1));
-  updateConeCamera(coneState.depth);
+  updateConeCamera(CONE_MESH_DEPTH);
   $("#coneThreeLoading").hidden = true;
   renderConeThreeFrame();
 }
@@ -1462,7 +1536,7 @@ async function renderConeThree() {
 function updateConeReadouts() {
   const solution = coneState.solution;
   const gapDegrees = Math.max(0, 360 * (1 - coneNumerics.targetN / solution.R));
-  $("#coneProgressValue").textContent = `${Math.round(coneState.progress * 100)}%`;
+  $("#coneProgressValue").textContent = `R = ${solution.R.toFixed(6)}`;
   setMath("#coneSInline", `s=${solution.s.toFixed(4)}`);
   $("#coneRValue").textContent = solution.R.toFixed(6);
   $("#coneLambdaValue").textContent = solution.lambda.toFixed(6);
@@ -1472,8 +1546,7 @@ function updateConeReadouts() {
   $("#coneDomainState").textContent = coneState.progress > .999
     ? "integral order reached · planar lift defined"
     : (coneState.progress < .001 ? "nonintegral crossing · angular gap present" : "computed cone branch");
-  const depthUnits = 5 + Math.pow(coneState.depth, 1.35) * (solution.R - 5);
-  $("#coneZoomValue").textContent = coneState.depth < .16 ? "boundary" : (coneState.depth > .94 ? "cone point" : `${depthUnits.toFixed(1)} units`);
+  drawConeBranchPlot();
 }
 
 function updateConeAxis() {
@@ -1485,7 +1558,7 @@ function updateConeAxis() {
     setMath(center, "\\psi\\in[-\\pi,\\pi]");
     setMath(right, "x=0\\;\\text{(boundary)}");
   } else if (coneState.view === "cone") {
-    left.textContent = coneState.depth < .16 ? "boundary collar" : "toward the cone point";
+    left.textContent = "cone point";
     center.textContent = "metric cone surface · drag / zoom";
     right.textContent = "boundary";
   } else {
@@ -1565,36 +1638,29 @@ document.querySelectorAll(".cone-view-button").forEach((button) => button.addEve
 document.querySelectorAll(".cone-note").forEach((button) => button.addEventListener("click", () => setConeView(button.dataset.coneTarget)));
 
 setRangeFill($("#coneProgressRange"));
-setRangeFill($("#coneZoomRange"));
 $("#coneProgressRange").addEventListener("input", (event) => {
   stopConePlayback();
   coneState.progress = Number(event.target.value);
   setRangeFill(event.target);
   scheduleConeUpdate();
 });
-$("#coneZoomRange").addEventListener("input", (event) => {
-  coneState.depth = Number(event.target.value);
-  coneThreeState.lastDepth = null;
-  setRangeFill(event.target);
-  updateConeReadouts();
-  if (coneState.view === "cone") scheduleConeUpdate();
-});
 $("#conePlayButton").addEventListener("click", toggleConePlayback);
 $("#coneResetButton").addEventListener("click", () => {
   stopConePlayback();
   coneState.progress = 0;
-  coneState.depth = .08;
   $("#coneProgressRange").value = coneState.progress;
-  $("#coneZoomRange").value = coneState.depth;
   setRangeFill($("#coneProgressRange"));
-  setRangeFill($("#coneZoomRange"));
   solveAndRenderCone();
 });
 
 let coneResizeTimer;
 window.addEventListener("resize", () => {
   clearTimeout(coneResizeTimer);
-  coneResizeTimer = setTimeout(() => { if (coneState.solution) renderConeActiveView(); }, 140);
+  coneResizeTimer = setTimeout(() => {
+    if (!coneState.solution) return;
+    renderConeActiveView();
+    drawConeBranchPlot();
+  }, 140);
 });
 
 solveAndRenderCone();
