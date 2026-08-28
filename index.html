@@ -20,7 +20,7 @@
     <script defer src="math.js?v=20260827.9"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tufte-css@1.9.0/tufte.min.css">
     <link rel="stylesheet" href="styles.css?v=20260828.2">
-    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260828.9">
+    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260828.10">
   </head>
   <body class="tufte-site">
     <div class="noise" aria-hidden="true"></div>
@@ -803,13 +803,96 @@
         </header>
 
         <div class="half-cylinder-introduction">
-          <p>In this subsection we will show that the cylinder solution can be perturbed independently of the eigenvalue <span class="formula">\(\lambda\in[2,3]\)</span>: the same interval in the bifurcation parameter <span class="formula">\(s\)</span> works for every <span class="formula">\(\lambda\)</span> in this range.</p>
+          <label for="half-cylinder-applet-note" class="margin-toggle" aria-label="Show the half-cylinder bifurcation applet">&#8853;</label>
+          <input type="checkbox" id="half-cylinder-applet-note" class="margin-toggle">
+          <figure class="marginnote side-figure side-applet laboratory cylinder-margin-applet">
+            <section class="canvas-panel" aria-label="Half-cylinder free-boundary solve">
+              <div class="passive-script-targets" hidden aria-hidden="true"><strong id="domainState">trivial cylinder at the branch origin</strong></div>
+              <div id="canvasWrap" class="canvas-wrap">
+                <canvas id="fieldCanvas" role="img" aria-label="Heat map of the scalar field on a half-cylinder with a moving right boundary" hidden></canvas>
+                <div id="threeWrap" class="three-wrap" role="img" aria-label="Rotatable three-dimensional half-cylinder colored by the scalar field">
+                  <div id="threeLoading" class="three-loading">loading 3D renderer…</div>
+                </div>
+                <div id="solverBadge" class="solver-badge" hidden aria-hidden="true">solving boundary + field…</div>
+              </div>
+              <div class="passive-script-targets" hidden aria-hidden="true"><span>\(x\to-\infty\)</span><span id="axisDescription">cylindrical surface \((x,\cos\theta,\sin\theta)\)</span><span>boundary \(x=h(\theta)\)</span></div>
+            </section>
+
+            <aside class="controls paper-demo-controls" aria-label="Half-cylinder applet controls">
+              <div class="control-heading" hidden aria-hidden="true">
+                <button id="resetButton" type="button" hidden aria-hidden="true">Reset</button>
+              </div>
+
+              <div class="control-block primary-control">
+                <div class="control-label">
+                  <label for="lambdaRange">spectral parameter \(\lambda\)</label>
+                  <output id="lambdaValue" for="lambdaRange">2.40</output>
+                </div>
+                <input id="lambdaRange" type="range" min="2" max="3" value="2.40" step="0.01">
+                <div class="range-scale"><span>2</span><span>2.5</span><span>3</span></div>
+              </div>
+
+              <div class="control-block primary-control">
+                <div class="control-label">
+                  <label for="sRange">branch parameter \(s\)</label>
+                  <output id="sValue" for="sRange">0.00</output>
+                </div>
+                <input id="sRange" type="range" min="-0.85" max="0.85" value="0" step="0.005">
+                <div class="range-scale"><span>−0.85</span><span>0</span><span>+0.85</span></div>
+              </div>
+
+              <button id="playButton" class="play-button" type="button"><span id="playIcon">▶</span><span id="playLabel">Animate</span></button>
+
+              <div class="view-switch" role="group" aria-label="Visualization view">
+                <button class="view-button" data-view="flat" type="button" aria-pressed="false">Unwrapped</button>
+                <button class="view-button active" data-view="cylinder" type="button" aria-pressed="true">3D</button>
+              </div>
+
+              <details class="secondary-controls" hidden aria-hidden="true">
+                <summary>Options <span>+</span></summary>
+                <div class="control-block compact">
+                  <div class="control-label">
+                    <label for="phaseRange">angular phase \(\phi\)</label>
+                    <output id="phaseValue" for="phaseRange">\(0\)</output>
+                  </div>
+                  <input id="phaseRange" type="range" min="0" max="6.283185" value="0" step="0.01">
+                </div>
+                <div class="control-block compact">
+                  <div class="control-label">
+                    <label for="modeRange">retained modes</label>
+                    <output id="modeValue" for="modeRange">\(k\leq10\)</output>
+                  </div>
+                  <input id="modeRange" type="range" min="3" max="16" value="10" step="1">
+                </div>
+              </details>
+
+              <div class="solver-readout" hidden aria-hidden="true">
+                <div><span>interior PDE residual</span><strong id="interiorValue">—</strong></div>
+                <div><span>boundary mode \(h_2\)</span><strong id="wallMode2Value">—</strong></div>
+                <div><span>boundary mode \(h_3\)</span><strong id="wallMode3Value">—</strong></div>
+                <div><span>Dirichlet normalized \(L^2\)</span><strong id="dirichletValue">—</strong></div>
+                <div><span>Neumann normalized \(L^2\)</span><strong id="neumannValue">—</strong></div>
+                <div><span>slowest decay length</span><strong id="decayValue">—</strong></div>
+              </div>
+            </aside>
+            <figcaption>The two views show the same computed Helmholtz field on a bifurcating half-cylinder. The controls vary \(\lambda\) and move along the branch.</figcaption>
+          </figure>
+
+          <p>The goal of this subsection is to construct the bifurcation on the half-infinite cylinder. Graphically, we seek a continuous two-parameter family of Schiffer domains and eigenfunctions, as shown in the applet.</p>
+          <p>Mathematically, we want a single bifurcation statement that holds throughout <span class="formula">\(2\leq\lambda\leq3\)</span>, with one common interval for the branch parameter.</p>
         </div>
 
         <article class="math-statement math-statement-theorem cylinder-theorem" aria-labelledby="halfCylinderTheoremTitle">
-          <header class="math-statement-header"><span>Theorem</span><small>5.1 · uniform half-cylinder branch</small></header>
+          <header class="math-statement-header"><span>Theorem</span><small>Uniform half-cylinder bifurcation</small></header>
           <div class="math-statement-body theorem-statement">
-            <p id="halfCylinderTheoremTitle">Fix <span class="formula">\(0&lt;\alpha&lt;1\)</span>. There is an <span class="formula">\(\varepsilon&gt;0\)</span> and a <span class="formula">\(C^3\)</span> family <span class="formula">\((\Omega_{\lambda,s},u_{\lambda,s})\)</span>, indexed by <span class="formula">\((\lambda,s)\in[2,3]\times(-\varepsilon,\varepsilon)\)</span>, such that <span class="formula">\(\Omega_{\lambda,s}=\{(x,\theta):x&lt;h_{\lambda,s}(\theta)\}\)</span> for some <span class="formula">\(h_{\lambda,s}\in C^{2,\alpha}(S^1)\)</span>, and</p>
+            <p id="halfCylinderTheoremTitle">Fix <span class="formula">\(0&lt;\alpha&lt;1\)</span> and write <span class="formula">\(\mathcal C_-=(-\infty,0)\times S^1\)</span>. There are <span class="formula">\(\varepsilon&gt;0\)</span> and a <span class="formula">\(C^3\)</span> family <span class="formula">\((\Omega_{\lambda,s},u_{\lambda,s})\)</span>, indexed by <span class="formula">\((\lambda,s)\in[2,3]\times(-\varepsilon,\varepsilon)\)</span>, such that</p>
+            <div class="tex-display">
+              \[
+              \Omega_{\lambda,s}=\{(x,\theta):x&lt;h_{\lambda,s}(\theta)\},
+              \qquad h_{\lambda,s}\in C^{2,\alpha}(S^1),
+              \]
+            </div>
+            <p>and</p>
             <div class="theorem-system tex-display">
               \[
               \begin{cases}
@@ -819,67 +902,62 @@
               \end{cases}
               \]
             </div>
-            <p>After fixing rotation and axial translation, the branch may be parametrized so that \(h_{\lambda,s}(\theta)=s\cos\theta+O(s^2)\). The family and its remainders are uniform in \(\lambda\in[2,3]\) on every fixed boundary collar.</p>
+            <p>At the branch origin, <span class="formula">\(\Omega_{\lambda,0}=\mathcal C_-\)</span> and <span class="formula">\(u_{\lambda,0}(x,\theta)=\cos(\sqrt\lambda\,x)\)</span>. After fixing rotation and axial translation, the branch may be parametrized by <span class="formula">\(h_{\lambda,s}(\theta)=s\cos\theta+O(s^2)\)</span>. The family and its remainders are uniform in <span class="formula">\(\lambda\in[2,3]\)</span> on every fixed boundary collar.</p>
           </div>
         </article>
 
-        <div class="cylinder-spectral-seed paper-copy">
-          <div class="cylinder-seed-copy">
-            <p>Let <span class="formula">\(\mathcal C_-=(-\infty,0]\times S^1\)</span> and <span class="formula">\(\Delta=\partial_x^2+\partial_\theta^2\)</span>. The undeformed Schiffer solution is independent of <span class="formula">\(\theta\)</span>. By the linearization above, a first-order deformation of the boundary must come from a nonradial Dirichlet solution at the same eigenvalue. Separation of variables makes both functions explicit.</p>
-          </div>
-
-          <div class="cylinder-mode-pair">
-              <p>The undeformed solution is</p>
-              <div class="tex-display">
-                \[
-                u_0(x)=\cos(\sqrt\lambda\,x),
-                \qquad
-                \begin{cases}
-                (\Delta+\lambda)u_0=0,\\
-                u_0(0)=1,\quad \partial_xu_0(0)=0.
-                \end{cases}
-                \]
-              </div>
-              <p>It is constant on the boundary and has zero normal derivative there.</p>
-              <p>The corresponding nonradial kernel direction is</p>
-              <div class="tex-display">
-                \[
-                v_1(x,\theta)=\sin(\sqrt{\lambda-1}\,x)\cos\theta,
-                \qquad
-                \begin{cases}
-                (\Delta+\lambda)v_1=0,\\
-                v_1(0,\theta)=0.
-                \end{cases}
-                \]
-              </div>
-              <p>The angular eigenvalue <span class="formula">\(1\)</span> leaves the normal frequency <span class="formula">\(\sqrt{\lambda-1}\)</span>.</p>
-          </div>
-
-          <div class="cylinder-kernel-bridge">
-            <div>
-              <p>To recover the boundary displacement, write <span class="formula">\(h_s=s f+O(s^2)\)</span> and <span class="formula">\(u_s=u_0+s v+O(s^2)\)</span>. Linearizing the two boundary conditions at <span class="formula">\(x=0\)</span> gives</p>
-              <div class="tex-display">
-                \[
-                v(0,\theta)=0,
-                \qquad
-                \partial_xv(0,\theta)=\lambda f(\theta).
-                \]
-              </div>
-              <p>Therefore <span class="formula">\(f(\theta)=\cos\theta\)</span> corresponds to <span class="formula">\(v=\lambda v_1/\sqrt{\lambda-1}\)</span>. This is exactly the first-order term in Theorem 5.1.</p>
+        <article class="math-statement math-statement-lemma" aria-labelledby="cylinderCoincidenceTitle">
+          <header class="math-statement-header"><span>Lemma 1</span><small>Dirichlet–Neumann coincidence</small></header>
+          <div class="math-statement-body">
+            <p id="cylinderCoincidenceTitle">Let <span class="formula">\(\Delta=\partial_x^2+\partial_\theta^2\)</span>. For every <span class="formula">\(\lambda\in[2,3]\)</span>, the negative cylinder carries both the radial Schiffer solution</p>
+            <div class="tex-display">
+              \[
+              u_0(x)=\cos(\sqrt\lambda\,x),
+              \qquad
+              (\Delta+\lambda)u_0=0,\qquad
+              u_0(0)=1,\qquad \partial_xu_0(0)=0,
+              \]
             </div>
+            <p>and the even, nonradial Dirichlet mode</p>
+            <div class="tex-display">
+              \[
+              v_1(x,\theta)=\sin(\sqrt{\lambda-1}\,x)\cos\theta,
+              \qquad
+              (\Delta+\lambda)v_1=0,\qquad v_1(0,\theta)=0.
+              \]
+            </div>
+            <p>Thus the Neumann eigenvalue of the undeformed solution coincides with a Dirichlet eigenvalue in the first angular channel.</p>
           </div>
+        </article>
 
-          <div class="cylinder-journal-note">
-            <p>Fall, Minlend and Weth prove the corresponding nonlinear bifurcation theorem for compact flat cylinders. The half-cylinder statement used here follows from the same separation-of-variables and local-bifurcation argument: the boundary condition at the second end is replaced by boundedness as <span class="formula">\(x\to-\infty\)</span>. For <span class="formula">\(2\leq\lambda\leq3\)</span>, the inverses on the complementary Fourier modes are bounded uniformly in <span class="formula">\(\lambda\)</span>. <a href="https://ems.press/journals/jems/articles/14298635" target="_blank" rel="noreferrer">Fall–Minlend–Weth, <em>JEMS</em> (2025) ↗</a></p>
-          </div>
+        <div class="paper-copy cylinder-step-copy cylinder-formal-lead">
+          <p>One can now formally compute what the perturbation must look like if it exists. At first order one finds a boundary displacement <span class="formula">\(\cos\theta\)</span> and an eigenfunction correction in the direction <span class="formula">\(v_1\)</span>. At second order one finds a pure second harmonic.</p>
         </div>
 
+        <article class="math-statement math-statement-lemma" aria-labelledby="cylinderExpansionTitle">
+          <header class="math-statement-header"><span>Lemma 2</span><small>Formal first- and second-order computation</small></header>
+          <div class="math-statement-body">
+            <p id="cylinderExpansionTitle">After fixing rotation, axial translation, and the scale of <span class="formula">\(s\)</span>, every formal branch through <span class="formula">\((\mathcal C_-,u_0)\)</span> begins as</p>
+            <div class="tex-display">
+              \[
+              \begin{aligned}
+              h_{\lambda,s}(\theta)
+              &amp;=s\cos\theta-\frac{s^2}{4}\sqrt{4-\lambda}\,\cos2\theta+O(s^3),\\
+              u_{\lambda,s}(x,\theta)
+              &amp;=\cos(\sqrt\lambda\,x)
+              +s\frac{\lambda}{\sqrt{\lambda-1}}
+              \sin(\sqrt{\lambda-1}\,x)\cos\theta+O(s^2).
+              \end{aligned}
+              \]
+            </div>
+          </div>
+        </article>
+
         <details class="cylinder-jet-proof proof-details">
-          <summary><span>Derivation of the first- and second-order terms</span><i>expand +</i></summary>
+          <summary><span>Detailed first- and second-order computation</span><i>expand +</i></summary>
           <div class="cylinder-jet-proof-body">
             <div class="cylinder-proof-scope">
-              <span>Proof of the expansion</span>
-              <p>Assume the branch supplied by Theorem 5.1 and fix <span class="formula">\(\lambda\in[2,3]\)</span>. Expanding the equation and the two boundary conditions determines its two-jet as follows.</p>
+              <p>Assume a smooth branch exists and fix <span class="formula">\(\lambda\in[2,3]\)</span>. Expanding the equation and the two boundary conditions determines its two-jet.</p>
             </div>
 
             <div class="cylinder-proof-grid">
@@ -958,82 +1036,33 @@
           </div>
         </details>
 
-        <div class="experiment-story-lead">
-          <p>The applet below computes a finite Fourier approximation to the family in Theorem 5.1. For each <span class="formula">\((\lambda,s)\in[2,3]\times[-0.85,0.85]\)</span>, it solves simultaneously for the boundary graph and the Helmholtz field. The flat and three-dimensional panels display the same numerical solution in two coordinate systems.</p>
+        <div class="paper-copy cylinder-step-copy cylinder-uniform-lead">
+          <p>The Crandall–Rabinowitz theorem turns this formal kernel direction into an actual local branch. To use the branch later on large cones, however, its size and estimates must be uniform as <span class="formula">\(\lambda\)</span> varies.</p>
         </div>
 
-        <figure class="laboratory interactive-plate figure-band">
-          <aside class="controls paper-demo-controls" aria-label="Simulation controls">
-            <div class="control-heading" hidden aria-hidden="true">
-              <button id="resetButton" type="button" hidden aria-hidden="true">Reset</button>
+        <article class="math-statement math-statement-lemma" aria-labelledby="uniformCylinderBranchTitle">
+          <header class="math-statement-header"><span>Lemma 3</span><small>Uniform bifurcation</small></header>
+          <div class="math-statement-body">
+            <p id="uniformCylinderBranchTitle">The Crandall–Rabinowitz hypotheses hold at every <span class="formula">\((\lambda,0)\)</span> with <span class="formula">\(\lambda\in[2,3]\)</span>. The complementary inverse, the transversality constant, and the nonlinear estimates may all be bounded independently of <span class="formula">\(\lambda\)</span>. Consequently the local branches contain one common interval <span class="formula">\(|s|&lt;\varepsilon\)</span>.</p>
+          </div>
+        </article>
+
+        <details class="proof-details cylinder-uniform-proof">
+          <summary><span>Why the bifurcation is uniform in \(\lambda\)</span><i>expand +</i></summary>
+          <div class="proof-argument">
+            <p>Pull the moving graph <span class="formula">\(x=h(\theta)\)</span> back to <span class="formula">\(\mathcal C_-\)</span> and let <span class="formula">\(F(\lambda,h,w)=0\)</span> collect the transformed Helmholtz equation and the two boundary conditions, together with the translation and amplitude gauges. On even functions, the derivative <span class="formula">\(D_{(h,w)}F(\lambda,0,0)\)</span> is Fredholm of index zero. Lemma 1 and the linearized boundary identity show that its kernel is one-dimensional and represented by</p>
+            <div class="tex-display">
+              \[
+              f(\theta)=\cos\theta,
+              \qquad
+              v(x,\theta)=\frac{\lambda}{\sqrt{\lambda-1}}
+              \sin(\sqrt{\lambda-1}\,x)\cos\theta.
+              \]
             </div>
-
-            <div class="control-block primary-control">
-              <div class="control-label">
-                <label for="lambdaRange">spectral parameter \(\lambda\)</label>
-                <output id="lambdaValue" for="lambdaRange">2.40</output>
-              </div>
-              <input id="lambdaRange" type="range" min="2" max="3" value="2.40" step="0.01">
-              <div class="range-scale"><span>2</span><span>2.5</span><span>3</span></div>
-            </div>
-
-            <div class="control-block primary-control">
-              <div class="control-label">
-                <label for="sRange">branch parameter \(s\)</label>
-                <output id="sValue" for="sRange">0.00</output>
-              </div>
-              <input id="sRange" type="range" min="-0.85" max="0.85" value="0" step="0.005">
-              <div class="range-scale"><span>−0.85</span><span>0</span><span>+0.85</span></div>
-            </div>
-
-            <button id="playButton" class="play-button" type="button"><span id="playIcon">▶</span><span id="playLabel">Animate</span></button>
-
-            <div class="view-switch" role="group" aria-label="Visualization view">
-              <button class="view-button" data-view="flat" type="button" aria-pressed="false">Unwrapped</button>
-              <button class="view-button active" data-view="cylinder" type="button" aria-pressed="true">3D half-cylinder</button>
-            </div>
-
-            <details class="secondary-controls" hidden aria-hidden="true">
-              <summary>Options <span>+</span></summary>
-              <div class="control-block compact">
-                <div class="control-label">
-                  <label for="phaseRange">angular phase \(\phi\)</label>
-                  <output id="phaseValue" for="phaseRange">\(0\)</output>
-                </div>
-                <input id="phaseRange" type="range" min="0" max="6.283185" value="0" step="0.01">
-              </div>
-              <div class="control-block compact">
-                <div class="control-label">
-                  <label for="modeRange">retained modes</label>
-                  <output id="modeValue" for="modeRange">\(k\leq10\)</output>
-                </div>
-                <input id="modeRange" type="range" min="3" max="16" value="10" step="1">
-              </div>
-            </details>
-
-            <div class="solver-readout" hidden aria-hidden="true">
-              <div><span>interior PDE residual</span><strong id="interiorValue">—</strong></div>
-              <div><span>boundary mode \(h_2\)</span><strong id="wallMode2Value">—</strong></div>
-              <div><span>boundary mode \(h_3\)</span><strong id="wallMode3Value">—</strong></div>
-              <div><span>Dirichlet normalized \(L^2\)</span><strong id="dirichletValue">—</strong></div>
-              <div><span>Neumann normalized \(L^2\)</span><strong id="neumannValue">—</strong></div>
-              <div><span>slowest decay length</span><strong id="decayValue">—</strong></div>
-            </div>
-          </aside>
-
-          <section class="canvas-panel" aria-label="Half-cylinder free-boundary solve">
-            <div class="passive-script-targets" hidden aria-hidden="true"><strong id="domainState">trivial cylinder at the branch origin</strong></div>
-            <div id="canvasWrap" class="canvas-wrap">
-              <canvas id="fieldCanvas" role="img" aria-label="Heat map of the scalar field on a half-cylinder with a moving right boundary" hidden></canvas>
-              <div id="threeWrap" class="three-wrap" role="img" aria-label="Rotatable three-dimensional half-cylinder colored by the scalar field">
-                <div id="threeLoading" class="three-loading">loading 3D renderer…</div>
-              </div>
-              <div id="solverBadge" class="solver-badge" hidden aria-hidden="true">solving boundary + field…</div>
-            </div>
-            <div class="passive-script-targets" hidden aria-hidden="true"><span>\(x\to-\infty\)</span><span id="axisDescription">cylindrical surface \((x,\cos\theta,\sin\theta)\)</span><span>boundary \(x=h(\theta)\)</span></div>
-          </section>
-          <figcaption>The unwrapped and three-dimensional views show the same computed Helmholtz field. Colour runs from teal at \(-1\), through the paper colour at zero, to orange at \(+1\).</figcaption>
-        </figure>
+            <p>The first angular channel gives the Crandall–Rabinowitz transversality condition. The remaining Fourier channels stay uniformly separated: for <span class="formula">\(2\leq\lambda\leq3\)</span>, every <span class="formula">\(k\geq2\)</span> has decay rate <span class="formula">\(\sqrt{k^2-\lambda}\)</span>, bounded below by <span class="formula">\(1\)</span>, while the radial and first channels are removed by the gauges and kernel projection. The inverse on the complementary space is therefore uniformly bounded.</p>
+            <p>The transformed operator depends smoothly on <span class="formula">\(\lambda\)</span>, and <span class="formula">\([2,3]\)</span> is compact. Uniform inverse and nonlinear bounds let the contraction and implicit-function estimates be made with the same radius at every parameter value. Crandall–Rabinowitz then supplies the family in the theorem with one <span class="formula">\(\varepsilon&gt;0\)</span>. This is the half-cylinder analogue of the compact-cylinder argument of <a href="https://ems.press/journals/jems/articles/14298635" target="_blank" rel="noreferrer">Fall–Minlend–Weth, <em>JEMS</em> (2025) ↗</a>; boundedness as <span class="formula">\(x\to-\infty\)</span> replaces the condition at the second end.</p>
+          </div>
+        </details>
 
         <div class="readout-strip figure-band" hidden aria-hidden="true">
           <div class="readout-copy">
@@ -1633,6 +1662,6 @@
     <script defer src="pompeiu.js?v=20260828.3"></script>
     <script defer src="computer-assisted.js?v=20260828.1"></script>
     <script defer src="applet-layout.js?v=20260828.1"></script>
-    <script defer src="tufte/layout-contract.js?v=20260828.9"></script>
+    <script defer src="tufte/layout-contract.js?v=20260828.10"></script>
   </body>
 </html>

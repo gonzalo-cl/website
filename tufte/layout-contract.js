@@ -349,18 +349,29 @@
     if (document.querySelector("#modes-experiment .collar-limit-argument")) {
       errors.push("the landing zoom repeats machinery established before the landing");
     }
+    const halfCylinderIntro = document.querySelector("#experiment .half-cylinder-introduction");
+    const halfCylinderApplet = halfCylinderIntro?.querySelector(":scope > .side-applet");
+    const halfCylinderVisual = halfCylinderApplet?.querySelector(":scope > section");
+    const halfCylinderControls = halfCylinderApplet?.querySelector(":scope > aside");
+    if (!halfCylinderApplet || !halfCylinderVisual || !halfCylinderControls
+        || !(halfCylinderVisual.compareDocumentPosition(halfCylinderControls) & Node.DOCUMENT_POSITION_FOLLOWING)) {
+      errors.push("Subsection 5.1 does not use the visual-then-controls margin applet grammar");
+    }
     const halfCylinderSequence = [
       document.querySelector("#experiment .cylinder-theorem"),
-      document.querySelector("#experiment .cylinder-spectral-seed"),
+      document.querySelector("#experiment [aria-labelledby='cylinderCoincidenceTitle']"),
+      document.querySelector("#experiment .cylinder-formal-lead"),
+      document.querySelector("#experiment [aria-labelledby='cylinderExpansionTitle']"),
       document.querySelector("#experiment .cylinder-jet-proof"),
-      document.querySelector("#experiment .experiment-story-lead"),
-      document.querySelector("#experiment > .laboratory"),
+      document.querySelector("#experiment .cylinder-uniform-lead"),
+      document.querySelector("#experiment [aria-labelledby='uniformCylinderBranchTitle']"),
+      document.querySelector("#experiment .cylinder-uniform-proof"),
     ];
     if (halfCylinderSequence.some((node) => !node) || halfCylinderSequence.some((node, index) => {
       if (!index) return false;
       return !(halfCylinderSequence[index - 1].compareDocumentPosition(node) & Node.DOCUMENT_POSITION_FOLLOWING);
     })) {
-      errors.push("Subsection 4.1 does not follow theorem, expansion, applet order");
+      errors.push("Subsection 5.1 does not follow theorem and three-lemma order");
     }
 
     document.querySelectorAll(marginSelector).forEach((aside, index) => {

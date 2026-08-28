@@ -320,6 +320,7 @@ body.tufte-site h3 {
   align-items: start;
   margin: 0;
   padding: 0 0 1.35rem;
+  border: 0;
 }
 
 .section-heading::before {
@@ -725,6 +726,17 @@ body.tufte-site main .side-applet > figcaption {
   font-size: var(--type-caption) !important;
   font-style: italic;
   line-height: var(--leading-caption) !important;
+}
+
+/* Interactive marginalia use the same square, stacked composition regardless
+   of which applet they contain: visual first, then its few controls. */
+body.tufte-site main .marginnote.side-applet > .canvas-panel {
+  height: auto;
+  aspect-ratio: 4 / 3;
+  grid-template-rows: minmax(0, 1fr) !important;
+}
+body.tufte-site main .marginnote.side-applet > aside.paper-demo-controls {
+  padding: .75rem 0 0;
 }
 
 .membrane-figure {
