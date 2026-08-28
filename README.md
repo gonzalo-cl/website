@@ -52,9 +52,10 @@ The HTML supplies semantic sections, statements, disclosures, figures and
 controls. Page measures are owned by
 [tufte/tufte-port.css](tufte/tufte-port.css), so authored content does not
 choose ad hoc widths. [document-structure.js](document-structure.js) owns the
-document counters and cross-reference registry: sections are numbered from
-DOM order, while statements, equations, figures and asides use stable semantic
-labels such as `data-label="half-cylinder-bifurcation"`. References use
+document counters, generated table of contents and cross-reference registry:
+sections are numbered from DOM order, while statements, equations, figures and
+asides use stable semantic labels such as
+`data-label="half-cylinder-bifurcation"`. References use
 `<a class="xref" data-ref="half-cylinder-bifurcation"></a>` and therefore
 survive editorial reordering without hand-maintained numbers.
 

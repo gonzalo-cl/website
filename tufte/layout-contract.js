@@ -21,30 +21,6 @@
 
   const headingTitleElement = (heading) => heading.querySelector(":scope > :is(h2, h3)");
 
-  const tocHeadings = () => Array.from(document.querySelectorAll(headingSelector))
-    .filter((heading) => Object.prototype.hasOwnProperty.call(tocClassByLevel, heading.dataset.toc || ""));
-
-  function renderTableOfContents() {
-    const nav = document.querySelector(".site-toc nav[data-toc-nav]");
-    if (!nav) return;
-    nav.replaceChildren(...tocHeadings().map((heading) => {
-      const link = document.createElement("a");
-      const level = heading.dataset.toc;
-      const target = headingTarget(heading);
-      const className = tocClassByLevel[level];
-      if (className) link.classList.add(className);
-      link.href = target ? `#${target.id}` : "#";
-      const number = document.createElement("b");
-      number.textContent = heading.dataset.number;
-      const title = document.createElement("span");
-      title.textContent = heading.dataset.title;
-      link.append(number, title);
-      return link;
-    }));
-  }
-
-  renderTableOfContents();
-
   /* Display mathematics is authored semantically; the layout layer fits the
      rendered KaTeX to whichever editorial measure contains it.  Resetting to
      the canonical size before every measurement prevents resize history from
@@ -353,6 +329,10 @@
     }) || actualTocContents.length !== expectedTocContents.length) {
       errors.push("table of contents does not match the shared heading contract");
     }
+    const tocNumberColors = new Set(Array.from(document.querySelectorAll(".site-toc nav[data-toc-nav] a b"), (number) => (
+      getComputedStyle(number).color
+    )));
+    if (tocNumberColors.size > 1) errors.push("table of contents numbers do not share one colour role");
 
     document.querySelectorAll("details.optional-digression").forEach((details, index) => {
       const summary = details.querySelector(":scope > summary");
@@ -711,6 +691,15 @@
         if (Math.abs(box.width - reference.width) > 1 || Math.abs(box.height - reference.height) > 1) {
           errors.push(`comparison cell ${index + 1} does not share the gallery shape`);
         }
+        const image = cell.querySelector(":scope > img");
+        const imageBox = image?.getBoundingClientRect();
+        const declaredWidth = Number(image?.getAttribute("width"));
+        const declaredHeight = Number(image?.getAttribute("height"));
+        if (!image || !declaredWidth || declaredWidth !== declaredHeight || !/comparison-[^/]+\.svg$/.test(image.getAttribute("src") || "")) {
+          errors.push(`comparison cell ${index + 1} does not use a normalized square crop`);
+        } else if (Math.abs(imageBox.width - box.width) > 1 || Math.abs(imageBox.height - box.height) > 1) {
+          errors.push(`comparison crop ${index + 1} does not fill its shared frame`);
+        }
       });
       const galleryStyle = getComputedStyle(comparisonCells[0].closest(".intro-shapes"));
       if ([galleryStyle.borderTopWidth, galleryStyle.borderRightWidth, galleryStyle.borderBottomWidth, galleryStyle.borderLeftWidth]
@@ -831,7 +820,7 @@
           errors.push(`interactive plate ${index + 1} controls do not fill the narrow measure`);
         }
       } else {
-        if (plate.classList.contains("annotated-plate")) {
+      if (plate.classList.contains("annotated-plate")) {
           if (Math.abs(visualBox.width - plateBox.width) > 2) {
             errors.push(`annotated plate ${index + 1} visual does not fill its measure`);
           }
@@ -841,6 +830,10 @@
           }
           if (controlBox.width > plateBox.width * .34) {
             errors.push(`annotated plate ${index + 1} apparatus is too wide`);
+          }
+          if (plate.classList.contains("geometry-laboratory")
+              && Math.abs((controlBox.top + controlBox.height / 2) - (visualBox.top + visualBox.height / 2)) > 2) {
+            errors.push("geometry stage key is not vertically centred on its visual");
           }
         } else {
           if (controlBox.left < visualBox.right - 1) errors.push(`interactive plate ${index + 1} controls are not to the right of its visual`);

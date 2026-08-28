@@ -49,6 +49,12 @@
   });
   const TAU = Math.PI * 2;
   const GEOMETRY_PROFILE_PHASE = -Math.PI / 2;
+  const GEOMETRY_TRAJECTORY = Object.freeze({
+    coneTip: .16,
+    coneRight: .84,
+    cylinderLeft: -.62,
+    cylinderRight: .97,
+  });
   const visualTheme = window.SCHIFFER_VISUAL_THEME || {
     paperEdition: false,
     background: "#101b20",
@@ -334,6 +340,18 @@
     return clamped * clamped * (3 - 2 * clamped);
   }
 
+  /* On wide pages the stage key occupies a fraction of the canvas.  Center
+     disk stages in the unobscured remainder; on stacked layouts the CSS token
+     is zero and the ordinary canvas centre is recovered automatically. */
+  function geometryVisualCenter(width) {
+    const laboratory = select(".geometry-laboratory");
+    const token = laboratory
+      ? parseFloat(getComputedStyle(laboratory).getPropertyValue("--geometry-key-width")) / 100
+      : 0;
+    const keyFraction = Number.isFinite(token) ? Math.max(0, Math.min(.45, token)) : 0;
+    return width * (.5 + keyFraction / 2);
+  }
+
   function drawNfoldDisk(context, width, height, options = {}) {
     const cx = options.cx ?? width * .5;
     const cy = options.cy ?? height * .54;
@@ -411,8 +429,8 @@
   // Changing `fold`, `tip`, and `wave` changes only the embedding of those
   // points, so no renderer handoff can move the surface by a pixel.
   function geometrySheetState(width, height, options = {}) {
-    const tip = options.tip ?? width * .16;
-    const right = options.right ?? width * .84;
+    const tip = options.tip ?? width * GEOMETRY_TRAJECTORY.coneTip;
+    const right = options.right ?? width * GEOMETRY_TRAJECTORY.coneRight;
     const surfaceLeft = options.surfaceLeft ?? Math.max(-width * .12, tip);
     const length = right - tip;
     const referenceLength = width * .68;
@@ -562,7 +580,7 @@
     const materialOpacity = ease((t - .12) / .2);
     const fold = ease((t - .55) / .45);
     const fullDiskRadius = Math.min(width * .27, height * .34);
-    const diskCx = lerp(width * .5, width * .16, zoom);
+    const diskCx = lerp(geometryVisualCenter(width), width * GEOMETRY_TRAJECTORY.coneTip, zoom);
     const diskRadius = lerp(fullDiskRadius, width * .68, zoom);
     const targetHalf = Math.min(118, height * .23);
 
@@ -598,11 +616,12 @@
        viewport.  The surface is an exact cylinder whose left end is clipped
        behind the stage key, rather than a long finite cone squeezed into the
        drawing. */
-    const tip = lerp(width * .34, -width * .62, t);
-    const axisLeft = -width * .62;
+    const tip = lerp(width * GEOMETRY_TRAJECTORY.coneTip, width * GEOMETRY_TRAJECTORY.cylinderLeft, t);
+    const right = lerp(width * GEOMETRY_TRAJECTORY.coneRight, width * GEOMETRY_TRAJECTORY.cylinderRight, t);
+    const axisLeft = width * GEOMETRY_TRAJECTORY.cylinderLeft;
     const sheet = geometrySheetState(width, height, {
       tip,
-      right: width * .97,
+      right,
       surfaceLeft: lerp(tip, axisLeft, t),
       half: Math.min(118, height * .23),
       fold: 1,
@@ -669,9 +688,9 @@
     const transfer = ease((t - .28) / .20);
     const fan = ease((t - .50) / .50);
     const finalRadius = Math.min(width * .27, height * .34);
-    const initialTip = width * .16;
-    const initialRight = width * .84;
-    const tip = lerp(initialTip, width * .5, transfer);
+    const initialTip = width * GEOMETRY_TRAJECTORY.coneTip;
+    const initialRight = width * GEOMETRY_TRAJECTORY.coneRight;
+    const tip = lerp(initialTip, geometryVisualCenter(width), transfer);
     const length = lerp(initialRight - initialTip, finalRadius, transfer);
     const half = lerp(Math.min(118, height * .23), finalRadius * Math.sin(Math.PI / 28), transfer);
     const initialOpening = Math.atan2(Math.min(118, height * .23), initialRight - initialTip);
@@ -695,7 +714,7 @@
     const scaled = Math.max(0, Math.min(1, progress)) * 6;
     const segment = Math.min(5, Math.floor(scaled));
     const local = scaled - segment;
-    if (segment === 0) drawNfoldDisk(context, width, height, { selection: ease(local), divisions: 1, showCaption: false });
+    if (segment === 0) drawNfoldDisk(context, width, height, { cx: geometryVisualCenter(width), selection: ease(local), divisions: 1, showCaption: false });
     else if (segment === 1) drawFoldingSector(context, width, height, local);
     else if (segment === 2) drawConeCylinder(context, width, height, local, 0);
     else if (segment === 3) drawConeCylinder(context, width, height, 1, ease(local));
@@ -796,7 +815,7 @@
 
     if (cylinderAmount !== null) {
       const t = ease(cylinderAmount);
-      const surfaceLeft = lerp(width * .16, width * .08, t);
+      const surfaceLeft = lerp(width * GEOMETRY_TRAJECTORY.coneTip, width * GEOMETRY_TRAJECTORY.cylinderLeft, t);
       const sheetOrder = 28 / Math.max(.035, 1 - t);
       const half = Math.min(118, height * .23);
       const orderOpacity = ease(t / .12);
@@ -809,7 +828,7 @@
       order.style.opacity = String(orderOpacity);
 
       const wallOpacity = ease((waveAmount - .12) / .28) * ease(t / .15);
-      const wallX = width < 620 ? 24 : Math.max(surfaceLeft + 100, width * .84 - 330);
+      const wallX = width < 620 ? 24 : Math.max(surfaceLeft + 100, width * GEOMETRY_TRAJECTORY.coneRight - 330);
       const wallY = height * .54 - half - (width < 620 ? 37 : 42);
       setFormula(wall, "x=h_s(\\psi)=s\\cos(\\psi-\\phi)+O(s^2)", { serif: true });
       wall.style.left = `${wallX}px`;

@@ -16,6 +16,11 @@
   if (!main) return;
 
   const registry = new Map();
+  const tocClassByLevel = Object.freeze({
+    section: "",
+    subsection: "toc-nested",
+    "proof-subsection": "toc-subsection",
+  });
   const topLevelSections = Array.from(main.children)
     .filter((element) => element.matches("section"));
   const numberedSections = topLevelSections
@@ -91,6 +96,33 @@
       element: target,
     });
   });
+
+  /* The contents is a projection of the semantic heading tree, never authored
+     separately.  Keeping it beside section numbering means a moved or renamed
+     subsection has exactly one source of truth. */
+  const headingTarget = (heading) => {
+    if (heading.dataset.target) return document.querySelector(heading.dataset.target);
+    if (heading.id) return heading;
+    return heading.closest("[id]") || heading.querySelector("[id]");
+  };
+  const toc = document.querySelector(".site-toc nav[data-toc-nav]");
+  if (toc) {
+    const headings = Array.from(main.querySelectorAll(".section-heading[data-number][data-title]"))
+      .filter((heading) => Object.prototype.hasOwnProperty.call(tocClassByLevel, heading.dataset.toc || ""));
+    toc.replaceChildren(...headings.map((heading) => {
+      const link = document.createElement("a");
+      const className = tocClassByLevel[heading.dataset.toc];
+      const target = headingTarget(heading);
+      if (className) link.classList.add(className);
+      link.href = target ? `#${target.id}` : "#";
+      const number = document.createElement("b");
+      number.textContent = heading.dataset.number;
+      const title = document.createElement("span");
+      title.textContent = heading.dataset.title;
+      link.append(number, title);
+      return link;
+    }));
+  }
 
   const statementKinds = new Set(["theorem", "lemma", "proposition", "corollary", "criterion"]);
   const statementCounters = new Map();
