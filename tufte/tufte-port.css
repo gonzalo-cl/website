@@ -252,7 +252,8 @@ main { width: 100%; }
   .phase-story,
   .debye-experiment,
   .abundance-experiment,
-  .site-references
+  .site-references,
+  .site-acknowledgements
 ) {
   width: 100%;
   padding: 5rem 0 6rem;
@@ -2363,6 +2364,21 @@ body.tufte-site main .computer-assisted-details-body {
 .site-references li { grid-template-columns: 2.2rem 52.8%; }
 .site-references li p { font-size: var(--type-caption) !important; line-height: var(--leading-caption); }
 
+/* Acknowledgements remain ordinary prose at the foot of the essay. */
+.site-acknowledgements {
+  padding-top: 1rem;
+}
+.site-acknowledgements h2 {
+  width: var(--measure-reading);
+  margin-top: 0;
+  font-size: var(--type-section);
+  font-style: italic;
+}
+.site-acknowledgements .acknowledgements-copy {
+  margin-top: 2rem;
+}
+.site-acknowledgements .funding-code { white-space: nowrap; }
+
 body > footer {
   width: 100%;
   min-height: 0;
@@ -2452,8 +2468,11 @@ body > footer {
     .phase-story,
     .debye-experiment,
     .abundance-experiment,
-    .site-references
+    .site-references,
+    .site-acknowledgements
   ) { padding: 3.5rem 0 4.5rem; }
+
+  .site-acknowledgements { padding-top: 0; }
 
   .intro-index, .intro h1, .intro-bottom,
   .section-heading,

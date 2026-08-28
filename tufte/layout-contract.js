@@ -157,6 +157,7 @@
       "computer-assisted-proof",
       "experiment",
       "references",
+      "acknowledgements",
     ];
     const actualSectionOrder = Array.from(document.querySelectorAll("main > section[id]"), (section) => section.id);
     if (actualSectionOrder.length !== expectedSectionOrder.length
@@ -216,6 +217,7 @@
       ["5.4", "Equidistributed phases supply near-integer crossing orders", "#abundance-experiment", "proof-subsection"],
       ["5.5", "Closing the argument", "#modes-experiment", "proof-subsection"],
       ["", "References", "#references", "section"],
+      ["", "Acknowledgements", "#acknowledgements", "section"],
     ];
     const headingContract = Array.from(document.querySelectorAll(headingSelector), (heading) => {
       const title = headingTitleElement(heading);
