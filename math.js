@@ -40,7 +40,7 @@
     scheduleMathFit();
   };
 
-  window.SchifferMath = Object.freeze({ render });
+  window.SchifferMath = Object.freeze({ render, fitDisplays: () => scheduleMathFit() });
 
   if (typeof window.renderMathInElement !== "function") return;
 
@@ -87,7 +87,8 @@
     let fitFrame = 0;
     const fitDisplays = () => {
       fitFrame = 0;
-      document.querySelectorAll(".tex-display").forEach((wrapper) => {
+      const wrappers = Array.from(document.querySelectorAll(".tex-display"));
+      wrappers.forEach((wrapper) => {
         if (!wrapper.getClientRects().length) return;
         wrapper.style.setProperty("--math-scale", "1");
         const rootStyle = getComputedStyle(document.documentElement);
@@ -101,14 +102,30 @@
           - parseFloat(style.paddingLeft || 0)
           - parseFloat(style.paddingRight || 0);
         if (available <= 1) return;
-        const required = Math.max(...contents.map((content) => content.scrollWidth));
+        const required = Math.max(...contents.map((content) => (
+          Math.max(content.scrollWidth, content.getBoundingClientRect().width)
+        )));
         const safety = Math.min(14, Math.max(4, available * .03));
         const scale = required > available + 1
-          ? Math.max(.52, Math.min(1, (available - safety) / required))
+          ? Math.min(1, (available - safety) / required)
           : 1;
         wrapper.style.setProperty("--math-scale", scale.toFixed(4));
         wrapper.style.setProperty("--math-size", `${baseMathSize * scale}px`);
         wrapper.classList.toggle("math-fitted", scale < .999);
+      });
+      /* KaTeX tags and sub-pixel glyph metrics can make the wrapper a few
+         pixels wider than the measured glyph run. Correct the rendered box
+         once, after layout, so even those equations remain inside measure. */
+      requestAnimationFrame(() => {
+        wrappers.forEach((wrapper) => {
+          if (!wrapper.getClientRects().length || wrapper.clientWidth <= 1
+              || wrapper.scrollWidth <= wrapper.clientWidth + 1) return;
+          const currentSize = parseFloat(wrapper.style.getPropertyValue("--math-size"));
+          if (!Number.isFinite(currentSize)) return;
+          const correction = Math.max(0, (wrapper.clientWidth - 4) / wrapper.scrollWidth);
+          wrapper.style.setProperty("--math-size", `${currentSize * correction}px`);
+          wrapper.classList.add("math-fitted");
+        });
       });
     };
     scheduleMathFit = () => {
@@ -127,6 +144,10 @@
     });
     document.querySelectorAll(".tex-display").forEach((wrapper) => observer.observe(wrapper));
     window.addEventListener("resize", scheduleMathFit, { passive: true });
+    document.addEventListener("toggle", (event) => {
+      if (event.target instanceof HTMLDetailsElement) scheduleMathFit();
+    }, true);
+    document.fonts?.ready.then(scheduleMathFit);
     scheduleMathFit();
   }
 })();

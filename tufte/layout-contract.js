@@ -21,72 +21,27 @@
 
   const headingTitleElement = (heading) => heading.querySelector(":scope > :is(h2, h3)");
 
-  /* Display mathematics is authored semantically; the layout layer fits the
-     rendered KaTeX to whichever editorial measure contains it.  Resetting to
-     the canonical size before every measurement prevents resize history from
-     becoming part of the result. */
-  let mathFitFrame = 0;
-  let mathMeasureFrame = 0;
-  let contractFrame = 0;
-  const fitDisplayMath = () => {
-    mathFitFrame = 0;
-    const displays = Array.from(document.querySelectorAll("body.tufte-site main .tex-display"))
-      .filter((display) => display.querySelector(".katex"));
-    displays.forEach((display) => {
-      display.classList.remove("math-fitted");
-      display.style.removeProperty("--math-size");
-    });
-    mathMeasureFrame = requestAnimationFrame(() => {
-      mathMeasureFrame = 0;
-      const rootStyle = getComputedStyle(document.documentElement);
-      const baseSize = parseFloat(rootStyle.getPropertyValue("--type-math"))
-        * parseFloat(rootStyle.fontSize);
-      displays.forEach((display) => {
-        const available = display.clientWidth;
-        const required = display.scrollWidth;
-        if (available <= 1 || required <= available + 1) return;
-        const fittedSize = baseSize * Math.min(1, (available - 2) / required) * .99;
-        display.style.setProperty("--math-size", `${fittedSize}px`);
-        display.classList.add("math-fitted");
-      });
-      if (layoutCheckEnabled) {
-        if (contractFrame) cancelAnimationFrame(contractFrame);
-        contractFrame = requestAnimationFrame(() => {
-          contractFrame = 0;
-          runLayoutContract();
-        });
-      }
-    });
-  };
-  const scheduleMathFit = () => {
-    if (mathFitFrame) cancelAnimationFrame(mathFitFrame);
-    if (mathMeasureFrame) {
-      cancelAnimationFrame(mathMeasureFrame);
-      mathMeasureFrame = 0;
-    }
-    if (contractFrame) {
-      cancelAnimationFrame(contractFrame);
-      contractFrame = 0;
-    }
-    mathFitFrame = requestAnimationFrame(fitDisplayMath);
-  };
+  if (!layoutCheckEnabled) return;
 
-  scheduleMathFit();
-  window.addEventListener("load", scheduleMathFit);
-  window.addEventListener("resize", scheduleMathFit);
-  document.fonts?.ready.then(scheduleMathFit);
+  /* The production math layer owns typesetting.  This file only audits the
+     result, after renderers, fonts, and disclosure layout have settled. */
+  let contractFrame = 0;
+  const scheduleContract = () => {
+    if (contractFrame) cancelAnimationFrame(contractFrame);
+    contractFrame = requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(() => {
+      contractFrame = 0;
+      runLayoutContract();
+    })));
+  };
+  scheduleContract();
+  window.addEventListener("load", scheduleContract);
+  window.addEventListener("resize", scheduleContract);
+  document.fonts?.ready.then(scheduleContract);
   const main = document.querySelector("main");
   if (main) {
-    new MutationObserver(scheduleMathFit).observe(main, { childList: true, subtree: true });
-    /* Opening a native disclosure changes the available measure without
-       mutating its descendants. Refit the same semantic displays on toggle;
-       individual proofs never need a mobile equation override. */
-    main.querySelectorAll("details").forEach((details) => details.addEventListener("toggle", () => {
-      requestAnimationFrame(() => window.dispatchEvent(new Event("resize")));
-    }));
+    new MutationObserver(scheduleContract).observe(main, { childList: true, subtree: true });
+    main.querySelectorAll("details").forEach((details) => details.addEventListener("toggle", scheduleContract));
   }
-
-  if (!layoutCheckEnabled) return;
 
   const rounded = (value) => Math.round(value * 10) / 10;
   const marginSelector = "body.tufte-site main .marginnote";
@@ -105,11 +60,12 @@
     const gutter = parseFloat(rootStyle.getPropertyValue("--measure-gutter")) / 100;
     const figure = parseFloat(rootStyle.getPropertyValue("--measure-figure")) / 100;
     const readingInFigure = parseFloat(rootStyle.getPropertyValue("--measure-reading-in-figure")) / 100;
-    const compactVisual = parseFloat(rootStyle.getPropertyValue("--measure-apparatus-visual-compact")) / 100;
     const mobileNote = parseFloat(rootStyle.getPropertyValue("--measure-mobile-note")) / 100;
     const typeProof = parseFloat(rootStyle.getPropertyValue("--type-proof")) * parseFloat(rootStyle.fontSize);
     const typeCaption = parseFloat(rootStyle.getPropertyValue("--type-caption")) * parseFloat(rootStyle.fontSize);
     const typeLabel = parseFloat(rootStyle.getPropertyValue("--type-label")) * parseFloat(rootStyle.fontSize);
+    const typeSection = parseFloat(rootStyle.getPropertyValue("--type-section")) * parseFloat(rootStyle.fontSize);
+    const typeSubsection = parseFloat(rootStyle.getPropertyValue("--type-subsection")) * parseFloat(rootStyle.fontSize);
     const typeControlValue = parseFloat(rootStyle.getPropertyValue("--type-control-value")) * parseFloat(rootStyle.fontSize);
     const typeCode = parseFloat(rootStyle.getPropertyValue("--type-code")) * parseFloat(rootStyle.fontSize);
 
@@ -126,7 +82,7 @@
 
     const checkType = (selector, expected, label) => {
       document.querySelectorAll(selector).forEach((element, index) => {
-        if (!element.getClientRects().length) return;
+        if (!visible(element)) return;
         const actual = parseFloat(getComputedStyle(element).fontSize);
         if (Math.abs(actual - expected) > .2) {
           errors.push(`${label} ${index + 1} uses ${rounded(actual)}px instead of ${rounded(expected)}px`);
@@ -134,12 +90,13 @@
       });
     };
 
-    const visible = (element) => Boolean(
-      element
-      && element.getClientRects().length
-      && getComputedStyle(element).display !== "none"
-      && getComputedStyle(element).visibility !== "hidden"
-    );
+    const visible = (element) => {
+      if (!element || !element.getClientRects().length) return false;
+      const closedDetails = element.closest("details:not([open])");
+      if (closedDetails && !closedDetails.querySelector(":scope > summary")?.contains(element)) return false;
+      const style = getComputedStyle(element);
+      return style.display !== "none" && style.visibility !== "hidden";
+    };
 
     const directVisibleText = (root) => Array.from(root.querySelectorAll("*"))
       .filter(visible)
@@ -184,6 +141,8 @@
       "schiffer-property",
       "schiffer-pompeiu-equivalence",
       "pompeiu-star-shaped",
+      "uniform-cone-bifurcation",
+      "near-integer-crossings",
     ];
     const actualLeanStatements = Array.from(document.querySelectorAll("details.lean-statement"), (statement) => statement.dataset.statement);
     if (actualLeanStatements.length !== expectedLeanStatements.length
@@ -225,12 +184,20 @@
     const transferSection = document.querySelector("#debye-experiment");
     const collarComparison = document.querySelector("[data-figure='collar-coordinate-comparison']");
     const uniformConeTheorem = document.querySelector("[data-label='uniform-cone-bifurcation']");
+    const uniformConeLean = document.querySelector("#debye-experiment > .lean-statement[data-statement='uniform-cone-bifurcation']");
     if (!transferSection || !collarComparison || !uniformConeTheorem
         || !(collarComparison.compareDocumentPosition(uniformConeTheorem) & Node.DOCUMENT_POSITION_FOLLOWING)) {
       errors.push("the large-cone comparison must precede the uniform cone theorem");
     }
-    if (transferSection?.lastElementChild !== uniformConeTheorem) {
-      errors.push("the uniform cone theorem must close the transfer subsection");
+    if (!uniformConeTheorem || !uniformConeLean || transferSection?.lastElementChild !== uniformConeLean
+        || !(uniformConeTheorem.compareDocumentPosition(uniformConeLean) & Node.DOCUMENT_POSITION_FOLLOWING)) {
+      errors.push("the uniform cone theorem and its Lean counterpart must close the transfer subsection");
+    }
+    const nearIntegerTheorem = document.querySelector("[data-label='near-integer-crossings']");
+    const nearIntegerLean = document.querySelector(".lean-statement[data-statement='near-integer-crossings']");
+    if (!nearIntegerTheorem || !nearIntegerLean
+        || nearIntegerTheorem.nextElementSibling !== nearIntegerLean) {
+      errors.push("Theorem 5.9 is missing its adjacent Lean counterpart");
     }
 
     const expectedHeadingContract = [
@@ -289,7 +256,8 @@
       }
     });
     document.querySelectorAll("article.math-statement[data-kind]").forEach((statement, index) => {
-      const numbered = ["theorem", "lemma", "proposition", "corollary", "criterion"].includes(statement.dataset.kind);
+      const numbered = ["theorem", "lemma", "proposition", "corollary", "criterion"].includes(statement.dataset.kind)
+        && statement.dataset.unnumbered !== "true";
       if (numbered && !statement.dataset.label) errors.push(`numbered statement ${index + 1} has no semantic label`);
       if (numbered && !statement.dataset.number) errors.push(`numbered statement ${statement.dataset.label || index + 1} has no generated number`);
     });
@@ -313,6 +281,15 @@
           errors.push("section heading contains hand-authored numbering text");
         }
       });
+      const title = headingTitleElement(heading);
+      if (title && !heading.hasAttribute("data-unnumbered")) {
+        const expected = title.matches("h2") ? typeSection : typeSubsection;
+        const numberSize = parseFloat(getComputedStyle(heading, "::before").fontSize);
+        const titleSize = parseFloat(getComputedStyle(title).fontSize);
+        if (Math.abs(numberSize - expected) > .2 || Math.abs(numberSize - titleSize) > .2) {
+          errors.push(`section number for “${normalizeText(title.textContent)}” does not share its title scale`);
+        }
+      }
     });
     const expectedTocContents = expectedHeadingContract
       .filter(([, , , toc]) => toc)
@@ -333,6 +310,7 @@
       getComputedStyle(number).color
     )));
     if (tocNumberColors.size > 1) errors.push("table of contents numbers do not share one colour role");
+    checkType(".site-toc nav[data-toc-nav] a b", typeLabel, "contents number");
 
     document.querySelectorAll("details.optional-digression").forEach((details, index) => {
       const summary = details.querySelector(":scope > summary");
@@ -358,19 +336,33 @@
     });
 
     const transferTheorem = document.querySelector("#debye-experiment > #uniformConeBifurcation.math-statement");
-    const transferAside = document.querySelector("#debye-experiment .debye-lead > .side-applet");
+    const transferDetails = document.querySelector("#debye-experiment > details.transfer-proof-details");
+    const transferAside = transferDetails?.querySelector(".side-applet[data-figure='fixed-collar-profiles']");
     const transferVisual = transferAside?.querySelector(":scope > section.stacked-plot");
     const transferControls = transferAside?.querySelector(":scope > aside");
-    const transferDetails = document.querySelector("#debye-experiment > details.transfer-proof-details");
+    const transferComparison = document.querySelector("#debye-experiment > [data-figure='collar-coordinate-comparison']");
+    const informalDebye = document.querySelector("#debye-experiment > .informal-debye-theorem[data-unnumbered='true']");
+    const transferSketch = document.querySelector("#debye-experiment .debye-lead > .cone-cylinder-sketch");
     if (!transferTheorem || transferTheorem.classList.length !== 1) {
       errors.push("Theorem 5.2 is not a direct canonical math statement");
     }
     if (!transferAside || !transferVisual || !transferControls
         || !(transferVisual.compareDocumentPosition(transferControls) & Node.DOCUMENT_POSITION_FOLLOWING)) {
-      errors.push("Subsection 5.2 does not use the visual-then-controls margin applet grammar");
+      errors.push("Subsection 5.2 does not keep the fixed-collar plot inside its technical disclosure");
     }
-    if (!transferDetails || !(transferTheorem.compareDocumentPosition(transferDetails) & Node.DOCUMENT_POSITION_FOLLOWING)) {
-      errors.push("Subsection 5.2 does not place expandable details after its theorem");
+    if (!transferSketch || !transferComparison || !informalDebye || !transferDetails
+        || !(transferComparison.compareDocumentPosition(informalDebye) & Node.DOCUMENT_POSITION_FOLLOWING)
+        || !(informalDebye.compareDocumentPosition(transferDetails) & Node.DOCUMENT_POSITION_FOLLOWING)
+        || !(transferDetails.compareDocumentPosition(transferTheorem) & Node.DOCUMENT_POSITION_FOLLOWING)) {
+      errors.push("Subsection 5.2 does not follow observation → applet → informal theorem → details → uniform theorem");
+    }
+    if (document.querySelector("#debye-experiment > details.collar-coordinate-details")) {
+      errors.push("Subsection 5.2 has split its mode normalization into an unexplained second disclosure");
+    }
+    if (!/angular quotient.+normalization.+oscillatory.+evanescent.+uniform error bounds/i.test(
+      document.querySelector("#debye-experiment .transfer-conclusion")?.textContent || ""
+    )) {
+      errors.push("Subsection 5.2 does not tell the reader what its technical disclosure contains");
     }
     const halfCylinderIntro = document.querySelector("#experiment .half-cylinder-introduction");
     const halfCylinderApplet = halfCylinderIntro?.querySelector(":scope > .side-applet");
@@ -408,9 +400,8 @@
         errors.push(`margin aside ${index + 1} has no matching toggle label`);
       }
       if (narrow) {
-        const shouldShow = toggle instanceof HTMLInputElement && toggle.checked;
-        if ((style.display !== "none") !== shouldShow) {
-          errors.push(`margin aside ${index + 1} does not follow its mobile toggle`);
+        if (style.display === "none") {
+          errors.push(`margin aside ${index + 1} disappears instead of joining the mobile reading flow`);
         }
         return;
       }
@@ -507,7 +498,7 @@
       const body = details.classList.contains("proof-details")
         ? Array.from(details.children).find((child) => child !== summary)
         : null;
-      if (body && body.getClientRects().length) {
+      if (body && visible(body)) {
         const bodyBox = body.getBoundingClientRect();
         const expectedBodyWidth = detailsBox.width * (narrow ? 1 : readingInFigure);
         if (Math.abs(bodyBox.left - detailsBox.left) > 1 || Math.abs(bodyBox.width - expectedBodyWidth) > 2) {
@@ -546,7 +537,7 @@
     });
 
     document.querySelectorAll("body.tufte-site main .paper-copy").forEach((copy, index) => {
-      if (!copy.getClientRects().length) return;
+      if (!visible(copy)) return;
       const box = copy.getBoundingClientRect();
       const expectedWidth = sectionMeasure(copy, narrow ? 1 : reading);
       if (Math.abs(box.width - expectedWidth) > 2) errors.push(`paper copy ${index + 1} is outside the reading measure`);
@@ -755,7 +746,7 @@
     checkType("body.tufte-site main .lean-statement :is(summary code, pre code)", typeCode, "Lean source");
 
     const forbiddenControlChrome = ":is(.variation-equation, .variation-equation-label, .variation-legend, .geometry-stage-note, .solver-readout, .crossing-card, .parameter-pair, .fixed-zoom-pair, .problem-map, .phase-law, .phase-agreement, .collar-field-readout, .collar-field-locator, .debye-status, .phase-story-readout, .modes-status)";
-    document.querySelectorAll("body.tufte-site main .paper-demo-controls").forEach((controls, index) => {
+    document.querySelectorAll("body.tufte-site main .paper-demo-controls:not(.geometry-controls)").forEach((controls, index) => {
       if (!visible(controls)) return;
       const controlStyle = getComputedStyle(controls);
       if ([controlStyle.borderTopWidth, controlStyle.borderRightWidth, controlStyle.borderBottomWidth, controlStyle.borderLeftWidth]
@@ -837,7 +828,7 @@
         } else {
           if (controlBox.left < visualBox.right - 1) errors.push(`interactive plate ${index + 1} controls are not to the right of its visual`);
           if (Math.abs(controlBox.top - visualBox.top) > 1) errors.push(`interactive plate ${index + 1} control and visual tops do not align`);
-          const expectedVisualWidth = plateBox.width * (plate.classList.contains("compact-plate") ? compactVisual : reading);
+          const expectedVisualWidth = plateBox.width * reading;
           const expectedControlWidth = plateBox.width * aside;
           const expectedGap = plateBox.width * gutter;
           if (Math.abs(visualBox.width - expectedVisualWidth) > 2) {
@@ -870,6 +861,34 @@
           errors.push(`interactive plate ${index + 1} has an implausibly tall narrow plot`);
         }
       });
+    });
+
+    document.querySelectorAll(".interactive-plate[data-apparatus='visual-aside']").forEach((plate, index) => {
+      const visual = plate.querySelector(":scope > .apparatus-visual");
+      const controls = plate.querySelector(":scope > .apparatus-controls");
+      const caption = plate.querySelector(":scope > figcaption");
+      if (!visual || !controls || !caption) {
+        errors.push("canonical apparatus " + (index + 1) + " is missing a semantic visual, controls, or caption role");
+        return;
+      }
+      if (!(visual.compareDocumentPosition(controls) & Node.DOCUMENT_POSITION_FOLLOWING)
+          || !(controls.compareDocumentPosition(caption) & Node.DOCUMENT_POSITION_FOLLOWING)) {
+        errors.push("canonical apparatus " + (index + 1) + " is not authored visual → controls → caption");
+      }
+    });
+
+    document.querySelectorAll(".interactive-plate[data-panel-grid='four']").forEach((plate, index) => {
+      const panels = Array.from(plate.querySelectorAll(":scope > .apparatus-visual > .apparatus-panel"));
+      if (panels.length !== 4) {
+        errors.push("four-panel apparatus " + (index + 1) + " does not contain exactly four panels");
+        return;
+      }
+      if (!narrow) {
+        const widths = panels.map((panel) => panel.getBoundingClientRect().width);
+        if (Math.max(...widths) - Math.min(...widths) > 2) {
+          errors.push("four-panel apparatus " + (index + 1) + " does not distribute its drawings evenly");
+        }
+      }
     });
 
     document.querySelectorAll("body.tufte-site main :is(.reading-figure, .phase-family) canvas").forEach(checkCanvasAspect);
@@ -910,10 +929,4 @@
   }
 
   window.__runTufteLayoutContract = runLayoutContract;
-
-  document.addEventListener("toggle", (event) => {
-    if (event.target instanceof HTMLDetailsElement) {
-      scheduleMathFit();
-    }
-  }, true);
 })();

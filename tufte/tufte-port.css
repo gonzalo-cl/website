@@ -81,8 +81,6 @@
   --measure-side-figure-in-margin: 68.75%;
   --measure-apparatus-visual: 55%;
   --measure-apparatus-controls: var(--measure-aside);
-  --measure-apparatus-visual-compact: 41.25%;
-  --measure-apparatus-controls-compact: var(--measure-aside);
   --measure-mobile-note: 95%;
   --measure-mobile-note-inset: 2.5%;
   --layout-prose: var(--measure-reading);
@@ -237,6 +235,7 @@ body.tufte-site main a.xref:hover { color: var(--orange); }
 .site-toc a:visited b {
   color: var(--ink);
   font-family: et-book-roman-old-style, var(--serif);
+  font-size: var(--type-label) !important;
 }
 
 main { width: 100%; }
@@ -364,9 +363,9 @@ body.tufte-site h3 {
 .section-heading {
   width: var(--measure-reading);
   display: grid;
-  grid-template-columns: 2.4rem minmax(0, 1fr);
+  grid-template-columns: max-content minmax(0, 1fr);
   gap: .85rem;
-  align-items: start;
+  align-items: baseline;
   margin: 0;
   padding: 0 0 1.35rem;
   border: 0;
@@ -374,9 +373,20 @@ body.tufte-site h3 {
 
 .section-heading::before {
   content: attr(data-number);
-  padding-top: .16rem;
+  padding-top: 0;
   color: var(--muted);
-  font: 400 var(--type-note)/1 et-book-roman-old-style, var(--serif);
+  font-family: et-book-roman-old-style, var(--serif);
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.section-heading:has(> h2)::before {
+  font-size: var(--type-section);
+}
+
+.section-heading:has(> h3)::before {
+  font-size: var(--type-subsection);
 }
 
 body.tufte-site main .section-heading :is(h2, h3) {
@@ -789,15 +799,6 @@ body.tufte-site main .marginnote.side-applet > aside.paper-demo-controls {
   padding: .75rem 0 0;
 }
 
-/* A compact plate keeps the canonical figure and aside coordinates while
-   reducing only its visual field. The control rail therefore remains exactly
-   the same width as every other piece of marginalia. */
-body.tufte-site main .compact-plate.interactive-plate {
-  grid-template-columns:
-    minmax(0, var(--measure-apparatus-visual-compact))
-    minmax(0, var(--measure-apparatus-controls-compact));
-}
-
 .membrane-figure {
   clear: none;
   display: block;
@@ -1104,6 +1105,39 @@ body.tufte-site main details.lean-statement > .lean-statement-body {
   border-left: 0;
 }
 
+/* An apparatus has exactly three semantic pieces: visual, margin controls,
+   caption. Every applet uses these roles; individual applets may draw their
+   own visual, but cannot choose their column measures or rebuild a control
+   rail. */
+body.tufte-site main .interactive-plate[data-apparatus="visual-aside"] > .apparatus-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: .8rem;
+  margin: 0;
+  padding: .1rem 0 0 1.5rem;
+  color: var(--ink);
+  background: transparent !important;
+  border: 0 !important;
+}
+body.tufte-site main .apparatus-controls > .apparatus-control {
+  align-self: stretch;
+  margin: 0;
+  padding: 0;
+  background: transparent !important;
+  border: 0 !important;
+}
+body.tufte-site main .apparatus-controls > .apparatus-control + .apparatus-control {
+  margin-top: .55rem;
+}
+body.tufte-site main .apparatus-controls > .play-button {
+  align-self: flex-start;
+  width: auto;
+  margin-top: .3rem;
+  padding: .45rem 0;
+  border: 0 !important;
+}
+
 .interactive-plate > section {
   grid-area: visual;
   min-width: 0;
@@ -1363,19 +1397,11 @@ body.tufte-site main .collar-field-laboratory {
 }
 .collar-field-controls {
   grid-column: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  align-items: stretch;
-  padding: 1rem 0 0 1.5rem;
   color: var(--ink);
   background: transparent !important;
-  border-right: 0;
-  border-top: 1px solid var(--ink);
-  border-left: 1px solid var(--line);
 }
 .collar-field-controls .control-heading { align-self: stretch; padding: 0 0 1rem; }
-.collar-field-control-block { align-self: stretch; padding: 1rem 0; border-bottom: 1px solid var(--line); }
+.collar-field-control-block { align-self: stretch; }
 body.tufte-site main .collar-field-controls :is(label, span, strong, button) { color: var(--ink); }
 .collar-field-controls input[type="range"] { background: linear-gradient(90deg, var(--orange), rgba(17,17,17,.14)); }
 .collar-field-readout { margin-top: 0; padding-top: 1rem; }
@@ -1384,10 +1410,13 @@ body.tufte-site main .collar-field-controls :is(label, span, strong, button) { c
 .collar-field-readout strong { color: var(--ink); }
 .collar-field-visual {
   display: grid;
-  grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.2rem 1rem;
   align-items: start;
 }
 .collar-field-canvas-wrap {
+  width: 100%;
+  height: 100%;
   min-width: 0;
   contain: size layout paint;
 }
@@ -1408,12 +1437,12 @@ body.tufte-site main .collar-field-controls :is(label, span, strong, button) { c
 .collar-field-laboratory .collar-field-visual > .collar-field-panel {
   margin: 0;
   padding: 0;
-  grid-template-rows: 48px clamp(220px, 22vw, 310px);
+  grid-template-rows: auto clamp(185px, 16vw, 230px);
   border: 0;
 }
-.collar-field-panel:nth-child(even) { border-left: 1px solid var(--line); }
-.collar-field-panel:nth-child(n+3) { border-top: 1px solid var(--line); }
-.collar-field-panel > header { padding: .85rem 1rem; border-bottom: 1px solid var(--line); }
+.collar-field-panel:nth-child(even),
+.collar-field-panel:nth-child(n+3) { border: 0; }
+.collar-field-panel > header { padding: 0 0 .45rem; border: 0; }
 .collar-field-panel > header > span {
   display: block;
   margin-bottom: 0;
@@ -1459,11 +1488,11 @@ body.tufte-site main .collar-field-controls :is(label, span, strong, button) { c
 .modes-controls {
   display: flex;
   flex-direction: column;
-  gap: 0;
-  background: rgba(255,255,255,.2);
+  gap: .8rem;
+  background: transparent !important;
 }
 .modes-controls > * { grid-column: auto; }
-.modes-control-block { min-width: 0; padding: 1.15rem 0; }
+.modes-control-block { min-width: 0; }
 .modes-control-block .problem-map { grid-template-columns: 1fr auto 1fr; }
 .modes-controls :is(.problem-map, .phase-law) { display: none; }
 .modes-controls .phase-track { margin-top: 1.25rem; }
@@ -1490,6 +1519,45 @@ body.tufte-site main .modes-experiment {
   border-top: 0;
 }
 body.tufte-site main .modes-experiment .modes-laboratory { margin-top: 1.8rem; }
+
+.cone-cylinder-sketch {
+  margin-top: .3rem;
+}
+.cone-cylinder-sketch svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.cone-cylinder-sketch svg :is(path, ellipse) {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.7;
+  vector-effect: non-scaling-stroke;
+}
+.cone-cylinder-sketch svg .sketch-collar {
+  fill: rgba(56, 143, 145, .12);
+  stroke: var(--teal);
+}
+.cone-cylinder-sketch svg .sketch-guide {
+  stroke: var(--muted);
+  stroke-width: 1;
+}
+.cone-cylinder-sketch svg text {
+  fill: var(--ink);
+  font: 400 14px/1 var(--serif);
+  font-style: italic;
+}
+.cone-cylinder-sketch svg .sketch-note {
+  fill: var(--muted);
+  font: 400 10px/1 var(--mono);
+  text-anchor: middle;
+  text-transform: uppercase;
+}
+.cone-cylinder-sketch > .sketch-caption {
+  margin: .55rem 0 0;
+  padding: 0;
+}
 body.tufte-site main .cone-canvas-panel {
   grid-template-rows: clamp(300px, 39vw, 550px);
 }
@@ -2348,7 +2416,7 @@ body > footer {
   body.tufte-site main .geometry-canvas-panel {
     grid-template-rows: clamp(300px, 88vw, 520px);
   }
-  .collar-field-visual { grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr); }
+  .collar-field-visual { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 1000px) {
@@ -2416,7 +2484,6 @@ body > footer {
     width: 100%;
     max-width: 100%;
   }
-  body.tufte-site main .compact-plate.interactive-plate { grid-template-columns: minmax(0, 1fr); }
   body.tufte-site main .statement-sequence > header,
   body.tufte-site main .figure-with-caption > header,
   body.tufte-site main .figure-with-caption > .phase-family-note,
@@ -2467,40 +2534,25 @@ body > footer {
   .intro-shape-object + .intro-shape-object { margin-top: 0; }
   .membrane-figure { width: 100%; max-width: 100%; }
 
-  /* Tufte's margin notes become opt-in blocks on a narrow screen.  Every
-     note, figure and gallery uses this same adjacent-toggle contract. */
-  body.tufte-site main .marginnote { display: none; }
-  body.tufte-site main .marginnote.intro-shapes { display: none; }
-  input.margin-toggle:checked + .marginnote {
+  /* Narrow screens have no physical margin. Preserve the information by
+     placing every note and side figure directly in the reading sequence.
+     The desktop-only toggle remains in the source as the semantic anchor,
+     but does not hide content or initialize applets at zero width. */
+  body.tufte-site main .margin-toggle {
+    display: none !important;
+  }
+  body.tufte-site main input.margin-toggle + .marginnote,
+  body.tufte-site main input.margin-toggle + .marginnote.side-figure,
+  body.tufte-site main input.margin-toggle + .marginnote.side-applet,
+  body.tufte-site main input.margin-toggle + .marginnote.intro-shapes {
     display: block;
     float: none;
     clear: both;
-    left: 0;
+    position: static;
     width: var(--measure-mobile-note);
     max-width: var(--measure-mobile-note);
-    margin: 1rem var(--measure-mobile-note-inset);
-  }
-  body.tufte-site main input.margin-toggle:checked + .marginnote.side-figure,
-  body.tufte-site main input.margin-toggle:checked + .marginnote.intro-shapes {
-    display: block;
-    width: var(--measure-mobile-note);
-    max-width: var(--measure-mobile-note);
-    margin-right: var(--measure-mobile-note-inset);
-    margin-left: var(--measure-mobile-note-inset);
-  }
-  body.tufte-site main .marginnote.side-applet {
-    display: none;
-    float: none;
-    clear: both;
-    left: 0;
-    width: var(--measure-mobile-note);
-    max-width: var(--measure-mobile-note);
-    margin: 1rem var(--measure-mobile-note-inset);
-  }
-  body.tufte-site main input.margin-toggle:checked + .marginnote.side-applet {
-    display: block;
-    width: var(--measure-mobile-note);
-    max-width: var(--measure-mobile-note);
+    margin-top: 1.25rem;
+    margin-bottom: 1.5rem;
     margin-right: var(--measure-mobile-note-inset);
     margin-left: var(--measure-mobile-note-inset);
   }
@@ -2517,9 +2569,9 @@ body > footer {
   }
   .phase-story-lab > aside,
   .debye-controls { margin: 0; padding: 1.4rem 0 0; }
-  .collar-field-visual { grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr); }
-  .collar-field-laboratory .collar-field-visual > .collar-field-panel { grid-template-rows: 48px clamp(210px, 36vw, 290px); }
-  .collar-field-panel:nth-child(even) { border-left: 1px solid var(--line); }
+  .collar-field-visual { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .collar-field-laboratory .collar-field-visual > .collar-field-panel { grid-template-rows: auto clamp(210px, 36vw, 290px); }
+  .collar-field-panel:nth-child(even) { border-left: 0; }
   .collar-field-caption { padding-right: 0; }
   .canvas-toolbar { justify-content: space-between; overflow: hidden; }
   .canvas-toolbar > .passive-script-targets { display: none !important; }
@@ -2572,9 +2624,9 @@ body > footer {
 }
 
 @media (max-width: 620px) {
-  .collar-field-visual { grid-template-columns: minmax(0, 1fr); }
+  .collar-field-visual { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .collar-field-laboratory .collar-field-visual > .collar-field-panel {
-    grid-template-rows: 48px clamp(230px, 78vw, 320px);
+    grid-template-rows: auto clamp(145px, 42vw, 210px);
   }
   .collar-field-panel:nth-child(even) { border-left: 0; }
   .collar-field-panel + .collar-field-panel { border-top: 0 !important; }

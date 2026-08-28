@@ -16,11 +16,11 @@
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js" integrity="sha384-bjyGPfbij8/NDKJhSGZNP/khQVgtHUE5exjm4Ydllo42FwIgYsdLO2lXGmRBf5Mz" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.12.0/highlight.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/highlightjs-lean@1.2.0/dist/lean.min.js"></script>
-    <script defer src="lean-statements.js?v=20260828.4"></script>
-    <script defer src="math.js?v=20260827.9"></script>
+    <script defer src="lean-statements.js?v=20260828.5"></script>
+    <script defer src="math.js?v=20260828.2"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tufte-css@1.9.0/tufte.min.css">
     <link rel="stylesheet" href="styles.css?v=20260828.3">
-    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260828.14">
+    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260828.16">
   </head>
   <body class="tufte-site">
     <div class="noise" aria-hidden="true"></div>
@@ -244,7 +244,7 @@
           <label for="chladni-photo-note" class="margin-toggle" aria-label="Show the Chladni plate photograph">&#8853;</label>
           <input type="checkbox" id="chladni-photo-note" class="margin-toggle">
           <figure class="marginnote chladni-photo-panel" data-figure="chladni-plate">
-            <img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Round_Chladni_plate_with_4_circular_nodes.JPG?width=1024" loading="lazy" decoding="async" alt="Sand gathered along circular nodal lines separating four radial nodal domains on a vibrating round Chladni plate">
+            <img src="assets/chladni-plate.jpg" loading="lazy" decoding="async" alt="Sand gathered along circular nodal lines separating four radial nodal domains on a vibrating round Chladni plate">
             <figcaption>A vibrating Chladni plate. Sand migrates from the moving regions and settles along the circular nodal lines, where the plate remains still. <a href="https://commons.wikimedia.org/wiki/File:Round_Chladni_plate_with_4_circular_nodes.JPG" target="_blank" rel="noreferrer">Pieter Kuiper, public domain.</a></figcaption>
           </figure>
           <p>A domain \(\Omega\) for which the system <a class="xref" data-ref="schiffer-system" data-ref-short></a> has a solution is said to have the <em>Schiffer property</em>. The disk has this property: its radial modes are multiples of \(J_0(\sqrt\lambda\,r)\), and their normal derivative vanishes at the boundary whenever \(J_1(\sqrt\lambda\,r)=0\).</p>
@@ -1101,102 +1101,73 @@
         </header>
 
         <div class="debye-lead paper-copy">
-          <label for="debye-profile-note" class="margin-toggle" aria-label="Show the fixed-collar Bessel comparison">&#8853;</label>
-          <input type="checkbox" id="debye-profile-note" class="margin-toggle">
-          <figure class="marginnote side-figure side-applet debye-laboratory" data-figure="fixed-collar-profiles" aria-labelledby="debyeProfileCaption">
-            <section class="debye-plot-panel stacked-plot" aria-label="Bessel and cylinder radial profile comparison">
-              <div class="passive-script-targets" hidden aria-hidden="true"><strong id="debyePlotState">two radial channels on \([R-5,R]\)</strong></div>
-              <div id="debyeCanvasWrap" class="debye-canvas-wrap">
-                <canvas id="debyeCanvas" role="img" aria-label="Two plots comparing exact Bessel profiles with their half-cylinder limits"></canvas>
-              </div>
-            </section>
-            <aside class="debye-controls paper-demo-controls" aria-label="Choose the higher angular mode">
-              <div class="debye-control-block">
-                <div class="control-label"><label for="debyeModeRange">lower plot</label><output id="debyeModeValue">\(k=2\)</output></div>
-                <input id="debyeModeRange" type="range" min="2" max="4" value="2" step="1">
-                <div class="range-scale"><span>\(k=2\)</span><span>\(k=3\)</span><span>\(k=4\)</span></div>
-              </div>
-            </aside>
-            <figcaption id="debyeProfileCaption">At \(R=28\), the exact regular Bessel profiles (cyan) are compared with their half-cylinder limits (orange) on the fixed collar. The Neumann channel \(k=1\) is fixed above; choose an evanescent channel below.</figcaption>
-          </figure>
-          <p>A cone with a very large boundary radius looks flat on any collar of fixed depth. In the local coordinate \(x=r-R\), its separated Bessel modes therefore approach the trigonometric and exponential modes of the half-cylinder. The marginal plots show that comparison at \(R=28\); the four-panel figure below shows the same limit in the original geometry.</p>
+          <label for="cone-cylinder-note" class="margin-toggle" aria-label="Show the long-cone and cylinder comparison">&#8853;</label>
+          <input type="checkbox" id="cone-cylinder-note" class="margin-toggle">
+          <aside class="marginnote side-figure cone-cylinder-sketch" aria-labelledby="coneCylinderSketchCaption">
+            <svg viewBox="0 0 320 145" role="img" aria-labelledby="coneCylinderSketchTitle coneCylinderSketchDesc">
+              <title id="coneCylinderSketchTitle">A half-cylinder and a long cone near their boundaries</title>
+              <desc id="coneCylinderSketchDesc">The final fixed-depth collars of a cylinder and a long cone are highlighted; near the rim the two geometries become indistinguishable.</desc>
+              <g class="sketch-cylinder">
+                <path d="M42 27H266M42 55H266" />
+                <ellipse cx="266" cy="41" rx="6" ry="14" />
+                <path class="sketch-collar" d="M228 27H266V55H228Z" />
+                <text x="42" y="18">half-cylinder</text>
+              </g>
+              <g class="sketch-cone">
+                <path d="M42 108L266 78M42 108L266 138" />
+                <ellipse cx="266" cy="108" rx="6" ry="30" />
+                <path class="sketch-collar" d="M228 83L266 78V138L228 133Z" />
+                <text x="42" y="94">long cone</text>
+              </g>
+              <path class="sketch-guide" d="M228 61V69M266 61V69M228 65H266" />
+              <text class="sketch-note" x="247" y="76">fixed collar</text>
+            </svg>
+            <p class="sketch-caption" id="coneCylinderSketchCaption">The highlighted fixed collars approach the same geometry.</p>
+          </aside>
+          <p>On the half-cylinder, separation of variables is elementary. Each angular mode has a radial factor made from sines and cosines when \(k^2&lt;\lambda\), and from a bounded exponential when \(k^2&gt;\lambda\). These are the modes used in the uniform cylinder bifurcation above.</p>
+          <p>On a cone, the corresponding regular modes are Bessel functions \(J_{kR}(\sqrt\lambda\,r)\). Their formula is less transparent, but a long cone is almost cylindrical near its rim: on every collar of fixed depth, the curvature tends to zero as \(R\to\infty\). We therefore expect its Bessel modes to approach the cylinder modes. The applet below makes this comparison visible.</p>
         </div>
 
-        <details class="proof-details transfer-proof-details">
-          <summary><span>Why the cylinder estimates transfer uniformly</span><i>expand +</i></summary>
-          <div class="proof-details-body">
+        <figure class="collar-field-laboratory interactive-plate figure-band" data-apparatus="visual-aside" data-panel-grid="four" data-figure="collar-coordinate-comparison" aria-label="Two-dimensional cylinder and cone mode comparison">
+          <section class="collar-field-visual apparatus-visual">
+            <article class="collar-field-panel apparatus-panel collar-global-panel">
+              <header><span>complete disk</span><strong id="collarDiskTitle">angular order 28</strong></header>
+              <div class="collar-field-canvas-wrap"><canvas id="collarDiskCanvas" role="img" aria-label="Selected Bessel mode on the whole disk with its magnified sector outlined"></canvas></div>
+            </article>
 
-        <div class="basis-dictionary paper-copy" aria-label="Cylinder and cone eigenfunction dictionaries">
-          <label for="cylinder-channel-note" class="margin-toggle" aria-label="Show the cylinder channel note">&#8853;</label>
-          <input type="checkbox" id="cylinder-channel-note" class="margin-toggle">
-          <aside class="marginnote">For \(1&lt;\lambda&lt;4\), the cylinder channels \(k=0,1\) oscillate. Boundedness as \(x\to-\infty\) leaves exactly one exponential for every \(k\ge2\).</aside>
-          <p>On the half-cylinder \(x\le0\), separation of variables reduces the radial factor to</p>
-          <div class="tex-display">
-            \[
-            f_k''+(\lambda-k^2)f_k=0,\qquad
-            f_k(x)=
-            \begin{cases}
-            A_k\cos(\sqrt{\lambda-k^2}\,x)\\
-            \quad+B_k\sin(\sqrt{\lambda-k^2}\,x),&amp;k^2&lt;\lambda,\\
-            C_k e^{\sqrt{k^2-\lambda}\,x},&amp;k^2&gt;\lambda,
-            \end{cases}
-            \]
-            \[
-            u_k^{\mathrm{cyl}}(x,\theta)=f_k(x)\{\cos(k\theta),\sin(k\theta)\}.
-            \]
-          </div>
-          <label for="cone-regularity-note" class="margin-toggle" aria-label="Show the cone regularity note">&#8853;</label>
-          <input type="checkbox" id="cone-regularity-note" class="margin-toggle">
-          <aside class="marginnote">Regularity at \(r=0\) selects \(J_{kr_0}\) and rejects \(Y_{kr_0}\). The modified Bessel functions \(I\) and \(K\) solve the equation with the opposite spectral sign.</aside>
-          <p>On the cone, with metric \(dr^2+(r^2/r_0^2)d\psi^2\), the same angular mode gives the regular Bessel basis</p>
-          <div class="tex-display">
-            \[
-            f_k''+\frac1r f_k'+\left(\lambda-\frac{k^2r_0^2}{r^2}\right)f_k=0,
-            \qquad
-            f_k(r)=J_{kr_0}(\sqrt\lambda\,r),
-            \]
-            \[
-            u_k^{\mathrm{cone}}(r,\psi)=J_{kr_0}(\sqrt\lambda\,r)
-            \{\cos(k\psi),\sin(k\psi)\}.
-            \]
-          </div>
-          <p>In the fixed-collar coordinate \(x=r-r_0\), the cone coefficients converge on every bounded interval to the constant coefficients of the cylinder equation as \(r_0\to\infty\).</p>
-        </div>
+            <article class="collar-field-panel apparatus-panel">
+              <header><span>planar collar</span><strong id="collarConeTitle">\(u_1^{\mathrm{cone}}\)</strong></header>
+              <div class="collar-field-canvas-wrap"><canvas id="collarConeCanvas" role="img" aria-label="Selected Bessel mode on a magnified collar of one planar sector"></canvas></div>
+            </article>
 
-        <div class="basis-limit-derivation paper-copy">
-          <div>
-            <p>On a fixed collar, put \(q=\sqrt\lambda\), \(\omega=\sqrt{\lambda-1}\), and \(\Phi(q)=\sqrt{q^2-1}-\arccos(q^{-1})\). Debye's oscillatory large-order expansion, <a href="https://dlmf.nist.gov/10.19.E6" target="_blank" rel="noreferrer">DLMF (10.19.6) ↗</a>, gives</p>
-            <div class="tex-display important-equation">\[\begin{aligned}
-              J_{r_0}(\sqrt\lambda(r_0+x))
-              &amp;=A_{r_0}(x)\cos\!\left(\xi(r_0)+\omega x\right)\\
-              &amp;\quad+O(r_0^{-1}),\\
-              \xi(r_0)&amp;=r_0\Phi(\sqrt\lambda)-\frac\pi4.
-            \end{aligned}\]</div>
-            <p>Thus changing \(r_0\) translates the local wave by the explicit phase rate \(d\xi/dr_0=\Phi(\sqrt\lambda)\). For the higher channels, the nonoscillatory Debye formula gives</p>
-            <div class="tex-display important-equation">\[\frac{J_{kr_0}(\sqrt\lambda(r_0+x))}{J_{kr_0}(\sqrt\lambda r_0)}\longrightarrow e^{\sqrt{k^2-\lambda}\,x},\qquad k\ge2.\]</div>
-            <p>The last limit is the exponential regime of the same expansion, <a href="https://dlmf.nist.gov/10.19.E3" target="_blank" rel="noreferrer">DLMF (10.19.3) ↗</a>, applied with order \(kr_0\) and argument-to-order ratio \(\sqrt\lambda/k&lt;1\).</p>
-            <p>The radial channel \(k=0\) is also oscillatory. Put \(\sigma_R=(J_0(\rho_R)^2+J_0'(\rho_R)^2)^{1/2}\) and \(B_{0,R}(x)=J_0(q_R(R+x))/\sigma_R\). If \(d_{0,R}=B_{0,R}'(0)\), its cylinder comparison is the Cauchy-matched wave \(C_{0,R}(x)=B_{0,R}(0)\cos(q_Rx)+(d_{0,R}/q_R)\sin(q_Rx)\). On a fixed collar, the Bessel equation for \(B_{0,R}\) converges to \(C''+\lambda_RC=0\).</p>
-            <p>In the figures below we choose a Neumann-normalized slice of this family. Let \(\rho_R\) be the fourth positive zero of \(J_R'\), put \(q_R=\rho_R/R\), and set \(\lambda_R=q_R^2\). This branch has \(2.50&lt;\lambda_R&lt;2.72\) throughout the displayed interval \(26\le R\le30\). Then</p>
-            <div class="tex-display important-equation">\[B_R(x)=\frac{J_R(q_R(R+x))}{J_R(\rho_R)},\qquad B_R(0)=1,\qquad B_R'(0)=0.\]</div>
-            <p>Thus every displayed \(k=1\) profile is an actual Neumann eigenmode. Its cylinder comparison is \(C_R(x)=\cos(\sqrt{\lambda_R-1}\,x)\), with the same value and derivative at the boundary.</p>
-          </div>
-        </div>
-          </div>
-        </details>
+            <article class="collar-field-panel apparatus-panel collar-half-cylinder-panel">
+              <header><span>half-cylinder</span><strong id="collarHalfCylinderTitle">\(u_1^{\mathrm{cyl}}\)</strong></header>
+              <div class="collar-field-canvas-cell"><div class="collar-field-canvas-wrap collar-half-cylinder-wrap"><canvas id="collarHalfCylinderCanvas" role="img" aria-label="A long thin half-cylinder drawn at the same geometric scale as the complete disk"></canvas></div></div>
+            </article>
 
-        <figure class="collar-field-laboratory interactive-plate figure-band compact-plate" data-figure="collar-coordinate-comparison" aria-label="Two-dimensional cylinder and cone mode comparison">
-          <aside class="collar-field-controls paper-demo-controls">
+            <article class="collar-field-panel apparatus-panel">
+              <header><span>cylinder collar</span><strong id="collarCylinderTitle">\(u_1^{\mathrm{cyl}}\)</strong></header>
+              <div class="collar-field-canvas-wrap"><canvas id="collarCylinderCanvas" role="img" aria-label="Selected separated mode on a flat cylinder collar"></canvas></div>
+            </article>
+
+            <svg id="collarZoomConnectors" class="collar-zoom-connectors" aria-hidden="true" focusable="false">
+              <line id="collarZoomConnectorTop"></line>
+              <line id="collarZoomConnectorBottom"></line>
+            </svg>
+          </section>
+
+          <aside class="collar-field-controls apparatus-controls paper-demo-controls" aria-label="Cone and cylinder comparison controls">
             <div class="control-heading" hidden aria-hidden="true">
               <button id="collarFieldResetButton" type="button" hidden aria-hidden="true">Reset</button>
             </div>
 
-            <div class="collar-field-control-block">
+            <div class="collar-field-control-block apparatus-control">
               <div class="control-label"><label for="collarNRange">fold symmetry \(N\)</label><output id="collarNValue">28</output></div>
               <input id="collarNRange" type="range" min="26" max="30" value="28" step="1">
               <div class="range-scale"><span>26</span><span>28</span><span>30</span></div>
             </div>
 
-            <div class="collar-field-control-block">
+            <div class="collar-field-control-block apparatus-control">
               <div class="control-label"><label for="collarKRange">wave parameter \(k\)</label><output id="collarKValue">1</output></div>
               <input id="collarKRange" type="range" min="0" max="3" value="1" step="1">
               <div class="range-scale"><span>0</span><span>1</span><span>2</span><span>3</span></div>
@@ -1209,62 +1180,121 @@
               <div><span>spectral parameter</span><strong id="collarLambdaValue">\(\lambda_N=2.6042\)</strong></div>
             </div>
           </aside>
-
-          <section class="collar-field-visual">
-            <article class="collar-field-panel collar-global-panel">
-              <header><span>complete disk</span><strong id="collarDiskTitle">angular order 28</strong></header>
-              <div class="collar-field-canvas-wrap"><canvas id="collarDiskCanvas" role="img" aria-label="Selected Bessel mode on the whole disk with its magnified sector outlined"></canvas></div>
-            </article>
-
-            <article class="collar-field-panel">
-              <header><span>planar collar</span><strong id="collarConeTitle">\(u_1^{\mathrm{cone}}\)</strong></header>
-              <div class="collar-field-canvas-wrap"><canvas id="collarConeCanvas" role="img" aria-label="Selected Bessel mode on a magnified collar of one planar sector"></canvas></div>
-            </article>
-
-            <article class="collar-field-panel collar-half-cylinder-panel">
-              <header><span>half-cylinder</span><strong id="collarHalfCylinderTitle">\(u_1^{\mathrm{cyl}}\)</strong></header>
-              <div class="collar-field-canvas-cell"><div class="collar-field-canvas-wrap collar-half-cylinder-wrap"><canvas id="collarHalfCylinderCanvas" role="img" aria-label="A long thin half-cylinder drawn at the same geometric scale as the complete disk"></canvas></div></div>
-            </article>
-
-            <article class="collar-field-panel">
-              <header><span>cylinder collar</span><strong id="collarCylinderTitle">\(u_1^{\mathrm{cyl}}\)</strong></header>
-              <div class="collar-field-canvas-wrap"><canvas id="collarCylinderCanvas" role="img" aria-label="Selected separated mode on a flat cylinder collar"></canvas></div>
-            </article>
-
-            <svg id="collarZoomConnectors" class="collar-zoom-connectors" aria-hidden="true" focusable="false">
-              <line id="collarZoomConnectorTop"></line>
-              <line id="collarZoomConnectorBottom"></line>
-            </svg>
-
-          </section>
           <figcaption class="collar-field-caption">The disk and half-cylinder are shown at one geometric scale. Their outlined five-unit collars are magnified in the neighbouring views, using the same local coordinates and colour scale.</figcaption>
         </figure>
 
-        <div class="debye-lead paper-copy transfer-conclusion">
-          <p>The four views in <a class="xref" data-ref="collar-coordinate-comparison"></a> express the transfer required by the proof. At a crossing the cone radius and Bessel order are the same real number: \(\lambda=\rho^2/R^2\) and \(\sqrt\lambda R=\rho\). Because the estimates are uniform for \(2\le\lambda\le3\), the Crandall–Rabinowitz conclusion persists on every sufficiently large cone, with a perturbation interval that does not shrink as \(R\to\infty\).</p>
+        <div class="debye-lead paper-copy">
+          <p>This comparison can be made rigorous using the well-known Debye asymptotics for Bessel functions.</p>
         </div>
 
-        <details class="proof-details collar-coordinate-details">
-          <summary><span>Mode normalization and the angular quotient</span><i>expand +</i></summary>
-          <div class="proof-details-body">
-        <div class="angular-quotient-note paper-copy">
-          <div>
-            <p>Let <span class="formula">\(\vartheta\)</span> be the planar polar angle. On one <span class="formula">\(N\)</span>-fold sector, the rescaled quotient coordinate is <span class="formula">\(\psi=N\vartheta\in S^1\)</span>. Consequently</p>
-            <div class="tex-display important-equation">
+        <article class="math-statement informal-debye-theorem" data-kind="theorem" data-label="informal-debye-asymptotics" data-unnumbered="true" aria-labelledby="informalDebyeTitle">
+          <header class="math-statement-header"><span>Theorem</span><small id="informalDebyeTitle">informal · Debye asymptotics on a fixed collar</small></header>
+          <div class="math-statement-body">
+            <p>The regular separated eigenfunctions on the cone of order \(R\) are</p>
+            <div class="tex-display">
               \[
-              \cos(kN\vartheta)=\cos(k\psi),
-              \qquad
-              \sin(kN\vartheta)=\sin(k\psi).
+              J_{kR}(\sqrt\lambda\,r)\{\cos(k\psi),\sin(k\psi)\}.
               \]
             </div>
-            <p>For \(k=0\), the angular factor is constant and there is no sine partner or angular phase. For \(k\ge1\), the sine/cosine pair gives the dependence on the periodic cylinder coordinate. More precisely, <span class="formula">\(A\cos(k\psi)+B\sin(k\psi)=C\cos(k\psi-\phi)\)</span>, so this two-dimensional freedom is the choice of phase, or equivalently the origin of <span class="formula">\(\psi\)</span> around the cylinder. This angular phase is separate from the radial Bessel phase controlled by <span class="formula">\(r_0\)</span>.</p>
+            <p>Write \(x=r-R\) and keep \(x\) in a fixed bounded collar. After matching the value and normal derivative at \(x=0\), these functions converge, uniformly for \(2\le\lambda\le3\), to</p>
+            <div class="tex-display">
+              \[
+              \begin{cases}
+              \bigl(A_k\cos(\sqrt{\lambda-k^2}\,x)+B_k\sin(\sqrt{\lambda-k^2}\,x)\bigr)
+              \{\cos(k\psi),\sin(k\psi)\},&amp;k^2&lt;\lambda,\\[3pt]
+              C_k e^{\sqrt{k^2-\lambda}\,x}\{\cos(k\psi),\sin(k\psi)\},&amp;k^2&gt;\lambda.
+              \end{cases}
+              \]
+            </div>
+            <p>The same convergence holds for the derivatives needed by the bifurcation problem.</p>
           </div>
+        </article>
+
+        <div class="debye-lead paper-copy transfer-conclusion">
+          <p>The informal statement is the linear core of the nonlinear transfer. The disclosure below records the angular quotient, the normalization of each mode, the oscillatory and evanescent Debye estimates, and the uniform error bounds used in the Crandall–Rabinowitz argument.</p>
         </div>
 
-        <div class="debye-conclusion paper-copy">
-          <p>Both \(k=1\) curves satisfy the Neumann boundary condition. The Bessel profile is rescaled by choosing \(q_RR=\rho_R\), where \(J_R'(\rho_R)=0\), and is normalized to equal one at the rim. Its cylinder comparison is therefore the cosine with the same Cauchy data: \(C_R(0)=1\) and \(C_R'(0)=0\).</p>
-          <p>The higher channels are exponential. With the same \(\lambda_R\), the \(k=2,3,4\) Bessel profiles approach \(e^{\sqrt{k^2-\lambda_R}\,x}\) on the fixed collar.</p>
-        </div>
+        <details class="proof-details transfer-proof-details">
+          <summary><span>Why every cone mode approaches its cylinder mode, uniformly in \(\lambda\)</span><i>expand +</i></summary>
+          <div class="proof-details-body">
+            <div class="angular-quotient-note paper-copy">
+              <div>
+                <p>Let <span class="formula">\(\vartheta\)</span> be the planar polar angle. On one <span class="formula">\(N\)</span>-fold sector, the rescaled quotient coordinate is <span class="formula">\(\psi=N\vartheta\in S^1\)</span>. Consequently</p>
+                <div class="tex-display important-equation">
+                  \[
+                  \cos(kN\vartheta)=\cos(k\psi),
+                  \qquad
+                  \sin(kN\vartheta)=\sin(k\psi).
+                  \]
+                </div>
+                <p>For \(k=0\), the angular factor is constant. For \(k\ge1\), the sine/cosine pair records the choice of angular phase. This phase is separate from the radial Bessel phase controlled by \(R\).</p>
+              </div>
+            </div>
+
+            <div class="basis-dictionary paper-copy" aria-label="Cylinder and cone eigenfunction dictionaries">
+              <label for="cylinder-channel-note" class="margin-toggle" aria-label="Show the cylinder channel note">&#8853;</label>
+              <input type="checkbox" id="cylinder-channel-note" class="margin-toggle">
+              <aside class="marginnote">For \(1&lt;\lambda&lt;4\), the cylinder channels \(k=0,1\) oscillate. Boundedness as \(x\to-\infty\) leaves exactly one exponential for every \(k\ge2\).</aside>
+              <p>On the half-cylinder \(x\le0\), separation of variables gives</p>
+              <div class="tex-display">
+                \[
+                f_k''+(\lambda-k^2)f_k=0,
+                \qquad
+                u_k^{\mathrm{cyl}}(x,\theta)=f_k(x)\{\cos(k\theta),\sin(k\theta)\}.
+                \]
+              </div>
+              <label for="cone-regularity-note" class="margin-toggle" aria-label="Show the cone regularity note">&#8853;</label>
+              <input type="checkbox" id="cone-regularity-note" class="margin-toggle">
+              <aside class="marginnote">Regularity at \(r=0\) selects \(J_{kR}\) and rejects \(Y_{kR}\).</aside>
+              <p>On the cone with metric \(dr^2+(r^2/R^2)d\psi^2\), the corresponding regular basis is</p>
+              <div class="tex-display">
+                \[
+                f_k''+\frac1r f_k'+\left(\lambda-\frac{k^2R^2}{r^2}\right)f_k=0,
+                \qquad
+                u_k^{\mathrm{cone}}(r,\psi)=J_{kR}(\sqrt\lambda\,r)
+                \{\cos(k\psi),\sin(k\psi)\}.
+                \]
+              </div>
+            </div>
+
+            <div class="basis-limit-derivation paper-copy">
+              <label for="debye-profile-note" class="margin-toggle" aria-label="Show the fixed-collar Bessel comparison">&#8853;</label>
+              <input type="checkbox" id="debye-profile-note" class="margin-toggle">
+              <figure class="marginnote side-figure side-applet debye-laboratory" data-figure="fixed-collar-profiles" aria-labelledby="debyeProfileCaption">
+                <section class="debye-plot-panel stacked-plot" aria-label="Bessel and cylinder radial profile comparison">
+                  <div class="passive-script-targets" hidden aria-hidden="true"><strong id="debyePlotState">two radial channels on \([R-5,R]\)</strong></div>
+                  <div id="debyeCanvasWrap" class="debye-canvas-wrap">
+                    <canvas id="debyeCanvas" role="img" aria-label="Two plots comparing exact Bessel profiles with their half-cylinder limits"></canvas>
+                  </div>
+                </section>
+                <aside class="debye-controls paper-demo-controls" aria-label="Choose the higher angular mode">
+                  <div class="debye-control-block">
+                    <div class="control-label"><label for="debyeModeRange">lower plot</label><output id="debyeModeValue">\(k=2\)</output></div>
+                    <input id="debyeModeRange" type="range" min="2" max="4" value="2" step="1">
+                    <div class="range-scale"><span>\(k=2\)</span><span>\(k=3\)</span><span>\(k=4\)</span></div>
+                  </div>
+                </aside>
+                <figcaption id="debyeProfileCaption">At \(R=28\), the exact regular Bessel profiles (cyan) are compared with their half-cylinder limits (orange) on the fixed collar. The Neumann channel \(k=1\) is fixed above; choose an evanescent channel below.</figcaption>
+              </figure>
+              <div>
+                <p>Put \(q=\sqrt\lambda\), \(\omega=\sqrt{\lambda-1}\), and \(\Phi(q)=\sqrt{q^2-1}-\arccos(q^{-1})\). Debye's oscillatory large-order expansion, <a href="https://dlmf.nist.gov/10.19.E6" target="_blank" rel="noreferrer">DLMF (10.19.6) ↗</a>, gives on a fixed collar</p>
+                <div class="tex-display important-equation">\[\begin{aligned}
+                  J_R(\sqrt\lambda(R+x))
+                  &amp;=A_R(x)\cos\!\left(\xi(R)+\omega x\right)+O(R^{-1}),\\
+                  \xi(R)&amp;=R\Phi(\sqrt\lambda)-\frac\pi4.
+                \end{aligned}\]</div>
+                <p>Changing \(R\) therefore translates the local wave at the explicit phase rate \(d\xi/dR=\Phi(\sqrt\lambda)\). In the evanescent channels, <a href="https://dlmf.nist.gov/10.19.E3" target="_blank" rel="noreferrer">DLMF (10.19.3) ↗</a> gives</p>
+                <div class="tex-display important-equation">\[\frac{J_{kR}(\sqrt\lambda(R+x))}{J_{kR}(\sqrt\lambda R)}\longrightarrow e^{\sqrt{k^2-\lambda}\,x},\qquad k\ge2.\]</div>
+                <p>The radial channel \(k=0\) follows directly from convergence of its Bessel equation to \(C''+\lambda C=0\). These estimates hold with the derivatives required by the nonlinear operator, uniformly for \(2\le\lambda\le3\).</p>
+                <p>For the displayed Neumann-normalized slice, let \(\rho_R\) be the fourth positive zero of \(J_R'\), put \(q_R=\rho_R/R\), and set \(\lambda_R=q_R^2\). Then</p>
+                <div class="tex-display important-equation">\[B_R(x)=\frac{J_R(q_R(R+x))}{J_R(\rho_R)},\qquad B_R(0)=1,\qquad B_R'(0)=0.\]</div>
+                <p>Its cylinder comparison is \(C_R(x)=\cos(\sqrt{\lambda_R-1}\,x)\), with the same Cauchy data at the boundary. The marginal plots are a numerical view of precisely these two asymptotic regimes.</p>
+              </div>
+            </div>
+
+            <div class="debye-conclusion paper-copy">
+              <p>At a crossing, the cone radius and Bessel order are the same real number: \(\lambda=\rho^2/R^2\) and \(\sqrt\lambda R=\rho\). Uniform mode estimates give a uniformly bounded complementary inverse and a transversality constant bounded away from zero. Thus the Crandall–Rabinowitz perturbation interval does not shrink as \(R\to\infty\).</p>
+            </div>
           </div>
         </details>
 
@@ -1294,6 +1324,7 @@
             <p>The family depends \(C^3\)-smoothly on \(s\), with uniform \(C^3\) bounds in the Banach spaces used for the boundary and the field. Thus the size and regularity of the perturbation do not deteriorate as \(R_*\to\infty\).</p>
           </div>
         </article>
+        <lean-statement data-statement="uniform-cone-bifurcation"></lean-statement>
       </section>
 
       <section id="phase-story" class="phase-story">
@@ -1418,6 +1449,7 @@
             <p>The scatter plot below is a finite numerical sample of these coincidences. The theorem itself comes from aligning the fixed-order McMahon phase and the large-order Debye phase.</p>
           </div>
         </article>
+        <lean-statement data-statement="near-integer-crossings"></lean-statement>
         <details class="abundance-proof-details proof-details">
           <summary><span>Proof sketch of <a class="xref" data-ref="near-integer-crossings"></a></span><i>expand +</i></summary>
           <div class="proof-argument abundance-proof-argument">
@@ -1563,14 +1595,21 @@
           <p>The animation follows the concrete \(D_{28}\) branch from the noninteger crossing \(R_*=28.026\ldots\) to the closing value \(R=28\). The complete field and its seam-centred one-wavelength collar are global and local views of the same solution; the crop box is enlarged at right in the coordinates \(x=r-R\) and \(\psi=R\phi\).</p>
         </div>
 
-        <figure class="modes-laboratory interactive-plate figure-band" data-figure="global-collar-zoom">
-          <aside class="modes-controls light-controls paper-demo-controls" aria-label="Nested angular zoom controls">
+        <figure class="modes-laboratory interactive-plate figure-band" data-apparatus="visual-aside" data-figure="global-collar-zoom">
+          <section class="modes-plot-panel apparatus-visual" aria-label="Global 28-sector field and one-wavelength collar zoom">
+            <div class="passive-script-targets" hidden aria-hidden="true"><strong id="modesPlotState">28 copies · one wavelength selected</strong></div>
+            <div id="modesCanvasWrap" class="modes-canvas-wrap">
+              <canvas id="modesCanvas" role="img" aria-label="A 28-fold global domain and a seam-centered one-wavelength flat collar zoom"></canvas>
+            </div>
+          </section>
+
+          <aside class="modes-controls apparatus-controls light-controls paper-demo-controls" aria-label="Cone branch controls">
             <div class="control-heading" hidden aria-hidden="true">
               <button id="modesResetButton" type="button" hidden aria-hidden="true">Reset</button>
             </div>
 
-            <div class="modes-control-block">
-              <div class="control-label"><label for="modesTransferRange">cone branch</label><output id="modesTransferValue">62%</output></div>
+            <div class="modes-control-block apparatus-control">
+              <div class="control-label"><label for="modesTransferRange">cone order</label><output id="modesTransferValue">\(R=28.016\)</output></div>
               <input id="modesTransferRange" type="range" min="0" max="1" value="0.62" step="0.002">
               <div class="range-scale"><span>\(R_*\) / open seam</span><span>\(N=28\) / closed</span></div>
               <div class="parameter-pair" hidden aria-hidden="true">
@@ -1613,12 +1652,6 @@
             </div>
           </aside>
 
-          <section class="modes-plot-panel" aria-label="Global 28-sector field and one-wavelength collar zoom">
-            <div class="passive-script-targets" hidden aria-hidden="true"><strong id="modesPlotState">28 copies · one wavelength selected</strong></div>
-            <div id="modesCanvasWrap" class="modes-canvas-wrap">
-              <canvas id="modesCanvas" role="img" aria-label="A 28-fold global domain and a seam-centered one-wavelength flat collar zoom"></canvas>
-            </div>
-          </section>
           <figcaption>The crop box and its connector lines identify the same one-wavelength boundary collar in the global and local views. The missing angular sector is slightly exaggerated so that its closure remains legible.</figcaption>
         </figure>
 
@@ -1690,12 +1723,12 @@
     <script defer src="cone-data.js"></script>
     <script defer src="debye-data.js?v=20260828.1"></script>
     <script defer src="abundance-data.js"></script>
-    <script defer src="app.js?v=20260828.8"></script>
+    <script defer src="app.js?v=20260828.9"></script>
     <script defer src="story.js?v=20260828.6"></script>
     <script defer src="abundance.js?v=20260828.2"></script>
     <script defer src="pompeiu.js?v=20260828.4"></script>
     <script defer src="computer-assisted.js?v=20260828.2"></script>
     <script defer src="applet-layout.js?v=20260828.1"></script>
-    <script defer src="tufte/layout-contract.js?v=20260828.15"></script>
+    <script defer src="tufte/layout-contract.js?v=20260828.18"></script>
   </body>
 </html>

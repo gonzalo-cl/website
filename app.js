@@ -2335,7 +2335,7 @@ function renderModesNestedZoom() {
     centerAngle: cropAngle,
     tangentSpan: Math.PI,
     depth: modesState.depth,
-    title: compact ? "UNWRAPPED COLLAR" : "ONE ANGULAR WAVELENGTH · UNWRAPPED COLLAR",
+    title: compact ? "UNWRAPPED COLLAR" : "ONE-WAVELENGTH COLLAR",
     detail: containsSeam ? `Δξ = ${comparison.phaseDegrees.toFixed(2)}° · SEAM CENTERED` : "ψ-span = 2π · locally flat",
     accent: MODES_COLORS.cyan,
     comparison,
@@ -2369,7 +2369,7 @@ function updateModesReadouts() {
   const cropDegrees = modesState.crop * 360;
   const comparison = modesRadialComparison(solution);
   const phasePercent = comparison.phaseFraction * 100;
-  $("#modesTransferValue").textContent = `${Math.round(modesState.progress * 100)}%`;
+  $("#modesTransferValue").textContent = `R = ${solution.R.toFixed(3)}`;
   $("#modesOrderValue").textContent = solution.R.toFixed(6);
   $("#modesAmplitudeValue").textContent = solution.s.toFixed(4);
   $("#modesCropValue").textContent = modesState.crop < .012 ? "centered on seam" : `${cropDegrees.toFixed(0)}° from seam`;
