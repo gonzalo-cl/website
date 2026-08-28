@@ -2453,9 +2453,8 @@ updateModesComparison();
 const debyeData = window.DEBYE_WIDE_DATA;
 if (debyeData) {
   const debyeState = {
-    radius: 28,
-    playing: false,
-    playFrame: null,
+    radius: debyeData.rReference,
+    mode: 2,
   };
 
   function debyeRadiusIndices(radius) {
@@ -2991,9 +2990,9 @@ if (debyeData) {
     const isWave = series.mode === 1;
     const plot = {
       left: rect.left + 14,
-      top: rect.top + 77,
+      top: rect.top + 43,
       width: rect.width - 28,
-      height: rect.height - 119,
+      height: rect.height - 72,
     };
     const xMap = (x) => plot.left + (x + debyeData.depth) / debyeData.depth * plot.width;
     let yMap;
@@ -3036,9 +3035,9 @@ if (debyeData) {
     seriesList.forEach((series, index) => {
       const panel = panels[index];
       const plotLeft = panel.left + 14;
-      const plotTop = panel.top + 77;
+      const plotTop = panel.top + 43;
       const plotWidth = panel.width - 28;
-      const plotHeight = panel.height - 119;
+      const plotHeight = panel.height - 72;
       setCanvasFormula("#debyeCanvasWrap", `debyeModeFormula${series.mode}`, `k=${series.mode}`, {
         left: panel.left + 14, top: panel.top + 25, color: formulaColor,
       });
@@ -3064,6 +3063,10 @@ if (debyeData) {
         transform: "translateX(-100%)", color: formulaColor,
       });
     });
+    [1, 2, 3, 4].filter((mode) => !seriesList.some((series) => series.mode === mode)).forEach((mode) => {
+      ["debyeModeFormula", "debyeRateFormula", "debyeErrorFormula", "debyeLeftFormula", "debyeRightFormula"]
+        .forEach((prefix) => removeCanvasFormula(`${prefix}${mode}`));
+    });
   }
 
   function renderDebyeComparison() {
@@ -3071,34 +3074,21 @@ if (debyeData) {
     context.clearRect(0, 0, width, height);
     context.fillStyle = SCHIFFER_VISUAL_THEME.background;
     context.fillRect(0, 0, width, height);
-    const compact = width < 620;
     const panels = [];
-    if (compact) {
-      const gap = 12;
-      const panelHeight = (height - gap * 4) / 3;
-      for (let index = 0; index < 3; index++) panels.push({ left: 12, top: gap + index * (panelHeight + gap), width: width - 24, height: panelHeight });
-    } else {
-      const gap = 14;
-      const panelWidth = (width - gap * 4) / 3;
-      for (let index = 0; index < 3; index++) panels.push({ left: gap + index * (panelWidth + gap), top: 18, width: panelWidth, height: height - 36 });
+    const gap = 10;
+    const panelHeight = (height - gap * 3) / 2;
+    for (let index = 0; index < 2; index++) {
+      panels.push({ left: gap, top: gap + index * (panelHeight + gap), width: width - 2 * gap, height: panelHeight });
     }
-    const seriesList = [1, 2, 3].map((mode) => debyeSeries(mode));
+    const seriesList = [1, debyeState.mode].map((mode) => debyeSeries(mode));
     seriesList.forEach((series, index) => debyeDrawPanel(context, panels[index], series));
     updateDebyeCanvasFormulas(panels, seriesList);
-    canvas.setAttribute("aria-label", `At boundary radius ${debyeState.radius.toFixed(2)}, exact regular Bessel modes are compared on a linear scale with their cylinder limits between r zero minus five and r zero. The k equals one Bessel and cylinder profiles both satisfy the Neumann condition at the rim.`);
+    canvas.setAttribute("aria-label", `At boundary radius ${debyeState.radius.toFixed(0)}, the exact k equals one and k equals ${debyeState.mode} Bessel profiles are compared with their half-cylinder limits on the five-unit collar.`);
   }
 
   function updateDebyeReadouts() {
-    const lambda = debyeLambdaAt(debyeState.radius);
-    const rho = debyeRhoAt(debyeState.radius);
-    const alpha2 = Math.sqrt(4 - lambda);
-    const alpha3 = Math.sqrt(9 - lambda);
-    $("#debyeOrderValue").textContent = debyeState.radius.toFixed(2);
-    setMath("#debyeLambdaValue", `\\lambda_R=${lambda.toFixed(5)}`);
-    setMath("#debyePhaseValue", "J_R'(\\rho_R)=0");
-    setMath("#debyeBetaValue", `\\rho_R=${rho.toFixed(5)}`);
-    $("#debyeDecayValue").textContent = `${alpha2.toFixed(4)}, ${alpha3.toFixed(4)}`;
-    $("#debyePlotState").textContent = "exact Bessel samples · Neumann data matched at the boundary";
+    setMath("#debyeModeValue", `k=${debyeState.mode}`);
+    $("#debyePlotState").textContent = `fixed R = 28 · k = 1 and k = ${debyeState.mode}`;
   }
 
   function updateDebyeComparison() {
@@ -3106,52 +3096,10 @@ if (debyeData) {
     renderDebyeComparison();
   }
 
-  function stopDebyePlayback() {
-    debyeState.playing = false;
-    if (debyeState.playFrame) cancelAnimationFrame(debyeState.playFrame);
-    debyeState.playFrame = null;
-    $("#debyePlayIcon").textContent = "▶";
-    setMath("#debyePlayLabel", debyeState.radius > debyeData.rMax - .01
-      ? "\\text{Repeat}"
-      : "\\text{Animate}");
-  }
-
-  function toggleDebyePlayback() {
-    if (debyeState.playing) { stopDebyePlayback(); return; }
-    if (debyeState.radius > debyeData.rMax - .01) debyeState.radius = debyeData.rMin;
-    debyeState.playing = true;
-    $("#debyePlayIcon").textContent = "Ⅱ";
-    $("#debyePlayLabel").textContent = "Pause";
-    const startRadius = debyeState.radius;
-    const start = performance.now();
-    let lastRender = 0;
-    const duration = Math.max(900, 8200 * (debyeData.rMax - startRadius) / (debyeData.rMax - debyeData.rMin));
-    const tick = (now) => {
-      if (!debyeState.playing) return;
-      const amount = Math.min(1, (now - start) / duration);
-      debyeState.radius = interpolateNumber(startRadius, debyeData.rMax, amount);
-      $("#debyeOrderRange").value = debyeState.radius;
-      setRangeFill($("#debyeOrderRange"));
-      if (now - lastRender > 45 || amount >= 1) { updateDebyeComparison(); lastRender = now; }
-      if (amount >= 1) { stopDebyePlayback(); return; }
-      debyeState.playFrame = requestAnimationFrame(tick);
-    };
-    debyeState.playFrame = requestAnimationFrame(tick);
-  }
-
-  setRangeFill($("#debyeOrderRange"));
-  $("#debyeOrderRange").addEventListener("input", (event) => {
-    stopDebyePlayback();
-    debyeState.radius = Number(event.target.value);
+  setRangeFill($("#debyeModeRange"));
+  $("#debyeModeRange").addEventListener("input", (event) => {
+    debyeState.mode = Number(event.target.value);
     setRangeFill(event.target);
-    updateDebyeComparison();
-  });
-  $("#debyePlayButton").addEventListener("click", toggleDebyePlayback);
-  $("#debyeResetButton").addEventListener("click", () => {
-    stopDebyePlayback();
-    debyeState.radius = debyeData.rReference;
-    $("#debyeOrderRange").value = debyeState.radius;
-    setRangeFill($("#debyeOrderRange"));
     updateDebyeComparison();
   });
 

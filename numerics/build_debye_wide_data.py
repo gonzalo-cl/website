@@ -28,7 +28,7 @@ NEUMANN_ROOT_INDEX = 4
 DEPTH = 5.0
 X_SAMPLES = 101
 GLOBAL_Q_SAMPLES = 181
-MODES = (0, 1, 2, 3)
+MODES = (0, 1, 2, 3, 4)
 
 
 def rounded(value):
@@ -147,7 +147,7 @@ def main():
         global_profiles[str(fold_order)] = fold_profiles
 
     payload = {
-        "source": "SciPy evaluation of J_(kR)(q_R r) for k=0,1,2,3, with k=0 phase-normalized and k>=1 rim-normalized, and with q_R R the fourth positive zero of J_R', on a fixed rim collar and whole integer-order disk",
+        "source": "SciPy evaluation of J_(kR)(q_R r) for k=0,1,2,3,4, with k=0 phase-normalized and k>=1 rim-normalized, and with q_R R the fourth positive zero of J_R', on a fixed rim collar and whole integer-order disk",
         "rMin": R_MIN,
         "rMax": R_MAX,
         "rReference": R_REFERENCE,

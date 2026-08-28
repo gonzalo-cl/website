@@ -40,6 +40,13 @@ The mathematical narrative is now:
 4. the computer-assisted validation of the numerical centre;
 5. the cylinder-to-cone bifurcation proof and planar lift.
 
+Within the final proof, each subsection now follows the same editorial order:
+observable numerical or geometric evidence, the precise theorem it suggests,
+and an expandable derivation. The large-cone transfer uses a fixed-radius
+two-panel Bessel comparison in the margin; the branch-family plot introduces
+both the uniform second variation and the near-integer phase argument; the
+separate landing dashboards have been removed from the reading path.
+
 The HTML supplies semantic sections, statements, disclosures, figures and
 controls. Page measures and numbering are owned by
 [tufte/tufte-port.css](tufte/tufte-port.css), so authored content does not

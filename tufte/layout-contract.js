@@ -100,7 +100,15 @@
   window.addEventListener("resize", scheduleMathFit);
   document.fonts?.ready.then(scheduleMathFit);
   const main = document.querySelector("main");
-  if (main) new MutationObserver(scheduleMathFit).observe(main, { childList: true, subtree: true });
+  if (main) {
+    new MutationObserver(scheduleMathFit).observe(main, { childList: true, subtree: true });
+    /* Opening a native disclosure changes the available measure without
+       mutating its descendants. Refit the same semantic displays on toggle;
+       individual proofs never need a mobile equation override. */
+    main.querySelectorAll("details").forEach((details) => details.addEventListener("toggle", () => {
+      requestAnimationFrame(() => window.dispatchEvent(new Event("resize")));
+    }));
+  }
 
   if (!layoutCheckEnabled) return;
 
@@ -121,6 +129,7 @@
     const gutter = parseFloat(rootStyle.getPropertyValue("--measure-gutter")) / 100;
     const figure = parseFloat(rootStyle.getPropertyValue("--measure-figure")) / 100;
     const readingInFigure = parseFloat(rootStyle.getPropertyValue("--measure-reading-in-figure")) / 100;
+    const compactVisual = parseFloat(rootStyle.getPropertyValue("--measure-apparatus-visual-compact")) / 100;
     const mobileNote = parseFloat(rootStyle.getPropertyValue("--measure-mobile-note")) / 100;
     const typeProof = parseFloat(rootStyle.getPropertyValue("--type-proof")) * parseFloat(rootStyle.fontSize);
     const typeCaption = parseFloat(rootStyle.getPropertyValue("--type-caption")) * parseFloat(rootStyle.fontSize);
@@ -229,10 +238,8 @@
       "debye-experiment",
       "phase-story",
       "abundance-experiment",
-      "cone-experiment",
-      "modes-experiment",
     ];
-    const actualProofSectionOrder = Array.from(document.querySelectorAll("#experiment > section[id]"), (section) => section.id);
+    const actualProofSectionOrder = Array.from(document.querySelectorAll("#experiment > section[id]:not([hidden])"), (section) => section.id);
     if (actualProofSectionOrder.length !== expectedProofSectionOrder.length
         || expectedProofSectionOrder.some((id, index) => actualProofSectionOrder[index] !== id)) {
       errors.push("Section V proof subsections do not follow source reading order");
@@ -249,11 +256,9 @@
       ["IV", "The computer-assisted proof", "#computer-assisted-proof", "section"],
       ["V", "The bifurcation proof", "#experiment", "section"],
       ["5.1", "Uniform half-cylinder bifurcation for 2 ≤ λ ≤ 3", "#half-cylinder-strategy", "proof-subsection"],
-      ["5.2", "Large-radius Bessel modes converge to cylinder modes on fixed boundary collars", "#debye-experiment", "proof-subsection"],
-      ["5.3", "Computing along the branch: the variation of R determines the Debye phase", "#phase-story", "proof-subsection"],
-      ["5.4", "Near-integer Bessel crossings make the common-zero condition arbitrarily close to integer order", "#abundance-experiment", "proof-subsection"],
-      ["5.5", "Landing and planar lift: the cone branch reaches integer order and unfolds into the plane", "#cone-experiment", "proof-subsection"],
-      ["5.5.2", "One-wavelength zoom: read the landed solution globally and on its boundary collar", "#modes-experiment", ""],
+      ["5.2", "Transfer from the half-cylinder to large cones", "#debye-experiment", "proof-subsection"],
+      ["5.3", "A visualization of the cone bifurcations", "#phase-story", "proof-subsection"],
+      ["5.4", "Equidistributed phases supply near-integer crossing orders", "#abundance-experiment", "proof-subsection"],
       ["R", "References", "#references", "section"],
     ];
     const headingContract = Array.from(document.querySelectorAll(headingSelector), (heading) => {
@@ -336,18 +341,20 @@
       if (!optionalTitles.includes(title)) errors.push(`missing optional digression: ${title}`);
     });
 
-    const coneSection = document.querySelector("#experiment > #cone-experiment");
-    if (!coneSection?.getClientRects().length) errors.push("the cone continuation is not visible");
-    if (!coneSection?.querySelector(":scope > .abundance-conclusion")) {
-      errors.push("the landing argument is not attached to the continuation section");
+    const transferTheorem = document.querySelector("#debye-experiment > #uniformConeBifurcation.math-statement");
+    const transferAside = document.querySelector("#debye-experiment .debye-lead > .side-applet");
+    const transferVisual = transferAside?.querySelector(":scope > section.stacked-plot");
+    const transferControls = transferAside?.querySelector(":scope > aside");
+    const transferDetails = document.querySelector("#debye-experiment > details.transfer-proof-details");
+    if (!transferTheorem || transferTheorem.classList.length !== 1) {
+      errors.push("Theorem 5.2 is not a direct canonical math statement");
     }
-    const transferTheorem = document.querySelector("#debye-experiment .real-order-bridge");
-    const transferEvidence = document.querySelector("#debye-experiment .debye-conclusion");
-    if (!transferTheorem || !transferEvidence || !(transferEvidence.compareDocumentPosition(transferTheorem) & Node.DOCUMENT_POSITION_FOLLOWING)) {
-      errors.push("the cone transfer theorem appears before its limiting evidence");
+    if (!transferAside || !transferVisual || !transferControls
+        || !(transferVisual.compareDocumentPosition(transferControls) & Node.DOCUMENT_POSITION_FOLLOWING)) {
+      errors.push("Subsection 5.2 does not use the visual-then-controls margin applet grammar");
     }
-    if (document.querySelector("#modes-experiment .collar-limit-argument")) {
-      errors.push("the landing zoom repeats machinery established before the landing");
+    if (!transferDetails || !(transferTheorem.compareDocumentPosition(transferDetails) & Node.DOCUMENT_POSITION_FOLLOWING)) {
+      errors.push("Subsection 5.2 does not place expandable details after its theorem");
     }
     const halfCylinderIntro = document.querySelector("#experiment .half-cylinder-introduction");
     const halfCylinderApplet = halfCylinderIntro?.querySelector(":scope > .side-applet");
@@ -789,7 +796,7 @@
       } else {
         if (controlBox.left < visualBox.right - 1) errors.push(`interactive plate ${index + 1} controls are not to the right of its visual`);
         if (Math.abs(controlBox.top - visualBox.top) > 1) errors.push(`interactive plate ${index + 1} control and visual tops do not align`);
-        const expectedVisualWidth = plateBox.width * reading;
+        const expectedVisualWidth = plateBox.width * (plate.classList.contains("compact-plate") ? compactVisual : reading);
         const expectedControlWidth = plateBox.width * aside;
         const expectedGap = plateBox.width * gutter;
         if (Math.abs(visualBox.width - expectedVisualWidth) > 2) {

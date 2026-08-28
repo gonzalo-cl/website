@@ -81,7 +81,7 @@
   --measure-side-figure-in-margin: 68.75%;
   --measure-apparatus-visual: 55%;
   --measure-apparatus-controls: var(--measure-aside);
-  --measure-apparatus-visual-compact: 55%;
+  --measure-apparatus-visual-compact: 41.25%;
   --measure-apparatus-controls-compact: var(--measure-aside);
   --measure-mobile-note: 95%;
   --measure-mobile-note-inset: 2.5%;
@@ -735,8 +735,30 @@ body.tufte-site main .marginnote.side-applet > .canvas-panel {
   aspect-ratio: 4 / 3;
   grid-template-rows: minmax(0, 1fr) !important;
 }
+body.tufte-site main .marginnote.side-applet > .stacked-plot {
+  height: auto;
+  min-height: 0;
+  aspect-ratio: 4 / 5;
+  grid-template-rows: minmax(0, 1fr) !important;
+  background: transparent !important;
+}
+body.tufte-site main .marginnote.side-applet .debye-canvas-wrap {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  background: transparent;
+}
 body.tufte-site main .marginnote.side-applet > aside.paper-demo-controls {
   padding: .75rem 0 0;
+}
+
+/* A compact plate keeps the canonical figure and aside coordinates while
+   reducing only its visual field. The control rail therefore remains exactly
+   the same width as every other piece of marginalia. */
+body.tufte-site main .compact-plate.interactive-plate {
+  grid-template-columns:
+    minmax(0, var(--measure-apparatus-visual-compact))
+    minmax(0, var(--measure-apparatus-controls-compact));
 }
 
 .membrane-figure {
@@ -962,6 +984,10 @@ body.tufte-site main .proof-details > :not(summary) {
   max-width: var(--measure-reading-in-figure);
   margin-right: 0;
   margin-left: 0;
+}
+body.tufte-site main .proof-details-body > :is(.paper-copy, .math-statement, .data-table) {
+  width: 100%;
+  max-width: 100%;
 }
 
 /* Every details element in the article is a prose disclosure unless it lives
@@ -1611,10 +1637,8 @@ body.tufte-site main .paper-demo-controls .collar-trig-switch button.active {
 }
 
 .cylinder-spectral-seed,
-.real-order-bridge,
 .basis-limit-derivation,
 .angular-quotient-note,
-.near-integer-theorem,
 .abundance-conclusion,
 .abundance-examples {
   background: transparent;
@@ -1623,11 +1647,8 @@ body.tufte-site main .paper-demo-controls .collar-trig-switch button.active {
 .cylinder-seed-copy,
 .cylinder-kernel-bridge,
 .cylinder-journal-note,
-.real-order-bridge > header,
-.real-order-theorem,
 .basis-limit-derivation,
 .angular-quotient-note,
-.near-integer-theorem,
 .abundance-conclusion,
 .abundance-examples > header {
   grid-template-columns: var(--measure-half-reading) var(--measure-reading);
@@ -2113,9 +2134,6 @@ body.tufte-site main :is(
   .proof-argument .tex-display,
   .cylinder-proof-grid .tex-display,
   .collar-limit-argument .tex-display,
-  .uniform-drop-theorem .tex-display,
-  .real-order-theorem .tex-display,
-  .near-integer-theorem .tex-display,
   .abundance-conclusion .tex-display
 ) {
   padding-right: 0 !important;
@@ -2374,6 +2392,7 @@ body > footer {
     width: 100%;
     max-width: 100%;
   }
+  body.tufte-site main .compact-plate.interactive-plate { grid-template-columns: minmax(0, 1fr); }
   body.tufte-site main .statement-sequence > header,
   body.tufte-site main .figure-with-caption > header,
   body.tufte-site main .figure-with-caption > .phase-family-note,
@@ -2514,7 +2533,7 @@ body > footer {
   body.tufte-site main .reading-figure .abundance-plot-panel {
     grid-template-rows: clamp(280px, 54vw, 340px);
   }
-  .cylinder-seed-copy, .cylinder-kernel-bridge, .cylinder-journal-note, .real-order-bridge > header, .real-order-theorem, .basis-limit-derivation, .angular-quotient-note, .near-integer-theorem, .abundance-conclusion, .abundance-examples > header { grid-template-columns: 1fr; }
+  .cylinder-seed-copy, .cylinder-kernel-bridge, .cylinder-journal-note, .basis-limit-derivation, .angular-quotient-note, .abundance-conclusion, .abundance-examples > header { grid-template-columns: 1fr; }
   .site-references ol { width: 100%; max-width: 100%; }
   .site-references li { grid-template-columns: 2rem minmax(0, 1fr); }
   body > footer { grid-template-columns: 1fr; }

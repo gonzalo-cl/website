@@ -952,21 +952,6 @@
       if (lambda < 2 || lambda > 3) continue;
       rows.push({ index, R, rho, lambda, gamma: cylinderLimitGamma(lambda), reference: false });
     }
-    const reference = crossingData.meta?.reference;
-    if (reference
-      && reference.R >= phaseFamilyRMin
-      && reference.R <= phaseFamilyRMax
-      && reference.lambda > 1
-      && reference.lambda < 4) {
-      rows.push({
-        index: -1,
-        R: reference.R,
-        rho: reference.rho,
-        lambda: reference.lambda,
-        gamma: cylinderLimitGamma(reference.lambda),
-        reference: true,
-      });
-    }
     rows.sort((left, right) => left.R - right.R);
     return rows;
   }
@@ -1248,9 +1233,11 @@
   }));
 
   const phaseRange = select("#phaseStoryRange");
-  fillRange(phaseRange);
-  phaseRange.addEventListener("input", (event) => { phaseStoryState.progress = Number(event.target.value); fillRange(event.target); updatePhaseStory(); });
-  select("#phaseStoryResetButton").addEventListener("click", () => { phaseStoryState.progress = 0; phaseRange.value = 0; fillRange(phaseRange); updatePhaseStory(); });
+  if (phaseRange) {
+    fillRange(phaseRange);
+    phaseRange.addEventListener("input", (event) => { phaseStoryState.progress = Number(event.target.value); fillRange(event.target); updatePhaseStory(); });
+    select("#phaseStoryResetButton")?.addEventListener("click", () => { phaseStoryState.progress = 0; phaseRange.value = 0; fillRange(phaseRange); updatePhaseStory(); });
+  }
 
   const phaseFamilyCanvas = select("#phaseFamilyCanvas");
   if (phaseFamilyCanvas) {
@@ -1280,10 +1267,14 @@
   let resizeTimer;
   window.addEventListener("resize", () => {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => { renderGeometryStory(); renderPhaseStory(); renderPhaseFamily(); }, 140);
+    resizeTimer = setTimeout(() => {
+      renderGeometryStory();
+      if (phaseRange) renderPhaseStory();
+      renderPhaseFamily();
+    }, 140);
   });
 
   renderGeometryStory();
-  updatePhaseStory();
+  if (phaseRange) updatePhaseStory();
   renderPhaseFamily();
 })();
