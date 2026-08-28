@@ -2,21 +2,21 @@
   "use strict";
 
   const colors = Object.freeze({
-    heading: "#162831",
-    text: "#31434b",
-    muted: "#607178",
-    accent: "#075760",
-    accentLight: "#dce9e7",
-    soft: "#f3f7f6",
-    rule: "#d4dfdc",
-    ruleDark: "#aebfbb",
-    white: "#ffffff",
+    heading: "#111111",
+    text: "#26241f",
+    muted: "#666158",
+    accent: "#a00000",
+    accentLight: "#f7f4e9",
+    soft: "#ece8dc",
+    rule: "rgba(17, 17, 17, .16)",
+    ruleDark: "rgba(17, 17, 17, .34)",
+    white: "#fffff8",
   });
 
-  const prepareCanvas = (canvas, minimumHeight = 300) => {
+  const prepareCanvas = (canvas) => {
     const rectangle = canvas.getBoundingClientRect();
-    const width = Math.max(280, Math.round(rectangle.width));
-    const height = Math.max(minimumHeight, Math.round(rectangle.height));
+    const width = Math.max(1, Math.round(rectangle.width));
+    const height = Math.max(1, Math.round(rectangle.height));
     const ratio = Math.min(window.devicePixelRatio || 1, 2);
     const pixelWidth = Math.round(width * ratio);
     const pixelHeight = Math.round(height * ratio);
@@ -44,7 +44,7 @@
 
   const drawLabel = (context, text, x, y, options = {}) => {
     context.fillStyle = options.color || colors.muted;
-    context.font = `${options.weight || 600} ${options.size || 12}px Aptos, Segoe UI, Arial, sans-serif`;
+    context.font = `${options.weight || 400} ${options.size || 12}px et-book, Palatino, Georgia, serif`;
     context.textAlign = options.align || "left";
     context.textBaseline = options.baseline || "alphabetic";
     context.fillText(text, x, y);
@@ -160,6 +160,8 @@
 
   const drawBoundary = () => {
     if (!boundaryCanvas) return;
+    const rectangle = boundaryCanvas.getBoundingClientRect();
+    if (rectangle.width < 120 || rectangle.height < 160) return;
     const cutoff = Math.max(1, Math.min(30, Number(boundaryModes?.value || 30)));
     const { context, width, height } = prepareCanvas(boundaryCanvas, 300);
     context.fillStyle = colors.white;
@@ -168,10 +170,10 @@
     const sideBySide = width >= 500;
     const overview = sideBySide
       ? { x: 18, y: 28, width: width * .48, height: height - 60 }
-      : { x: 20, y: 20, width: width - 40, height: Math.min(196, height * .47) };
+      : { x: 20, y: 14, width: width - 40, height: Math.min(width - 40, height * .48) };
     const detail = sideBySide
       ? { x: width * .54, y: 72, width: width * .42, height: 156 }
-      : { x: 20, y: height - 180, width: width - 40, height: 140 };
+      : { x: 20, y: height - 158, width: width - 40, height: 140 };
     const centerX = overview.x + overview.width / 2;
     const centerY = overview.y + overview.height / 2;
     const scale = Math.min(overview.width, overview.height) * .46 / 1.075;
@@ -259,8 +261,8 @@
   };
 
   if (boundaryModes) boundaryModes.addEventListener("input", drawBoundary);
-  drawBoundary();
   observeCanvas(boundaryCanvas, drawBoundary);
+  requestAnimationFrame(drawBoundary);
 
   const certificateCanvas = document.getElementById("certificateCanvas");
   const certificateRadius = document.getElementById("certificateRadius");
@@ -327,6 +329,8 @@
 
   const drawCertificate = () => {
     if (!certificateCanvas) return;
+    const rectangle = certificateCanvas.getBoundingClientRect();
+    if (rectangle.width < 120 || rectangle.height < 160) return;
     const { context, width, height } = prepareCanvas(certificateCanvas, 300);
     context.fillStyle = colors.white;
     context.fillRect(0, 0, width, height);
@@ -427,8 +431,8 @@
   };
 
   if (certificateRadius) certificateRadius.addEventListener("input", updateCertificate);
-  updateCertificate();
   observeCanvas(certificateCanvas, drawCertificate);
+  requestAnimationFrame(updateCertificate);
   const quotientCanvas = document.getElementById("quotientCanvas");
   const quotientStatus = document.getElementById("quotientStatus");
   const quotientButtons = Array.from(document.querySelectorAll("[data-quotient-stage]"));

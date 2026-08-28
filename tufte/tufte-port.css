@@ -1,0 +1,2570 @@
+/*
+ * Tufte port
+ *
+ * The upstream tufte-css stylesheet is loaded before the application's
+ * component styles.  This layer restores its page geometry after those
+ * components have been styled: a 55% reading measure, a 5% gutter, a 40%
+ * margin, and full-width figures for simulations and small multiples.
+ *
+ * Public layout vocabulary:
+ *   main details                 prose disclosure (automatic)
+ *   .marginnote                  marginalia (native Tufte pattern)
+ *   .side-figure                 true aside-size visual, not a full rail
+ *   .side-applet                 interactive figure using that same measure
+ *   .paper-copy                  continuous exposition or derivation
+ *   .math-statement              named mathematical statement
+ *   .small-multiples             a comparison that needs shared width
+ *   .figure-band                 a genuine wide visual
+ *   .reading-figure              a visual constrained to the text measure
+ *   .interactive-plate           apparatus: direct aside + section children
+ *   .paper-demo-controls         compact marginal controls for paper demos
+ *   .data-table                  tabular evidence at reading measure
+ * Geometry belongs to the measure tokens below, never to content instances.
+ */
+
+:root {
+  --ink: #111111;
+  --ink-2: #26241f;
+  --paper: #fffff8;
+  --paper-2: #f7f4e9;
+  --paper-3: #ece8dc;
+  --muted: #666158;
+  --line: rgba(17, 17, 17, 0.2);
+  --line-light: rgba(255, 255, 248, 0.2);
+  --orange: #a00000;
+  --red: #a00000;
+  --teal: #287b7b;
+  --serif: "et-book", Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif;
+  --sans: "et-book", Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif;
+  --mono: "DM Mono", Consolas, "Liberation Mono", Menlo, monospace;
+  /* Type grammar. These are roles, not component-specific sizes. */
+  --type-display: 3.2rem;
+  --type-section: 2.2rem;
+  --type-subsection: 1.7rem;
+  --type-body: 1.4rem;
+  --type-body-current: var(--type-body);
+  --type-proof: 1.2rem;
+  --type-caption: 1.1rem;
+  --type-note: 1rem;
+  --type-label: .78rem;
+  --type-control: .78rem;
+  --type-control-value: 1rem;
+  --type-code: .88rem;
+  --type-math: 1.18rem;
+  --type-display-mobile: 3rem;
+  --type-subsection-mobile: 1.45rem;
+  --type-body-mobile: 1.25rem;
+  --leading-body: 1.43;
+  --leading-proof: 1.62;
+  --leading-caption: 1.55;
+  --layout-max: 1400px;
+  --layout-gutter: 0px;
+  --layout-indent: 0px;
+  /* Page grammar. Components consume these measures; article markup never
+     chooses widths. */
+  --measure-reading: 55%;
+  --measure-margin: 40%;
+  --measure-gutter: 5%;
+  /* Native Tufte marginalia occupy half the reading measure: 27.5% of the
+     page frame. Side figures and applet controls share this one measure. */
+  --measure-aside: 27.5%;
+  --measure-figure: 100%;
+  --measure-reading-in-figure: 55%;
+  --measure-margin-in-figure: 40%;
+  --measure-gutter-in-figure: 5%;
+  --measure-half-reading: 27.5%;
+  --measure-note-in-reading: 50%;
+  --measure-note-offset: -60%;
+  --measure-side-figure-in-reading: var(--measure-note-in-reading);
+  /* A direct child of the 40% margin column needs 68.75% of that column to
+     match the existing native note width: 27.5% of the page frame. */
+  --measure-side-figure-in-margin: 68.75%;
+  --measure-apparatus-visual: 55%;
+  --measure-apparatus-controls: var(--measure-aside);
+  --measure-apparatus-visual-compact: 55%;
+  --measure-apparatus-controls-compact: var(--measure-aside);
+  --measure-mobile-note: 95%;
+  --measure-mobile-note-inset: 2.5%;
+  --layout-prose: var(--measure-reading);
+}
+
+html { font-size: 15px; }
+
+body.tufte-site {
+  box-sizing: content-box;
+  width: 87.5%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding-left: 12.5%;
+  color: var(--ink);
+  background: var(--paper);
+  font-family: var(--serif);
+  counter-reset: sidenote-counter;
+}
+
+body.tufte-site::before {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  inset: 0;
+  background: var(--paper);
+}
+
+.noise { display: none; }
+
+body.tufte-site a { text-decoration-thickness: .05em; text-underline-offset: .12em; }
+body.tufte-site a:hover { color: var(--orange); }
+
+/* A quiet folio replaces the application-like navigation bar. */
+.topbar {
+  min-height: 0;
+  height: auto;
+  display: grid;
+  grid-template-columns: var(--measure-reading);
+  gap: 1rem;
+  align-items: baseline;
+  padding: 1.25rem 0 .85rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.brand {
+  gap: .65rem;
+  font-family: var(--serif);
+  font-size: var(--type-note);
+  font-weight: 400;
+  font-variant: small-caps;
+  letter-spacing: .04em;
+}
+
+.brand svg { width: 1.35rem; height: 1.35rem; }
+.brand svg .accent { stroke: var(--orange); }
+
+/* Contents live in the margin beside the title, where a Tufte page expects
+   navigation and commentary.  It remains collapsible so it never becomes a
+   competing left rail. */
+.site-toc {
+  position: absolute;
+  z-index: 40;
+  top: 7rem;
+  right: max(6.25vw, calc((100vw - 1400px) / 2));
+  bottom: auto;
+  left: auto;
+  width: min(25rem, 31vw);
+  overflow: visible;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.site-toc summary {
+  position: static;
+  min-height: 0;
+  padding: .3rem 0 .55rem;
+  color: var(--muted);
+  background: transparent;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+  font-family: var(--serif);
+  font-size: var(--type-note) !important;
+  font-variant: small-caps;
+  letter-spacing: .04em;
+  text-transform: none;
+}
+
+.site-toc summary i { color: var(--orange); font-family: var(--mono); font-size: var(--type-label); }
+.site-toc nav { border: 0; }
+.site-toc a,
+.site-toc a.toc-subsection,
+.site-toc a.toc-nested {
+  min-height: 0;
+  grid-template-columns: 2.2rem minmax(0, 1fr);
+  padding: .38rem 0;
+  color: var(--muted);
+  background: transparent;
+  border-bottom: 1px solid rgba(17,17,17,.09);
+  font-family: var(--serif);
+  font-size: var(--type-label) !important;
+  line-height: 1.25;
+}
+.site-toc a:hover, .site-toc a:focus-visible { color: var(--ink); background: transparent; }
+.site-toc a b { color: var(--ink); font-family: et-book-roman-old-style, var(--serif); }
+
+main { width: 100%; }
+
+:is(
+  .intro,
+  .story-intro,
+  .linear-rigidity,
+  .borrow-flexibility,
+  .geometric-escape,
+  .computer-assisted-proof,
+  .experiment,
+  .modes-experiment,
+  .phase-story,
+  .debye-experiment,
+  .abundance-experiment,
+  .site-references
+) {
+  width: 100%;
+  padding: 5rem 0 6rem;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+body.tufte-site main > :is(.story-intro, .linear-rigidity, .geometric-escape, .computer-assisted-proof, .experiment, .site-references) {
+  border-top: 1px solid var(--line);
+}
+
+body.tufte-site main :is(.borrow-flexibility, .modes-experiment, .phase-story, .debye-experiment, .abundance-experiment) {
+  border-top: 0;
+}
+
+body.tufte-site main #linear-rigidity > .borrow-flexibility,
+body.tufte-site main #experiment > :is(.debye-experiment, .phase-story, .abundance-experiment, .cone-experiment, .modes-experiment) {
+  padding: 4.75rem 0 0;
+}
+
+body.tufte-site main #experiment > .modes-experiment { padding-bottom: 0; }
+
+/* Canonical Tufte type scale and text measure. */
+.intro {
+  grid-template-columns: minmax(0, 1fr);
+  padding-top: 5rem;
+}
+.intro > * { min-width: 0; }
+.intro-index {
+  width: var(--measure-reading);
+  color: var(--muted);
+  font-family: var(--serif);
+  font-size: var(--type-subsection);
+  font-style: italic;
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.intro h1 {
+  width: var(--measure-reading);
+  max-width: none;
+  margin: 4rem 0 1.5rem;
+  font: 400 var(--type-display)/1 var(--serif);
+  letter-spacing: -.02em;
+}
+
+.intro-bottom { width: var(--measure-reading); }
+.intro-bottom p { width: 100%; max-width: none; margin: 1.4rem 0; }
+
+body.tufte-site main :where(p:not(.eyebrow)) {
+  font-family: var(--serif);
+  font-size: var(--type-body-current);
+  line-height: var(--leading-body);
+}
+
+body.tufte-site main :is(
+  figcaption,
+  .formula-note,
+  .measurement-hint,
+  .applet-instruction,
+  .disk-model-note,
+  .membrane-model-note,
+  .intro-shape small,
+  .disk-sidequest-history p,
+  .phase-family-note,
+  .abundance-provenance
+) {
+  font-size: var(--type-caption) !important;
+  line-height: var(--leading-caption);
+}
+
+body.tufte-site main :is(
+  .proof-argument,
+  .intro-proof-body,
+  .disk-sidequest-proof,
+  .cylinder-proof-grid,
+  .cylinder-proof-scope
+) p:not(.eyebrow) {
+  color: var(--ink);
+  font-size: var(--type-proof) !important;
+  line-height: var(--leading-proof);
+}
+
+body.tufte-site main .world-cards article > p {
+  color: var(--ink);
+  font-size: var(--type-body-current) !important;
+  line-height: var(--leading-body);
+}
+
+body.tufte-site main p > span:has(.katex) {
+  color: inherit;
+  font: inherit;
+}
+
+body.tufte-site h2 {
+  margin: 2.1rem 0 1.4rem;
+  font: italic 400 var(--type-section)/1 var(--serif);
+  letter-spacing: 0;
+}
+
+body.tufte-site h3 {
+  margin: 2rem 0 1.4rem;
+  font: italic 400 var(--type-subsection)/1.05 var(--serif);
+  letter-spacing: 0;
+}
+
+.section-heading {
+  width: var(--measure-reading);
+  display: grid;
+  grid-template-columns: 2.4rem minmax(0, 1fr);
+  gap: .85rem;
+  align-items: start;
+  margin: 0;
+  padding: 0 0 1.35rem;
+}
+
+.section-heading::before {
+  content: attr(data-number);
+  padding-top: .16rem;
+  color: var(--muted);
+  font: 400 var(--type-note)/1 et-book-roman-old-style, var(--serif);
+}
+
+body.tufte-site main .section-heading :is(h2, h3) {
+  max-width: none;
+  margin: 0;
+}
+
+body.tufte-site main .section-heading h2 {
+  font: italic 400 var(--type-section)/1.06 var(--serif);
+}
+
+body.tufte-site main .section-heading h3 {
+  font: italic 400 var(--type-subsection)/1.12 var(--serif);
+}
+
+:is(.intro-copy, .paper-copy) > .section-heading {
+  width: 100%;
+}
+
+/* Vertical rhythm belongs to the section shell, not to whichever content
+   component happens to follow it.  This keeps chapter transitions compact
+   and prevents legacy component margins from stacking with section padding. */
+body.tufte-site main > .intro { padding-bottom: 2rem; }
+body.tufte-site main > .intro + .story-intro { padding-top: 2.75rem; }
+body.tufte-site main .section-heading + :is(
+  .intro-copy,
+  .intro-copy-wide,
+  .borrow-lead,
+  .geometry-lead,
+  .computer-assisted-lead,
+  .computer-assisted-copy,
+  .proof-strategy-lead,
+  .half-cylinder-introduction,
+  .experiment-story-lead,
+  .cone-lead,
+  .modes-lead,
+  .phase-story-lead,
+  .debye-lead,
+  .abundance-lead,
+  .proof-strategy-subheading
+) { margin-top: 0; }
+
+body.tufte-site .cone-experiment { padding-bottom: 2.5rem; }
+body.tufte-site .modes-experiment { padding-top: 2.5rem; border-top: 0; }
+
+body.tufte-site main .phase-story-example-note {
+  width: var(--measure-reading);
+  max-width: var(--measure-reading);
+  margin: 1.5rem 0 3rem;
+  color: var(--muted);
+  font-family: var(--serif);
+  font-size: var(--type-caption);
+  line-height: var(--leading-caption);
+}
+
+.eyebrow {
+  margin: 0 0 .65rem;
+  color: var(--ink);
+  font: 400 var(--type-note)/1.1 var(--serif);
+  font-variant: small-caps;
+  letter-spacing: .06em;
+  text-transform: lowercase;
+}
+
+.equations {
+  grid-column: 2;
+  justify-content: flex-start;
+  margin: .2rem 0 0;
+  color: var(--muted);
+  font-size: var(--type-label);
+}
+
+/* Main measure: the mathematical narrative remains narrow enough to read.
+   Labels, provenance, and theorem metadata occupy the adjacent margin. */
+:is(
+  .intro-copy,
+  .intro-copy-wide,
+  .borrow-lead,
+  .geometry-lead,
+  .computer-assisted-lead,
+  .computer-assisted-copy,
+  .proof-strategy-lead,
+  .half-cylinder-introduction,
+  .experiment-story-lead,
+  .cone-lead,
+  .modes-lead,
+  .phase-story-lead,
+  .debye-lead,
+  .abundance-lead,
+  .proof-strategy-subheading
+) {
+  width: var(--measure-reading);
+  max-width: none;
+  margin-right: 0;
+  margin-left: 0;
+}
+
+.intro-copy { color: var(--ink); }
+.intro-copy h3 { max-width: none; }
+.intro-chapter-heading { margin-top: 4rem; padding-top: 0; }
+
+.story-intro .intro-lead,
+.modes-lead,
+.abundance-lead {
+  width: var(--measure-figure);
+  display: grid;
+  grid-template-columns: var(--measure-reading) var(--measure-margin);
+  gap: var(--measure-gutter);
+  align-items: start;
+  margin-left: 0;
+}
+
+.story-intro .intro-lead > .intro-copy,
+.modes-lead > :first-child,
+.abundance-lead > :first-child { width: 100%; }
+
+/* Canonical mathematical statements.  Problems, definitions, conjectures,
+   propositions, lemmas, corollaries and theorems all use this square frame;
+   only the semantic label changes. */
+.math-statement {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  display: block;
+  margin: 2rem 0;
+  padding: 0;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--ink);
+  border-radius: 0;
+}
+
+.story-intro > .math-statement,
+body.tufte-site main section > .math-statement,
+.statement-sequence > .math-statement {
+  width: var(--measure-reading);
+  max-width: var(--measure-reading);
+}
+
+.math-statement-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .55rem .8rem .5rem;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--serif);
+  font-size: var(--type-label);
+  font-variant: small-caps;
+  letter-spacing: .055em;
+}
+.math-statement-header span { color: var(--orange); }
+.math-statement-header small { color: var(--muted); font-size: var(--type-label); text-align: right; }
+.math-statement-body { padding: 1rem 1.15rem 1.1rem; }
+.math-statement-body > :first-child { margin-top: 0 !important; }
+.math-statement-body > :last-child { margin-bottom: 0 !important; }
+.math-statement-body h3 { margin: 0 0 1rem; }
+body.tufte-site main .math-statement-body p,
+body.tufte-site main .math-statement-body li {
+  width: 100%;
+  max-width: 100%;
+  color: var(--ink);
+  font-size: var(--type-proof) !important;
+  line-height: var(--leading-proof);
+}
+.math-statement-problem .math-statement-body p,
+.math-statement-conjecture .math-statement-body p { font-style: italic; font-size: var(--type-body) !important; }
+
+/* A prose theorem and its machine-readable counterpart are one editorial
+   unit. The pair owns a reading measure; neither the HTML instance nor the
+   Lean registry chooses a width. */
+body.tufte-site main .formal-statement-pair {
+  width: var(--measure-reading);
+  max-width: var(--measure-reading);
+  margin: 3rem 0;
+}
+body.tufte-site main .formal-statement-pair > .math-statement,
+body.tufte-site main .formal-statement-pair > .lean-statement {
+  width: 100%;
+  max-width: 100%;
+}
+body.tufte-site main .formal-statement-pair > .math-statement { margin: 0; }
+
+/* Displayed mathematics in Tufte CSS is part of the text block, not a
+   coloured application card. */
+.schiffer-intro-system {
+  margin: 1.5rem 0;
+  padding: .5rem 0;
+  background: transparent;
+  border: 0;
+}
+
+/* Full-width figures are the visual spine of the article. */
+:is(figure.fullwidth, .figure-band) {
+  width: var(--measure-figure);
+  max-width: var(--measure-figure);
+  margin-right: 0;
+  margin-left: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+figure.fullwidth { clear: both; margin-top: 4rem; margin-bottom: 4rem; }
+
+body.tufte-site main .reading-figure {
+  box-sizing: border-box;
+  width: var(--measure-reading);
+  max-width: var(--measure-reading);
+  margin: 3.5rem 0;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.measurement-figure {
+  display: grid;
+  grid-template-columns: var(--measure-reading) var(--measure-margin);
+  column-gap: var(--measure-gutter);
+  align-items: start;
+}
+.measurement-caption { grid-column: 1; grid-row: 1; width: 100%; max-width: none; margin: 0; }
+.measurement-caption > p:last-child { font-size: var(--type-caption) !important; line-height: var(--leading-caption); }
+.measurement-panel {
+  grid-column: 2;
+  grid-row: 1;
+  width: 100%;
+  height: auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  overflow: visible;
+  background: transparent;
+  border: 0;
+  border-top: 0;
+}
+.measurement-caption,
+.measurement-panel { min-width: 0; }
+.measurement-figure > .side-figure {
+  width: var(--measure-side-figure-in-margin);
+  max-width: var(--measure-side-figure-in-margin);
+  justify-self: start;
+}
+.measurement-canvas {
+  width: 100%;
+  height: auto;
+  border: 0;
+}
+.line-probe-panel .measurement-canvas { aspect-ratio: 4 / 3; }
+.pompeiu-panel .measurement-canvas { aspect-ratio: 1 / 1; }
+.measurement-side { min-height: 0; }
+.measurement-size-control { padding: .85rem 0; }
+.measurement-readout { margin-top: 0; padding: .85rem 0; }
+.pompeiu-identity-readout {
+  gap: .35rem;
+  color: var(--ink);
+}
+.measurement-identity {
+  min-width: 0;
+  max-width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: .12rem .34rem;
+  line-height: 1.28;
+}
+.measurement-identity-relation {
+  flex: 0 0 auto;
+}
+.measurement-identity-value {
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.measurement-identity-secondary {
+  color: var(--muted);
+  line-height: 1.22;
+}
+body.tufte-site main .measurement-identity .katex {
+  font-size: var(--type-caption) !important;
+}
+body.tufte-site main .measurement-identity-secondary .katex {
+  font-size: var(--type-note) !important;
+}
+body.tufte-site main :is(#pompeiuValue, #pompeiuCoefficient) {
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.measurement-hint { min-height: 0; padding: .75rem 0 0; font-family: var(--serif); font-style: italic; }
+.disk-sidequest figure.fullwidth { width: 100%; max-width: 100%; }
+.disk-sidequest .measurement-figure {
+  grid-template-columns: var(--measure-reading-in-figure) var(--measure-margin-in-figure);
+  column-gap: var(--measure-gutter-in-figure);
+}
+
+body.tufte-site main .marginnote.intro-shapes {
+  display: block;
+  width: var(--measure-side-figure-in-reading);
+  max-width: var(--measure-side-figure-in-reading);
+  margin-right: var(--measure-note-offset);
+  margin-top: 0;
+  padding-top: 0;
+  border: 0;
+}
+.intro-shapes-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem .8rem;
+  align-items: start;
+}
+.intro-shapes-examples,
+.intro-shapes-aside,
+.intro-shapes-objects { display: contents; }
+.intro-shapes-aside-copy { display: none; }
+.intro-shape { order: initial; }
+.intro-shape {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 !important;
+  border: 0 !important;
+  text-align: center;
+}
+.intro-shape-media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  margin: 0 0 .4rem;
+  overflow: hidden;
+}
+.intro-shape > svg { display: none; }
+.intro-shape-object .intro-shape-media {
+  width: 100%;
+  margin-bottom: .4rem;
+}
+.intro-shape-domain img,
+.intro-shape-computer .intro-shape-domain img {
+  position: static;
+  width: 92%;
+  height: 92%;
+  margin: 0;
+  object-fit: contain;
+  object-position: center;
+}
+.intro-shape-object .intro-shape-media img {
+  position: absolute;
+  top: var(--gallery-object-y, 50%);
+  right: var(--gallery-object-right, auto);
+  left: var(--gallery-object-left, auto);
+  width: var(--gallery-object-scale, 200%);
+  max-width: none;
+  height: auto;
+  transform: translateY(-50%);
+}
+.intro-shape-media[data-focal-x="left"] { --gallery-object-left: 0; }
+.intro-shape-media[data-focal-x="right"] { --gallery-object-right: 0; }
+.intro-shape-media[data-gallery-crop="biscuit"] { --gallery-object-scale: 200%; }
+.intro-shape-media[data-gallery-crop="coin"] {
+  --gallery-object-scale: 200%;
+}
+.intro-shape-media[data-focal-y="lower"] { --gallery-object-y: 60%; }
+.intro-shape-media[data-gallery-crop="coin"][data-focal-y="lower"] { --gallery-object-y: 54.5%; }
+.intro-shape-kicker,
+.intro-shape small { display: none; }
+.intro-shape b {
+  font: italic 400 var(--type-label)/1.25 var(--serif);
+  text-align: center;
+}
+
+/* A side applet is marginalia with controls.  It inherits the same width and
+   offset as every other native Tufte note; only its contents stack locally. */
+body.tufte-site main .marginnote.side-applet {
+  width: var(--measure-side-figure-in-reading);
+  max-width: var(--measure-side-figure-in-reading);
+  display: block;
+  margin-top: .5rem;
+  padding: 0;
+  background: transparent !important;
+  border: 0 !important;
+}
+body.tufte-site main .side-applet > :is(section, aside, figcaption) {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+}
+body.tufte-site main .side-applet > section { min-height: 0; border: 0; }
+body.tufte-site main .side-applet > section > :is(svg, canvas) { width: 100%; height: auto; }
+body.tufte-site main .side-applet > aside { padding: .7rem 0 0; border: 0; }
+body.tufte-site main .side-applet > figcaption {
+  float: none;
+  padding: .75rem 0 0;
+  color: var(--muted);
+  font-size: var(--type-caption) !important;
+  font-style: italic;
+  line-height: var(--leading-caption) !important;
+}
+
+.membrane-figure {
+  clear: none;
+  display: block;
+  width: var(--measure-reading);
+  max-width: var(--measure-reading);
+  margin: 4rem 0;
+  background: transparent;
+  border: 0;
+}
+.chladni-photo-panel {
+  display: block;
+  margin-top: 4rem;
+  border: 0;
+  border-top: 0;
+}
+.chladni-photo-panel img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 6 / 5;
+  min-height: 0;
+  max-height: none;
+  flex: none;
+  object-fit: cover;
+  object-position: 0 47%;
+  border: 0;
+}
+.chladni-photo-panel figcaption {
+  float: none;
+  clear: none;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: .65rem 0 0;
+  font-size: var(--type-caption) !important;
+  line-height: var(--leading-caption) !important;
+}
+.schiffer-mode-panel {
+  width: 100%;
+  border-top: 0;
+}
+.schiffer-mode-heading { min-height: 0; padding: .85rem 0; border: 0; }
+.schiffer-mode-heading h3 { margin-bottom: 0; }
+.schiffer-mode-panel canvas { background: var(--paper); border: 0; }
+.schiffer-mode-controls { border: 0; border-top: 0; }
+.membrane-model-note { padding: .75rem 0 0; }
+.chladni-photo-panel figcaption,
+.membrane-model-note { font-style: italic; }
+
+.phase-derivation-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+/* A reusable prose-with-margin-figure primitive. Content authors choose the
+   semantic role; the layout layer owns the Tufte geometry and narrow-screen
+   collapse. */
+body.tufte-site main .margin-figure-sequence {
+  width: var(--measure-figure);
+  max-width: var(--measure-figure);
+  display: block;
+  margin: 2.5rem 0 0;
+  border: 0;
+}
+body.tufte-site main .margin-figure-row {
+  display: grid;
+  grid-template-columns: var(--measure-reading) var(--measure-margin);
+  column-gap: var(--measure-gutter);
+  align-items: start;
+  min-height: 0;
+  padding: 1rem 0 2rem;
+  background: transparent;
+  border: 0;
+}
+body.tufte-site main .margin-figure-row + .margin-figure-row {
+  margin-top: 2rem;
+}
+body.tufte-site main .margin-figure-row > :not(.margin-figure) { grid-column: 1; }
+body.tufte-site main .margin-figure-row > :is(h3, p, .tex-display) {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+body.tufte-site main .margin-figure-row > .margin-figure {
+  grid-column: 2;
+  grid-row: 1 / span 20;
+  margin: 0;
+  border: 0;
+  background: transparent;
+}
+body.tufte-site main .margin-figure-row > .side-figure {
+  width: var(--measure-side-figure-in-margin);
+  max-width: var(--measure-side-figure-in-margin);
+  justify-self: start;
+}
+.world-cards { border: 0; }
+.world-cards .world-sketch { height: auto; aspect-ratio: 1.5 / 1; }
+.world-cards .world-sketch { background: transparent; }
+.world-cards .world-branch-control {
+  padding: .75rem 0 0;
+  border: 0;
+  background: transparent;
+}
+.world-cards .world-mode-pair {
+  padding: .7rem 0 0;
+  border: 0;
+}
+.world-cards .world-sketch text:not(.world-domain-label) { display: none; }
+.world-cards article > span { margin-top: 0; }
+.world-cards h3 { font-style: normal; }
+.borrow-lead p + p { margin-top: 1.4rem; }
+
+/* One reset wins over the legacy presentation of every statement kind. New
+   theorem names never need to be added to a selector list. */
+.math-statement.math-statement {
+  display: block;
+  grid-template-columns: none;
+  gap: 0;
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--ink);
+}
+
+.disk-sidequest {
+  margin: 4rem 0;
+  border: 0;
+}
+.disk-sidequest > summary {
+  box-sizing: border-box;
+  padding: 1rem 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  font-family: var(--serif);
+}
+.disk-sidequest > summary span { font-size: var(--type-body); font-style: italic; }
+.disk-sidequest > summary small { font-size: var(--type-label); font-style: normal; font-variant: small-caps; }
+.disk-sidequest-body { padding: 2rem 0; }
+.disk-sidequest .intro-copy { width: var(--measure-reading-in-figure); }
+.disk-sidequest-proof { width: var(--measure-reading-in-figure); max-width: none; }
+.applet-instruction {
+  width: var(--measure-reading-in-figure);
+  margin: 0 0 2rem;
+  color: var(--muted);
+  font-size: var(--type-caption) !important;
+  font-style: italic;
+  line-height: 1.5 !important;
+}
+.disk-proof-flow .pompeiu-margin-figure { margin-top: .2rem; }
+.disk-proof-flow .disk-sidequest-proof {
+  width: 100%;
+  max-width: 100%;
+  margin-top: 2rem;
+  padding-top: 0;
+  border-top: 0;
+}
+.disk-model-note { color: var(--muted); font-size: var(--type-caption) !important; line-height: var(--leading-caption) !important; }
+.pompeiu-margin-figure .measurement-panel {
+  width: 100%;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* One margin primitive.  It is valid only inside the canonical reading
+   measure (55% of a page, or 61.111% inside a 90%-wide container). */
+body.tufte-site main .marginnote {
+  box-sizing: border-box;
+  float: right;
+  clear: right;
+  position: relative;
+  width: var(--measure-note-in-reading);
+  max-width: var(--measure-note-in-reading);
+  margin: .3rem var(--measure-note-offset) 1.25rem 0;
+  padding: .55rem 0 0;
+  color: var(--muted);
+  background: transparent;
+  border-top: 1px solid var(--line);
+  border-right: 0;
+  border-bottom: 0;
+  border-left: 0;
+  font-family: var(--serif);
+  font-size: var(--type-caption) !important;
+  line-height: 1.4 !important;
+}
+body.tufte-site main .marginnote :is(p, figcaption) {
+  width: 100%;
+  max-width: 100%;
+  margin: .65rem 0 0;
+  font-size: var(--type-caption) !important;
+  line-height: 1.42 !important;
+}
+body.tufte-site main .marginnote.side-figure {
+  padding-top: 0;
+  border-top: 0;
+}
+body.tufte-site main .marginnote > strong:first-child {
+  display: block;
+  color: var(--ink);
+  font-weight: 400;
+  font-variant: small-caps;
+  letter-spacing: .045em;
+}
+
+.intro-proof { margin-left: 0; }
+.intro-proof-body, .proof-argument { width: var(--measure-reading-in-figure); max-width: var(--measure-reading-in-figure); margin-left: 0; }
+.proof-details { border-color: var(--line); }
+.proof-details > summary { font-family: var(--serif); font-variant: small-caps; text-transform: none; }
+body.tufte-site main details.optional-digression > summary > span {
+  display: grid;
+  gap: .2rem;
+  font-style: italic;
+  font-variant: normal;
+}
+body.tufte-site main details.optional-digression > summary small {
+  display: block;
+  color: var(--orange);
+  font-family: var(--serif);
+  font-size: var(--type-label) !important;
+  font-style: normal;
+  font-variant: small-caps;
+  letter-spacing: .055em;
+  line-height: 1.2;
+}
+body.tufte-site main .proof-details > :not(summary) {
+  box-sizing: border-box;
+  width: var(--measure-reading-in-figure);
+  max-width: var(--measure-reading-in-figure);
+  margin-right: 0;
+  margin-left: 0;
+}
+
+/* Every details element in the article is a prose disclosure unless it lives
+   inside an apparatus. The content layer supplies only native semantics; this
+   presentation layer owns the measure and rules automatically. */
+body.tufte-site main details:not(.secondary-controls) {
+  box-sizing: border-box;
+  width: var(--measure-figure);
+  max-width: var(--measure-figure);
+  border: 0;
+}
+body.tufte-site main details:not(.secondary-controls) > summary {
+  box-sizing: border-box;
+  width: var(--measure-reading-in-figure);
+  max-width: var(--measure-reading-in-figure);
+  margin: 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  font-family: var(--serif);
+  font-variant: small-caps;
+  text-transform: none;
+}
+body.tufte-site main details:not(.secondary-controls)[open] > summary { border-bottom: 1px solid var(--line); }
+
+/* Formalization disclosures live wherever the corresponding prose statement
+   lives. Their full local width is therefore inherited from the prose layer;
+   authors never choose a page measure when adding Lean source. */
+body.tufte-site main details.lean-statement {
+  width: 100%;
+  max-width: 100%;
+  margin: 1.25rem 0 1.8rem;
+  border: 1px solid var(--line);
+}
+body.tufte-site main details.lean-statement > summary {
+  width: 100%;
+  max-width: 100%;
+  padding: .65rem .8rem;
+  border: 0;
+  font-family: var(--mono);
+  font-variant: normal;
+}
+body.tufte-site main details.lean-statement[open] > summary { border-bottom: 1px solid var(--line); }
+body.tufte-site main details.lean-statement > .lean-statement-body {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 1rem 1.1rem 1.1rem;
+}
+
+/* The laboratories share one composition contract: numerical image on the
+   reading side, apparatus on the right.  Keeping the placement here (rather
+   than in each applet) makes it difficult for a new control rail to drift
+   back into the prose column. */
+.interactive-plate {
+  display: grid;
+  grid-template-columns: minmax(0, var(--measure-apparatus-visual)) minmax(0, var(--measure-apparatus-controls));
+  grid-template-areas:
+    "visual controls"
+    "caption .";
+  column-gap: var(--measure-gutter);
+  align-items: start;
+  margin-top: 3rem;
+  background: transparent;
+  border: 0 !important;
+  box-shadow: none;
+}
+
+.interactive-plate > aside {
+  grid-area: controls;
+  min-width: 0;
+  padding: 0 0 0 1.5rem;
+  color: var(--ink);
+  background: transparent !important;
+  border-top: 0;
+  border-right: 0;
+  border-left: 0;
+}
+
+.interactive-plate > section {
+  grid-area: visual;
+  min-width: 0;
+  color: var(--ink);
+  background: var(--paper) !important;
+  border: 0 !important;
+  box-shadow: none;
+}
+
+body.tufte-site main .interactive-plate > figcaption {
+  grid-area: caption;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: .8rem 0 0;
+  color: var(--muted);
+  font-size: var(--type-caption) !important;
+  font-style: italic;
+  line-height: var(--leading-caption) !important;
+}
+
+:is(.geometry-laboratory, .laboratory, .modes-laboratory, .phase-story-lab, .debye-laboratory, .abundance-laboratory) {
+  border: 0 !important;
+  background: transparent;
+}
+
+/* Plotting fields are paper, not miniature applications.  A figure gets one
+   visual ground and an optional margin apparatus; nested cards and dark slabs
+   are forbidden by this shared reset. */
+body.tufte-site main :is(
+  .geometry-canvas-panel,
+  .canvas-panel,
+  .modes-plot-panel,
+  .phase-story-plot,
+  .phase-family-canvas-wrap,
+  .phase-family > footer,
+  .collar-field-visual,
+  .collar-field-canvas-wrap,
+  .debye-plot-panel,
+  .debye-canvas-wrap,
+  .abundance-plot-panel,
+  .abundance-canvas-wrap,
+  .three-wrap
+) {
+  --line-light: var(--line);
+  color: var(--ink) !important;
+  background: var(--paper) !important;
+  border-right: 0;
+  border-left: 0;
+  box-shadow: none;
+}
+body.tufte-site main :is(
+  .geometry-canvas-panel,
+  .canvas-panel,
+  .modes-plot-panel,
+  .phase-story-plot,
+  .phase-family-canvas-wrap,
+  .phase-family > footer,
+  .collar-field-visual,
+  .debye-plot-panel,
+  .abundance-plot-panel
+) :is(strong, span, p, label, .canvas-tex-label) { color: var(--ink); }
+body.tufte-site main :is(.canvas-tex-label, .three-loading) { color: var(--muted) !important; }
+body.tufte-site main .passive-script-targets { display: none !important; }
+body.tufte-site main .view-switch { padding: 0; border: 0; border-radius: 0; }
+body.tufte-site main .view-button { color: var(--muted); border-radius: 0; }
+body.tufte-site main .view-button.active {
+  color: var(--ink);
+  background: transparent;
+  box-shadow: inset 0 -1px 0 var(--ink);
+}
+body.tufte-site main .play-button {
+  border-right: 0;
+  border-left: 0;
+}
+
+body.tufte-site main :is(
+  .control-heading,
+  .control-block,
+  .modes-control-block,
+  .debye-control-block,
+  .collar-field-control-block,
+  .solver-readout div,
+  .modes-status div,
+  .phase-story-readout div,
+  .collar-field-readout div,
+  .debye-status div,
+  .parameter-pair,
+  .crossing-card,
+  .crossing-card > div,
+  .fixed-zoom-pair,
+  .problem-map,
+  .phase-agreement
+) {
+  border-right: 0 !important;
+  border-bottom: 0 !important;
+  border-left: 0 !important;
+}
+
+body.tufte-site main :is(
+  .canvas-toolbar,
+  .geometry-toolbar,
+  .modes-plot-toolbar,
+  .debye-plot-toolbar,
+  .axis-footer,
+  .phase-family > footer
+) {
+  padding-right: 0;
+  padding-left: 0;
+  background: transparent !important;
+  border-top: 0 !important;
+  border-right: 0 !important;
+  border-bottom: 0 !important;
+  border-left: 0 !important;
+}
+
+body.tufte-site main .control-heading-reset {
+  justify-content: flex-end;
+}
+
+/* The continuation was historically hidden, so its legacy dark-theme ink
+   never passed through the paper normalization. Treat its explanatory
+   pieces as the same prose, apparatus and caption roles used elsewhere. */
+body.tufte-site main .cone-lead > p span { color: inherit; font: inherit; }
+body.tufte-site main .candidate-stamp { border-color: var(--line); }
+body.tufte-site main .candidate-stamp small,
+body.tufte-site main .candidate-stamp a,
+body.tufte-site main .crossing-card span { color: var(--muted); }
+body.tufte-site main .candidate-stamp strong,
+body.tufte-site main .crossing-card strong { color: var(--ink); }
+body.tufte-site main .crossing-card p {
+  color: var(--ink);
+  font-size: var(--type-caption) !important;
+  line-height: var(--leading-caption);
+}
+body.tufte-site main .cone-view-notes {
+  width: var(--measure-figure);
+  max-width: var(--measure-figure);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--measure-gutter-in-figure);
+  margin-top: 1.5rem;
+  border: 0;
+}
+body.tufte-site main .cone-note {
+  min-height: 0;
+  padding: 1rem 0 0;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--line);
+  box-shadow: none;
+}
+body.tufte-site main .cone-note:hover,
+body.tufte-site main .cone-note.active { background: transparent; box-shadow: none; }
+body.tufte-site main .cone-note.active { border-top-color: var(--orange); }
+body.tufte-site main .cone-note > span { margin-bottom: .75rem; color: var(--orange); }
+body.tufte-site main .cone-note strong { color: var(--ink); font-size: var(--type-subsection); }
+body.tufte-site main .cone-note p {
+  color: var(--muted);
+  font-size: var(--type-caption) !important;
+  line-height: var(--leading-caption);
+}
+
+/* Explanatory prose already precedes these laboratories. Inside the figure,
+   keep only what is needed to operate it. */
+:is(.controls .control-block, .modes-controls .modes-control-block, .debye-controls .debye-control-block, .collar-field-controls .collar-field-control-block) > p {
+  display: none;
+}
+
+.laboratory { min-height: 0; }
+.canvas-panel { min-height: 0; grid-template-rows: 48px clamp(300px, 39vw, 550px) 30px; }
+body.tufte-site main .laboratory:not(.cone-laboratory) .canvas-panel {
+  grid-template-rows: clamp(230px, 22vw, 320px);
+}
+.canvas-toolbar { padding-right: 1rem; padding-left: 1rem; }
+.geometry-stages button small { display: none; }
+.geometry-stages {
+  margin-top: 0;
+  border-top: 0;
+  overflow: hidden;
+}
+.geometry-stages button {
+  box-sizing: border-box;
+  grid-template-rows: auto;
+  min-width: 0;
+  padding: .58rem 0;
+  overflow: hidden;
+  border-bottom: 0;
+}
+.geometry-stages button :is(strong, small) {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.geometry-stages button + button { margin-top: .15rem; }
+.geometry-stages button.active strong { text-decoration: underline; text-decoration-thickness: .05em; text-underline-offset: .18em; }
+.geometry-stage-note {
+  margin: 1rem 0 1.15rem;
+  color: var(--muted);
+  font-family: var(--serif);
+  font-size: var(--type-caption) !important;
+  font-style: italic;
+  line-height: var(--leading-caption);
+}
+.geometry-scrub output { display: none; }
+
+body.tufte-site main .geometry-laboratory {
+  column-gap: var(--measure-gutter);
+}
+body.tufte-site main .geometry-laboratory > aside { padding: 0; }
+body.tufte-site main .geometry-laboratory > section { align-self: start; }
+body.tufte-site main .geometry-canvas-panel {
+  grid-template-rows: clamp(340px, 36vw, 560px);
+}
+body.tufte-site main .geometry-canvas-wrap {
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* The compact one-parameter plots use the same orientation, but retain a
+   visible gutter so their readouts read as annotations rather than a panel. */
+.phase-story-lab,
+.debye-laboratory {
+  column-gap: var(--measure-gutter-in-figure);
+  min-height: 0;
+  border: 0;
+}
+.debye-laboratory { background: transparent !important; }
+.phase-story-lab > aside,
+.debye-controls {
+  padding: 0;
+  border: 0;
+  border-top: 1px solid var(--ink);
+}
+.debye-controls { color: var(--ink); background: var(--paper) !important; }
+.debye-controls :is(label, span, strong, p) { color: var(--ink) !important; }
+.debye-controls input[type="range"] { background: linear-gradient(90deg, var(--orange), rgba(17,17,17,.14)); }
+.debye-controls .debye-status span { color: var(--muted) !important; }
+.phase-story-plot,
+.debye-plot-panel { border: 0; }
+.phase-story-plot { min-height: 0; grid-template-rows: clamp(320px, 34vw, 440px); }
+.debye-plot-panel { min-height: 0; grid-template-rows: clamp(390px, 40vw, 570px); }
+.phase-story-control, .debye-control-block { padding: 1.25rem 0; }
+.phase-story-readout { margin-top: 1rem; }
+
+/* The collar comparison uses the same visual + margin-apparatus primitive as
+   every other lab. The original three views occupy three cells; the fourth
+   holds a long half-cylinder at the complete disk's geometric scale. */
+.collar-field-laboratory {
+  border: 0;
+  background: transparent;
+}
+body.tufte-site main .collar-field-laboratory {
+  --line-light: var(--line);
+  color: var(--ink);
+  background: transparent !important;
+}
+.collar-field-controls {
+  grid-column: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  align-items: stretch;
+  padding: 1rem 0 0 1.5rem;
+  color: var(--ink);
+  background: transparent !important;
+  border-right: 0;
+  border-top: 1px solid var(--ink);
+  border-left: 1px solid var(--line);
+}
+.collar-field-controls .control-heading { align-self: stretch; padding: 0 0 1rem; }
+.collar-field-control-block { align-self: stretch; padding: 1rem 0; border-bottom: 1px solid var(--line); }
+body.tufte-site main .collar-field-controls :is(label, span, strong, button) { color: var(--ink); }
+.collar-field-controls input[type="range"] { background: linear-gradient(90deg, var(--orange), rgba(17,17,17,.14)); }
+.collar-field-readout { margin-top: 0; padding-top: 1rem; }
+.collar-field-readout div { padding: .3rem 0; border-color: var(--line); }
+.collar-field-readout span { color: var(--muted); }
+.collar-field-readout strong { color: var(--ink); }
+.collar-field-visual {
+  display: grid;
+  grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr);
+  align-items: start;
+}
+.collar-field-canvas-wrap {
+  min-width: 0;
+  contain: size layout paint;
+}
+.collar-field-canvas-wrap canvas {
+  min-width: 0;
+  max-width: 100%;
+}
+.collar-field-canvas-cell {
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.collar-half-cylinder-wrap {
+  min-height: 1px;
+  background: transparent !important;
+}
+.collar-field-laboratory .collar-field-visual > .collar-field-panel {
+  margin: 0;
+  padding: 0;
+  grid-template-rows: 48px clamp(220px, 22vw, 310px);
+  border: 0;
+}
+.collar-field-panel:nth-child(even) { border-left: 1px solid var(--line); }
+.collar-field-panel:nth-child(n+3) { border-top: 1px solid var(--line); }
+.collar-field-panel > header { padding: .85rem 1rem; border-bottom: 1px solid var(--line); }
+.collar-field-panel > header > span {
+  display: block;
+  margin-bottom: 0;
+  color: var(--orange);
+  font-family: var(--mono);
+  font-size: var(--type-label);
+  letter-spacing: .055em;
+  text-transform: uppercase;
+}
+.collar-field-panel > header > strong {
+  display: none;
+  overflow: hidden;
+  color: var(--ink);
+  font: 400 var(--type-label)/1.3 var(--mono);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.collar-field-panel > footer { border-top: 1px solid var(--line); }
+.collar-field-caption {
+  grid-column: auto;
+  width: 100%;
+  max-width: 100%;
+  padding: .8rem 0 0;
+  color: var(--muted) !important;
+  background: transparent !important;
+  border: 0;
+  font-family: var(--serif);
+  font-style: italic;
+}
+.collar-crop-key { display: flex; align-items: center; gap: .35rem; }
+.collar-crop-key i {
+  width: .75rem;
+  height: .48rem;
+  display: inline-block;
+  border: 1px solid #72c9c6;
+}
+.collar-zoom-connectors { display: none; }
+
+/* The global/local cone view uses the canonical apparatus rail too. */
+.modes-laboratory {
+  min-height: 0;
+}
+.modes-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: rgba(255,255,255,.2);
+}
+.modes-controls > * { grid-column: auto; }
+.modes-control-block { min-width: 0; padding: 1.15rem 0; }
+.modes-control-block .problem-map { grid-template-columns: 1fr auto 1fr; }
+.modes-controls :is(.problem-map, .phase-law) { display: none; }
+.modes-controls .phase-track { margin-top: 1.25rem; }
+.modes-plot-panel { min-height: 0; grid-template-rows: clamp(400px, 48vw, 680px); }
+.geometry-canvas-panel { min-height: 0; }
+.abundance-plot-panel { min-height: 0; grid-template-rows: clamp(380px, 46vw, 620px); }
+.abundance-laboratory { min-height: 0; }
+body.tufte-site main .reading-figure .abundance-plot-panel {
+  grid-template-rows: clamp(320px, 28vw, 380px);
+}
+body.tufte-site main .reading-figure > figcaption {
+  float: none;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: .8rem 0 0;
+  color: var(--muted);
+  font-size: var(--type-caption) !important;
+  font-style: italic;
+  line-height: var(--leading-caption) !important;
+}
+body.tufte-site main .cone-canvas-panel {
+  grid-template-rows: clamp(300px, 39vw, 550px);
+}
+body.tufte-site main .cone-view-switch {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: .25rem .65rem;
+  margin: 0 0 .45rem;
+}
+body.tufte-site main .cone-view-switch .view-button {
+  padding: .2rem 0;
+  border: 0;
+  border-bottom: 1px solid transparent;
+}
+body.tufte-site main .cone-view-switch .view-button.active {
+  border-bottom-color: var(--orange);
+  box-shadow: none;
+}
+
+/* Paper demonstrations keep only the manipulable variables and, when useful,
+   one concise action. Explanatory prose lives in captions and surrounding
+   text; hidden script targets remain available to the applet code. */
+body.tufte-site main .paper-demo-controls {
+  box-sizing: border-box;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .65rem;
+  align-items: stretch;
+  padding: .1rem 0 0 1.25rem;
+  color: var(--ink);
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+body.tufte-site main .shape-variation-controls.paper-demo-controls {
+  padding-top: 0;
+}
+body.tufte-site main .paper-demo-controls > * {
+  min-width: 0;
+  max-width: 100%;
+}
+body.tufte-site main .paper-demo-controls .control-heading {
+  min-height: 0;
+  justify-content: flex-start;
+  padding: 0;
+  border: 0 !important;
+}
+body.tufte-site main .paper-demo-controls .control-heading:empty,
+body.tufte-site main .paper-demo-controls .control-heading:has(> [hidden]:only-child) {
+  display: none;
+}
+body.tufte-site main .paper-demo-controls .control-heading > span,
+body.tufte-site main .paper-demo-controls :is(
+  .variation-equation,
+  .variation-equation-label,
+  .variation-legend,
+  .geometry-stage-note,
+  .solver-readout,
+  .crossing-card,
+  .parameter-pair,
+  .fixed-zoom-pair,
+  .problem-map,
+  .phase-law,
+  .phase-agreement,
+  .collar-field-readout,
+  .collar-field-locator,
+  .debye-status,
+  .phase-story-readout,
+  .modes-status
+) {
+  display: none !important;
+}
+body.tufte-site main .paper-demo-controls p:not([hidden]) {
+  display: none;
+}
+body.tufte-site main .paper-demo-controls :is(
+  .control-block,
+  .modes-control-block,
+  .debye-control-block,
+  .collar-field-control-block,
+  .phase-story-control
+) {
+  align-self: stretch;
+  padding: .45rem 0;
+  border: 0 !important;
+  background: transparent !important;
+}
+body.tufte-site main .paper-demo-controls .control-label,
+body.tufte-site main .paper-demo-controls .variation-control-label {
+  gap: .75rem;
+  margin-bottom: .35rem;
+}
+body.tufte-site main .paper-demo-controls :is(.range-scale, .variation-slider-scale) {
+  margin-top: .25rem;
+  font-family: var(--mono);
+  font-size: var(--type-label) !important;
+  line-height: 1.25;
+}
+body.tufte-site main .paper-demo-controls :is(input[type="range"], .variation-slider-track) {
+  margin: 0;
+}
+body.tufte-site main .paper-demo-controls .play-button {
+  align-self: start;
+  min-height: 0;
+  margin: .2rem 0 0;
+  padding: .35rem 0;
+  color: var(--ink) !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+body.tufte-site main .paper-demo-controls .secondary-controls {
+  margin: 0;
+  padding: 0;
+  border: 0 !important;
+}
+body.tufte-site main .paper-demo-controls .secondary-controls > summary {
+  width: 100%;
+  min-height: 0;
+  padding: .35rem 0;
+  color: var(--muted);
+  border: 0 !important;
+}
+body.tufte-site main .paper-demo-controls .geometry-stages {
+  display: flex;
+  flex-direction: column;
+  gap: .1rem;
+  margin: 0;
+  border: 0 !important;
+}
+body.tufte-site main .paper-demo-controls .geometry-stages button {
+  grid-template-columns: 1.75rem minmax(0, 1fr);
+  gap: .45rem;
+  padding: .28rem 0;
+  color: var(--ink);
+  background: transparent;
+  border: 0 !important;
+}
+body.tufte-site main .paper-demo-controls .geometry-stages button strong {
+  line-height: 1.25;
+}
+body.tufte-site main .paper-demo-controls .geometry-scrub {
+  margin-top: .2rem;
+}
+body.tufte-site main .paper-demo-controls .collar-trig-switch {
+  gap: .3rem;
+  justify-content: flex-start;
+}
+body.tufte-site main .paper-demo-controls .collar-trig-switch button {
+  flex: 0 0 auto;
+  min-height: 0;
+  min-width: 2.6rem;
+  padding: .2rem .2rem .15rem;
+  background: transparent;
+  border: 0 !important;
+  border-bottom: 1px solid transparent !important;
+  box-shadow: none !important;
+}
+body.tufte-site main .paper-demo-controls .collar-trig-switch button.active {
+  border-bottom-color: var(--orange) !important;
+}
+
+:is(.geometry-canvas-panel, .canvas-panel, .modes-plot-panel, .phase-story-plot, .debye-plot-panel, .abundance-plot-panel) {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.control-heading > span,
+.control-label,
+.play-button,
+.geometry-stages button strong,
+  .geometry-stages button small,
+  .measurement-size-control label,
+  .measurement-range-scale {
+  font-family: var(--mono);
+  font-size: var(--type-label) !important;
+}
+
+.cylinder-spectral-seed,
+.real-order-bridge,
+.basis-limit-derivation,
+.angular-quotient-note,
+.near-integer-theorem,
+.abundance-conclusion,
+.abundance-examples {
+  background: transparent;
+}
+
+.cylinder-seed-copy,
+.cylinder-kernel-bridge,
+.cylinder-journal-note,
+.real-order-bridge > header,
+.real-order-theorem,
+.basis-limit-derivation,
+.angular-quotient-note,
+.near-integer-theorem,
+.abundance-conclusion,
+.abundance-examples > header {
+  grid-template-columns: var(--measure-half-reading) var(--measure-reading);
+  gap: var(--measure-gutter);
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.proof-strategy-lead { padding-left: 0; border-left: 0; }
+.phase-story .section-heading { margin-left: 0; }
+
+/* -----------------------------------------------------------------------
+   Editorial roles
+
+   The legacy site supplied dozens of component layouts. The Tufte edition
+   deliberately normalizes them one layer higher: content chooses a semantic
+   role and this layer chooses measure, rules, spacing, and type. No named
+   subsection below is allowed to invent its own page width.
+   ----------------------------------------------------------------------- */
+
+/* Continuous exposition and derivation. */
+body.tufte-site main .paper-copy {
+  box-sizing: border-box;
+  width: var(--measure-reading);
+  max-width: var(--measure-reading);
+  display: block;
+  margin: 3rem 0;
+  padding: 0;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+}
+
+body.tufte-site main .paper-copy > span:first-child {
+  display: block;
+  margin: 0 0 1rem;
+  padding-top: .65rem;
+  color: var(--orange);
+  border-top: 1px solid var(--line);
+  font-family: var(--serif);
+  font-size: var(--type-label);
+  font-variant: small-caps;
+  letter-spacing: .055em;
+  text-transform: none;
+}
+
+body.tufte-site main .paper-copy > div { min-width: 0; width: 100%; max-width: 100%; }
+body.tufte-site main .paper-copy h3 { margin: 0 0 1.25rem; }
+body.tufte-site main .paper-copy p:not(.eyebrow) {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 0 1rem;
+  color: var(--ink);
+  font-size: var(--type-proof) !important;
+  line-height: var(--leading-proof);
+}
+
+body.tufte-site main .paper-copy .tex-display {
+  max-width: 100%;
+  margin: 1.15rem 0;
+  padding: .35rem 0;
+  background: transparent;
+  border: 0;
+}
+
+/* Leads are still exposition, but use the main reading voice. */
+body.tufte-site main :is(
+  .phase-story-lead,
+  .debye-lead,
+  .abundance-lead
+).paper-copy p:not(.eyebrow) {
+  font-size: var(--type-body) !important;
+  line-height: var(--leading-body);
+}
+
+body.tufte-site main .abundance-lead.paper-copy { display: block; }
+body.tufte-site main .abundance-lead.paper-copy p + p { margin-top: 1.5rem; }
+
+/* Long calculations read downward. Their numbered steps are landmarks, not
+   cards, and their equations retain the text measure. */
+body.tufte-site main .derivation-sequence { display: block; }
+body.tufte-site main .derivation-sequence article {
+  min-height: 0;
+  padding: 2rem 0 0;
+  border: 0;
+}
+body.tufte-site main .derivation-sequence article + article { margin-top: 1.5rem; }
+body.tufte-site main .derivation-sequence article > span {
+  display: block;
+  color: var(--orange);
+  font-family: var(--serif);
+  font-size: var(--type-label);
+  font-variant: small-caps;
+  letter-spacing: .055em;
+  text-transform: none;
+}
+body.tufte-site main .derivation-sequence .phase-tex {
+  margin: 1.15rem 0;
+  padding: .35rem 0;
+  background: transparent;
+  border: 0;
+}
+
+/* A small multiple earns the wide measure only when juxtaposition carries
+   information. It gets hairlines, never dashboard card chrome. */
+body.tufte-site main .small-multiples {
+  box-sizing: border-box;
+  width: var(--measure-figure);
+  max-width: var(--measure-figure);
+  margin: 3.5rem 0;
+  color: var(--ink);
+  background: transparent;
+  border-right: 0;
+  border-left: 0;
+}
+
+body.tufte-site main .cylinder-spectral-seed.paper-copy {
+  width: var(--measure-reading);
+  max-width: var(--measure-reading);
+  margin: 3rem 0;
+  border-top: 0;
+  border-bottom: 0;
+}
+body.tufte-site main .cylinder-seed-copy {
+  width: 100%;
+  display: block;
+  padding: 0;
+}
+body.tufte-site main .cylinder-seed-copy > p:last-child {
+  max-width: 100%;
+  margin: 0;
+  color: var(--ink);
+  font-size: var(--type-proof) !important;
+  line-height: var(--leading-proof);
+}
+body.tufte-site main .cylinder-mode-pair {
+  display: block;
+  margin: 1.25rem 0 0;
+  border-top: 0;
+  border-bottom: 0;
+}
+body.tufte-site main .cylinder-mode-pair article {
+  min-width: 0;
+  padding: 0;
+  border: 0;
+}
+body.tufte-site main .cylinder-mode-pair article + article {
+  margin-top: 1.5rem;
+  border: 0;
+}
+body.tufte-site main .cylinder-mode-pair .tex-display {
+  min-height: 0;
+  margin: .8rem 0 1rem;
+  color: var(--ink);
+}
+body.tufte-site main .cylinder-mode-pair p {
+  max-width: 100%;
+  margin: 0 0 .75rem;
+  color: var(--ink);
+  font-size: var(--type-proof) !important;
+  line-height: var(--leading-proof);
+}
+body.tufte-site main :is(.cylinder-kernel-bridge, .cylinder-journal-note) {
+  width: 100%;
+  display: block;
+  padding: 1rem 0 0;
+  background: transparent;
+  border-top: 0;
+  border-bottom: 0;
+}
+body.tufte-site main :is(.cylinder-kernel-bridge, .cylinder-journal-note) p {
+  max-width: 100%;
+  color: var(--ink);
+  font-size: var(--type-proof) !important;
+  line-height: var(--leading-proof);
+}
+
+body.tufte-site main .motion-split {
+  display: block;
+  border-top: 0;
+  border-bottom: 0;
+}
+
+/* A theorem may follow a short piece of setup without the setup becoming a
+   giant enclosing card. */
+body.tufte-site main .statement-sequence {
+  width: 100%;
+  max-width: 100%;
+  margin: 3rem 0;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+}
+body.tufte-site main .statement-sequence > header {
+  width: var(--measure-reading);
+  display: block;
+  padding: 0 0 1.5rem;
+}
+body.tufte-site main .statement-sequence > header > span {
+  display: block;
+  margin-bottom: .8rem;
+  padding-top: .65rem;
+  color: var(--orange);
+  border-top: 1px solid var(--line);
+  font-family: var(--serif);
+  font-size: var(--type-label);
+  font-variant: small-caps;
+  letter-spacing: .055em;
+  text-transform: none;
+}
+body.tufte-site main .statement-sequence > header p {
+  color: var(--ink);
+  font-size: var(--type-body) !important;
+  line-height: var(--leading-body);
+}
+
+/* Conclusions return to the reading column instead of forming a row of
+   dashboard cards underneath the evidence. */
+body.tufte-site main .editorial-conclusion {
+  display: block;
+  min-height: 0;
+  padding: 1.5rem 0 0;
+  border-top: 0;
+}
+body.tufte-site main .editorial-conclusion article {
+  min-height: 0;
+  padding: 0 0 1.5rem;
+  border: 0;
+}
+body.tufte-site main .editorial-conclusion article + article {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 0;
+}
+body.tufte-site main .editorial-conclusion article > span,
+body.tufte-site main .editorial-conclusion > span:first-child {
+  display: block;
+  margin-bottom: .65rem;
+  color: var(--orange);
+  font-family: var(--serif);
+  font-size: var(--type-label);
+  font-variant: small-caps;
+  letter-spacing: .055em;
+  text-transform: none;
+}
+body.tufte-site main .editorial-conclusion strong {
+  display: block;
+  color: var(--ink);
+  font: italic 400 var(--type-body)/1.2 var(--serif);
+}
+body.tufte-site main .editorial-conclusion h3 { margin: 0 0 1.25rem; }
+body.tufte-site main .editorial-conclusion .tex-display { color: var(--ink); }
+
+/* Tabular evidence is part of the argument, not a full-bleed application
+   panel. Vertical rules are omitted in the Tufte tradition. */
+body.tufte-site main .data-table {
+  box-sizing: border-box;
+  width: var(--measure-reading);
+  max-width: var(--measure-reading);
+  margin: 4rem 0;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+}
+body.tufte-site main .data-table > header {
+  display: block;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--line);
+}
+body.tufte-site main .data-table > header > span {
+  display: block;
+  margin-bottom: .5rem;
+  color: var(--orange);
+  font-family: var(--serif);
+  font-size: var(--type-label);
+  font-variant: small-caps;
+  letter-spacing: .055em;
+  text-transform: none;
+}
+body.tufte-site main .data-table h3 { margin: 0; }
+body.tufte-site main .data-table :is(th, td) {
+  padding: .75rem .8rem;
+  border-right: 0;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--mono);
+}
+body.tufte-site main .data-table thead th {
+  color: var(--muted);
+  font-size: var(--type-label);
+}
+body.tufte-site main .data-table tbody th,
+body.tufte-site main .data-table tbody td {
+  color: var(--ink);
+  font-size: var(--type-caption);
+}
+
+/* Captions belong to the reading measure while their visual may use the
+   figure measure. This also fixes upstream Tufte's generic 55% footer rule
+   from shrinking component-local axis bars. */
+body.tufte-site main .figure-with-caption { border: 0; }
+body.tufte-site main .figure-with-caption > header {
+  width: var(--measure-reading-in-figure);
+  display: block;
+  padding: 0 0 1.5rem;
+}
+body.tufte-site main .figure-with-caption > header > span {
+  display: block;
+  margin-bottom: .7rem;
+  color: var(--orange);
+  font-family: var(--serif);
+  font-size: var(--type-label);
+  font-variant: small-caps;
+  letter-spacing: .055em;
+  text-transform: none;
+}
+body.tufte-site main .figure-with-caption > header p,
+body.tufte-site main .figure-with-caption > .phase-family-note {
+  color: var(--muted);
+  font-size: var(--type-caption) !important;
+  line-height: var(--leading-caption);
+}
+body.tufte-site main .figure-with-caption > .phase-family-note {
+  width: var(--measure-reading-in-figure);
+  padding: 1.25rem 0 0;
+  border-top: 0;
+}
+body.tufte-site main .phase-family-canvas-wrap {
+  height: clamp(210px, 16vw, 235px);
+}
+body.tufte-site main .phase-story-legend {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: var(--type-label) !important;
+}
+body.tufte-site main :is(.figure-band, .interactive-plate, .small-multiples) footer {
+  width: 100%;
+  max-width: 100%;
+  min-height: 0;
+  background: transparent;
+}
+
+/* Typography is attached to editorial roles. Local component rules from the
+   visual-first edition cannot create new prose sizes in this edition. */
+body.tufte-site main :is(figcaption, .formula-note, .phase-family-note, .abundance-provenance, .collar-field-caption) {
+  font-size: var(--type-caption) !important;
+  line-height: var(--leading-caption) !important;
+}
+body.tufte-site main p.collar-field-caption {
+  font-size: var(--type-caption) !important;
+  line-height: var(--leading-caption) !important;
+}
+body.tufte-site main :is(
+  .equations,
+  .control-heading,
+  .control-label,
+  .range-scale,
+  .play-button,
+  .view-button,
+  .axis-footer,
+  .geometry-toolbar,
+  .modes-plot-toolbar,
+  .debye-plot-toolbar,
+  .solver-readout,
+  .modes-status,
+  .phase-story-readout,
+  .collar-field-readout,
+  .debye-status
+) {
+  font-family: var(--mono);
+  font-size: var(--type-label) !important;
+}
+body.tufte-site main :is(
+  .solver-readout,
+  .modes-status,
+  .phase-story-readout,
+  .collar-field-readout,
+  .debye-status
+) span {
+  font-size: var(--type-label) !important;
+}
+body.tufte-site main :is(
+  .solver-readout,
+  .modes-status,
+  .phase-story-readout,
+  .collar-field-readout,
+  .debye-status
+) strong,
+body.tufte-site main .measurement-value-line strong {
+  font-size: var(--type-control-value) !important;
+}
+body.tufte-site main .interactive-plate .range-scale,
+body.tufte-site main .interactive-plate .range-scale > span {
+  min-width: 0;
+  overflow: hidden;
+}
+body.tufte-site main .interactive-plate :is(
+  header,
+  footer,
+  .legend,
+  .modes-legend,
+  .debye-legend,
+  .geometry-stages
+) :is(span, strong, small, a, button),
+body.tufte-site main :is(.world-card > span, .world-card .literature-link) {
+  font-size: var(--type-label) !important;
+}
+body.tufte-site main :is(
+  .canvas-toolbar,
+  .geometry-toolbar,
+  .equations,
+  .proof-strategy-subheading,
+  .cylinder-needed-later,
+  .cylinder-proof-scope,
+  .phase-agreement
+) :is(span, strong, small),
+body.tufte-site main :is(.phase-family, .world-cards) :is(footer span, article > span, .literature-link),
+body.tufte-site main .site-references li > span,
+body.tufte-site main .play-button > span {
+  font-size: var(--type-label) !important;
+}
+body.tufte-site main .parameter-pair span { font-size: var(--type-label) !important; }
+body.tufte-site main .parameter-pair strong { font-size: var(--type-control-value) !important; }
+body.tufte-site main .proof-strategy-lead p strong { font-size: inherit !important; }
+body.tufte-site main :is(.debye-plot-toolbar, .modes-plot-toolbar) strong,
+body.tufte-site main .fixed-zoom-pair span {
+  font-size: var(--type-label) !important;
+}
+body.tufte-site main .fixed-zoom-pair strong { font-size: var(--type-control-value) !important; }
+body.tufte-site main :is(
+  .eyebrow,
+  .small-multiples article > span,
+  .cylinder-proof-grid article > span,
+  .paper-copy > span:first-child
+) {
+  color: var(--orange);
+  font-family: var(--serif);
+  font-size: var(--type-label) !important;
+  font-variant: small-caps;
+  line-height: 1.3;
+  letter-spacing: .055em;
+  text-transform: none;
+}
+body.tufte-site main :is(
+  .control-label output,
+  .variation-control-label output,
+  .measurement-size-control output
+) {
+  font-family: var(--mono);
+  font-size: var(--type-control-value) !important;
+}
+
+body.tufte-site main :is(
+  .measurement-panel,
+  .shape-variation-controls,
+  .interactive-plate > aside
+) {
+  overflow-x: clip;
+}
+
+body.tufte-site main .math-statement-body > .tex-display {
+  color: var(--ink) !important;
+  background: transparent !important;
+  border-right: 0;
+  border-left: 0 !important;
+}
+body.tufte-site main .math-statement .katex,
+body.tufte-site main .math-statement .katex * { color: inherit !important; }
+body.tufte-site main .tex-display { --math-scale: 1; --math-size: var(--type-math); }
+body.tufte-site main .tex-display .katex { font-size: var(--math-size) !important; }
+body.tufte-site main .tex-display.math-fitted { overflow-x: hidden; }
+
+body.tufte-site main .tex-display {
+  background: transparent !important;
+  border: 0 !important;
+}
+
+body.tufte-site main :is(
+  .theorem-expansion,
+  .important-equation,
+  .boxed-equation,
+  .proof-argument .tex-display,
+  .cylinder-proof-grid .tex-display,
+  .collar-limit-argument .tex-display,
+  .uniform-drop-theorem .tex-display,
+  .real-order-theorem .tex-display,
+  .near-integer-theorem .tex-display,
+  .abundance-conclusion .tex-display
+) {
+  padding-right: 0 !important;
+  padding-left: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+
+/* The computer-assisted chapter consumes the same public page grammar as the
+   analytical applets: the mathematical picture remains on the reading
+   measure and its one useful control lives in the canonical aside measure. */
+.route-subheading {
+  margin-top: 3.25rem;
+  padding-top: 0;
+  border-top: 0;
+}
+.numerical-route-aside img,
+.berenstein-result-aside img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+body.tufte-site main .computer-assisted-theorem {
+  margin-top: 2.25rem;
+}
+
+body.tufte-site main .computer-assisted-copy {
+  margin-top: 2.5rem;
+}
+
+body.tufte-site main .computer-assisted-figure {
+  align-items: start;
+  margin-top: 3.25rem;
+  margin-bottom: 4rem;
+}
+
+body.tufte-site main .computer-assisted-canvas-panel {
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--paper) !important;
+}
+
+body.tufte-site main .computer-assisted-canvas-panel canvas {
+  display: block;
+  width: 100%;
+  height: clamp(270px, 29vw, 410px);
+  background: var(--paper);
+}
+
+body.tufte-site main .computer-assisted-controls {
+  gap: .8rem;
+  padding-top: 0;
+}
+
+body.tufte-site main .computer-assisted-controls :is(p, h3) {
+  display: block !important;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+}
+
+body.tufte-site main .computer-assisted-controls h3 {
+  font: italic 400 var(--type-subsection)/1.16 var(--serif);
+}
+
+body.tufte-site main .computer-assisted-controls > p:not(.eyebrow) {
+  color: var(--muted);
+  font-size: var(--type-caption) !important;
+  line-height: var(--leading-caption) !important;
+}
+
+body.tufte-site main .computer-assisted-control {
+  margin-top: .45rem;
+}
+
+body.tufte-site main .computer-assisted-control label {
+  display: flex;
+  justify-content: space-between;
+  gap: .65rem;
+  margin-bottom: .45rem;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: var(--type-label);
+  font-variant: small-caps;
+  letter-spacing: .035em;
+}
+
+body.tufte-site main .computer-assisted-control output {
+  flex: 0 0 auto;
+  color: var(--orange);
+  font-family: var(--mono);
+  font-size: var(--type-label);
+  font-variant: normal;
+  letter-spacing: 0;
+}
+
+body.tufte-site main .computer-assisted-control input[type="range"] {
+  width: 100%;
+  margin: 0;
+}
+
+body.tufte-site main .certificate-readout {
+  margin-top: .25rem;
+}
+
+body.tufte-site main .certificate-readout > div {
+  margin: .25rem 0;
+  color: var(--muted) !important;
+  font-family: var(--serif) !important;
+  font-size: var(--type-note) !important;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.35 !important;
+}
+
+body.tufte-site main .certificate-readout strong {
+  color: var(--ink);
+  font-weight: 400;
+}
+
+body.tufte-site main .computer-assisted-details {
+  margin-top: 2rem;
+}
+
+body.tufte-site main .computer-assisted-details-body {
+  width: var(--measure-reading-in-figure);
+  max-width: var(--measure-reading-in-figure);
+}
+
+/* References are bibliography, not a card list. */
+.site-references h2 { width: var(--measure-reading); margin-top: 0; font-size: var(--type-section); font-style: italic; }
+.site-references ol { width: var(--measure-figure); max-width: var(--measure-figure); }
+.site-references li { grid-template-columns: 2.2rem 52.8%; }
+.site-references li p { font-size: var(--type-caption) !important; line-height: var(--leading-caption); }
+
+body > footer {
+  width: 100%;
+  min-height: 0;
+  grid-template-columns: var(--measure-reading) 1fr auto;
+  gap: 1rem;
+  padding: 2rem 0 3rem;
+  color: var(--muted);
+  background: var(--paper);
+  border-top: 0;
+  font-family: var(--serif);
+  font-size: var(--type-label);
+  font-variant: small-caps;
+  letter-spacing: .04em;
+  text-transform: none;
+}
+
+.tex-display { max-width: 100%; overflow-x: auto; overflow-y: hidden; }
+
+@media (max-width: 1000px) {
+  .site-toc { position: relative; top: auto; right: auto; width: 100%; margin: 1rem 0 0; }
+  .site-toc summary { padding: .55rem 0; }
+  .story-intro .intro-lead { grid-template-columns: 1fr; }
+  .story-intro .intro-lead > * { width: 100%; }
+  body.tufte-site main .interactive-plate {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "visual" "controls" "caption";
+    column-gap: 0;
+  }
+  body.tufte-site main .interactive-plate > :is(section, aside, figcaption) {
+    width: 100%;
+    max-width: 100%;
+  }
+  .interactive-plate > aside,
+  .collar-field-controls {
+    margin: 0;
+    padding: 1.4rem 0 0;
+    border-top: 0;
+    border-left: 0;
+  }
+  body.tufte-site main .cone-view-notes { width: 100%; max-width: 100%; grid-template-columns: minmax(0, 1fr); }
+  body.tufte-site main .shape-variation-figure {
+    grid-template-areas: "heading" "visual" "controls" "caption";
+  }
+  body.tufte-site main .shape-variation-figure > :is(header, figcaption) {
+    width: 100%;
+    max-width: 100%;
+  }
+  .debye-plot-panel {
+    grid-template-rows: clamp(500px, 130vw, 570px);
+  }
+  body.tufte-site main .geometry-canvas-panel {
+    grid-template-rows: clamp(300px, 88vw, 520px);
+  }
+  .collar-field-visual { grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr); }
+}
+
+@media (max-width: 1000px) {
+  :root {
+    --type-body-current: var(--type-body-mobile);
+    --measure-reading: 100%;
+    --measure-margin: 100%;
+    --measure-gutter: 0%;
+    --measure-figure: 100%;
+    --measure-reading-in-figure: 100%;
+  }
+
+  body.tufte-site {
+    width: 84%;
+    margin: 0;
+    padding-right: 8%;
+    padding-left: 8%;
+  }
+
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding-top: 1rem; }
+  .brand span { max-width: 15rem; }
+  .brand svg { display: none; }
+
+	  :is(
+	    .intro,
+	    .story-intro,
+	    .linear-rigidity,
+	    .borrow-flexibility,
+    .geometric-escape,
+    .computer-assisted-proof,
+    .experiment,
+    .modes-experiment,
+    .phase-story,
+    .debye-experiment,
+    .abundance-experiment,
+    .site-references
+  ) { padding: 3.5rem 0 4.5rem; }
+
+  .intro-index, .intro h1, .intro-bottom,
+  .section-heading,
+  :is(.intro-copy, .intro-copy-wide, .borrow-lead, .geometry-lead, .computer-assisted-lead, .computer-assisted-copy, .proof-strategy-lead, .half-cylinder-introduction, .experiment-story-lead, .cone-lead, .modes-lead, .phase-story-lead, .debye-lead, .abundance-lead, .proof-strategy-subheading),
+  .disk-sidequest .intro-copy,
+  .disk-sidequest-proof, .disk-sidequest-history,
+  .intro-proof-body, .proof-argument {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .intro h1 { margin-top: 3rem; font-size: var(--type-display-mobile); }
+  .intro-index { font-size: var(--type-subsection-mobile); }
+  body.tufte-site main .math-statement {
+    width: 100%;
+    max-width: 100%;
+  }
+  body.tufte-site main .formal-statement-pair {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  body.tufte-site main :is(.paper-copy, .data-table) {
+    width: 100%;
+    max-width: 100%;
+  }
+  body.tufte-site main :is(.small-multiples, .statement-sequence) {
+    width: 100%;
+    max-width: 100%;
+  }
+  body.tufte-site main .statement-sequence > header,
+  body.tufte-site main .figure-with-caption > header,
+  body.tufte-site main .figure-with-caption > .phase-family-note,
+  body.tufte-site main :is(.cylinder-seed-copy, .cylinder-kernel-bridge, .cylinder-journal-note) {
+    width: 100%;
+    max-width: 100%;
+  }
+  body.tufte-site main :is(.cylinder-mode-pair, .motion-split) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  body.tufte-site main :is(.cylinder-mode-pair, .motion-split) article + article {
+    border-top: 0;
+    border-left: 0;
+  }
+  body.tufte-site main :is(.modes-lead, .abundance-lead) { display: block; }
+  body.tufte-site main .math-statement .math-statement-body p,
+  body.tufte-site main .paper-copy:not(.phase-story-lead):not(.debye-lead):not(.abundance-lead) p:not(.eyebrow) {
+    font-size: var(--type-proof) !important;
+    line-height: var(--leading-proof);
+  }
+  body.tufte-site main p.collar-field-caption {
+    font-size: var(--type-caption) !important;
+    line-height: var(--leading-caption) !important;
+  }
+  body.tufte-site main :is(
+    .applet-instruction,
+    .disk-model-note,
+    .measurement-caption > p:last-child,
+    .small-multiples p,
+    .formula-note,
+    figcaption
+  ) {
+    font-size: var(--type-caption) !important;
+    line-height: var(--leading-caption) !important;
+  }
+
+  .measurement-figure { grid-template-columns: minmax(0, 1fr); }
+  .measurement-caption { grid-column: 1; grid-row: 1; margin-bottom: 1.5rem; }
+  .measurement-panel { grid-column: 1; grid-row: 2; }
+  .measurement-figure > .side-figure {
+    width: var(--measure-mobile-note);
+    max-width: var(--measure-mobile-note);
+    margin: 0 var(--measure-mobile-note-inset);
+  }
+  .intro-shapes { display: block; }
+  .shape-variation-figure figcaption { width: 100%; margin: 0; }
+  .intro-shapes-row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem; }
+  .intro-shape-object + .intro-shape-object { margin-top: 0; }
+  .membrane-figure { width: 100%; max-width: 100%; }
+
+  /* Tufte's margin notes become opt-in blocks on a narrow screen.  Every
+     note, figure and gallery uses this same adjacent-toggle contract. */
+  body.tufte-site main .marginnote { display: none; }
+  body.tufte-site main .marginnote.intro-shapes { display: none; }
+  input.margin-toggle:checked + .marginnote {
+    display: block;
+    float: none;
+    clear: both;
+    left: 0;
+    width: var(--measure-mobile-note);
+    max-width: var(--measure-mobile-note);
+    margin: 1rem var(--measure-mobile-note-inset);
+  }
+  body.tufte-site main input.margin-toggle:checked + .marginnote.side-figure,
+  body.tufte-site main input.margin-toggle:checked + .marginnote.intro-shapes {
+    display: block;
+    width: var(--measure-mobile-note);
+    max-width: var(--measure-mobile-note);
+    margin-right: var(--measure-mobile-note-inset);
+    margin-left: var(--measure-mobile-note-inset);
+  }
+  body.tufte-site main .marginnote.side-applet {
+    display: none;
+    float: none;
+    clear: both;
+    left: 0;
+    width: var(--measure-mobile-note);
+    max-width: var(--measure-mobile-note);
+    margin: 1rem var(--measure-mobile-note-inset);
+  }
+  body.tufte-site main input.margin-toggle:checked + .marginnote.side-applet {
+    display: block;
+    width: var(--measure-mobile-note);
+    max-width: var(--measure-mobile-note);
+    margin-right: var(--measure-mobile-note-inset);
+    margin-left: var(--measure-mobile-note-inset);
+  }
+
+  .interactive-plate > aside { border-top: 0; border-left: 0; }
+  body.tufte-site main .computer-assisted-canvas-panel canvas {
+    height: clamp(260px, 78vw, 390px);
+  }
+  body.tufte-site main .computer-assisted-canvas-panel #boundaryCanvas {
+    height: clamp(390px, 115vw, 450px);
+  }
+  body.tufte-site main .computer-assisted-controls {
+    padding-top: 1.15rem;
+  }
+  .phase-story-lab > aside,
+  .debye-controls { margin: 0; padding: 1.4rem 0 0; }
+  .collar-field-visual { grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr); }
+  .collar-field-laboratory .collar-field-visual > .collar-field-panel { grid-template-rows: 48px clamp(210px, 36vw, 290px); }
+  .collar-field-panel:nth-child(even) { border-left: 1px solid var(--line); }
+  .collar-field-caption { padding-right: 0; }
+  .canvas-toolbar { justify-content: space-between; overflow: hidden; }
+  .canvas-toolbar > .passive-script-targets { display: none !important; }
+  .axis-footer { justify-content: center; overflow: hidden; }
+  .axis-footer > :first-child,
+  .axis-footer > :last-child { display: none; }
+  body.tufte-site main .margin-figure-sequence { width: 100%; max-width: 100%; }
+  body.tufte-site main .margin-figure-row,
+  body.tufte-site main .margin-figure-row + .margin-figure-row {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    margin-top: 0;
+    padding: 2rem 0;
+    border: 0;
+  }
+  body.tufte-site main .margin-figure-row > .margin-figure {
+    order: 2;
+    width: 100%;
+    margin: 1.25rem 0 0;
+  }
+  body.tufte-site main .margin-figure-row > .side-figure {
+    width: var(--measure-mobile-note);
+    max-width: var(--measure-mobile-note);
+    margin-right: var(--measure-mobile-note-inset);
+    margin-left: var(--measure-mobile-note-inset);
+  }
+  body.tufte-site main .reading-figure {
+    width: 100%;
+    max-width: 100%;
+  }
+  body.tufte-site main .phase-family-canvas-wrap {
+    height: clamp(230px, 48vw, 320px);
+  }
+  body.tufte-site main .reading-figure .abundance-plot-panel {
+    grid-template-rows: clamp(280px, 54vw, 340px);
+  }
+  .cylinder-seed-copy, .cylinder-kernel-bridge, .cylinder-journal-note, .real-order-bridge > header, .real-order-theorem, .basis-limit-derivation, .angular-quotient-note, .near-integer-theorem, .abundance-conclusion, .abundance-examples > header { grid-template-columns: 1fr; }
+  .site-references ol { width: 100%; max-width: 100%; }
+  .site-references li { grid-template-columns: 2rem minmax(0, 1fr); }
+  body > footer { grid-template-columns: 1fr; }
+
+  .schiffer-intro-system .katex-display > .katex > .katex-html > .tag {
+    position: static;
+    display: block;
+    width: auto;
+    margin-top: .45rem;
+    text-align: right;
+  }
+}
+
+@media (max-width: 620px) {
+  .collar-field-visual { grid-template-columns: minmax(0, 1fr); }
+  .collar-field-laboratory .collar-field-visual > .collar-field-panel {
+    grid-template-rows: 48px clamp(230px, 78vw, 320px);
+  }
+  .collar-field-panel:nth-child(even) { border-left: 0; }
+  .collar-field-panel + .collar-field-panel { border-top: 0 !important; }
+}
+
+/* Final chrome reset. Statement and Lean frames remain semantic; figures,
+   small multiples and applets rely on measure, captions and marginal controls
+   rather than enclosing rails. */
+body.tufte-site main :is(.figure-band, .small-multiples, .interactive-plate, .reading-figure) {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+body.tufte-site main :is(
+  .interactive-plate > aside,
+  .controls,
+  .geometry-controls,
+  .modes-controls,
+  .debye-controls,
+  .collar-field-controls,
+  .phase-story-lab > aside,
+  .canvas-toolbar,
+  .geometry-toolbar,
+  .modes-plot-toolbar,
+  .debye-plot-toolbar,
+  .axis-footer,
+  .phase-family > footer,
+  .reading-figure,
+  .candidate-stamp,
+  .cone-view-notes,
+  .cone-note,
+  .collar-field-panel,
+  .collar-field-panel > header,
+  .collar-field-panel > footer
+) {
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+body.tufte-site main :is(
+  .measurement-panel,
+  .side-figure,
+  .measurement-canvas,
+  .chladni-photo-panel,
+  .chladni-photo-panel img,
+  .schiffer-mode-panel,
+  .schiffer-mode-controls,
+  .shape-variation-stage,
+  .variation-stage-caption
+) {
+  border: 0 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
