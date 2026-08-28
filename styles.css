@@ -592,10 +592,6 @@ input[type="range"]::-moz-range-thumb { width: 9px; height: 9px; border: 3px sol
 .collar-field-control-block { padding: 23px 0 19px; border-bottom: 1px solid var(--line-light); }
 .collar-field-control-block p { margin: 13px 0 0; color: rgba(241,238,229,.43); font-size: 11px; line-height: 1.65; }
 .collar-field-control-block .control-label output { color: var(--orange); font-size: 13px; }
-.collar-trig-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-top: 18px; }
-.collar-trig-switch button { padding: 10px; color: rgba(241,238,229,.48); border: 1px solid var(--line-light); background: transparent; cursor: pointer; font: 11px var(--mono); text-transform: uppercase; }
-.collar-trig-switch button.active { color: var(--paper); border-color: var(--teal); background: rgba(77,162,163,.13); }
-.collar-trig-switch button:disabled { opacity: .36; cursor: not-allowed; }
 .collar-field-readout { margin-top: auto; padding-top: 18px; }
 .collar-field-readout div { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--line-light); }
 .collar-field-readout span { color: rgba(241,238,229,.38); font: 11px var(--mono); text-transform: uppercase; letter-spacing: .055em; }
@@ -1046,7 +1042,6 @@ dialog p:not(.eyebrow) {
   .control-heading,
   .play-button,
   .view-button,
-  .collar-trig-switch button,
   .secondary-controls summary,
   .proof-details > summary,
   .method-button,

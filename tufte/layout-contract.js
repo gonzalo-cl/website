@@ -695,7 +695,7 @@
         const imageBox = image?.getBoundingClientRect();
         const declaredWidth = Number(image?.getAttribute("width"));
         const declaredHeight = Number(image?.getAttribute("height"));
-        if (!image || !declaredWidth || declaredWidth !== declaredHeight || !/comparison-[^/]+\.svg$/.test(image.getAttribute("src") || "")) {
+        if (!image || !declaredWidth || declaredWidth !== declaredHeight || !/comparison-[^/]+\.webp$/.test(image.getAttribute("src") || "")) {
           errors.push(`comparison cell ${index + 1} does not use a normalized square crop`);
         } else if (Math.abs(imageBox.width - box.width) > 1 || Math.abs(imageBox.height - box.height) > 1) {
           errors.push(`comparison crop ${index + 1} does not fill its shared frame`);
@@ -773,7 +773,6 @@
       const directActions = Array.from(controls.querySelectorAll(":scope button:not([hidden])")).filter((button) => {
         if (!visible(button)) return false;
         return !button.closest(".geometry-stages")
-          && !button.closest(".collar-trig-switch")
           && !button.closest(".view-switch")
           && !button.closest(".cone-view-switch");
       });

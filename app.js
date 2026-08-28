@@ -2505,7 +2505,7 @@ if (debyeData) {
   // The original three views are kept unchanged: a flat collar, the
   // corresponding planar sector, and the complete N-fold disk.  A fourth view
   // places a long half-cylinder beside the disk at the same geometric scale.
-  const collarFieldState = { fold: 28, mode: 1, trig: "cos" };
+  const collarFieldState = { fold: 28, mode: 1 };
   const COLLAR_BACKGROUND = SCHIFFER_VISUAL_THEME.backgroundRgb;
   const COLLAR_ZOOM_ACCENT = getComputedStyle(document.documentElement).getPropertyValue("--teal").trim() || "#4da2a3";
   const COLLAR_ZOOM_FILL = SCHIFFER_VISUAL_THEME.paperEdition
@@ -2515,7 +2515,7 @@ if (debyeData) {
   function collarAngularValue(psi) {
     if (collarFieldState.mode === 0) return 1;
     const angle = collarFieldState.mode * psi;
-    return collarFieldState.trig === "cos" ? Math.cos(angle) : Math.sin(angle);
+    return Math.cos(angle);
   }
 
   function collarExactRadial(x) {
@@ -2610,7 +2610,7 @@ if (debyeData) {
       "aria-label",
       collarFieldState.mode === 0
         ? "Radial cylinder mode k 0 on the collar from x minus five to zero, with Cauchy data matched to the regular Bessel profile at the rim."
-        : `Cylinder mode k ${collarFieldState.mode} with ${collarFieldState.trig} angular data on the collar from x minus five to zero.`
+        : `Cylinder mode k ${collarFieldState.mode} with cosine angular data on the collar from x minus five to zero.`
     );
   }
 
@@ -2811,9 +2811,7 @@ if (debyeData) {
       if (q > 1) return COLLAR_BACKGROUND;
       const theta = Math.atan2(y, x);
       const angle = collarFieldState.mode * collarFieldState.fold * theta;
-      const angular = collarFieldState.mode === 0
-        ? 1
-        : collarFieldState.trig === "cos" ? Math.cos(angle) : Math.sin(angle);
+      const angular = collarFieldState.mode === 0 ? 1 : Math.cos(angle);
       return colorFor(collarGlobalRadial(q) * angular);
     });
     // collarRaster and the local geometry use the same CSS dimensions.
@@ -2849,12 +2847,11 @@ if (debyeData) {
   }
 
   function updateCollarFieldReadouts() {
-    const { fold, mode, trig } = collarFieldState;
+    const { fold, mode } = collarFieldState;
     const angularOrder = fold * mode;
     const lambda = debyeLambdaAt(fold);
     $("#collarNValue").textContent = String(fold);
     $("#collarKValue").textContent = String(mode);
-    $("#collarTrigValue").textContent = mode === 0 ? "constant" : trig;
     $("#collarAngularOrder").textContent = String(angularOrder);
     if (mode === 0) {
       setMath("#collarCylinderTitle", "u_0^{\\mathrm{cyl}}(x)", { serif: true });
@@ -2862,8 +2859,8 @@ if (debyeData) {
       setMath("#collarDiskTitle", "\\text{radial mode, angular order }0", { serif: true });
       setMath("#collarHalfCylinderTitle", "u_0^{\\mathrm{cyl}}(x)", { serif: true });
     } else {
-      setMath("#collarCylinderTitle", `u_${mode}^{\\mathrm{cyl}}\\;${trig}(${mode === 1 ? "\\theta" : `${mode}\\theta`})`, { serif: true });
-      setMath("#collarConeTitle", `u_${mode}^{\\mathrm{cone}}\\;J_{${angularOrder}}(q_Nr)\\;${trig}(${mode === 1 ? "\\psi" : `${mode}\\psi`})`, { serif: true });
+      setMath("#collarCylinderTitle", `u_${mode}^{\\mathrm{cyl}}\\;\\cos(${mode === 1 ? "\\theta" : `${mode}\\theta`})`, { serif: true });
+      setMath("#collarConeTitle", `u_${mode}^{\\mathrm{cone}}\\;J_{${angularOrder}}(q_Nr)\\;\\cos(${mode === 1 ? "\\psi" : `${mode}\\psi`})`, { serif: true });
       setMath("#collarDiskTitle", `\\text{angular order }${angularOrder}`, { serif: true });
       setMath("#collarHalfCylinderTitle", `u_${mode}^{\\mathrm{cyl}}`, { serif: true });
     }
@@ -2875,12 +2872,6 @@ if (debyeData) {
     } else {
       $("#collarRegimeCopy").textContent = "The selected channel is evanescent in the normal direction.";
     }
-    document.querySelectorAll("[data-collar-trig]").forEach((button) => {
-      const active = button.dataset.collarTrig === trig;
-      button.classList.toggle("active", active);
-      button.setAttribute("aria-pressed", String(active));
-      button.disabled = mode === 0;
-    });
   }
 
   function updateCollarFieldComparison() {
@@ -2900,18 +2891,11 @@ if (debyeData) {
   });
   $("#collarKRange").addEventListener("input", (event) => {
     collarFieldState.mode = Number(event.target.value);
-    if (collarFieldState.mode === 0) collarFieldState.trig = "cos";
     setRangeFill(event.target);
     updateCollarFieldComparison();
   });
-  document.querySelectorAll("[data-collar-trig]").forEach((button) => {
-    button.addEventListener("click", () => {
-      collarFieldState.trig = button.dataset.collarTrig;
-      updateCollarFieldComparison();
-    });
-  });
   $("#collarFieldResetButton").addEventListener("click", () => {
-    Object.assign(collarFieldState, { fold: 28, mode: 1, trig: "cos" });
+    Object.assign(collarFieldState, { fold: 28, mode: 1 });
     $("#collarNRange").value = collarFieldState.fold;
     $("#collarKRange").value = collarFieldState.mode;
     setRangeFill($("#collarNRange"));
