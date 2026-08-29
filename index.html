@@ -553,8 +553,42 @@
               \end{aligned}
               \]
             </div>
-            <p>At \(x=0\), the first wave has Neumann data and the second has Dirichlet data. Consequently, this spectral coincidence holds for every \(\lambda&gt;1\) on the half-cylinder. For \(1&lt;\lambda&lt;4\), every higher channel \(k\ge2\) is evanescent. Fall, Minlend and Weth obtain the corresponding nonlinear bifurcations on compact flat cylinders; the half-cylinder version used below follows from the same separated equations and weighted-space argument.</p>
+            <p>At \(x=0\), the first wave has Neumann data and the second has Dirichlet data. Consequently, this spectral coincidence holds for every \(\lambda&gt;1\) on the half-cylinder. For \(1&lt;\lambda&lt;4\), every higher channel \(k\ge2\) is evanescent. Fall, Minlend and Weth obtain the corresponding nonlinear bifurcations on compact flat cylinders; the half-cylinder version used below follows from the same separated equations and weighted-space argument. They also obtain non-contractible examples on the round sphere, bifurcating from bands around the equator.</p>
             <a class="literature-link" href="https://ems.press/journals/jems/articles/14298635" target="_blank" rel="noreferrer">Fall–Minlend–Weth, JEMS (2025) ↗</a>
+          </article>
+          <article class="margin-figure-row">
+            <aside class="world-visual margin-figure side-figure" aria-label="Interactive planar annulus branch figure">
+            <div class="world-sketch realistic-world" role="img" aria-label="A doubly connected planar domain whose outer boundary carries a four-fold ripple controlled by the bifurcation parameter s">
+              <svg viewBox="0 0 520 300" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="annulusDomain" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#e08a5f" stop-opacity=".62"/>
+                    <stop offset="1" stop-color="#c2643f" stop-opacity=".46"/>
+                  </linearGradient>
+                  <filter id="annulusShadow" x="-30%" y="-30%" width="160%" height="180%"><feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#132126" flood-opacity=".26"/></filter>
+                </defs>
+                <ellipse cx="260" cy="263" rx="105" ry="18" fill="#132126" opacity=".16"/>
+                <g filter="url(#annulusShadow)">
+                  <circle class="annulus-outer-reference" cx="260" cy="143" r="111"/>
+                  <circle class="annulus-inner-reference" cx="260" cy="143" r="15.65"/>
+                  <path class="annulus-domain-fill" fill="url(#annulusDomain)" fill-rule="evenodd" d=""/>
+                  <path class="annulus-boundary-outer" fill="none" d=""/>
+                  <path class="annulus-boundary-inner" fill="none" d=""/>
+                </g>
+                <text class="world-domain-label dark-label" x="260" y="100" text-anchor="middle">Ω</text>
+                <text x="260" y="286" text-anchor="middle">orange: ∂Ω · teal: unperturbed annulus</text>
+              </svg>
+            </div>
+            <div class="world-branch-control">
+              <div><label for="annulusBranchRange">branch parameter \(s\)</label><output id="annulusBranchValue" for="annulusBranchRange">\(s=0\)</output></div>
+              <input id="annulusBranchRange" type="range" min="-1" max="1" step="0.01" value="0" aria-label="Annulus bifurcation parameter from minus epsilon to plus epsilon">
+              <div class="range-scale"><span>\(-\varepsilon\)</span><span>\(0\)</span><span>\(+\varepsilon\)</span></div>
+            </div>
+            </aside>
+            <span>planar annulus</span><h3>A Neumann eigenfunction of the Laplacian, locally constant on the boundary.</h3>
+            <p>Relax the problem to domains that are not contractible, and let the eigenfunction take a different constant on each component of the boundary — one value on the outer curve, another on the inner one. Enciso, Fernández, Ruiz and Sicbaldi show that this weaker condition no longer forces a disk or an annulus: they construct doubly connected domains carrying a nonradial eigenfunction whose gradient vanishes on the whole boundary.</p>
+            <p>The branch leaves the annulus \(\{a&lt;r&lt;1\}\) at the second nonconstant radial Neumann mode, where its eigenvalue meets the first Dirichlet eigenvalue of angular mode \(l\). That crossing exists for every \(l\ge4\); at \(l=4\) it sits at \(a=0.140989\). Both curves ripple as \(\cos4\theta\) and the domain thickens where the cosine is positive, but the outer curve carries almost all of the motion, with about twenty-eight times the amplitude of the inner one.</p>
+            <a class="literature-link" href="https://doi.org/10.1215/00127094-2024-0054" target="_blank" rel="noreferrer">Enciso–Fernández–Ruiz–Sicbaldi, Duke (2025) ↗</a>
           </article>
           <article class="margin-figure-row">
             <aside class="world-visual margin-figure side-figure" aria-label="Interactive spherical branch figure">

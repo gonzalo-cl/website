@@ -195,6 +195,8 @@ a { color: inherit; }
 .world-sketch .world-domain-label.dark-label { fill: #72392f; filter: none; }
 .world-sketch .sphere-equator-reference { stroke: var(--teal); stroke-width: 1.5; stroke-dasharray: 6 5; stroke-opacity: .9; }
 .world-sketch .sphere-boundary-back { stroke: #a84e42; stroke-width: 1.8; stroke-dasharray: 5 5; opacity: .78; }
+.world-sketch .annulus-outer-reference, .world-sketch .annulus-inner-reference { fill: none; stroke: var(--teal); stroke-width: 1.5; stroke-dasharray: 6 5; stroke-opacity: .9; }
+.world-sketch .annulus-boundary-outer, .world-sketch .annulus-boundary-inner { stroke: #a84e42; stroke-width: 2; }
 .world-branch-control { padding: 13px 16px 14px; border-top: 1px solid var(--line); background: rgba(241,238,229,.34); }
 .world-branch-control > div:first-child { display: flex; align-items: center; justify-content: space-between; gap: 14px; color: var(--muted); font: 10px/1.4 var(--mono); text-transform: uppercase; letter-spacing: .065em; }
 .world-branch-control output { color: var(--orange); }

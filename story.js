@@ -98,6 +98,11 @@
   const sphereDomainLabel = select(".world-domain-label.dark-label");
   const sphereBranchRange = select("#sphereBranchRange");
   const sphereBranchValue = select("#sphereBranchValue");
+  const annulusDomainFill = select(".annulus-domain-fill");
+  const annulusBoundaryOuter = select(".annulus-boundary-outer");
+  const annulusBoundaryInner = select(".annulus-boundary-inner");
+  const annulusBranchRange = select("#annulusBranchRange");
+  const annulusBranchValue = select("#annulusBranchValue");
 
   function worldPath(points, close = false) {
     const path = points.map((point, index) => `${index ? "L" : "M"}${point.x.toFixed(2)} ${point.y.toFixed(2)}`).join("");
@@ -127,6 +132,41 @@
     cylinderDomainBack.setAttribute("d", worldPath([...leftBack, ...[...rightBack].reverse()], true));
     cylinderBoundaryFront.setAttribute("d", `${worldPath(leftFront)}${worldPath(rightFront)}`);
     cylinderBoundaryBack.setAttribute("d", `${worldPath(leftBack)}${worldPath(rightBack)}`);
+  }
+
+  function renderAnnulusBifurcation(branchAmount) {
+    if (!annulusDomainFill || !annulusBoundaryOuter || !annulusBoundaryInner) return;
+    // Enciso-Fernandez-Ruiz-Sicbaldi bifurcate from the annulus {a < r < 1} at
+    // the crossing mu_{0,2}(a) = lambda_{l,0}(a), which exists for every l >= 4.
+    // We draw the verified case l = 4, where a_4 = 0.140989 and mu = 57.5851.
+    const centreX = 260;
+    const centreY = 143;
+    const outerRadius = 111;
+    const innerFraction = .1409893;
+    // Both boundaries move as cos(4 theta), but not by the same amount: the
+    // true ratio of the two amplitudes is -27.883, computed from the crossing
+    // eigenfunctions.  The common factor is enlarged for sight, so the outer
+    // ripple is visible while the inner one stays almost imperceptible --
+    // which is the honest picture.  The sign makes the domain thicken where
+    // cos(4 theta) is positive.
+    const outerAmplitude = .13;
+    const innerAmplitude = -outerAmplitude / 27.883;
+    const outer = [];
+    const inner = [];
+    for (let index = 0; index <= 192; index++) {
+      const theta = TAU * index / 192;
+      const wave = Math.cos(4 * theta);
+      const rOuter = outerRadius * (1 + outerAmplitude * branchAmount * wave);
+      const rInner = outerRadius * (innerFraction + innerAmplitude * branchAmount * wave);
+      outer.push({ x: centreX + rOuter * Math.cos(theta), y: centreY + rOuter * Math.sin(theta) });
+      inner.push({ x: centreX + rInner * Math.cos(theta), y: centreY + rInner * Math.sin(theta) });
+    }
+    const outerPath = worldPath(outer, true);
+    const innerPath = worldPath(inner, true);
+    // evenodd on the combined path punches the hole out of the filled disk.
+    annulusDomainFill.setAttribute("d", `${outerPath}${innerPath}`);
+    annulusBoundaryOuter.setAttribute("d", outerPath);
+    annulusBoundaryInner.setAttribute("d", innerPath);
   }
 
   function renderSphereBifurcation(branchAmount) {
@@ -190,6 +230,7 @@
   if (worldSection) {
     bindWorldBranch(cylinderBranchRange, cylinderBranchValue, renderCylinderBifurcation);
     bindWorldBranch(sphereBranchRange, sphereBranchValue, renderSphereBifurcation);
+    bindWorldBranch(annulusBranchRange, annulusBranchValue, renderAnnulusBifurcation);
   }
 
   function fillRange(input) {
