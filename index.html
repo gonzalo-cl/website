@@ -1302,6 +1302,37 @@
 
         <div class="real-order-setup paper-copy">
           <p>The cone metric \(g_R=dr^2+(r^2/R^2)d\psi^2\) and its regular separated modes \(J_{kR}\) are defined for every real \(R&gt;0\). A planar \(N\)-fold quotient is obtained at an integer value \(R=N\), when the cone is unfolded into the plane.</p>
+
+          <p><strong>Cutting a collar.</strong> Fix a small depth \(L\) and discard the interior. The Schiffer problem is posed only on \(\Omega_{\mathrm{ext}}=\Omega\setminus B(0,R-L)\), the collar between the perturbed boundary \(r=R-h(\psi)\) and the fixed inner circle \(r=R-L\). A cutoff \(\chi\), equal to \(1\) near the boundary and to \(0\) before the inner circle, carries that collar onto a cylinder \(\mathcal C_L=[0,L]\times S^1\) of unit radius and height \(L\), fixed once and for all:</p>
+          <div class="tex-display">
+            \[
+            \Phi^h_R(y,\psi)=(r,\varphi)=\bigl(R-y-\chi(y)h(\psi),\ \psi/R\bigr).
+            \]
+          </div>
+          <p>Here \(y\) is depth below the boundary. Because \(\chi\) vanishes before \(y=L\), the inner circle never moves: the whole deformation is confined to a neighbourhood of \(\partial\Omega\), and the two ends of the collar can be treated separately.</p>
+
+          <p><strong>Why the relaxed problem is a genuine one.</strong> The angular map \(\varphi\mapsto R\varphi\) is well defined on the circle only when \(R\) is an integer, so \(\Phi^h_R\) is a diffeomorphism only in that case. But the Laplacian transported through it becomes a second-order operator in \((y,\psi)\) whose coefficients are explicit rational expressions in \(\chi\), \(h\) and \(R\), and those expressions do not know that \(R\) was meant to be an integer. They define a uniformly elliptic operator on the fixed cylinder for every real \(R\), agreeing with the pulled-back Laplacian whenever \(R\in\mathbb N\). This, rather than the geometry of the cone, is what carries the relaxation: beyond this point the cone itself is no longer needed.</p>
+
+          <p><strong>The discarded interior.</strong> What was removed is restored by a Dirichlet-to-Neumann map on the inner circle, again defined for every real \(R\) by an explicit Fourier multiplier:</p>
+          <div class="tex-display">
+            \[
+            D_R\bigl(\cos k\psi\bigr)=\tau_k\cos k\psi,\qquad
+            \tau_k=\sqrt\lambda\;\frac{J'_{kR}\bigl(\sqrt\lambda\,(R-L)\bigr)}{J_{kR}\bigl(\sqrt\lambda\,(R-L)\bigr)}.
+            \]
+          </div>
+          <p>At integer \(R\) this is the honest interior Dirichlet-to-Neumann map of \(\Delta+\lambda\) on \(B(0,R-L)\), for even \(R\)-fold symmetric data. Imposing \(\partial_y u+D_Ru=0\) at \(y=L\) says exactly that the collar solution continues across the inner circle to a solution regular at the origin, and that the two pieces meet there in \(C^1\). Regularity at the cone tip, which is where the singularity would have been, becomes a boundary condition.</p>
+
+          <p><strong>One unknown for the boundary and the field.</strong> Following Fall, Minlend and Weth, the moving boundary and the eigenfunction are read off a single unknown \(v\) on the cylinder, required only to vanish at \(y=0\). The boundary displacement is its normal derivative there, and the eigenfunction is built from it:</p>
+          <div class="tex-display">
+            \[
+            h_v=\lambda^{-1}\partial_yv(0,\cdot),\qquad
+            w_v=w_0+v+\chi(y)\,\partial_yw_0(y)\,h_v(\psi),\qquad
+            w_0(y)=\frac{J_0\bigl(\sqrt\lambda\,(R-y)\bigr)}{J_0(\rho)}.
+            \]
+          </div>
+          <p>The last term is not a correction chosen for convenience. It is the first variation of the transported radial mode as the boundary moves, \(\tfrac{d}{ds}\big|_{s=0}w_0\bigl(R-y-s\chi(y)h(\psi)\bigr)\). Straightening a moving domain drags the background field along with it, and this term is that drag.</p>
+
+          <p><strong>Why a single Dirichlet unknown suffices.</strong> The unperturbed mode \(w_0\) already satisfies both Schiffer conditions: \(w_0(0)=1\), and \(\partial_yw_0(0)=0\) because \(J_1(\rho)=0\). The correction must therefore vanish to first order in both. Neither piece does so alone — \(v\) is Dirichlet by assumption, and the drag term is Dirichlet only because \(\partial_yw_0(0)=0\). But the drag term's own normal derivative at \(y=0\) is \(\chi(0)\,\partial^2_yw_0(0)\,h_v=-\lambda h_v=-\partial_yv(0,\cdot)\), using \(\partial^2_yw_0(0)=-\lambda\) from the equation itself. That is exactly \(v\)'s Neumann defect with the opposite sign, so the sum satisfies both conditions although neither summand does. The accounting closes: one Dirichlet unknown carries a Dirichlet-and-Neumann field correction together with one free function of the angle, because the normal derivative \(v\) surrenders to the Neumann condition is precisely what is spent on \(h\).</p>
         </div>
 
         <article id="uniformConeBifurcation" class="math-statement" data-kind="theorem" data-label="uniform-cone-bifurcation" aria-labelledby="uniformConeBifurcationTitle">
