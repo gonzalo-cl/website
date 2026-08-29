@@ -1309,7 +1309,7 @@
         <div class="real-order-setup paper-copy">
           <p>The cone metric \(g_R=dr^2+(r^2/R^2)d\psi^2\) and its regular separated modes \(J_{kR}\) are defined for every real \(R&gt;0\). A planar \(N\)-fold quotient is obtained at an integer value \(R=N\), when the cone is unfolded into the plane.</p>
 
-          <p><strong>Where the setting comes from.</strong> The functional framework used below is due to Fall, Minlend and Weth, who introduced it for the cylinder and the sphere: the anisotropic spaces, and with them the device of carrying the moving boundary and the eigenfunction in a single unknown, which is what keeps the linearization from losing a derivative. It has been used again since, including for the half-sphere example above. What is new here is the treatment of the interior. Cutting the domain at a fixed depth and replacing the discarded disk by a Dirichlet-to-Neumann map, with the matching condition carried as a second component of the target space, is what allows the problem to be posed at noninteger order at all.</p>
+          <p><strong>Where the setting comes from.</strong> The functional framework used below is due to Fall, Minlend and Weth, who introduced it for the cylinder and the sphere: the anisotropic spaces, and with them the device of carrying the moving boundary and the eigenfunction in a single unknown, which is what keeps the linearization from losing a derivative. Enciso, Fernández, Ruiz and Sicbaldi then used the same setting to produce annular counterexamples in the plane, where the boundary has two components and the eigenfunction is constant on each but with different values <a class="history-citation" href="#ref-efrs">[17]</a>; the half-sphere example above uses it too. What is new here is the treatment of the interior. Cutting the domain at a fixed depth and replacing the discarded disk by a Dirichlet-to-Neumann map, with the matching condition carried as a second component of the target space, is what allows the problem to be posed at noninteger order at all.</p>
 
           <p><strong>Cutting a collar.</strong> Fix a small depth \(L\) and discard the interior. The Schiffer problem is posed only on \(\Omega_{\mathrm{ext}}=\Omega\setminus B(0,R-L)\), the collar between the perturbed boundary \(r=R-h(\psi)\) and the fixed inner circle \(r=R-L\). A cutoff \(\chi\), equal to \(1\) near the boundary and to \(0\) before the inner circle, carries that collar onto a cylinder \(\mathcal C_L=[0,L]\times S^1\) of unit radius and height \(L\), fixed once and for all:</p>
           <div class="tex-display">
@@ -1333,9 +1333,11 @@
           <p><strong>One unknown for the boundary and the field.</strong> Following Fall, Minlend and Weth, the moving boundary and the eigenfunction are read off a single unknown \(v\) on the cylinder, required only to vanish at \(y=0\). The boundary displacement is its normal derivative there, and the eigenfunction is built from it:</p>
           <div class="tex-display">
             \[
+            \begin{gathered}
             h_v=\lambda^{-1}\partial_yv(0,\cdot),\qquad
-            w_v=w_0+v+\chi(y)\,\partial_yw_0(y)\,h_v(\psi),\qquad
-            w_0(y)=\frac{J_0\bigl(\sqrt\lambda\,(R-y)\bigr)}{J_0(\rho)}.
+            w_0(y)=\frac{J_0\bigl(\sqrt\lambda\,(R-y)\bigr)}{J_0(\rho)},\\[6pt]
+            w_v=w_0+v+\chi(y)\,\partial_yw_0(y)\,h_v(\psi).
+            \end{gathered}
             \]
           </div>
           <p>The last term is not a correction chosen for convenience. It is the first variation of the transported radial mode as the boundary moves, \(\tfrac{d}{ds}\big|_{s=0}w_0\bigl(R-y-s\chi(y)h(\psi)\bigr)\). Straightening a moving domain drags the background field along with it, and this term is that drag.</p>
@@ -1720,6 +1722,7 @@
           <li><span>[14]</span><p>F. W. J. Olver et al., editors, <a href="https://dlmf.nist.gov/10" target="_blank" rel="noreferrer"><em>NIST Digital Library of Mathematical Functions, Chapter 10: Bessel Functions</em></a>.</p></li>
           <li><span>[15]</span><p>C. L. Siegel, <em>Über einige Anwendungen diophantischer Approximationen</em>, <em>Abhandlungen der Preußischen Akademie der Wissenschaften, Physikalisch-Mathematische Klasse</em>, no. 1 (1929), 1–70. Bourget's hypothesis is a special case of Siegel's theorem on Bessel functions.</p></li>
           <li id="ref-berenstein"><span>[16]</span><p>Matthew J. Colbrook, Siavash Sadeghi and George Stepaniants, <a href="https://arxiv.org/abs/2608.08953" target="_blank" rel="noreferrer"><em>A computer-assisted counterexample to the planar Berenstein conjecture</em></a>, arXiv:2608.08953 (2026).</p></li>
+          <li id="ref-efrs"><span>[17]</span><p>A. Enciso, A. J. Fernández, D. Ruiz and P. Sicbaldi, <a href="https://doi.org/10.1215/00127094-2024-0054" target="_blank" rel="noreferrer"><em>A Schiffer-type problem for annuli with applications to stationary planar Euler flows</em></a>, <em>Duke Mathematical Journal</em> <b>174</b> (2025), 1151–1208. Doubly connected counterexamples, with the eigenfunction taking a different constant value on each boundary component.</p></li>
         </ol>
       </section>
 
