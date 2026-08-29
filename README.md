@@ -40,13 +40,18 @@ The mathematical narrative is now:
 4. the computer-assisted validation of the numerical centre;
 5. the cylinder-to-cone bifurcation proof and planar lift.
 
-Within the final proof, each subsection now follows the same editorial order:
-observable numerical or geometric evidence, the precise theorem it suggests,
-and an expandable derivation. The large-cone transfer uses a fixed-radius
-two-panel Bessel comparison in the margin; the branch-family plot introduces
-both the uniform second variation and the near-integer phase argument; the
-final global/collar animation closes the argument by showing an explicit
-near-integer cone branch reach an integral order.
+The two proof tracks have parallel navigation and visual weight. The
+computer-assisted chapter follows the numerical search, printed conformal
+centre, fixed-disc pullback, exact compatible inverse, finite/tail split,
+certified fixed-point iteration and geometric reconstruction. Its applets mark
+schematic search data separately from exact algebra and certified bounds; the
+iteration figure shows how a Newton-like map stays inside a coefficient ball
+and contracts toward the unique exact solution. The
+bifurcation chapter follows the half-cylinder branch, large-cone transfer,
+real-order collar problem, uniform second variation, near-integer phase
+argument and planar lift. In both chapters, observable numerical or geometric
+evidence is followed by the precise result and the proof mechanism that makes
+it rigorous.
 
 The HTML supplies semantic sections, statements, disclosures, figures and
 controls. Page measures are owned by

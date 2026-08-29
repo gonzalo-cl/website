@@ -171,8 +171,42 @@
     if (document.querySelector("main > #borrow-flexibility")) {
       errors.push("borrowed-flexibility material is still a top-level section");
     }
+    const expectedComputerProofOrder = [
+      "computer-search",
+      "computer-fixed-disc",
+      "computer-compatible-inverse",
+      "computer-finite-tail",
+      "computer-contraction",
+      "computer-reconstruction",
+    ];
+    const actualComputerProofOrder = Array.from(
+      document.querySelectorAll("#computer-assisted-proof > header.section-heading[id]"),
+      (heading) => heading.id,
+    );
+    if (actualComputerProofOrder.length !== expectedComputerProofOrder.length
+        || expectedComputerProofOrder.some((id, index) => actualComputerProofOrder[index] !== id)) {
+      errors.push("Section IV proof stages do not follow the certified argument");
+    }
+    const expectedComputerFigures = [
+      "computer-assisted-search",
+      "computer-assisted-centre",
+      "conformal-pullback",
+      "compatible-inverse-modes",
+      "finite-tail-certificate",
+      "radii-polynomial-certificate",
+      "computer-assisted-reconstruction",
+    ];
+    const actualComputerFigures = Array.from(
+      document.querySelectorAll("#computer-assisted-proof > figure[data-figure]"),
+      (figure) => figure.dataset.figure,
+    );
+    if (actualComputerFigures.length !== expectedComputerFigures.length
+        || expectedComputerFigures.some((label, index) => actualComputerFigures[index] !== label)) {
+      errors.push("Section IV visual proof stages are incomplete or out of order");
+    }
     const expectedProofSectionOrder = [
       "debye-experiment",
+      "bifurcation-setting",
       "phase-story",
       "abundance-experiment",
       "modes-experiment",
@@ -198,7 +232,7 @@
     const nearIntegerLean = document.querySelector(".lean-statement[data-statement='near-integer-crossings']");
     if (!nearIntegerTheorem || !nearIntegerLean
         || nearIntegerTheorem.nextElementSibling !== nearIntegerLean) {
-      errors.push("Theorem 5.9 is missing its adjacent Lean counterpart");
+      errors.push("Theorem 5.10 is missing its adjacent Lean counterpart");
     }
 
     const expectedHeadingContract = [
@@ -210,12 +244,21 @@
       ["3.1", "Numerically: continue an easier boundary problem", "#numerical-route", "proof-subsection"],
       ["3.2", "Geometrically: pass through the half-cylinder", "#cone-route", "proof-subsection"],
       ["4", "The computer-assisted proof", "#computer-assisted-proof", "section"],
+      ["4.1", "Find a promising shape", "#computer-search", "proof-subsection"],
+      ["4.2", "Move the problem to one fixed disk", "#computer-fixed-disc", "proof-subsection"],
+      ["4.3", "Solve both boundary conditions at once", "#computer-compatible-inverse", "proof-subsection"],
+      ["4.4", "Control every coefficient, including the infinite tail", "#computer-finite-tail", "proof-subsection"],
+      ["4.5", "Prove that fixed-point iteration converges", "#computer-contraction", "proof-subsection"],
+      ["4.6", "Turn the coefficient solution back into a domain", "#computer-reconstruction", "proof-subsection"],
       ["5", "The bifurcation proof", "#experiment", "section"],
-      ["5.1", "Uniform half-cylinder bifurcation for 2 ≤ λ ≤ 3", "#half-cylinder-strategy", "proof-subsection"],
-      ["5.2", "Transfer from the half-cylinder to large cones", "#debye-experiment", "proof-subsection"],
-      ["5.3", "Exploring the cone bifurcation", "#phase-story", "proof-subsection"],
-      ["5.4", "Equidistributed phases supply near-integer crossing orders", "#abundance-experiment", "proof-subsection"],
-      ["5.5", "Closing the argument", "#modes-experiment", "proof-subsection"],
+      ["5.1", "Remapping the problem to a cone", "#cone-remap", "proof-subsection"],
+      ["5.2", "Expressing the problem on a fixed domain", "#fixed-domain", "proof-subsection"],
+      ["5.3", "Uniform half-cylinder bifurcation for 2 ≤ λ ≤ 3", "#half-cylinder-strategy", "proof-subsection"],
+      ["5.4", "Transfer from the half-cylinder to large cones", "#debye-experiment", "proof-subsection"],
+      ["5.5", "The bifurcation setting: a collar problem for every real order", "#bifurcation-setting", "proof-subsection"],
+      ["5.6", "Exploring the cone bifurcation", "#phase-story", "proof-subsection"],
+      ["5.7", "Equidistributed phases supply near-integer crossing orders", "#abundance-experiment", "proof-subsection"],
+      ["5.8", "Closing the argument", "#modes-experiment", "proof-subsection"],
       ["", "References", "#references", "section"],
       ["", "Acknowledgements", "#acknowledgements", "section"],
     ];
@@ -346,25 +389,25 @@
     const informalDebye = document.querySelector("#debye-experiment > .informal-debye-theorem[data-unnumbered='true']");
     const transferSketch = document.querySelector("#debye-experiment .debye-lead > .cone-cylinder-sketch");
     if (!transferTheorem || transferTheorem.classList.length !== 1) {
-      errors.push("Theorem 5.2 is not a direct canonical math statement");
+      errors.push("the uniform cone theorem is not a direct canonical math statement");
     }
     if (!transferAside || !transferVisual || !transferControls
         || !(transferVisual.compareDocumentPosition(transferControls) & Node.DOCUMENT_POSITION_FOLLOWING)) {
-      errors.push("Subsection 5.2 does not keep the fixed-collar plot inside its technical disclosure");
+      errors.push("Subsection 5.4 does not keep the fixed-collar plot inside its technical disclosure");
     }
     if (!transferSketch || !transferComparison || !informalDebye || !transferDetails
         || !(transferComparison.compareDocumentPosition(informalDebye) & Node.DOCUMENT_POSITION_FOLLOWING)
         || !(informalDebye.compareDocumentPosition(transferDetails) & Node.DOCUMENT_POSITION_FOLLOWING)
         || !(transferDetails.compareDocumentPosition(transferTheorem) & Node.DOCUMENT_POSITION_FOLLOWING)) {
-      errors.push("Subsection 5.2 does not follow observation → applet → informal theorem → details → uniform theorem");
+      errors.push("Subsection 5.4 does not follow observation → applet → informal theorem → details → uniform theorem");
     }
     if (document.querySelector("#debye-experiment > details.collar-coordinate-details")) {
-      errors.push("Subsection 5.2 has split its mode normalization into an unexplained second disclosure");
+      errors.push("Subsection 5.4 has split its mode normalization into an unexplained second disclosure");
     }
     if (!/angular quotient.+normalization.+oscillatory.+evanescent.+uniform error bounds/i.test(
       document.querySelector("#debye-experiment .transfer-conclusion")?.textContent || ""
     )) {
-      errors.push("Subsection 5.2 does not tell the reader what its technical disclosure contains");
+      errors.push("Subsection 5.4 does not tell the reader what its technical disclosure contains");
     }
     const halfCylinderIntro = document.querySelector("#experiment .half-cylinder-introduction");
     const halfCylinderApplet = halfCylinderIntro?.querySelector(":scope > .side-applet");
@@ -372,7 +415,7 @@
     const halfCylinderControls = halfCylinderApplet?.querySelector(":scope > aside");
     if (!halfCylinderApplet || !halfCylinderVisual || !halfCylinderControls
         || !(halfCylinderVisual.compareDocumentPosition(halfCylinderControls) & Node.DOCUMENT_POSITION_FOLLOWING)) {
-      errors.push("Subsection 5.1 does not use the visual-then-controls margin applet grammar");
+      errors.push("Subsection 5.3 does not use the visual-then-controls margin applet grammar");
     }
     const halfCylinderSequence = [
       document.querySelector("#experiment .cylinder-theorem"),
@@ -388,7 +431,7 @@
       if (!index) return false;
       return !(halfCylinderSequence[index - 1].compareDocumentPosition(node) & Node.DOCUMENT_POSITION_FOLLOWING);
     })) {
-      errors.push("Subsection 5.1 does not follow theorem and three-lemma order");
+      errors.push("Subsection 5.3 does not follow theorem and three-lemma order");
     }
 
     document.querySelectorAll(marginSelector).forEach((aside, index) => {
@@ -770,7 +813,7 @@
           && !button.closest(".cone-view-switch");
       });
       if (directActions.length > 1) errors.push(`paper control rail ${index + 1} has ${directActions.length} visible actions`);
-      const manipulators = Array.from(controls.querySelectorAll("input, button:not([hidden]), summary")).filter(visible);
+      const manipulators = Array.from(controls.querySelectorAll("input, select, button:not([hidden]), summary")).filter(visible);
       if (!manipulators.length) errors.push(`paper control rail ${index + 1} has no visible manipulator`);
     });
 

@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="A mathematical account of two constructions of planar counterexamples to Schiffer's conjecture: computer-assisted validation and cylinder-to-cone bifurcation.">
     <link rel="canonical" href="https://pompeiu-schiffer.org/">
-    <title>A counterexample to Schiffer's conjecture · Cone bifurcations and planar domains</title>
+    <title>Counterexamples to Schiffer's conjecture · Two independent constructions</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="icon" type="image/png" href="assets/website-logo-transparent.png?v=20260828">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css" integrity="sha384-vlBdW0r3AcZO/HboRPznQNowvexd3fY8qHOWkBi5q7KGgqJ+F48+DceybYmrVbmB" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.12.0/styles/github.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.js" integrity="sha384-AtrdNsnxl/75rvBneBVH7DtOvCxSVahR2zWqle1coBKd8DEmLoviqNeJSx64gNAs" crossorigin="anonymous"></script>
@@ -20,13 +20,13 @@
     <script defer src="math.js?v=20260828.2"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tufte-css@1.9.0/tufte.min.css">
     <link rel="stylesheet" href="styles.css?v=20260828.3">
-    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260829.2">
+    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260829.3">
   </head>
   <body class="tufte-site">
     <div class="noise" aria-hidden="true"></div>
 
     <header class="topbar">
-      <a class="brand" href="#top" aria-label="Schiffer bifurcation exposition home">
+      <a class="brand" href="#top" aria-label="Schiffer counterexample exposition home">
         <svg viewBox="0 0 34 34" aria-hidden="true"><path d="M6 4v26M6 4c12 0 12 8 22 8M6 30c12 0 12-8 22-8"/><path class="accent" d="M28 5v24"/></svg>
         <span>Counterexamples to Schiffer's conjecture</span>
       </a>
@@ -39,11 +39,11 @@
 
     <main id="top">
       <section class="intro">
-        <p class="intro-authors">Exposition by <a href="https://people.epfl.ch/gonzalo.caolabora" target="_blank" rel="noreferrer">Gonzalo Cao-Labora</a>, <a href="https://www.damtp.cam.ac.uk/user/mjc249/home.html" target="_blank" rel="noreferrer">Matthew J. Colbrook</a>, <a href="https://jaume.dedios.cat/" target="_blank" rel="noreferrer">Jaume de Dios Pont</a>, and <a href="https://georgestepaniants.com/" target="_blank" rel="noreferrer">George Stepaniants</a>, based on <a href="https://arxiv.org/abs/2608.05114" target="_blank" rel="noreferrer"><em>Counterexamples to Schiffer’s Conjecture</em></a>, <a href="https://arxiv.org/abs/2608.01579" target="_blank" rel="noreferrer"><em>A computer-assisted counterexample to the planar Pompeiu and Schiffer conjectures</em></a>, and <a href="https://arxiv.org/abs/2608.08953" target="_blank" rel="noreferrer"><em>A computer-assisted counterexample to the planar Berenstein conjecture</em></a>. <a class="intro-acknowledgements-link" href="#acknowledgements">Acknowledgements</a>.</p>
-        <h1>A counterexample to Schiffer's conjecture</h1>
+        <p class="intro-authors">Exposition by <a href="https://people.epfl.ch/gonzalo.caolabora" target="_blank" rel="noreferrer">Gonzalo Cao-Labora</a>, <a href="https://www.damtp.cam.ac.uk/user/mjc249/home.html" target="_blank" rel="noreferrer">Matthew J. Colbrook</a>, <a href="https://jaume.dedios.cat/" target="_blank" rel="noreferrer">Jaume de Dios Pont</a>, and <a href="https://georgestepaniants.com/" target="_blank" rel="noreferrer">George Stepaniants</a>, based on <a href="https://arxiv.org/abs/2608.01579" target="_blank" rel="noreferrer"><em>A computer-assisted counterexample to the planar Pompeiu and Schiffer conjectures</em></a>, <a href="https://arxiv.org/abs/2608.05114" target="_blank" rel="noreferrer"><em>Counterexamples to Schiffer’s Conjecture</em></a>, and <a href="https://arxiv.org/abs/2608.08953" target="_blank" rel="noreferrer"><em>A computer-assisted counterexample to the planar Berenstein conjecture</em></a>. <a class="intro-acknowledgements-link" href="#acknowledgements">Acknowledgements</a>.</p>
+        <h1>Counterexamples to Schiffer's conjecture</h1>
         <div class="intro-bottom">
           <p>Let \(\Omega\subset\mathbb R^2\) be a bounded domain. Pompeiu asked whether a function \(f\) is determined by its integrals over all rigid motions \(E(\Omega)\). Williams showed that nonuniqueness occurs exactly when \(\Omega\) supports a nonconstant Laplace eigenfunction whose value is constant and whose normal derivative vanishes on \(\partial\Omega\). The disk is the classical example, and Schiffer conjectured that it is the only connected smooth planar one.</p>
-          <p>We explain two ways to construct counterexamples. In the first, we search numerically for an almost-counterexample with extremely high precision, and then use a computer-assisted proof to show that an exact counterexample lies nearby. The domain is encoded as a conformal map from the unit disk, and a Newton&ndash;Kantorovich argument is run with interval arithmetic to prove that an exact solution exists. In the second, we look for domains with \(N\)-fold symmetry and relax the problem so that \(N\) may be any real number, which recovers Schiffer&rsquo;s problem exactly when \(N\) is an integer. Geometrically the relaxed problem lives on a cone of angle \(2\pi/N\), and bifurcation theory lets us start from a fractional \(N\) and arrive at an integer one.</p>
+          <p>We explain two ways to construct counterexamples. In the first, we search numerically for an almost-counterexample with extremely high precision, and then use a computer-assisted proof to show that an exact counterexample lies nearby. The domain is encoded as a conformal map from the unit disk, and interval arithmetic proves that a fixed-point iteration stays in a small coefficient ball and converges to an exact solution. In the second, we look for domains with \(N\)-fold symmetry and relax the problem so that \(N\) may be any real number, which recovers Schiffer&rsquo;s problem exactly when \(N\) is an integer. Geometrically the relaxed problem lives on a cone of angle \(2\pi/N\), and bifurcation theory lets us start from a fractional \(N\) and arrive at an integer one.</p>
         </div>
 
         <div class="formal-statement-pair intro-main-result">
@@ -771,7 +771,7 @@
             <figcaption>The \(D_{10}\)-symmetric domain found numerically and then enclosed by a rigorous certificate.</figcaption>
           </figure>
           <p>The disk has no nontrivial first-order Schiffer deformation, so the computer-assisted construction does not try to start a local branch there. Instead it first relaxes the zero-flux condition to \(\partial_\nu u=c\), begins at a known solution with \(c\ne0\), and numerically continues that branch toward \(c=0\). At the endpoint, the computation has found an extremely accurate noncircular approximate Schiffer domain.</p>
-          <p>The continuation produces an approximate zero of the boundary equations. To prove existence, <a class="xref" data-ref="computer-assisted-proof"></a> pulls the moving-domain problem back to the unit disk and verifies that a Newton-like map is contractive on a small coefficient ball centred at that approximation; its unique fixed point yields an exact domain.</p>
+          <p>The continuation produces an approximate solution of the boundary equations. To prove existence, <a class="xref" data-ref="computer-assisted-proof"></a> pulls the moving-domain problem back to the unit disk and builds a small ball around that approximation. A Newton-like iteration stays inside the ball and moves any two coefficient lists closer together, so it converges to one exact domain.</p>
         </div>
 
         <header id="cone-route" class="section-heading proof-strategy-subheading route-subheading" data-title="Geometrically: pass through the half-cylinder" data-toc="proof-subsection">
@@ -815,79 +815,470 @@
         </header>
 
         <div class="computer-assisted-lead">
-          <p>The numerical continuation in <a class="xref" data-ref="numerical-route"></a> supplies a centre. The proof must still control infinitely many coefficients, both boundary conditions, and the geometric reconstruction of the physical domain. It does so by pulling everything back to a fixed disk and validating a Newton-like contraction in a weighted coefficient algebra.</p>
+          <p>The computer proof turns an accurate numerical guess into an exact solution. A point \(x=(g,p)\) is an infinite list of coefficients: \(g\) describes the field inside the domain and \(p\) describes its shape and frequency. Numerical computation gives a finite list \(x^\circ\). The proof then draws a small ball around \(x^\circ\) in this coefficient space and proves that a true solution \(x^*\) lies inside it.</p>
+          <p>The six steps below explain how that ball is built and why iteration inside it must converge. Each visual has a specific job: it either explains how the equation is reorganized or shows what one of the rigorous estimates controls.</p>
         </div>
 
         <article class="math-statement math-statement-theorem computer-assisted-theorem" data-kind="theorem" data-label="computer-assisted-existence" aria-labelledby="computerAssistedTheoremTitle">
           <header class="math-statement-header"><span>Theorem</span><small>Colbrook&ndash;Stepaniants · 2026</small></header>
           <div class="math-statement-body">
-            <p id="computerAssistedTheoremTitle">There is a bounded, simply connected, noncircular \(D_{10}\)-symmetric Schiffer domain with real-analytic boundary.</p>
+            <p id="computerAssistedTheoremTitle">There is a bounded, simply connected, noncircular \(D_{10}\)-symmetric domain \(\Omega\subset\mathbb R^2\) with real-analytic boundary, a number</p>
+            <div class="tex-display">
+              \[
+              31.967007261&lt;k&lt;31.967007293,
+              \]
+            </div>
+            <p>and a nonconstant real-analytic function satisfying \((\Delta+k^2)u=0\) in \(\Omega\), with \(u=1\) and \(\partial_\nu u=0\) on \(\partial\Omega\). Consequently \(\Omega\) is a counterexample to both the planar Schiffer and Pompeiu conjectures.</p>
           </div>
         </article>
 
-        <div class="computer-assisted-copy">
-          <h3 id="boundaryFigureTitle">The conformal boundary used to centre the proof.</h3>
-          <p>The solid curve below uses the printed coefficients; its inset magnifies one crest at the same horizontal and vertical scale.</p>
-          <label for="computer-centre-note" class="margin-toggle" aria-label="Show the numerical centre and its magnified crest">&#8853;</label>
-          <input type="checkbox" id="computer-centre-note" class="margin-toggle">
-          <figure class="marginnote side-figure side-applet computer-assisted-figure boundary-aside" data-figure="computer-assisted-centre" aria-labelledby="boundaryFigureTitle">
-            <section class="computer-assisted-canvas-panel">
-              <canvas id="boundaryCanvas" role="img" aria-label="Numerical ten-fold conformal boundary and a magnified detail, compared with the unit circle">The selected number of conformal coefficients determines the displayed boundary.</canvas>
-              <div class="boundary-legend" aria-hidden="true">
-                <span><i class="boundary-legend-circle"></i>unit circle</span>
-                <span><i class="boundary-legend-centre"></i>printed centre</span>
-              </div>
-            </section>
-            <aside class="computer-assisted-controls paper-demo-controls">
-              <div class="computer-assisted-control">
-                <label for="boundaryModes">Coefficients shown <output id="boundaryModesValue" for="boundaryModes">30 of 30</output></label>
-                <input id="boundaryModes" type="range" min="1" max="30" value="30" step="1">
-              </div>
-            </aside>
-            <figcaption>The printed coefficients determine the plotted centre. The validation theorem encloses an exact domain in a small coefficient ball about this centre.</figcaption>
-          </figure>
-          <p>Write the ten-fold symmetric conformal map as</p>
+        <header id="computer-search" class="section-heading proof-strategy-subheading" data-title="Find a promising shape" data-toc="proof-subsection">
+          <h3>Find a promising shape</h3>
+        </header>
+        <div class="computer-assisted-copy paper-copy">
+          <p class="proof-step-purpose"><strong>Why this step matters.</strong> The later proof needs a good centre \(x^\circ\). This search finds one, but makes no claim yet that an exact solution exists.</p>
+          <p>A direct small deformation of the disk would require two different integer-order Bessel functions to vanish at the same positive number, which they do not. The search therefore solves a slightly easier problem first: it allows the outward derivative to be a constant \(c\), rather than demanding \(c=0\) from the start.</p>
+          <p>For a radial solution on the disk, this constant is</p>
           <div class="tex-display">
             \[
-            \phi_p(z)=p_0z+\sum_{j\ge1}p_jz^{10j+1}.
+            u_\mu(r)=\frac{J_0(\mu r)}{J_0(\mu)},qquad
+            u_\mu(1)=1,qquad
+            \partial_ru_\mu(1)=-\mu\frac{J_1(\mu)}{J_0(\mu)}=:c(\mu).
             \]
           </div>
-          <p>Pulling the Helmholtz equation back by \(\phi_p\) fixes the domain and moves the geometry into \(|\phi_p'|^2\). If \(g=\Delta(U-1)\), a compatible inverse \(K\) is chosen so that \(Kg\) and its radial derivative both vanish on the unit circle. Thus \(U=1+Kg\) already satisfies the two boundary conditions, and substitution leaves one cubic coefficient equation \(F(g,p)=0\).</p>
-        </div>
-
-        <div class="computer-assisted-copy">
-          <h3 id="certificateFigureTitle">The two final sign conditions.</h3>
-          <p>A finite approximate inverse is joined to analytic tail estimates for the full coefficient space. For the Newton-like map \(T(x)=x-\mathcal A F(x)\), the released bounds reduce the final contraction test to</p>
+          <p>Near \(\mu\approx31.2780879260\), the ten-fold angular deformation becomes free to move away from the disk. A determinant called the Wronskian detects this loss of independence:</p>
           <div class="tex-display">
             \[
-            \mathcal R(t)=Y+(Z-1)t+C_2t^2+C_3t^3.
+            W_{1,10}(\mu)=J_1(\mu)J'_{10}(\mu)-J_{10}(\mu)J'_1(\mu)=0.
             \]
           </div>
-          <p>At \(r=10^{-6}\), the strict inequalities \(\mathcal R(r)&lt;0\) and \(\mathcal R'(r)&lt;0\) make the coefficient ball invariant and contractive. Exact coefficient bounds then prove that \(\phi_p\) is injective, analytic across the circle, and non-linear, reconstructing the required physical domain.</p>
+          <p>Numerical continuation follows the resulting noncircular branch. Along the branch it adjusts the shape, the field, the frequency, and \(c\), eventually reaching \(k\approx31.9670072772\) with computed \(c=0\). The endpoint gives \(x^\circ=(g^\circ,p^\circ)\). It is a very accurate guess, not a proof: rounding error and the infinitely many coefficients that were not stored still have to be controlled.</p>
         </div>
 
-        <figure class="computer-assisted-figure interactive-plate figure-band" data-figure="radii-polynomial-certificate" aria-labelledby="certificateFigureTitle">
-          <section class="computer-assisted-canvas-panel">
-            <canvas id="certificateCanvas" role="img" aria-label="Radii-polynomial upper bound and selected coefficient radius">The selected radius is tested against the two exact sign conditions.</canvas>
+        <figure class="computer-assisted-figure interactive-plate figure-band" data-apparatus="visual-aside" data-figure="computer-assisted-search" aria-labelledby="searchFigureTitle">
+          <section class="computer-assisted-canvas-panel apparatus-visual">
+            <canvas id="searchCanvas" role="img" aria-label="Four-stage schematic of the numerical search from a disk crossing to a candidate with zero flux">The control moves through the numerical-search stages.</canvas>
           </section>
-          <aside class="computer-assisted-controls paper-demo-controls">
-            <div class="computer-assisted-control">
-              <label for="certificateRadius">Radius \(\times10^{-6}\) <output id="certificateRadiusValue" for="certificateRadius">1.000</output></label>
-              <input id="certificateRadius" type="range" min="0" max="2" value="1" step="0.001">
+          <aside class="computer-assisted-controls paper-demo-controls apparatus-controls">
+            <div class="computer-assisted-control apparatus-control">
+              <label for="searchStage">Search stage <output id="searchStageValue" for="searchStage">disk crossing</output></label>
+              <select id="searchStage">
+                <option value="0">1 · disk crossing</option>
+                <option value="1">2 · branch opens</option>
+                <option value="2">3 · reach zero flux</option>
+                <option value="3">4 · start the proof</option>
+              </select>
             </div>
-            <div class="certificate-readout" aria-live="polite">
-              <div><strong id="certificateValue">&mdash;</strong></div>
-              <div><strong id="certificateDerivative">&mdash;</strong></div>
-              <div id="certificateVerdict">&mdash;</div>
+            <output id="searchStageStatus" class="computer-assisted-status" for="searchStage" aria-live="polite">At this special frequency, a ten-fold deformation can move away from the disk.</output>
+          </aside>
+          <figcaption id="searchFigureTitle">What to see: the search moves through a family of easier constant-flux problems until it reaches \(c=0\). The path is a guide to the candidate, not evidence for the theorem; the rigorous argument starts from its endpoint.</figcaption>
+        </figure>
+
+        <div class="computer-assisted-copy paper-copy">
+          <p>The shape part of \(x^\circ\) contains thirty stored conformal coefficients. The first few create the visible ten-fold bulges; later coefficients make much smaller corrections. This is why the approximation can look settled even though the proof must still control an infinite tail.</p>
+        </div>
+        <figure class="computer-assisted-figure interactive-plate figure-band" data-apparatus="visual-aside" data-figure="computer-assisted-centre" aria-labelledby="boundaryFigureTitle">
+          <section class="computer-assisted-canvas-panel apparatus-visual">
+            <canvas id="boundaryCanvas" role="img" aria-label="Numerical ten-fold conformal boundary and a magnified detail, compared with the unit circle">The selected number of conformal coefficients determines the displayed boundary.</canvas>
+            <div class="boundary-legend" aria-hidden="true">
+              <span><i class="boundary-legend-circle"></i>unit circle</span>
+              <span><i class="boundary-legend-centre"></i>printed centre</span>
+            </div>
+          </section>
+          <aside class="computer-assisted-controls paper-demo-controls apparatus-controls">
+            <div class="computer-assisted-control apparatus-control">
+              <label for="boundaryModes">Coefficients shown <output id="boundaryModesValue" for="boundaryModes">30 of 30</output></label>
+              <select id="boundaryModes">
+                <option value="1">1 coefficient</option>
+                <option value="2">2 coefficients</option>
+                <option value="3">3 coefficients</option>
+                <option value="5">5 coefficients</option>
+                <option value="10">10 coefficients</option>
+                <option value="20">20 coefficients</option>
+                <option value="30" selected>all 30 coefficients</option>
+              </select>
             </div>
           </aside>
-          <figcaption>The plotted polynomial is explanatory. The archived proof also checks the finite derivative block, every omitted residual row, the adjacent tails, the remote tails, and the geometric reconstruction.</figcaption>
+          <figcaption id="boundaryFigureTitle">What to see: low modes determine the visible shape and high modes only refine it. The solid curve is still the computed centre, not the exact boundary; the proof will place the exact map within \(7.13\times10^{-11}\) of it.</figcaption>
+        </figure>
+
+        <header id="computer-fixed-disc" class="section-heading proof-strategy-subheading" data-title="Move the problem to one fixed disk" data-toc="proof-subsection">
+          <h3>Move the problem to one fixed disk</h3>
+        </header>
+        <div class="computer-assisted-copy paper-copy">
+          <p class="proof-step-purpose"><strong>Why this step matters.</strong> Comparing functions on different unknown domains is awkward. A conformal map moves every candidate problem back to the same unit disk.</p>
+          <p>The analytic function \(\phi_p\) maps the unit disk to the candidate domain. Ten-fold symmetry is built into the powers of \(z\):</p>
+          <div class="tex-display">
+            \[
+            p(z)=\sum_{j\ge0}p_jz^{10j},\qquad
+            k=p_0,qquad
+            \phi_p(z)=z+\sum_{j\ge1}\frac{p_j}{p_0(10j+1)}z^{10j+1}.
+            \]
+          </div>
+          <p>Here \(p_0=k\) is the frequency, while \(p_1,p_2,\ldots\) change the shape. The definition gives \(p=k\phi_p'\). If \(U=u\circ\phi_p\) is the original field viewed on the disk, then the equation becomes</p>
+          <div class="tex-display" data-equation="fixed-disc-problem">
+            \[
+            \Delta U+|p|^2U=0\quad\text{in }\mathbb D,qquad
+            U=1,\quad\partial_rU=0\quad\text{on }\mathbb T.
+            \]
+          </div>
+          <p>The Laplacian and the outward derivative change by the following scale factors:</p>
+          <div class="tex-display">
+            \[
+            \Delta U=|\phi_p'|^2(\Delta u)\circ\phi_p,
+            \qquad
+            \partial_rU=|\phi_p'|(\partial_\nu u)\circ\phi_p
+            \quad\text{on }\mathbb T.
+            \]
+          </div>
+          <p>Since \(|p|^2=k^2|\phi_p'|^2\), all motion of the boundary is now recorded by the coefficient \(|p|^2\). The boundary itself stays at the unit circle. The normalization \(\phi_p(0)=0\), \(\phi_p'(0)=1\) prevents the shape coefficients from wasting freedom on translation, rotation, or resizing.</p>
+          <p>The proof works in a function space where the boundary value and boundary derivative are well defined. It does not yet assume that \(\phi_p\) is one-to-one; that will be proved from the final coefficient bounds.</p>
+        </div>
+
+        <article class="math-statement" data-kind="proposition" data-label="fixed-disc-transfer">
+          <header class="math-statement-header"><span>Proposition</span><small>conformal transfer</small></header>
+          <div class="math-statement-body">
+            <p>If \(p_0&gt;0\), \(\phi_p\) is one-to-one near \(\overline{\mathbb D}\), and \(U\) solves <a class="xref" data-ref="fixed-disc-problem"></a>, then \(\Omega=\phi_p(\mathbb D)\) and \(u=U\circ\phi_p^{-1}\) solve the original Schiffer problem at frequency \(k=p_0\).</p>
+          </div>
+        </article>
+
+        <figure class="computer-assisted-figure interactive-plate figure-band" data-apparatus="visual-aside" data-figure="conformal-pullback" aria-labelledby="pullbackFigureTitle">
+          <section class="computer-assisted-canvas-panel apparatus-visual">
+            <canvas id="pullbackCanvas" role="img" aria-label="A conformal grid moving from the physical ten-fold domain to the fixed unit disk with coefficient weight">The control follows the conformal pullback to the fixed disk.</canvas>
+          </section>
+          <aside class="computer-assisted-controls paper-demo-controls apparatus-controls">
+            <div class="computer-assisted-control apparatus-control">
+              <label for="pullbackStage">Coordinate view <output id="pullbackStageValue" for="pullbackStage">physical domain</output></label>
+              <select id="pullbackStage">
+                <option value="0">1 · moving domain</option>
+                <option value="1">2 · conformal map</option>
+                <option value="2">3 · fixed disk</option>
+              </select>
+            </div>
+            <output id="pullbackStatus" class="computer-assisted-status" for="pullbackStage" aria-live="polite">The equation is posed on the unknown domain \(\Omega\).</output>
+          </aside>
+          <figcaption id="pullbackFigureTitle">What to see: the geometry has not disappeared; it has moved into the coefficient \(|p|^2=k^2|\phi_p'|^2\). This turns a PDE on many possible domains into one equation on a fixed disk.</figcaption>
+        </figure>
+
+        <header id="computer-compatible-inverse" class="section-heading proof-strategy-subheading" data-title="Solve both boundary conditions at once" data-toc="proof-subsection">
+          <h3>Solve both boundary conditions at once</h3>
+        </header>
+        <div class="computer-assisted-copy paper-copy">
+          <p class="proof-step-purpose"><strong>Why this step matters.</strong> The field must have both a prescribed value and a prescribed derivative at the boundary. The proof chooses coordinates in which those two conditions hold automatically.</p>
+          <p>Set \(v=U-1\). Then both \(v\) and its outward derivative are zero on the circle. If \(g=\Delta v\), not every possible source \(g\) can satisfy both conditions. Green's identity shows the necessary test: for every harmonic function \(h\),</p>
+          <div class="tex-display">
+            \[
+            \int_{\mathbb D}g\,h\,dA
+            =\int_{\mathbb T}\bigl(\partial_rv\,h-v\,\partial_rh\bigr)\,d\theta=0.
+            \]
+          </div>
+          <p>A disk-polynomial basis makes this test visible coefficient by coefficient:</p>
+          <div class="tex-display">
+            \[
+            \Phi_{\ell,s}(r,\theta)=r^{10|\ell|}P_s^{(0,10|\ell|)}(2r^2-1)e^{10i\ell\theta}.
+            \]
+          </div>
+          <p>Here \(P_s^{(0,10|\ell|)}\) is a standard Jacobi polynomial. The proof needs two concrete facts about this basis: the modes with \(s=0\) are harmonic, and the Laplacian relates neighbouring values of \(s\). Thus the compatibility condition is simply \(g_{\ell,0}=0\) for every \(\ell\). Once those forbidden coordinates are removed, the operator \(K\) below reconstructs \(v\) while satisfying both boundary conditions exactly.</p>
+        </div>
+
+        <article class="math-statement" data-kind="corollary" data-label="disk-polynomial-algebra">
+          <header class="math-statement-header"><span>Corollary</span><small>controlled multiplication</small></header>
+          <div class="math-statement-body">
+            <p>For \(\rho&gt;1\), measure a function by the weighted sum \(\|f\|_\rho=\sum_{\ell,s}\rho^{|\ell|}|f_{\ell,s}|\). The factor \(\rho^{|\ell|}\) makes high angular frequencies more expensive. Products of disk polynomials have positive finite expansions</p>
+            <div class="tex-display">
+              \[
+              \Phi_{a,s}\Phi_{b,t}=\sum_q\lambda_q\Phi_{a+b,q},
+              \qquad \lambda_q\ge0,
+              \qquad \sum_q\lambda_q=1.
+              \]
+            </div>
+            <p>Consequently \(\|fh\|_\rho\le\|f\|_\rho\|h\|_\rho\). Multiplying two functions cannot make the coefficient bound unexpectedly larger, and convergence in this norm implies uniform convergence on the disk.</p>
+          </div>
+        </article>
+
+        <article class="math-statement" data-kind="lemma" data-label="compatible-inverse">
+          <header class="math-statement-header"><span>Lemma</span><small>an inverse with both boundary conditions</small></header>
+          <div class="math-statement-body">
+            <p>For \(s\ge1\) and \(D=10|\ell|+2s\), define</p>
+            <div class="tex-display">
+              \[
+              K\Phi_{\ell,s}=
+              \frac{\Phi_{\ell,s-1}}{4D(D+1)}-
+              \frac{\Phi_{\ell,s}}{2D(D+2)}+
+              \frac{\Phi_{\ell,s+1}}{4(D+1)(D+2)}.
+              \]
+            </div>
+            <p>Then \(\Delta K\Phi_{\ell,s}=\Phi_{\ell,s}\), while both \(K\Phi_{\ell,s}\) and its radial derivative vanish on the circle. Moreover, \(K\) increases the coefficient norm by at most a factor of \(1/8\).</p>
+          </div>
+        </article>
+
+        <div class="computer-assisted-copy paper-copy">
+          <p>Why use three neighbouring radial modes? At the boundary they all have the same value, and their derivatives are known numbers. The three fractions in \(K\) are chosen so that the values cancel and the derivatives cancel. Applying the Laplacian then returns the original middle mode. The visual below shows those two cancellations.</p>
+          <p>The size estimate is exact too. For total degree \(D\), the three absolute coefficients add to \(1/[D(D+2)]\), at most \(1/8\). Higher-frequency modes are therefore easier, not harder, to control.</p>
+        </div>
+
+        <figure class="computer-assisted-figure interactive-plate figure-band" data-apparatus="visual-aside" data-figure="compatible-inverse-modes" aria-labelledby="inverseFigureTitle">
+          <section class="computer-assisted-canvas-panel apparatus-visual">
+            <canvas id="inverseCanvas" role="img" aria-label="One disk-polynomial source beside the three neighbouring modes that solve both boundary conditions">Choose a disk-polynomial mode to see how three neighbouring modes cancel at the boundary.</canvas>
+          </section>
+          <aside class="computer-assisted-controls paper-demo-controls apparatus-controls">
+            <div class="computer-assisted-control apparatus-control">
+              <label for="inverseAngularMode">Angular index <output id="inverseAngularModeValue" for="inverseAngularMode">\(\ell=1\)</output></label>
+              <select id="inverseAngularMode">
+                <option value="0">ℓ = 0</option>
+                <option value="1" selected>ℓ = 1</option>
+                <option value="2">ℓ = 2</option>
+                <option value="3">ℓ = 3</option>
+              </select>
+            </div>
+            <div class="computer-assisted-control apparatus-control">
+              <label for="inverseRadialMode">Radial index <output id="inverseRadialModeValue" for="inverseRadialMode">\(s=1\)</output></label>
+              <select id="inverseRadialMode">
+                <option value="1">s = 1</option>
+                <option value="2">s = 2</option>
+                <option value="3">s = 3</option>
+                <option value="4">s = 4</option>
+              </select>
+            </div>
+            <output id="inverseStatus" class="computer-assisted-status" for="inverseAngularMode inverseRadialMode" aria-live="polite">The three weights cancel both the boundary value and its radial derivative.</output>
+          </aside>
+          <figcaption id="inverseFigureTitle">What to see: one source mode is spread across three neighbouring modes whose boundary values and boundary derivatives cancel. This is an exact identity for every choice in the selectors, not a numerical fit.</figcaption>
+        </figure>
+
+        <div class="computer-assisted-copy paper-copy">
+          <p>Now \(v=Kg\) automatically has both zero boundary conditions. Since \(g=\Delta v\) and \(U=1+v\), the entire disk problem becomes one equation:</p>
+          <div class="tex-display important-equation" data-equation="computer-cubic-equation">
+            \[
+            F(g,p):=g+|p|^2(1+Kg)=0.
+            \]
+          </div>
+          <p>The term \(g\) is \(\Delta v\), while \(|p|^2(1+Kg)\) is \(|p|^2U\). Thus \(F=0\) is exactly the PDE, with both boundary conditions already built in. It is a cubic equation in the coefficient lists \(g\) and \(p\), so its derivatives and nonlinear error can be bounded explicitly.</p>
+        </div>
+
+        <header id="computer-finite-tail" class="section-heading proof-strategy-subheading" data-title="Control every coefficient, including the infinite tail" data-toc="proof-subsection">
+          <h3>Control every coefficient, including the infinite tail</h3>
+        </header>
+        <div class="computer-assisted-copy paper-copy">
+          <p class="proof-step-purpose"><strong>Why this step matters.</strong> A computer stores finitely many numbers, but a function has infinitely many coefficients. The proof must show that no uncomputed coefficient can spoil the result.</p>
+          <p>The main computation keeps \(0\le\ell\le60\), \(1\le s\le40\) for \(g\), and \(0\le j\le30\) for \(p\). This gives</p>
+          <div class="tex-display">
+            \[
+            61\cdot40+31=2471
+            \]
+          </div>
+          <p>unknowns in the central block. The derivative of \(F\) on this block is an ordinary finite matrix \(M\); its computed inverse \(R\) is stored as exact rational data. Just outside the block, multiplication by the finite centre can couple nearby coefficients, so every such interaction is listed and checked. Farther away, the factor \(1/[D(D+2)]\) in \(K\) decreases like \(1/D^2\), and a decreasing formula bounds all remaining modes at once.</p>
+          <p>The approximate inverse therefore has two pieces:</p>
+          <div class="tex-display">
+            \[
+            \mathcal A=\mathcal A_{\mathrm{finite}}\oplus J_{\mathrm{tail}}.
+            \]
+          </div>
+          <p>The first piece handles the \(2471\) stored coordinates. The second pairs each sufficiently distant coefficient with its matching equation and can be inverted exactly. Finally, \(\|I-RM\|_1&lt;1\) proves that the finite matrix really is invertible: its error from an exact inverse is too small to create a missing direction. Together these facts prove that \(\mathcal A\) is invertible on the full infinite list, not merely on a truncation.</p>
+          <p>The figure separates the argument into a finite core, a finite band of nearby interactions, and a remote tail with a decreasing bound. Its point is that the union covers the whole coefficient plane: there is no unchecked region between “computed” and “estimated.”</p>
+        </div>
+
+        <figure class="computer-assisted-figure interactive-plate figure-band" data-apparatus="visual-aside" data-figure="finite-tail-certificate" aria-labelledby="tailFigureTitle">
+          <section class="computer-assisted-canvas-panel apparatus-visual">
+            <canvas id="tailCanvas" role="img" aria-label="Five-part view showing how the finite core, nearby coefficients, and remote infinite tail are all bounded">Move through the finite core and the two parts of the infinite tail.</canvas>
+          </section>
+          <aside class="computer-assisted-controls paper-demo-controls apparatus-controls">
+            <div class="computer-assisted-control apparatus-control">
+              <label for="tailStage">Part of the estimate <output id="tailStageValue" for="tailStage">finite core</output></label>
+              <select id="tailStage">
+                <option value="0">1 · finite core</option>
+                <option value="1">2 · omitted equations</option>
+                <option value="2">3 · nearby tail</option>
+                <option value="3">4 · remote tail</option>
+                <option value="4">5 · combine all bounds</option>
+              </select>
+            </div>
+            <output id="tailStatus" class="computer-assisted-status" for="tailStage" aria-live="polite">An ordinary 2,471 by 2,471 calculation handles the stored coefficients.</output>
+          </aside>
+          <figcaption id="tailFigureTitle">What to see: the finite rectangle alone is not the proof. The checked boundary bands meet a decreasing estimate for the remote tail, so every possible coefficient is covered.</figcaption>
         </figure>
 
         <details class="proof-details computer-assisted-details">
-          <summary><span>What the certificate contains</span><i>expand +</i></summary>
+          <summary><span>How floating-point computation enters the theorem</span><i>expand +</i></summary>
           <div class="computer-assisted-details-body">
-            <p>The finite derivative block has 2,471 variables. Directed MPFR interval computations enclose the finite leaves; monotone analytic estimates control the remaining tails; and a separate exact-rational checker derives the two final inequalities and the bounds needed to reconstruct the domain. The proof materials are available in the <a href="https://doi.org/10.5281/zenodo.21765287" target="_blank" rel="noreferrer">archived certificate</a> and <a href="https://github.com/MColbrook/Pompeiu_Schiffer" target="_blank" rel="noreferrer">source repository</a>.</p>
+            <p>The program uses interval arithmetic: every rounded answer comes with lower and upper bounds guaranteed to contain the exact value. It runs the calculation at two precisions and checks that the higher-precision result lies inside the earlier bounds. A separate program then combines the bounds using exact fractions and decides the final inequalities without floating-point rounding.</p>
+          </div>
+        </details>
+
+        <header id="computer-contraction" class="section-heading proof-strategy-subheading" data-title="Prove that fixed-point iteration converges" data-toc="proof-subsection">
+          <h3>Prove that fixed-point iteration converges</h3>
+        </header>
+        <div class="computer-assisted-copy paper-copy">
+          <p class="proof-step-purpose"><strong>Why this step matters.</strong> We now have an approximate solution \(x^\circ\), but need a true solution. Banach's fixed-point theorem supplies one if a small enough ball around \(x^\circ\) is carried into itself and distances shrink inside that ball.</p>
+          <p>A point of the coefficient space \(X\) is a complete infinite list \(x=(g,p)\). Write</p>
+          <div class="tex-display">
+            \[
+            B_r(x^\circ)=\{x:\|x-x^\circ\|_X\le r\},
+            \qquad
+            T(x)=x-\mathcal A F(x).
+            \]
+          </div>
+          <p>The map \(T\) is an approximate Newton step. Because \(\mathcal A\) is invertible, \(T(x)=x\) exactly when \(F(x)=0\). Four rigorous bounds summarize everything proved in the earlier steps:</p>
+          <div class="certificate-bound-list" aria-label="Outward bounds used in the radii polynomial">
+            <span><b>\(Y\)</b><small>size of first step</small><strong>\(1.59\times10^{-10}\)</strong></span>
+            <span><b>\(Z\)</b><small>linear shrink bound</small><strong>\(0.621\)</strong></span>
+            <span><b>\(C_2\)</b><small>quadratic change</small><strong>\(122\)</strong></span>
+            <span><b>\(C_3\)</b><small>cubic change</small><strong>\(0.012\)</strong></span>
+          </div>
+          <p>\(Y\) bounds the first move away from \(x^\circ\). \(Z\) measures how much the imperfect inverse can fail to cancel the linear part. \(C_2\) and \(C_3\) control how the nonlinear equation bends away from its linear approximation. These are bounds for every point in the ball, not samples from a plot.</p>
+        </div>
+
+        <article class="math-statement" data-kind="criterion" data-label="radii-criterion">
+          <header class="math-statement-header"><span>Criterion</span><small>radii polynomial</small></header>
+          <div class="math-statement-body">
+            <p>Define the self-map bound \(\mathcal R\) and contraction factor \(q\) by</p>
+            <div class="tex-display">
+              \[
+              \mathcal R(t)=Y+(Z-1)t+C_2t^2+C_3t^3,
+              \qquad
+              q(t)=Z+2C_2t+3C_3t^2.
+              \]
+            </div>
+            <p>If \(\mathcal R(r)&lt;0\) and \(q(r)&lt;1\), then \(T\) maps \(B_r(x^\circ)\) into itself and shrinks distances there. The ball contains one and only one solution of \(F(x)=0\).</p>
+          </div>
+        </article>
+
+        <div class="computer-assisted-copy paper-copy">
+          <p>At \(r=10^{-6}\), the exact checks give \(\mathcal R(r)&lt;0\) and \(q(r)\le0.621244000000036&lt;1\). Thus every coefficient list within distance \(10^{-6}\) of the centre is sent back into that same ball, and</p>
+          <div class="tex-display">
+            \[
+            \|T(x)-T(y)\|_X\le q(r)\,\|x-y\|_X
+            \qquad (x,y\in B_r(x^\circ)).
+            \]
+          </div>
+          <p>Start anywhere in the ball and repeat \(x_{n+1}=T(x_n)\). The distance still remaining after \(n\) steps satisfies</p>
+          <div class="tex-display">
+            \[
+            \|x_n-x^*\|_X
+            \le q(r)^n\|x_0-x^*\|_X.
+            \]
+          </div>
+          <p>Since \(q(r)&lt;1\), the powers \(q(r)^n\) tend to zero. Thus the points converge to one limit \(x^*\). Continuity gives \(T(x^*)=x^*\), and invertibility of \(\mathcal A\) then gives \(F(x^*)=0\). Starting at the centre yields the sharper estimate</p>
+          <div class="tex-display">
+            \[
+            \|x^*-x^\circ\|_X
+            \le\frac{Y}{1-q(r)}
+            <4.20\times10^{-10}.
+            \]
+          </div>
+          <p>The large ball of radius \(10^{-6}\) is the certified safe region; the actual solution is forced into a much smaller neighbourhood of its centre. The checker evaluates the needed inequalities with exact fractions. The two-dimensional animation below is a schematic view of this high-dimensional coefficient space, but its displayed distance bounds are the certified ones.</p>
+        </div>
+
+        <figure class="computer-assisted-figure interactive-plate figure-band" data-apparatus="visual-aside" data-figure="radii-polynomial-certificate" aria-labelledby="certificateFigureTitle">
+          <section class="computer-assisted-canvas-panel apparatus-visual">
+            <canvas id="certificateCanvas" role="img" aria-label="Schematic coefficient-space ball showing fixed-point iterates converging to the exact solution">Choose a radius and run the certified fixed-point iteration.</canvas>
+          </section>
+          <aside class="computer-assisted-controls paper-demo-controls apparatus-controls">
+            <div class="computer-assisted-control apparatus-control">
+              <label for="certificateRadius">Radius \(\times10^{-6}\) <output id="certificateRadiusValue" for="certificateRadius">1.000</output></label>
+              <input id="certificateRadius" type="range" min="0" max="2" value="1" step="0.001">
+            </div>
+            <button id="certificatePlayButton" class="play-button certificate-play-button" type="button">
+              <span id="certificatePlayIcon" aria-hidden="true">▶</span>
+              <span id="certificatePlayLabel">Run iteration</span>
+            </button>
+            <div class="certificate-readout" aria-live="polite">
+              <div><strong id="certificateValue">&mdash;</strong></div>
+              <div><strong id="certificateDerivative">&mdash;</strong></div>
+              <div><strong id="certificateIteration">&mdash;</strong></div>
+              <div id="certificateVerdict">&mdash;</div>
+            </div>
+          </aside>
+          <figcaption id="certificateFigureTitle">What to see: once the selected ball passes both tests, \(T\) keeps every iterate inside it and the distance to the fixed point falls geometrically. The disk, path, and direction to \(x^*\) are a two-dimensional schematic of the infinite-dimensional space; the displayed contraction factors and distance bounds are rigorous, and the tiny central enclosure is enlarged.</figcaption>
+        </figure>
+
+        <article class="math-statement" data-kind="theorem" data-label="validated-fixed-disc-zero">
+          <header class="math-statement-header"><span>Theorem</span><small>validated solution</small></header>
+          <div class="math-statement-body">
+            <p>There is a unique exact solution \(x^*=(g^*,p^*)\) of <a class="xref" data-ref="computer-cubic-equation"></a> in the ball \(\|x-x^\circ\|_X\le10^{-6}\). The iteration from \(x^\circ\) converges to it, and \(\|x^*-x^\circ\|_X&lt;4.20\times10^{-10}\).</p>
+          </div>
+        </article>
+
+        <header id="computer-reconstruction" class="section-heading proof-strategy-subheading" data-title="Turn the coefficient solution back into a domain" data-toc="proof-subsection">
+          <h3>Turn the coefficient solution back into a domain</h3>
+        </header>
+        <div class="computer-assisted-copy paper-copy">
+          <p class="proof-step-purpose"><strong>Why this step matters.</strong> Solving the coefficient equation is not enough by itself. We must check that the resulting series gives one genuine, noncircular domain and an analytic field on that domain.</p>
+          <p><strong>First, the exact boundary stays near the plotted one.</strong> The coefficient ball gives</p>
+          <div class="tex-display">
+            \[
+            \sup_{|z|\le1}|\phi_{p^*}(z)-\phi_{p^\circ}(z)|
+            <7.13\times10^{-11}.
+            \]
+          </div>
+          <p>The contribution from all shape coefficients beyond those stored by the computer is less than \(3.47\times10^{-13}\).</p>
+          <p><strong>Second, the map cannot fold over itself.</strong> The same bounds prove</p>
+          <div class="tex-display">
+            \[
+            \sum_{j\ge1}\left|\frac{p_j^*}{p_0^*}\right|&lt;0.65,
+            \qquad
+            \operatorname{Re}\phi_{p^*}'(z)&gt;0.35
+            \quad(|z|\le1).
+            \]
+          </div>
+          <p>For two different points \(z_1,z_2\),</p>
+          <div class="tex-display">
+            \[
+            \frac{\phi_{p^*}(z_2)-\phi_{p^*}(z_1)}{z_2-z_1}
+            =\int_0^1\phi_{p^*}'\bigl(z_1+t(z_2-z_1)\bigr)\,dt.
+            \]
+          </div>
+          <p>The real part of this average derivative is positive, so the quotient cannot be zero. Hence \(\phi_{p^*}(z_1)\ne\phi_{p^*}(z_2)\): the map is one-to-one.</p>
+          <p><strong>Third, the domain is not a disk.</strong> The first shape coefficient stays a definite distance away from zero. Therefore \(\phi_{p^*}\) is not linear. A normalized one-to-one map from the unit disk onto a disk would have to be linear, so its ten-fold symmetric image is genuinely noncircular.</p>
+          <p>Finally, the coefficient bounds give convergent power series slightly beyond the unit circle. Standard analytic theory for the PDE extends \(U^*=1+Kg^*\) across the circle. Composing with \(\phi_{p^*}^{-1}\) produces the required real-analytic field on the physical domain.</p>
+        </div>
+
+        <article class="math-statement" data-kind="proposition" data-label="computer-geometric-reconstruction">
+          <header class="math-statement-header"><span>Proposition</span><small>quantitative reconstruction</small></header>
+          <div class="math-statement-body">
+            <p>Every solution in the validated ball has \(p_0&gt;0\), defines a one-to-one conformal map near \(\overline{\mathbb D}\), and lies within \(7.13\times10^{-11}\) of the printed map. The unique solution gives a \(D_{10}\)-symmetric domain with a simple real-analytic boundary that is not a circle.</p>
+          </div>
+        </article>
+
+        <figure class="computer-assisted-figure interactive-plate figure-band" data-apparatus="visual-aside" data-figure="computer-assisted-reconstruction" aria-labelledby="reconstructionFigureTitle">
+          <section class="computer-assisted-canvas-panel apparatus-visual">
+            <canvas id="reconstructionCanvas" role="img" aria-label="Three checks showing that the exact boundary is nearby, the map does not fold, and the shape is not a disk">Move through the three geometric checks.</canvas>
+          </section>
+          <aside class="computer-assisted-controls paper-demo-controls apparatus-controls">
+            <div class="computer-assisted-control apparatus-control">
+              <label for="reconstructionStage">Geometry check <output id="reconstructionStageValue" for="reconstructionStage">exact boundary is nearby</output></label>
+              <select id="reconstructionStage">
+                <option value="0">1 · exact boundary is nearby</option>
+                <option value="1">2 · map does not fold</option>
+                <option value="2">3 · shape is not a disk</option>
+              </select>
+            </div>
+            <output id="reconstructionStatus" class="computer-assisted-status" for="reconstructionStage" aria-live="polite">The exact boundary is uniformly within \(7.13\times10^{-11}\) of the printed centre.</output>
+          </aside>
+          <figcaption id="reconstructionFigureTitle">What to see: the exact map lies in a microscopic tube around the plotted centre, its derivative keeps a positive direction so it cannot fold, and its first shape coefficient stays away from zero so the image cannot be a disk. The tube is greatly enlarged to make it visible.</figcaption>
+        </figure>
+
+        <article class="math-statement" data-kind="corollary" data-label="computer-assisted-pompeiu">
+          <header class="math-statement-header"><span>Corollary</span><small>Fourier-circle cancellation</small></header>
+          <div class="math-statement-body">
+            <p>For every \(\omega\in S^1\),</p>
+            <div class="tex-display">
+              \[
+              \widehat{\mathbf 1_\Omega}(k\omega)=0.
+              \]
+            </div>
+            <p>Green's identity applied to the reconstructed field gives this cancellation for every direction. The standard Fourier characterization of the Pompeiu property then shows that \(\Omega\) is a counterexample.</p>
+          </div>
+        </article>
+
+        <div class="computer-assisted-copy paper-copy computer-assisted-close">
+          <p>Here is that last implication directly. Insert the plane wave \(e^{-ik\omega\cdot x}\) into Green's identity with \(u\). The two interior Helmholtz terms cancel. Since \(u=1\) and \(\partial_\nu u=0\) on the boundary, what remains is \(-k^2\int_\Omega e^{-ik\omega\cdot x}\,dx=0\). This is exactly the displayed Fourier-transform identity.</p>
+          <p>The computer-assisted proof is now complete: it constructs one exact noncircular Schiffer domain and shows that the same domain also fails the Pompeiu property. The bifurcation proof that follows reaches the existence conclusion by a different route.</p>
+        </div>
+
+        <details class="proof-details computer-assisted-details">
+          <summary><span>Certificate, source, and independent replay</span><i>expand +</i></summary>
+          <div class="computer-assisted-details-body">
+            <p>The released archive contains the exact stored centre, the finite approximate inverse, interval-arithmetic checks, a reproduction script, and a separate exact-fraction checker. The proof materials are available in the <a href="https://doi.org/10.5281/zenodo.21765287" target="_blank" rel="noreferrer">archived certificate</a> and <a href="https://github.com/MColbrook/Pompeiu_Schiffer" target="_blank" rel="noreferrer">source repository</a>.</p>
           </div>
         </details>
       </section>
@@ -1930,8 +2321,8 @@
           <li id="ref-fall-weth"><span>[9]</span><p>M. M. Fall and T. Weth, <a href="https://doi.org/10.1007/s12220-018-00115-w" target="_blank" rel="noreferrer"><em>Critical domains for the first nonzero Neumann eigenvalue in Riemannian manifolds</em></a>, <em>Journal of Geometric Analysis</em> <b>29</b> (2019), 3221–3247. The shape derivative used above, and its converse.</p></li>
           <li><span>[10]</span><p>M. M. Fall, I. A. Minlend and T. Weth, <a href="https://doi.org/10.4171/JEMS/1612" target="_blank" rel="noreferrer"><em>The Schiffer problem on the cylinder and on the 2-sphere</em></a>, <em>Journal of the European Mathematical Society</em> (2025).</p></li>
           <li><span>[11]</span><p>G. Cao-Labora and A. J. Fernández, <a href="https://arxiv.org/abs/2510.05732" target="_blank" rel="noreferrer"><em>A contractible Schiffer counterexample on the half-sphere</em></a>, arXiv:2510.05732 (2025).</p></li>
-          <li id="ref-colbrook"><span>[12]</span><p>M. J. Colbrook and G. Stepaniants, <a href="https://arxiv.org/abs/2608.01579" target="_blank" rel="noreferrer"><em>A computer-assisted counterexample to the planar Pompeiu and Schiffer conjectures</em></a>, arXiv:2608.01579 (2026).</p></li>
-          <li id="ref-cao-dedios"><span>[13]</span><p>G. Cao-Labora and J. de Dios Pont, <a href="https://arxiv.org/abs/2608.05114" target="_blank" rel="noreferrer"><em>Counterexamples to Schiffer's Conjecture</em></a>, arXiv:2608.05114 (2026). The construction expounded here.</p></li>
+          <li id="ref-colbrook"><span>[12]</span><p>M. J. Colbrook and G. Stepaniants, <a href="https://arxiv.org/abs/2608.01579" target="_blank" rel="noreferrer"><em>A computer-assisted counterexample to the planar Pompeiu and Schiffer conjectures</em></a>, arXiv:2608.01579 (2026). The validated conformal-map construction expounded here.</p></li>
+          <li id="ref-cao-dedios"><span>[13]</span><p>G. Cao-Labora and J. de Dios Pont, <a href="https://arxiv.org/abs/2608.05114" target="_blank" rel="noreferrer"><em>Counterexamples to Schiffer's Conjecture</em></a>, arXiv:2608.05114 (2026). The real-order cone-bifurcation construction expounded here.</p></li>
           <li><span>[14]</span><p>F. W. J. Olver et al., editors, <a href="https://dlmf.nist.gov/10" target="_blank" rel="noreferrer"><em>NIST Digital Library of Mathematical Functions, Chapter 10: Bessel Functions</em></a>.</p></li>
           <li><span>[15]</span><p>C. L. Siegel, <em>Über einige Anwendungen diophantischer Approximationen</em>, <em>Abhandlungen der Preußischen Akademie der Wissenschaften, Physikalisch-Mathematische Klasse</em>, no. 1 (1929), 1–70. Bourget's hypothesis is a special case of Siegel's theorem on Bessel functions.</p></li>
           <li id="ref-berenstein"><span>[16]</span><p>Matthew J. Colbrook, Siavash Sadeghi and George Stepaniants, <a href="https://arxiv.org/abs/2608.08953" target="_blank" rel="noreferrer"><em>A computer-assisted counterexample to the planar Berenstein conjecture</em></a>, arXiv:2608.08953 (2026).</p></li>
@@ -1960,8 +2351,8 @@
     </main>
 
     <footer>
-      <span>A counterexample to Schiffer's conjecture</span>
-      <span>disk rigidity → cylinder limit → cone bifurcation → planar lift</span>
+      <span>Counterexamples to Schiffer's conjecture</span>
+      <span>validated conformal map &nbsp;∥&nbsp; real-order cone bifurcation</span>
       <a href="#top">Back to top ↑</a>
     </footer>
 
@@ -1969,6 +2360,13 @@
       <button id="closeMethod" type="button" aria-label="Close">×</button>
       <p class="eyebrow">Computational notes</p>
       <h2>What is exact, and what is computed numerically.</h2>
+      <p class="eyebrow">Computer-assisted validation</p>
+      <p>The \(D_{10}\)-symmetric centre is found by numerical continuation in the easier constant-flux problem. This is only a search. The theorem keeps the final stored coefficient list \(x^\circ\) and, without using the search path, proves that the full infinite equation has one exact solution in the ball \(\|x-x^\circ\|_X\le10^{-6}\).</p>
+      <p>The change of coordinates \(p=k\phi'\) puts every candidate domain on the unit disk. Writing \(g=\Delta(U-1)\) and removing its harmonic coordinates makes both boundary conditions compatible. The explicit three-term operator \(K\) then gives \(\Delta Kg=g\), \(Kg=0\), and \(\partial_rKg=0\) at the circle. The PDE and both boundary conditions reduce to \(F(g,p)=g+|p|^2(1+Kg)=0\).</p>
+      <p>The main finite calculation contains \(2471\) variables. Interval arithmetic bounds this core and every nearby coefficient that can interact with it; decreasing formulas cover all more distant coefficients. A separate exact-fraction checker combines the bounds, so rounded numbers do not decide the theorem.</p>
+      <p>At \(r=10^{-6}\), the checker proves that \(T(x)=x-\mathcal AF(x)\) sends the ball into itself and shrinks distances by a factor at most \(0.621244000000036\). Banach's theorem therefore makes \(x_{n+1}=T(x_n)\) converge to the unique exact solution \(x^*\), with \(\|x^*-x^\circ\|_X&lt;4.20\times10^{-10}\). Further bounds prove that the resulting map is one-to-one, nonlinear, and within \(7.13\times10^{-11}\) of the plotted boundary.</p>
+      <hr>
+      <p class="eyebrow">Real-order bifurcation</p>
       <p>The limiting problem is posed on the half-infinite cylinder <span class="formula">\(\Omega_{\lambda,s}=\{x&lt;h_{\lambda,s}(\theta)\}\)</span>. The local bifurcation argument used for compact flat-cylinder domains gives a one-ended branch with <span class="formula">\(h_{\lambda,s}=s\cos\theta+O(s^2)\)</span>, uniformly for <span class="formula">\(2\leq\lambda\leq3\)</span>. The finite window is the portion of this infinite-domain solution displayed in the browser.</p>
       <p>We set <span class="formula">\(\Gamma_s:x=h_s(\theta)=s\cos(\theta-\phi)+h_2\cos 2(\theta-\phi)+h_3\cos 3(\theta-\phi)\)</span>. The mean translation is fixed to zero and <span class="formula">\(h_1=s\)</span> is the amplitude gauge. The field is a truncated sum of separated solutions of <span class="formula">\((\Delta+\lambda)u=0\)</span> in the physical cylinder coordinates.</p>
       <p>The <span class="formula">\(k=0\)</span> and <span class="formula">\(k=1\)</span> radial factors are oscillatory. For <span class="formula">\(k\ge2\)</span> they are <span class="formula">\(e^{\sqrt{k^2-\lambda}\,x}\cos(k\theta)\)</span> and <span class="formula">\(e^{\sqrt{k^2-\lambda}\,x}\sin(k\theta)\)</span>, which decay as <span class="formula">\(x\to-\infty\)</span>. Consequently, the interior PDE residual is identically zero.</p>
@@ -2003,8 +2401,8 @@
     <script defer src="story.js?v=20260828.6"></script>
     <script defer src="abundance.js?v=20260828.2"></script>
     <script defer src="pompeiu.js?v=20260828.4"></script>
-    <script defer src="computer-assisted.js?v=20260829.1"></script>
+    <script defer src="computer-assisted.js?v=20260829.3"></script>
     <script defer src="applet-layout.js?v=20260829.1"></script>
-    <script defer src="tufte/layout-contract.js?v=20260828.19"></script>
+    <script defer src="tufte/layout-contract.js?v=20260829.3"></script>
   </body>
 </html>
