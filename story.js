@@ -92,12 +92,14 @@
   const cylinderBoundaryFront = select(".cylinder-boundary-front");
   const cylinderBranchRange = select("#cylinderBranchRange");
   const cylinderBranchValue = select("#cylinderBranchValue");
+  const cylinderBranchDiagram = select("#cylinderBranchDiagram");
   const sphereDomainFill = select(".sphere-domain-fill");
   const sphereBoundaryBack = select(".sphere-boundary-back");
   const sphereBoundaryFront = select(".sphere-boundary-front");
   const sphereDomainLabel = select(".world-domain-label.dark-label");
   const sphereBranchRange = select("#sphereBranchRange");
   const sphereBranchValue = select("#sphereBranchValue");
+  const sphereBranchDiagram = select("#sphereBranchDiagram");
   const annulusDomainFill = select(".annulus-domain-fill");
   const annulusBoundaryOuter = select(".annulus-boundary-outer");
   const annulusBoundaryInner = select(".annulus-boundary-inner");
@@ -299,9 +301,17 @@
   }
 
   if (worldSection) {
-    bindWorldBranch(cylinderBranchRange, cylinderBranchValue, renderCylinderBifurcation);
-    bindWorldBranch(sphereBranchRange, sphereBranchValue, renderSphereBifurcation);
+    bindWorldBranch(cylinderBranchRange, cylinderBranchValue, (amount) => {
+      renderCylinderBifurcation(amount);
+      renderBranchDiagram(cylinderBranchDiagram, amount);
+    });
+    bindWorldBranch(sphereBranchRange, sphereBranchValue, (amount) => {
+      renderSphereBifurcation(amount);
+      renderBranchDiagram(sphereBranchDiagram, amount);
+    });
     bindWorldBranch(annulusBranchRange, annulusBranchValue, renderAnnulusBifurcation);
+    bindBranchDiagram(cylinderBranchDiagram, cylinderBranchRange);
+    bindBranchDiagram(sphereBranchDiagram, sphereBranchRange);
     bindBranchDiagram(annulusBranchDiagram, annulusBranchRange);
   }
 

@@ -498,8 +498,8 @@
           <h3>Recent results: the flexibility direction</h3>
         </header>
         <div class="borrow-lead">
-          <p>The linearization in this section tells us what to look for: a radial Schiffer eigenvalue that is also a nonradial Dirichlet eigenvalue. The Bourget–Siegel theorem rules this out on a disk. It does occur on the flat cylinder and on the sphere, and in both geometries the resulting linearized kernel produces genuine nonradial Schiffer branches. The sliders below move along the two branches, with the symmetric domain at <span class="formula">\(s=0\)</span>.</p>
-          <p>The common mechanism is a precise coincidence of special functions. Separation of variables produces a radial or zonal family satisfying the Neumann condition and a nonradial family satisfying the Dirichlet condition. A bifurcation becomes possible when the two families have the same eigenvalue: trigonometric waves on the cylinder, associated Legendre functions on the sphere, and, later, Bessel functions on the cone. The disk is rigid precisely because the corresponding Bessel coincidence is forbidden.</p>
+          <p>The linearization in this section tells us what to look for: a radial Schiffer eigenvalue that is also a nonradial Dirichlet eigenvalue. The Bourget–Siegel theorem rules this out on a disk. It does occur in other geometries, and there it produces genuine nonradial Schiffer examples. The diagrams below move along the branches, with the symmetric domain at <span class="formula">\(s=0\)</span>.</p>
+          <p>The difference in these modified geometries is that a radial Neumann eigenvalue and a nonradial Dirichlet eigenvalue can agree, and a bifurcation occurs precisely when they do.</p>
         </div>
         <div class="world-cards margin-figure-sequence">
           <article class="margin-figure-row">
@@ -542,21 +542,30 @@
             </div>
             <div class="world-branch-control">
               <div><label for="cylinderBranchRange">branch parameter \(s\)</label><output id="cylinderBranchValue" for="cylinderBranchRange">\(s=0\)</output></div>
+              <svg class="branch-diagram" id="cylinderBranchDiagram" viewBox="0 0 260 104" role="application" tabindex="0" aria-label="Pitchfork bifurcation diagram: drag the marker along the branch to set s. Horizontal axis is the band length a, vertical axis the amplitude s. The direction in which the branch bends is drawn schematically.">
+                <rect class="branch-hit" x="0" y="0" width="260" height="104" fill="transparent"/>
+                <line class="branch-axis" x1="18" y1="52" x2="248" y2="52"/>
+                <line class="branch-axis-tick" x1="150" y1="16" x2="150" y2="88"/>
+                <path class="branch-trivial" d="M18 52H248"/>
+                <path class="branch-nontrivial" d=""/>
+                <circle class="branch-marker" cx="150" cy="52" r="5"/>
+                <text class="branch-axis-label" x="150" y="100" text-anchor="middle">a</text>
+              </svg>
               <input id="cylinderBranchRange" type="range" min="-1" max="1" step="0.01" value="0" aria-label="Cylinder bifurcation parameter from minus epsilon to plus epsilon">
               <div class="range-scale"><span>\(-\varepsilon\)</span><span>\(0\)</span><span>\(+\varepsilon\)</span></div>
             </div>
             </aside>
             <span>flat cylinder</span><h3>A radial Neumann mode and a nonradial Dirichlet mode have the same eigenvalue.</h3>
-            <p>On the half-cylinder \(x\le0\), separation of variables gives, for every \(\lambda&gt;1\),</p>
+            <p>Fall, Minlend and Weth work on the full cylinder \(\mathbb{R}\times S^1\) and take as domain a band of length \(a\), carrying a radial Neumann eigenfunction across its length. Separation of variables gives</p>
             <div class="world-mode-pair tex-display">
               \[
               \begin{aligned}
               u_0(x)&amp;=\cos(\sqrt\lambda\,x),\\
-              v_1(x,\theta)&amp;=\sin(\sqrt{\lambda-1}\,x)\cos\theta.
+              v_1(x,\theta)&amp;=\sin(\sqrt{\lambda-1}\,x)\cos\theta,
               \end{aligned}
               \]
             </div>
-            <p>At \(x=0\), the first wave has Neumann data and the second has Dirichlet data, so on the half-cylinder the coincidence costs nothing: it holds for every \(\lambda&gt;1\), and for \(1&lt;\lambda&lt;4\) every higher channel \(k\ge2\) is evanescent. On a compact domain the spectrum is discrete instead, and the coincidence becomes a condition on the shape. Fall, Minlend and Weth take a straight band around the cylinder, carrying a radial Neumann eigenfunction across its width, and vary that width against the circumference; the two families cross at the single ratio \(\sqrt3/2\), where the Neumann eigenvalue exceeds the first Dirichlet eigenvalue by exactly the cost of one wave around the cylinder. Both boundary loops then pick up that \(\cos x\) wave, and their principal curvatures stop being constant — the first Schiffer domain in a space of constant curvature whose boundary is not isoparametric. They also obtain non-contractible examples on the round sphere, bifurcating from bands around the equator, which disproves a conjecture of Souam. The half-cylinder version used below follows from the same separated equations and weighted-space argument.</p>
+            <p>with \(u_0\) the radial Schiffer eigenfunction whenever the Neumann condition cancels at the two ends, and \(v_1\) the nonradial Dirichlet mode. On the band both conditions are quantization conditions on \(a\), so the two eigenvalues agree only at isolated lengths. As \(a\) varies they cross once, at width-to-circumference ratio \(\sqrt3/2\) and \(\lambda=4/3\), and it is at that single critical length that a nonradial branch appears. Both boundary loops then pick up a \(\cos x\) wave, and their principal curvatures stop being constant &mdash; the first Schiffer domain in a space of constant curvature whose boundary is not isoparametric. They also obtain non-contractible examples on the round sphere, bifurcating from bands around the equator, which disproves a conjecture of Souam.</p>
             <a class="literature-link" href="https://ems.press/journals/jems/articles/14298635" target="_blank" rel="noreferrer">Fall–Minlend–Weth, JEMS (2025) ↗</a>
           </article>
           <article class="margin-figure-row">
@@ -639,6 +648,15 @@
             </div>
             <div class="world-branch-control">
               <div><label for="sphereBranchRange">branch parameter \(s\)</label><output id="sphereBranchValue" for="sphereBranchRange">\(s=0\)</output></div>
+              <svg class="branch-diagram" id="sphereBranchDiagram" viewBox="0 0 260 104" role="application" tabindex="0" aria-label="Pitchfork bifurcation diagram: drag the marker along the branch to set s. Horizontal axis is the polar angle of the band, vertical axis the amplitude s. The direction in which the branch bends is drawn schematically.">
+                <rect class="branch-hit" x="0" y="0" width="260" height="104" fill="transparent"/>
+                <line class="branch-axis" x1="18" y1="52" x2="248" y2="52"/>
+                <line class="branch-axis-tick" x1="150" y1="16" x2="150" y2="88"/>
+                <path class="branch-trivial" d="M18 52H248"/>
+                <path class="branch-nontrivial" d=""/>
+                <circle class="branch-marker" cx="150" cy="52" r="5"/>
+                <text class="branch-axis-label" x="150" y="100" text-anchor="middle">θ</text>
+              </svg>
               <input id="sphereBranchRange" type="range" min="-1" max="1" step="0.01" value="0" aria-label="Spherical bifurcation parameter from minus epsilon to plus epsilon">
               <div class="range-scale"><span>\(-\varepsilon\)</span><span>\(0\)</span><span>\(+\varepsilon\)</span></div>
             </div>
