@@ -103,6 +103,7 @@
   const annulusBoundaryInner = select(".annulus-boundary-inner");
   const annulusBranchRange = select("#annulusBranchRange");
   const annulusBranchValue = select("#annulusBranchValue");
+  const annulusBranchDiagram = select("#annulusBranchDiagram");
 
   function worldPath(points, close = false) {
     const path = points.map((point, index) => `${index ? "L" : "M"}${point.x.toFixed(2)} ${point.y.toFixed(2)}`).join("");
@@ -132,6 +133,75 @@
     cylinderDomainBack.setAttribute("d", worldPath([...leftBack, ...[...rightBack].reverse()], true));
     cylinderBoundaryFront.setAttribute("d", `${worldPath(leftFront)}${worldPath(rightFront)}`);
     cylinderBoundaryBack.setAttribute("d", `${worldPath(leftBack)}${worldPath(rightBack)}`);
+  }
+
+  /* Pitchfork diagram for the annulus branch.  The trivial solutions are the
+     round annuli, one for each inner radius a, so they form the horizontal
+     line; the nontrivial branch leaves it at a_4 = 0.140989.  Crandall-
+     Rabinowitz gives a(s) even in s, because s -> -s is a rotation by pi/l,
+     so the branch really is a pitchfork rather than a transcritical crossing.
+     The *direction* in which it bends is second-order data that neither paper
+     records, so the bend drawn here is schematic and carries no claim; only
+     the shape and the crossing point are asserted. */
+  const BRANCH_DIAGRAM = Object.freeze({
+    left: 18, right: 248, axisY: 52, top: 16, bottom: 88, criticalX: 150, bend: 74,
+  });
+
+  function branchDiagramGeometry(amount) {
+    const { axisY, top, bottom, criticalX, bend } = BRANCH_DIAGRAM;
+    const halfHeight = (bottom - top) / 2;
+    return {
+      x: criticalX + bend * amount * amount,
+      y: axisY - halfHeight * amount,
+    };
+  }
+
+  function renderBranchDiagram(diagram, amount) {
+    if (!diagram) return;
+    const curve = diagram.querySelector(".branch-nontrivial");
+    const marker = diagram.querySelector(".branch-marker");
+    if (!curve || !marker) return;
+    const points = [];
+    for (let index = 0; index <= 48; index++) {
+      points.push(branchDiagramGeometry(-1 + 2 * index / 48));
+    }
+    curve.setAttribute("d", worldPath(points));
+    const here = branchDiagramGeometry(amount);
+    marker.setAttribute("cx", here.x.toFixed(2));
+    marker.setAttribute("cy", here.y.toFixed(2));
+  }
+
+  function bindBranchDiagram(diagram, range) {
+    if (!diagram || !range) return;
+    const { axisY, top, bottom } = BRANCH_DIAGRAM;
+    const halfHeight = (bottom - top) / 2;
+    const setFromPointer = (event) => {
+      const box = diagram.getBoundingClientRect();
+      if (!box.height) return;
+      // Map the pointer back through the viewBox: s is the vertical coordinate.
+      const viewY = (event.clientY - box.top) / box.height * 104;
+      const amount = Math.max(-1, Math.min(1, (axisY - viewY) / halfHeight));
+      range.value = amount.toFixed(2);
+      range.dispatchEvent(new Event("input", { bubbles: true }));
+    };
+    diagram.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
+      diagram.setPointerCapture(event.pointerId);
+      setFromPointer(event);
+    });
+    diagram.addEventListener("pointermove", (event) => {
+      if (!diagram.hasPointerCapture(event.pointerId)) return;
+      setFromPointer(event);
+    });
+    diagram.addEventListener("pointerup", (event) => diagram.releasePointerCapture(event.pointerId));
+    diagram.addEventListener("keydown", (event) => {
+      const step = event.key === "ArrowUp" || event.key === "ArrowRight" ? .05
+        : event.key === "ArrowDown" || event.key === "ArrowLeft" ? -.05 : 0;
+      if (!step) return;
+      event.preventDefault();
+      range.value = Math.max(-1, Math.min(1, Number(range.value) + step)).toFixed(2);
+      range.dispatchEvent(new Event("input", { bubbles: true }));
+    });
   }
 
   function renderAnnulusBifurcation(branchAmount) {
@@ -167,6 +237,7 @@
     annulusDomainFill.setAttribute("d", `${outerPath}${innerPath}`);
     annulusBoundaryOuter.setAttribute("d", outerPath);
     annulusBoundaryInner.setAttribute("d", innerPath);
+    renderBranchDiagram(annulusBranchDiagram, branchAmount);
   }
 
   function renderSphereBifurcation(branchAmount) {
@@ -231,6 +302,7 @@
     bindWorldBranch(cylinderBranchRange, cylinderBranchValue, renderCylinderBifurcation);
     bindWorldBranch(sphereBranchRange, sphereBranchValue, renderSphereBifurcation);
     bindWorldBranch(annulusBranchRange, annulusBranchValue, renderAnnulusBifurcation);
+    bindBranchDiagram(annulusBranchDiagram, annulusBranchRange);
   }
 
   function fillRange(input) {
