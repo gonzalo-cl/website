@@ -2944,3 +2944,25 @@ body.tufte-site main .shape-variation-figure .variation-original-boundary {
   font-size: 26px;
   font-style: normal;
 }
+.cone-remap-figure svg .remap-ident {
+  stroke: var(--teal, #388f91);
+  stroke-width: 1.4;
+}
+.cone-remap-figure svg marker path {
+  fill: var(--muted);
+  stroke: none;
+}
+.cone-remap-figure svg .remap-lspan {
+  stroke: var(--teal, #388f91);
+  stroke-width: 1.3;
+}
+.cone-remap-figure svg .remap-arrow-label {
+  fill: var(--muted);
+  font-size: 15px;
+  font-style: italic;
+}
+.cone-remap-figure svg .remap-sub,
+.cone-remap-figure svg .remap-sup {
+  font-size: 10px;
+  font-style: normal;
+}
