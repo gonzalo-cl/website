@@ -492,6 +492,13 @@ body.tufte-site main .phase-story-example-note {
 .section-heading[data-unnumbered] { grid-template-columns: minmax(0, 1fr); }
 .section-heading[data-unnumbered]::before { display: none; }
 
+/* A numbered section whose own heading carries no text: the number is
+   still needed for its subsections, but there is nothing to set beside
+   it, so the empty header must not reserve a band of its own. */
+.section-heading[data-toc="section"]:not(:has(> h2)):not(:has(> h3)) {
+  display: none;
+}
+
 .story-intro .intro-lead,
 .modes-lead,
 .abundance-lead {
