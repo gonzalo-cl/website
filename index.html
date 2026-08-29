@@ -59,9 +59,14 @@
       </section>
 
       <section id="introduction" class="story-intro">
-        <header class="section-heading light-section-heading" data-title="Pompeiu’s problem: When does a measuring probe lose information?" data-toc="section">
-          <h2>Pompeiu’s problem: When does a measuring probe lose information?</h2>
+        <header class="section-heading" data-title="The problem" data-toc="section" data-label="introduction">
         </header>
+
+        <div id="pompeiu-problem" class="intro-copy intro-copy-wide intro-chapter-heading">
+          <header class="section-heading light-section-heading" data-title="Pompeiu’s problem: When does a measuring probe lose information?" data-toc="subsection">
+            <h3>Pompeiu’s problem: When does a measuring probe lose information?</h3>
+          </header>
+        </div>
 
         <div class="intro-copy intro-copy-wide intro-pompeiu-copy">
           <p>Suppose that you are designing a probe to measure a physical quantity that varies across a sample: its temperature, its local composition, or the roughness of its surface. One choice in the design is the probe's footprint \(\Omega\), the region over which it takes a reading. Physical limitations prevent the instrument from measuring the field at a single point, so it returns an average over this footprint. You want to choose \(\Omega\) so that these averaged measurements retain as much information as possible.</p>
@@ -370,11 +375,10 @@
             <p><a href="https://arxiv.org/abs/2608.08953" target="_blank" rel="noreferrer"><em>A computer-assisted counterexample to the planar Berenstein conjecture</em></a>, by Matthew J. Colbrook, Siavash Sadeghi and George Stepaniants, constructs a bounded simply connected non-disc with real-analytic boundary and a sign-changing eigenfunction satisfying these data. Thus the unrestricted conjecture is false; rigidity versions that impose a sign condition on \(u\) are not contradicted by this example.</p>
           </div>
         </details>
-      </section>
 
-      <section id="linear-rigidity" class="linear-rigidity">
-        <header class="section-heading" data-title="Linear rigidity" data-toc="section">
-          <h2>Linear rigidity</h2>
+        <section id="linear-rigidity" class="linear-rigidity section-subsection">
+        <header class="section-heading subsection-heading" data-title="Early results: the rigidity direction" data-toc="subsection">
+          <h3>Early results: the rigidity direction</h3>
         </header>
 
         <div class="intro-copy intro-copy-wide">
@@ -544,8 +548,8 @@
         </div>
 
         <section id="borrow-flexibility" class="borrow-flexibility section-subsection">
-        <header class="section-heading subsection-heading" data-title="Changing the ambient geometry: what if linear rigidity fails?" data-toc="subsection">
-          <h3>Changing the ambient geometry: what if linear rigidity fails?</h3>
+        <header class="section-heading subsection-heading" data-title="Recent results: the flexibility direction" data-toc="subsection">
+          <h3>Recent results: the flexibility direction</h3>
         </header>
         <div class="borrow-lead">
           <p>The linearization in this section tells us what to look for: a radial Schiffer eigenvalue that is also a nonradial Dirichlet eigenvalue. The Bourget–Siegel theorem rules this out on a disk. It does occur on the flat cylinder and on the sphere, and in both geometries the resulting linearized kernel produces genuine nonradial Schiffer branches. The sliders below move along the two branches, with the symmetric domain at <span class="formula">\(s=0\)</span>.</p>
@@ -667,6 +671,7 @@
           </article>
           <lean-statement data-statement="pompeiu-star-shaped"></lean-statement>
         </div>
+      </section>
       </section>
       </section>
 
