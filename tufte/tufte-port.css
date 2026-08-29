@@ -238,7 +238,10 @@ body.tufte-site main a.xref:hover { color: var(--orange); }
   font-size: var(--type-label) !important;
 }
 
-main { width: 100%; }
+main {
+  container-type: inline-size;
+  width: 100%;
+}
 
 :is(
   .intro,
@@ -1059,12 +1062,14 @@ body.tufte-site main details:not(.secondary-controls) > summary {
 }
 body.tufte-site main details:not(.secondary-controls)[open] > summary { border-bottom: 1px solid var(--line); }
 
-/* Formalization disclosures live wherever the corresponding prose statement
-   lives. Their full local width is therefore inherited from the prose layer;
-   authors never choose a page measure when adding Lean source. */
+/* Formalization disclosures have one component-owned reading measure.  `cqw`
+   is relative to the page frame, while `min(100%, ...)` lets the same element
+   fill an already-narrow prose parent without becoming 55% of 55%.
+   Authors therefore never choose a width when adding Lean source. */
 body.tufte-site main details.lean-statement {
-  width: 100%;
-  max-width: 100%;
+  box-sizing: border-box;
+  width: min(100%, 55cqw);
+  max-width: 55cqw;
   margin: 1.25rem 0 1.8rem;
   border: 1px solid var(--line);
 }
@@ -1652,6 +1657,21 @@ body.tufte-site main .paper-demo-controls :is(
 }
 body.tufte-site main .paper-demo-controls p:not([hidden]) {
   display: none;
+}
+/* Concise applet introductions are genuine marginal prose.  The apparatus
+   owns their measure, while this shared role owns their type; an individual
+   applet never chooses either. */
+body.tufte-site main .paper-demo-controls > p.apparatus-note {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 0 .45rem;
+  padding: 0;
+  color: var(--muted);
+  font-family: var(--serif);
+  font-size: var(--type-note) !important;
+  font-style: normal;
+  line-height: var(--leading-caption) !important;
 }
 body.tufte-site main .paper-demo-controls :is(
   .control-block,
@@ -2502,6 +2522,10 @@ body > footer {
     width: 100%;
     max-width: 100%;
   }
+  body.tufte-site main details.lean-statement {
+    width: 100%;
+    max-width: 100%;
+  }
 
   body.tufte-site main :is(.paper-copy, .data-table) {
     width: 100%;
@@ -2651,6 +2675,9 @@ body > footer {
 }
 
 @media (max-width: 620px) {
+  body.tufte-site main .modes-plot-panel {
+    grid-template-rows: clamp(620px, 180vw, 680px);
+  }
   .collar-field-visual { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .collar-field-laboratory .collar-field-visual > .collar-field-panel {
     grid-template-rows: auto clamp(145px, 42vw, 210px);

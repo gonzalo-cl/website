@@ -1679,10 +1679,17 @@ solveAndRenderCone();
 // Global-to-local angular zoom. All three scales use the same interpolated
 // nonlinear cone record and the same precomputed Fourier–Bessel field.
 
+const MODES_PATCH_TANGENT_SPAN = Math.PI;
+const MODES_PATCH_EXTERIOR = .65;
+/* A square in the local (x, psi) coordinates must span the same coordinate
+   length in both directions.  The angular interval has length 2pi, so the
+   radial interval is chosen to have that same length. */
+const MODES_PATCH_DEPTH = TWO_PI - MODES_PATCH_EXTERIOR;
+
 const modesState = {
   progress: .62,
   crop: 0,
-  depth: 5,
+  depth: MODES_PATCH_DEPTH,
   solution: null,
   playing: false,
   playFrame: null,
@@ -1973,8 +1980,8 @@ function modesRaster(rect, sampler, resolution = .62) {
 function modesDrawGlobal(context, rect, solution, fieldValue) {
   const plot = {
     cx: rect.left + rect.width * .5,
-    cy: rect.top + rect.height * .54,
-    radius: Math.min(rect.width, rect.height - 42) * .43,
+    cy: rect.top + rect.height * .5,
+    radius: Math.min(rect.width, rect.height) * .475,
   };
   const localPlot = {
     cx: (plot.cx - rect.left) / rect.width,
@@ -2074,13 +2081,6 @@ function modesDrawGlobal(context, rect, solution, fieldValue) {
   context.lineWidth = 1.7;
   context.stroke();
 
-  context.fillStyle = SCHIFFER_VISUAL_THEME.ink;
-  context.font = SCHIFFER_VISUAL_THEME.labelFont;
-  context.fillText("WHOLE 28-COPY ASSEMBLY", rect.left + 10, rect.top + 16);
-  if (rect.width >= 480) {
-    context.fillStyle = MODES_COLORS.cyan;
-    context.fillText("ONE WAVELENGTH", cropPoints[1].x + 5, cropPoints[1].y - 5);
-  }
   const [cropTop, cropBottom] = [cropPoints[1], cropPoints[2]]
     .sort((first, second) => first.y - second.y);
   context.restore();
@@ -2203,17 +2203,10 @@ function modesDrawRadialComparison(context, rect, solution, depth, comparison) {
 }
 
 function modesDrawPatch(context, rect, solution, fieldValue, options) {
-  const compact = Boolean(options.compact);
-  const labelHeight = compact ? 24 : 39;
-  const footerHeight = compact ? 27 : 31;
-  const plot = {
-    left: rect.left + (compact ? 8 : 12),
-    top: rect.top + labelHeight,
-    width: rect.width - (compact ? 16 : 24),
-    height: rect.height - labelHeight - footerHeight,
-  };
-  const xMin = -options.depth;
-  const xMax = compact ? .22 : .55;
+  const plot = { ...rect };
+  const coordinateSpan = 2 * options.tangentSpan;
+  const xMax = options.exterior;
+  const xMin = xMax - coordinateSpan;
   const raster = modesRaster(plot, (u, v) => {
     const x = interpolateNumber(xMin, xMax, u);
     const tangent = interpolateNumber(options.tangentSpan, -options.tangentSpan, v);
@@ -2222,11 +2215,9 @@ function modesDrawPatch(context, rect, solution, fieldValue, options) {
     const wall = -coneBoundaryGraph(coordinates.psi, solution);
     if (x > wall) return SCHIFFER_VISUAL_THEME.backgroundAltRgb;
     return coneColorFor(fieldValue(solution.R + x, coordinates.psi));
-  }, compact ? .76 : .64);
+  }, .92);
 
   context.save();
-  context.fillStyle = SCHIFFER_VISUAL_THEME.panel;
-  context.fillRect(rect.left, rect.top, rect.width, rect.height);
   context.imageSmoothingEnabled = true;
   context.drawImage(raster, plot.left, plot.top, plot.width, plot.height);
 
@@ -2257,49 +2248,24 @@ function modesDrawPatch(context, rect, solution, fieldValue, options) {
     drawing = true;
   }
   context.strokeStyle = MODES_COLORS.white;
-  context.lineWidth = compact ? 1.3 : 2;
+  context.lineWidth = 1.7;
   context.shadowColor = "rgba(255,116,73,.62)";
-  context.shadowBlur = compact ? 3 : 6;
+  context.shadowBlur = 5;
   context.stroke();
   context.shadowBlur = 0;
-
-  if (!SCHIFFER_VISUAL_THEME.paperEdition) {
-    context.strokeStyle = options.accent;
-    context.lineWidth = 1;
-    context.strokeRect(rect.left + .5, rect.top + .5, rect.width - 1, rect.height - 1);
-  }
-  context.fillStyle = SCHIFFER_VISUAL_THEME.ink;
-  context.font = SCHIFFER_VISUAL_THEME.labelFont;
-  context.fillText(options.title, rect.left + (compact ? 8 : 12), rect.top + (compact ? 15 : 17));
   context.restore();
-  return plot;
+  return {
+    ...plot,
+    xMin,
+    xMax,
+    scaleX: plot.width / coordinateSpan,
+    scaleY: plot.height / (2 * options.tangentSpan),
+  };
 }
 
-function updateModesCanvasFormulas(globalRect, patchRect, patchPlot, solution, comparison, containsSeam) {
-  const formulaColor = SCHIFFER_VISUAL_THEME.muted;
-  if (SCHIFFER_VISUAL_THEME.paperEdition) {
-    ["modesGlobalFormula", "modesPatchFormula", "modesRadialFormula"].forEach(removeCanvasFormula);
-  } else {
-    setCanvasFormula("#modesCanvasWrap", "modesGlobalFormula", `R=${solution.R.toFixed(6)},\\quad s=${solution.s.toFixed(4)}`, {
-      left: globalRect.left + 10, top: globalRect.top + 20, color: formulaColor,
-    });
-    setCanvasFormula("#modesCanvasWrap", "modesPatchFormula", containsSeam
-      ? `\\Delta\\xi=${comparison.phaseDegrees.toFixed(2)}^{\\circ}`
-      : "\\psi\\in[-\\pi,\\pi]", {
-      left: patchRect.left + patchRect.width - 12,
-      top: patchRect.top + 8,
-      transform: "translateX(-100%)",
-      color: formulaColor,
-    });
-  }
-  setCanvasFormula("#modesCanvasWrap", "modesPatchLeftFormula", `x=-${modesState.depth.toFixed(1)}`, {
-    left: patchPlot.left, top: patchPlot.top + patchPlot.height + 5, color: formulaColor,
-  });
-  setCanvasFormula("#modesCanvasWrap", "modesPatchRightFormula", "x=0", {
-    left: patchPlot.left + patchPlot.width, top: patchPlot.top + patchPlot.height + 5,
-    transform: "translateX(-100%)", color: formulaColor,
-  });
-  removeCanvasFormula("modesRadialFormula");
+function updateModesCanvasFormulas() {
+  ["modesGlobalFormula", "modesPatchFormula", "modesPatchLeftFormula",
+    "modesPatchRightFormula", "modesRadialFormula"].forEach(removeCanvasFormula);
 }
 
 function modesCropContainsSeam(solution) {
@@ -2309,41 +2275,83 @@ function modesCropContainsSeam(solution) {
   return distance <= Math.PI / solution.R + gap / 2;
 }
 
+/* One layout function owns both panels.  Equal image rectangles are the
+   invariant; only their direction changes when the canvas becomes narrow. */
+function modesEqualPanelLayout(width, height) {
+  const horizontal = width >= 520;
+  const labelHeight = 22;
+  if (horizontal) {
+    const outer = 12;
+    const gap = Math.max(38, Math.min(52, width * .065));
+    const size = Math.max(80, Math.min(
+      340,
+      (width - 2 * outer - gap) / 2,
+      height - 2 * outer - labelHeight
+    ));
+    const groupWidth = 2 * size + gap;
+    const left = (width - groupWidth) / 2;
+    const top = (height - size - labelHeight) / 2 + labelHeight;
+    return {
+      horizontal,
+      size,
+      labelY: top - 8,
+      globalRect: { left, top, width: size, height: size },
+      patchRect: { left: left + size + gap, top, width: size, height: size },
+    };
+  }
+
+  const outer = 12;
+  const gap = 36;
+  const size = Math.max(80, Math.min(
+    300,
+    width - 2 * outer,
+    (height - 2 * outer - 2 * labelHeight - gap) / 2
+  ));
+  const groupHeight = 2 * (labelHeight + size) + gap;
+  const top = (height - groupHeight) / 2;
+  const left = (width - size) / 2;
+  const globalTop = top + labelHeight;
+  const patchLabelY = globalTop + size + gap + labelHeight - 8;
+  return {
+    horizontal,
+    size,
+    labelY: globalTop - 8,
+    patchLabelY,
+    globalRect: { left, top: globalTop, width: size, height: size },
+    patchRect: { left, top: patchLabelY + 8, width: size, height: size },
+  };
+}
+
+function drawModesImageLabel(context, text, rect, baseline) {
+  context.save();
+  context.fillStyle = SCHIFFER_VISUAL_THEME.ink;
+  context.font = SCHIFFER_VISUAL_THEME.labelFont;
+  context.fillText(text, rect.left, baseline);
+  context.restore();
+}
+
 function renderModesNestedZoom() {
   const { canvas, context, width, height } = modesCanvasMetrics();
   const solution = modesState.solution;
   const fieldValue = modesFastField(solution);
-  const comparison = modesRadialComparison(solution);
   context.clearRect(0, 0, width, height);
   context.fillStyle = SCHIFFER_VISUAL_THEME.background;
   context.fillRect(0, 0, width, height);
-  const compact = width < 650;
-  let globalRect;
-  let patchRect;
-  if (compact) {
-    globalRect = { left: 12, top: 10, width: width - 24, height: height * .54 };
-    patchRect = { left: 12, top: height * .58, width: width - 24, height: height * .39 };
-  } else {
-    globalRect = { left: 16, top: 18, width: width * .54, height: height - 36 };
-    patchRect = { left: width * .62, top: height * .17, width: width * .34, height: height * .66 };
-  }
+  const layout = modesEqualPanelLayout(width, height);
+  const { globalRect, patchRect } = layout;
 
   const global = modesDrawGlobal(context, globalRect, solution, fieldValue);
   const cropAngle = modesState.crop * TWO_PI;
-  const containsSeam = modesCropContainsSeam(solution);
   const patchPlot = modesDrawPatch(context, patchRect, solution, fieldValue, {
     centerAngle: cropAngle,
-    tangentSpan: Math.PI,
-    depth: modesState.depth,
-    title: compact ? "UNWRAPPED COLLAR" : "ONE-WAVELENGTH COLLAR",
-    detail: containsSeam ? `Δξ = ${comparison.phaseDegrees.toFixed(2)}° · SEAM CENTERED` : "ψ-span = 2π · locally flat",
-    accent: MODES_COLORS.cyan,
-    comparison,
-    compact,
+    tangentSpan: MODES_PATCH_TANGENT_SPAN,
+    exterior: MODES_PATCH_EXTERIOR,
   });
-  updateModesCanvasFormulas(globalRect, patchRect, patchPlot, solution, comparison, containsSeam);
+  updateModesCanvasFormulas();
+  drawModesImageLabel(context, "GLOBAL DOMAIN", globalRect, layout.labelY);
+  drawModesImageLabel(context, "BOUNDARY ZOOM", patchRect, layout.patchLabelY || layout.labelY);
 
-  if (!compact) {
+  if (layout.horizontal) {
     context.save();
     context.strokeStyle = "rgba(77,162,163,.58)";
     context.lineWidth = 1;
@@ -2357,10 +2365,15 @@ function renderModesNestedZoom() {
     context.restore();
   }
 
+  canvas.dataset.panelLayout = layout.horizontal ? "side-by-side" : "stacked";
+  canvas.dataset.panelSize = layout.size.toFixed(2);
+  canvas.dataset.patchScaleX = patchPlot.scaleX.toFixed(6);
+  canvas.dataset.patchScaleY = patchPlot.scaleY.toFixed(6);
+
   const gapDegrees = Math.max(0, 360 * (1 - coneNumerics.targetN / solution.R));
   canvas.setAttribute("aria-label", SCHIFFER_VISUAL_THEME.paperEdition
-    ? "The cone quotient assembled in 28 copies and a seam-centered one-wavelength flat collar crop of the same field."
-    : `The cone quotient at order ${solution.R.toFixed(6)} assembled in 28 copies, with a seam-centered one-wavelength flat collar crop showing a ${gapDegrees.toFixed(3)} degree mismatch.`);
+    ? "The cone quotient assembled in 28 copies beside an isotropically enlarged boundary-collar crop of the same field."
+    : `The cone quotient at order ${solution.R.toFixed(6)} assembled in 28 copies, beside an isotropically enlarged boundary-collar crop showing a ${gapDegrees.toFixed(3)} degree mismatch.`);
 }
 
 function updateModesReadouts() {
@@ -2442,7 +2455,7 @@ $("#modesTransferRange").addEventListener("input", (event) => {
 $("#modesPlayButton").addEventListener("click", toggleModesPlayback);
 $("#modesResetButton").addEventListener("click", () => {
   stopModesPlayback();
-  Object.assign(modesState, { progress: .62, crop: 0, depth: 5 });
+  Object.assign(modesState, { progress: .62, crop: 0, depth: MODES_PATCH_DEPTH });
   $("#modesTransferRange").value = modesState.progress;
   setRangeFill($("#modesTransferRange"));
   updateModesComparison();
