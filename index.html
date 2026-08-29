@@ -51,7 +51,7 @@
             <header class="math-statement-header"><span>Theorem</span><small>Main result</small></header>
             <div class="math-statement-body">
               <h3 id="mainResultTitle">A noncircular star-shaped planar Schiffer domain exists.</h3>
-              <p>There is a bounded, nonempty planar domain with a regular \(C^2\) boundary, star-shaped with respect to the origin, which is not a disk and has the Schiffer property.</p>
+              <p>There is a bounded, nonempty planar domain with a regular \(C^2\) boundary, star-shaped with respect to the origin, which is not a disk and is a Schiffer domain.</p>
             </div>
           </article>
           <lean-statement data-statement="schiffer-star-shaped"></lean-statement>
@@ -247,12 +247,12 @@
             <img src="assets/chladni-plate.jpg" loading="lazy" decoding="async" alt="Sand gathered along circular nodal lines separating four radial nodal domains on a vibrating round Chladni plate">
             <figcaption>A vibrating Chladni plate. Sand migrates from the moving regions and settles along the circular nodal lines, where the plate remains still. <a href="https://commons.wikimedia.org/wiki/File:Round_Chladni_plate_with_4_circular_nodes.JPG" target="_blank" rel="noreferrer">Pieter Kuiper, public domain.</a></figcaption>
           </figure>
-          <p>A domain \(\Omega\) for which the system <a class="xref" data-ref="schiffer-system" data-ref-short></a> has a solution is said to have the <em>Schiffer property</em>. The disk has this property: its radial modes are multiples of \(J_0(\sqrt\lambda\,r)\), and their normal derivative vanishes at the boundary precisely when \(\sqrt\lambda\,r\) is a zero of \(J_0'\) — equivalently of \(J_1\), since \(J_0'=-J_1\).</p>
-          <p>The formal version below writes the boundary condition as \(\nabla u=0\). Indeed, constancy of \(u\) along the boundary kills every tangential derivative, while \(\partial_\nu u=0\) kills the normal component. Together they make the full gradient vanish on \(\partial\Omega\).</p>
+          <p>A domain \(\Omega\) for which the system <a class="xref" data-ref="schiffer-system" data-ref-short></a> has a solution is called a <em>Schiffer domain</em>. The disk is one: its radial modes are multiples of \(J_0(\sqrt\lambda\,r)\), and their normal derivative vanishes at the boundary precisely when \(\sqrt\lambda\,r\) is a zero of \(J_0'\) — equivalently of \(J_1\), since \(J_0'=-J_1\).</p>
+          <p>The formal version below writes the boundary condition as \(\nabla u=0\). Indeed, constancy of \(u\) along the boundary kills every tangential derivative, while \(\partial_\nu u=0\) kills the normal component. Together they make the full gradient vanish on \(\partial\Omega\). It also normalizes \(\lambda=1\), which costs nothing: if \((u,\lambda)\) solves the system on \(\Omega\), then \(x\mapsto u(x/\sqrt\lambda)\) solves it with eigenvalue \(1\) on the rescaled domain \(\sqrt\lambda\,\Omega\). Fixing the domain and varying \(\lambda\), as the rest of this site does, is the same problem read the other way round.</p>
           <lean-statement data-statement="schiffer-property"></lean-statement>
           <article class="math-statement math-statement-conjecture" data-kind="conjecture" data-label="schiffer-conjecture" aria-labelledby="schifferConjectureTitle">
             <header class="math-statement-header"><span>Conjecture</span><small>Schiffer</small></header>
-            <div class="math-statement-body"><p id="schifferConjectureTitle">Every connected smooth bounded planar domain with the Schiffer property is a disk.</p></div>
+            <div class="math-statement-body"><p id="schifferConjectureTitle">Every connected smooth bounded planar Schiffer domain is a disk.</p></div>
           </article>
         </div>
 
@@ -293,7 +293,7 @@
         <details class="optional-digression proof-details intro-proof">
           <summary><span><small>Optional digression</small>The Schiffer&ndash;Pompeiu equivalence</span><i>expand +</i></summary>
           <div class="intro-proof-body">
-            <p><em>The Schiffer property implies failure of the Pompeiu property.</em> Let \((u,\lambda)\) solve the Schiffer system on \(\Omega\), and let \(f\) be <em>any</em> solution of \(\Delta f+\lambda f=0\) on the whole plane (the plane wave \(f(x)=\cos(\sqrt\lambda\,x_1)\) will do). Fix a rigid motion \(\sigma\) and write \(\Omega_\sigma=\sigma(\Omega)\), \(u_\sigma=u\circ\sigma^{-1}\), which solves the same system on \(\Omega_\sigma\). Green's second identity reads</p>
+            <p><em>A Schiffer domain fails the Pompeiu property.</em> Let \((u,\lambda)\) solve the Schiffer system on \(\Omega\), and let \(f\) be <em>any</em> solution of \(\Delta f+\lambda f=0\) on the whole plane (the plane wave \(f(x)=\cos(\sqrt\lambda\,x_1)\) will do). Fix a rigid motion \(\sigma\) and write \(\Omega_\sigma=\sigma(\Omega)\), \(u_\sigma=u\circ\sigma^{-1}\), which solves the same system on \(\Omega_\sigma\). Green's second identity reads</p>
             <div class="tex-display">
               \[
               \int_{\Omega_\sigma}\bigl(u_\sigma\Delta f-f\Delta u_\sigma\bigr)
@@ -309,7 +309,7 @@
               \]
             </div>
             <p>the middle step being the divergence theorem. Since \(\lambda&gt;0\), the integral of \(f\) over \(\Omega_\sigma\) is zero, and \(\sigma\) was arbitrary. The plane wave is a Pompeiu counterexample for \(\Omega\). <span class="qed">□</span></p>
-            <p><em>Failure of the Pompeiu property implies the Schiffer property.</em> Suppose \(\Omega\) fails the Pompeiu property, witnessed by a nonzero function \(f\). Run the convolution argument above on each rotated copy \(\sigma(\Omega)\), with \(\sigma\) a rotation about the origin, and use \(\widehat{\mathbf 1_{\sigma(\Omega)}}(\xi)=\widehat{\mathbf 1_{\Omega}}(\sigma^{-1}\xi)\). Picking any \(\xi_0\) in the support of \(\widehat f\) and letting \(\sigma\) run over all rotations shows that \(\widehat{\mathbf 1_\Omega}\) vanishes on the entire circle \(|\xi|=|\xi_0|\), and that circle is not a point since \(\widehat{\mathbf 1_\Omega}(0)=|\Omega|&gt;0\).</p>
+            <p><em>A domain failing the Pompeiu property is a Schiffer domain.</em> Suppose \(\Omega\) fails the Pompeiu property, witnessed by a nonzero function \(f\). Run the convolution argument above on each rotated copy \(\sigma(\Omega)\), with \(\sigma\) a rotation about the origin, and use \(\widehat{\mathbf 1_{\sigma(\Omega)}}(\xi)=\widehat{\mathbf 1_{\Omega}}(\sigma^{-1}\xi)\). Picking any \(\xi_0\) in the support of \(\widehat f\) and letting \(\sigma\) run over all rotations shows that \(\widehat{\mathbf 1_\Omega}\) vanishes on the entire circle \(|\xi|=|\xi_0|\), and that circle is not a point since \(\widehat{\mathbf 1_\Omega}(0)=|\Omega|&gt;0\).</p>
             <p>Now, take \(\lambda=|\xi_0|^2\). Since \(\widehat{\mathbf 1_\Omega}\) vanishes at \(|\xi|^2=\lambda\), we divide it by \((\lambda-|\xi|^2)\), which is the Fourier symbol of \(\Delta+\lambda\). Consider<sup class="fn-ref"><a href="#intro-fn-williams">1</a></sup></p>
             <label for="williams-technical-note" class="margin-toggle" aria-label="Show the technical note">&#8853;</label>
             <input type="checkbox" id="williams-technical-note" class="margin-toggle">
