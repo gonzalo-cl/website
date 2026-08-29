@@ -328,19 +328,26 @@
           <summary><span><small>Optional digression</small>Two further equivalences</span><i>expand +</i></summary>
           <div class="intro-proof-body">
             <p>Williams&rsquo; theorem lines up two conditions on \(\Omega\). Two more belong on the same list, one in harmonic analysis and one in shape optimization, so the disk question can be asked in four equivalent ways.</p>
-            <p><em>A Fourier zero set.</em> Brown, Schreiber and Taylor <a class="history-citation" href="#ref-bst">[5]</a> reduced the Pompeiu property to a condition on a single function: \(\Omega\) fails it exactly when \(\widehat{\mathbf 1_\Omega}\) vanishes identically on some circle \(|\xi|=\alpha\) centred at the origin.</p>
-            <p>One direction is proved above already. The rotation argument applied to a Pompeiu counterexample \(f\) produced exactly such a circle, of radius \(|\xi_0|\) for any \(\xi_0\) in the support of \(\widehat f\). For the converse, suppose \(\widehat{\mathbf 1_\Omega}\) vanishes on \(|\xi|=\alpha\), fix a unit vector \(\theta\), and write a rigid motion as \(\sigma(y)=\rho(y)+a\) with \(\rho\) a rotation. Since \(\theta\cdot\rho(y)=(\rho^{-1}\theta)\cdot y\),</p>
+            <p><em>A Fourier zero set.</em> Brown, Schreiber and Taylor <a class="history-citation" href="#ref-bst">[5]</a> reduced the Pompeiu property to a condition on a single function: \(\Omega\) fails it exactly when \(\widehat{\mathbf 1_\Omega}\) vanishes identically on some circle \(|\xi|=\alpha\) centred at the origin. This is the condition we already met in the proof above, where the rotation argument turned a Pompeiu counterexample into a circle of zeros of \(\widehat{\mathbf 1_\Omega}\); the converse runs the same computation backwards, since \(\int_{\sigma(\Omega)}e^{i\alpha\theta\cdot x}dx\) is a value of \(\widehat{\mathbf 1_\Omega}\) at a point of that circle.</p>
+            <p>For the disk this is where the Bessel condition comes from. Because \(\widehat{\mathbf 1_{B_r}}(\xi)=2\pi r\,J_1(r|\xi|)/|\xi|\) is radial, a single zero is automatically a whole circle of them, and the circle condition collapses to the one equation \(J_1(r\alpha)=0\). Without rotational symmetry, vanishing on an entire circle is an infinitely overdetermined demand, which is why counterexamples were hard to find.</p>
+            <p><em>A critical point.</em> Fix a smooth bounded \(\Omega\) with connected boundary, a simple Neumann eigenvalue \(\mu&gt;0\), and its eigenfunction \(u\) normalized by \(\int_\Omega u^2=1\). Deform \(\Omega\) while keeping its area fixed. Then \(\mu\) is stationary under every such deformation precisely when \(u\) is constant on \(\partial\Omega\) (which is the Schiffer system above). Schiffer domains are the critical points of a Neumann eigenvalue under a volume constraint, and Schiffer's question asks whether the disk is the only one.</p>
+            <label for="criticality-converse-note" class="margin-toggle" aria-label="Show the converse note">&#8853;</label>
+            <input type="checkbox" id="criticality-converse-note" class="margin-toggle">
+            <aside class="marginnote">The converse needs one more step. Criticality under the area constraint gives the Lagrange condition \(|\nabla u|^2-\mu u^2=\text{const}\) on \(\partial\Omega\), which looks weaker; Fall and Weth show that any nontrivial solution of it has \(u^2\) constant on the boundary, so on a connected boundary \(u\) itself is constant. Simplicity of \(\mu\) is not a technicality here. The ball in \(\mathbb R^n\) maximizes the first nonzero Neumann eigenvalue at fixed volume, so it is certainly critical, yet that eigenvalue has multiplicity \(n\) and none of its eigenfunctions is constant on the sphere.</aside>
+            <p>Deform with normal velocity \(f=V\cdot\nu\) on \(\partial\Omega\). The Hadamard formula for a simple Neumann eigenvalue is</p>
             <div class="tex-display">
-              \[
-              \int_{\sigma(\Omega)}e^{i\alpha\,\theta\cdot x}\,dx
-              =e^{i\alpha\,\theta\cdot a}\int_\Omega e^{i\alpha\,(\rho^{-1}\theta)\cdot y}\,dy
-              =e^{i\alpha\,\theta\cdot a}\,\widehat{\mathbf 1_\Omega}\bigl(-\alpha\rho^{-1}\theta\bigr),
-              \]
+            \[
+            \mu'(0)=\int_{\partial\Omega}\bigl(|\nabla u|^{2}-\mu u^{2}\bigr)f\,d\sigma .
+            \]
             </div>
-            <p>which vanishes because \(|\alpha\rho^{-1}\theta|=\alpha\). Taking real parts, the plane wave \(\cos(\alpha\,\theta\cdot x)\) has integral zero over every rigid motion of \(\Omega\), so \(\Omega\) fails the Pompeiu property. <span class="qed">&#9633;</span></p>
-            <p>This closes the loop back to the disk. Because \(\widehat{\mathbf 1_{B_r}}(\xi)=2\pi r\,J_1(r|\xi|)/|\xi|\) is radial, a single zero is automatically a whole circle of them, and the circle condition collapses to the one equation \(J_1(r\alpha)=0\): the same arithmetic that appeared in Pompeiu&rsquo;s problem and again in Schiffer&rsquo;s. Without rotational symmetry, vanishing on an entire circle is an infinitely overdetermined demand, which is why counterexamples were hard to find.</p>
-            <p><em>A critical point.</em> The fourth condition is variational, and it is <a href="#criticality-equivalence">proved further down</a>: for a simple Neumann eigenvalue \(\mu\) and connected \(\partial\Omega\), a domain is a Schiffer domain at \(\mu\) exactly when \(\mu\) is stationary under every area-preserving deformation. The connection to Schiffer&rsquo;s problem was drawn by Chatelain and Henrot <a class="history-citation" href="#ref-chatelain-henrot">[18]</a>, who identified the overdetermined boundary conditions as the Lagrange conditions for an eigenvalue under a volume constraint. The shape-derivative formula being differentiated is Zanger&rsquo;s <a class="history-citation" href="#ref-zanger">[19]</a>, and the converse step is Fall and Weth&rsquo;s <a class="history-citation" href="#ref-fall-weth">[9]</a>.</p>
-            <p>Which eigenvalue it is matters. On the unit disk the Schiffer mode is the first radial one, with \(\sqrt\mu\) the first zero of \(J_1\); it is the sixth Neumann eigenvalue counted with multiplicity, and it is simple. The first nonzero eigenvalue is the doubled dipole mode, which the disk maximizes at fixed area without either of its eigenfunctions being constant on the boundary.</p>
+            <p>On \(\partial\Omega\) the Neumann condition \(\partial_\nu u=0\) leaves only the tangential part of the gradient, and if \(u\equiv c\) on the boundary then that part vanishes too. What is left is</p>
+            <div class="tex-display">
+            \[
+            \mu'(0)=-\mu c^{2}\int_{\partial\Omega}f\,d\sigma
+            =-\mu c^{2}\,\frac{d}{dt}\Big|_{t=0}|\Omega_t| ,
+            \]
+            </div>
+            <p>which is zero for every area-preserving deformation. The constant \(c\) is not zero: if it were, \(u\) and \(\partial_\nu u\) would both vanish on \(\partial\Omega\) and unique continuation would force \(u\equiv0\). <span class="qed">□</span></p>
           </div>
         </details>
 
@@ -470,34 +477,6 @@
             </div>
             <p>Dilating gives another one, \(\Omega_t=(1+ct)D\) with \(u_t(x)=u_0\!\left(x/(1+ct)\right)\) and \(\lambda_t=\rho^2/(1+ct)^2\), whose normal velocity is the constant \(\delta\Omega(\theta)=c\); here the eigenvalue has to move, because the Laplacian scales like the inverse of a length squared. Rotating contributes nothing at all: the velocity is tangent to the circle, so \(\delta\Omega=0\).</p>
             <p>A genuinely new Schiffer domain must therefore produce a \(\delta\Omega\) outside the span of \(\{1,\cos\theta,\sin\theta\}\), and near a disk there is none. Expanding \(\delta u\) in angular modes, the mode \(\ell\) survives only if \(J_\ell(\rho)=0\) on top of \(J_1(\rho)=0\), and the Bourget&ndash;Siegel theorem says that two Bessel functions of distinct integer order share no positive zero. So every \(\ell\ge2\) dies, \(\ell=1\) is a translation and \(\ell=0\) is a dilation: the disk is rigid, and this is the obstruction Siegel's theorem provides. <span class="qed" aria-label="end of proof">&#9633;</span></p>
-          </div>
-        </details>
-
-        <div class="intro-copy intro-copy-wide" id="criticality-equivalence">
-          <h3>A Schiffer domain is a critical point of a Neumann eigenvalue.</h3>
-          <p>There is a second way to read the same boundary condition, which shows it is not an accident of the equations: it is exactly a criticality condition. Fix a smooth bounded \(\Omega\) with connected boundary, a simple Neumann eigenvalue \(\mu&gt;0\), and its eigenfunction \(u\) normalized by \(\int_\Omega u^2=1\). Deform \(\Omega\) while keeping its area fixed. Then \(\mu\) is stationary under every such deformation precisely when \(u\) is constant on \(\partial\Omega\) (which is the Schiffer system above). Schiffer domains are the critical points of a Neumann eigenvalue under a volume constraint, and Schiffer's question asks whether the disk is the only one.</p>
-        </div>
-
-        <details class="proof-details intro-proof">
-          <summary><span>Why the boundary condition is a criticality condition</span><i>expand +</i></summary>
-          <div class="intro-proof-body">
-            <label for="criticality-converse-note" class="margin-toggle" aria-label="Show the converse note">&#8853;</label>
-            <input type="checkbox" id="criticality-converse-note" class="margin-toggle">
-            <aside class="marginnote">The converse needs one more step. Criticality under the area constraint gives the Lagrange condition \(|\nabla u|^2-\mu u^2=\text{const}\) on \(\partial\Omega\), which looks weaker; Fall and Weth show that any nontrivial solution of it has \(u^2\) constant on the boundary, so on a connected boundary \(u\) itself is constant. Simplicity of \(\mu\) is not a technicality here. The ball in \(\mathbb R^n\) maximizes the first nonzero Neumann eigenvalue at fixed volume, so it is certainly critical, yet that eigenvalue has multiplicity \(n\) and none of its eigenfunctions is constant on the sphere.</aside>
-            <p>Deform with normal velocity \(f=V\cdot\nu\) on \(\partial\Omega\). The Hadamard formula for a simple Neumann eigenvalue is</p>
-            <div class="tex-display">
-              \[
-              \mu'(0)=\int_{\partial\Omega}\bigl(|\nabla u|^{2}-\mu u^{2}\bigr)f\,d\sigma .
-              \]
-            </div>
-            <p>On \(\partial\Omega\) the Neumann condition \(\partial_\nu u=0\) leaves only the tangential part of the gradient, and if \(u\equiv c\) on the boundary then that part vanishes too. What is left is</p>
-            <div class="tex-display">
-              \[
-              \mu'(0)=-\mu c^{2}\int_{\partial\Omega}f\,d\sigma
-              =-\mu c^{2}\,\frac{d}{dt}\Big|_{t=0}|\Omega_t| ,
-              \]
-            </div>
-            <p>which is zero for every area-preserving deformation. The constant \(c\) is not zero: if it were, \(u\) and \(\partial_\nu u\) would both vanish on \(\partial\Omega\) and unique continuation would force \(u\equiv0\). <span class="qed">□</span></p>
           </div>
         </details>
 
@@ -1743,8 +1722,6 @@
           <li><span>[15]</span><p>C. L. Siegel, <em>Über einige Anwendungen diophantischer Approximationen</em>, <em>Abhandlungen der Preußischen Akademie der Wissenschaften, Physikalisch-Mathematische Klasse</em>, no. 1 (1929), 1–70. Bourget's hypothesis is a special case of Siegel's theorem on Bessel functions.</p></li>
           <li id="ref-berenstein"><span>[16]</span><p>Matthew J. Colbrook, Siavash Sadeghi and George Stepaniants, <a href="https://arxiv.org/abs/2608.08953" target="_blank" rel="noreferrer"><em>A computer-assisted counterexample to the planar Berenstein conjecture</em></a>, arXiv:2608.08953 (2026).</p></li>
           <li id="ref-efrs"><span>[17]</span><p>A. Enciso, A. J. Fernández, D. Ruiz and P. Sicbaldi, <a href="https://doi.org/10.1215/00127094-2024-0054" target="_blank" rel="noreferrer"><em>A Schiffer-type problem for annuli with applications to stationary planar Euler flows</em></a>, <em>Duke Mathematical Journal</em> <b>174</b> (2025), 1151–1208. Doubly connected counterexamples, with the eigenfunction taking a different constant value on each boundary component.</p></li>
-          <li id="ref-chatelain-henrot"><span>[18]</span><p>T. Chatelain and A. Henrot, <a href="https://doi.org/10.1088/0266-5611/15/3/301" target="_blank" rel="noreferrer"><em>Some results about Schiffer&rsquo;s conjectures</em></a>, <em>Inverse Problems</em> <b>15</b> (1999), 647&ndash;658. Identifies the overdetermined boundary conditions as the criticality conditions for an eigenvalue under a volume constraint.</p></li>
-          <li id="ref-zanger"><span>[19]</span><p>D. Z. Zanger, <em>Eigenvalue variations for the Neumann problem</em>, <em>Applied Mathematics Letters</em> <b>14</b> (2001), no. 1, 39&ndash;43. The shape-derivative formula for a simple Neumann eigenvalue.</p></li>
         </ol>
       </section>
 
