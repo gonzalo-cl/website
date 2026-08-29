@@ -22,6 +22,24 @@
   let frame = 0;
   let settleTimer = 0;
 
+  /* Every paper control uses the same progress custom property.  Keeping
+     this here, beside responsive applet coordination, means an applet author
+     only supplies semantic min/max/value attributes; the red track cannot
+     silently drift away from its thumb. */
+  const syncRangeProgress = (input) => {
+    if (!(input instanceof HTMLInputElement) || input.type !== "range") return;
+    const minimum = input.min === "" ? 0 : Number(input.min);
+    const maximum = input.max === "" ? 100 : Number(input.max);
+    const value = Number(input.value);
+    if (![minimum, maximum, value].every(Number.isFinite) || maximum <= minimum) return;
+    const fraction = Math.max(0, Math.min(1, (value - minimum) / (maximum - minimum)));
+    input.style.setProperty("--value", `${(fraction * 100).toFixed(3)}%`);
+  };
+
+  const syncRangeControls = () => {
+    document.querySelectorAll('input[type="range"]').forEach(syncRangeProgress);
+  };
+
   const signature = () => [...document.querySelectorAll(visualSelector)]
     .filter((element) => element.getClientRects().length)
     .map((element) => {
@@ -52,6 +70,7 @@
   };
 
   const start = () => {
+    syncRangeControls();
     const targets = [...document.querySelectorAll(visualSelector)];
     if ("ResizeObserver" in window) {
       const observer = new ResizeObserver(() => emitStableLayout());
@@ -71,4 +90,6 @@
   window.addEventListener("load", settle, { once: true });
   window.addEventListener("pageshow", settle);
   window.addEventListener("orientationchange", settle);
+  document.addEventListener("input", (event) => syncRangeProgress(event.target));
+  document.addEventListener("change", (event) => syncRangeProgress(event.target));
 })();

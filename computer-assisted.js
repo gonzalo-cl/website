@@ -167,7 +167,7 @@
     context.fillStyle = colors.white;
     context.fillRect(0, 0, width, height);
 
-    const sideBySide = width >= 500;
+    const sideBySide = width >= 440;
     const detail = sideBySide
       ? { x: width * .54, y: 72, width: width * .42, height: 156 }
       : { x: 20, y: 30, width: width - 40, height: Math.min(145, height * .27) };
@@ -261,13 +261,6 @@
       context.stroke();
       context.setLineDash([]);
     }
-
-    drawLabel(context, "dashed: unit circle", 20, height - 14, { size: 11 });
-    drawLabel(context, `solid: ${cutoff} printed coefficient${cutoff === 1 ? "" : "s"}`, width - 20, height - 14, {
-      align: "right",
-      color: colors.accent,
-      size: 11,
-    });
 
     if (boundaryModesValue) boundaryModesValue.textContent = `${cutoff} of 30`;
     if (boundaryModes) boundaryModes.setAttribute("aria-valuetext", `${cutoff} of 30 printed conformal coefficients`);
