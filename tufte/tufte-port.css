@@ -2901,38 +2901,32 @@ body.tufte-site main .shape-variation-figure .variation-original-boundary {
   height: auto;
   overflow: visible;
 }
-.cone-remap-figure svg :is(path, ellipse) {
+.cone-remap-figure svg path {
   fill: none;
   stroke: var(--ink);
   stroke-width: 1.7;
   vector-effect: non-scaling-stroke;
 }
+.cone-remap-figure svg .remap-sector {
+  fill: rgba(56, 143, 145, .10);
+  stroke: none;
+}
+.cone-remap-figure svg .remap-collar-region {
+  fill: rgba(56, 143, 145, .26);
+  stroke: none;
+}
+.cone-remap-figure svg .remap-cone-body {
+  fill: var(--paper, #fff);
+  stroke: none;
+}
+.cone-remap-figure svg .remap-spokes {
+  stroke: var(--muted);
+  stroke-width: .8;
+}
 .cone-remap-figure svg .remap-inner-circle {
   stroke: var(--muted);
   stroke-width: 1;
   stroke-dasharray: 4 3;
-}
-.cone-remap-figure svg :is(.remap-sector, .remap-collar-region) {
-  fill: rgba(56, 143, 145, .12);
-  stroke: none;
-}
-.cone-remap-figure svg :is(.remap-collar-top, .remap-collar-bottom) {
-  stroke: var(--ink);
-}
-.cone-remap-figure svg .remap-collar-bottom {
-  stroke: var(--muted);
-  stroke-width: 1;
-  stroke-dasharray: 4 3;
-}
-.cone-remap-figure svg :is(.remap-arrow, .remap-arrow-label) {
-  stroke: var(--muted);
-}
-.cone-remap-figure svg .remap-arrow {
-  stroke-width: 1.2;
-}
-.cone-remap-figure svg marker path {
-  fill: var(--muted);
-  stroke: none;
 }
 .cone-remap-figure svg text {
   fill: var(--ink);
@@ -2940,7 +2934,13 @@ body.tufte-site main .shape-variation-figure .variation-original-boundary {
   font: 400 13px/1 var(--serif);
   font-style: italic;
 }
-.cone-remap-figure svg :is(.remap-tick, .remap-arrow-label) {
+.cone-remap-figure svg .remap-tick {
   fill: var(--muted);
-  font-size: 11px;
+  font-size: 13px;
+  font-style: normal;
+}
+.cone-remap-figure svg .remap-iso {
+  fill: var(--muted);
+  font-size: 26px;
+  font-style: normal;
 }
