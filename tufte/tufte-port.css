@@ -2893,3 +2893,54 @@ body.tufte-site main .shape-variation-figure .variation-original-boundary {
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 }
+
+
+.cone-remap-figure svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.cone-remap-figure svg :is(path, ellipse) {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.7;
+  vector-effect: non-scaling-stroke;
+}
+.cone-remap-figure svg .remap-inner-circle {
+  stroke: var(--muted);
+  stroke-width: 1;
+  stroke-dasharray: 4 3;
+}
+.cone-remap-figure svg :is(.remap-sector, .remap-collar-region) {
+  fill: rgba(56, 143, 145, .12);
+  stroke: none;
+}
+.cone-remap-figure svg :is(.remap-collar-top, .remap-collar-bottom) {
+  stroke: var(--ink);
+}
+.cone-remap-figure svg .remap-collar-bottom {
+  stroke: var(--muted);
+  stroke-width: 1;
+  stroke-dasharray: 4 3;
+}
+.cone-remap-figure svg :is(.remap-arrow, .remap-arrow-label) {
+  stroke: var(--muted);
+}
+.cone-remap-figure svg .remap-arrow {
+  stroke-width: 1.2;
+}
+.cone-remap-figure svg marker path {
+  fill: var(--muted);
+  stroke: none;
+}
+.cone-remap-figure svg text {
+  fill: var(--ink);
+  stroke: none;
+  font: 400 13px/1 var(--serif);
+  font-style: italic;
+}
+.cone-remap-figure svg :is(.remap-tick, .remap-arrow-label) {
+  fill: var(--muted);
+  font-size: 11px;
+}
