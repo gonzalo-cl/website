@@ -102,7 +102,7 @@
             <div class="math-statement-body"><p id="pompeiuProblemTitle">Does every bounded planar set have the Pompeiu property?</p></div>
           </article>
 
-          <p>Chakalov showed in 1944 that the answer is no: every disk fails to have the Pompeiu property. Rotational symmetry makes the loss of information plausible, since rotating a disk produces no new footprint. The optional digression below gives an explicit nonzero function in the kernel.</p>
+          <p>Chakalov showed in 1944 that the answer is no: every disk fails to have the Pompeiu property. Rotational symmetry makes the loss of information plausible, since rotating a disk produces no new footprint. Concretely, on the disk of radius \(r\) the plane wave \(\cos(\sqrt\lambda\,x_1)\) has integral zero over every congruent copy precisely when \(\sqrt\lambda\,r\) is a zero of \(J_1\). The optional digression below proves this.</p>
           <p>Finite disjoint unions of congruent disks give further examples. A function whose integral vanishes over every moved disk also has integral zero over every moved copy of such a union. We shall therefore consider connected smooth bounded domains. The modern Pompeiu conjecture asserts that, in this class, only disks fail to have the Pompeiu property.</p>
         </div>
 
@@ -247,7 +247,7 @@
             <img src="assets/chladni-plate.jpg" loading="lazy" decoding="async" alt="Sand gathered along circular nodal lines separating four radial nodal domains on a vibrating round Chladni plate">
             <figcaption>A vibrating Chladni plate. Sand migrates from the moving regions and settles along the circular nodal lines, where the plate remains still. <a href="https://commons.wikimedia.org/wiki/File:Round_Chladni_plate_with_4_circular_nodes.JPG" target="_blank" rel="noreferrer">Pieter Kuiper, public domain.</a></figcaption>
           </figure>
-          <p>A domain \(\Omega\) for which the system <a class="xref" data-ref="schiffer-system" data-ref-short></a> has a solution is said to have the <em>Schiffer property</em>. The disk has this property: its radial modes are multiples of \(J_0(\sqrt\lambda\,r)\), and their normal derivative vanishes at the boundary whenever \(J_1(\sqrt\lambda\,r)=0\).</p>
+          <p>A domain \(\Omega\) for which the system <a class="xref" data-ref="schiffer-system" data-ref-short></a> has a solution is said to have the <em>Schiffer property</em>. The disk has this property: its radial modes are multiples of \(J_0(\sqrt\lambda\,r)\), and their normal derivative vanishes at the boundary precisely when \(\sqrt\lambda\,r\) is a zero of \(J_0'\) — equivalently of \(J_1\), since \(J_0'=-J_1\).</p>
           <p>The formal version below writes the boundary condition as \(\nabla u=0\). Indeed, constancy of \(u\) along the boundary kills every tangential derivative, while \(\partial_\nu u=0\) kills the normal component. Together they make the full gradient vanish on \(\partial\Omega\).</p>
           <lean-statement data-statement="schiffer-property"></lean-statement>
           <article class="math-statement math-statement-conjecture" data-kind="conjecture" data-label="schiffer-conjecture" aria-labelledby="schifferConjectureTitle">
@@ -271,6 +271,8 @@
             <p class="membrane-model-note">The applet illustrates the corresponding radial nodal patterns. The shallow surface and radial trace evaluate the scalar membrane modes \(J_0(\rho_n r)\cos(\rho_n t)\) appearing in Schiffer's equation, with \(J_1(\rho_n)=0\).</p>
           </div>
         </figure>
+
+        <p>In both problems the disk produced the same arithmetic condition: the frequency times the radius must be a zero of \(J_1\). That coincidence is not an accident, and Williams made it precise.</p>
 
         <div class="formal-statement-pair">
           <article class="math-statement math-statement-theorem intro-theorem" data-kind="theorem" data-label="williams-equivalence" aria-labelledby="williamsTheoremTitle">
