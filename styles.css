@@ -39,10 +39,12 @@ a { color: inherit; }
 .brand { display: flex; align-items: center; gap: 12px; width: fit-content; text-decoration: none; font-size: 12px; font-weight: 600; letter-spacing: .015em; }
 .brand svg { width: 27px; height: 27px; fill: none; stroke: var(--ink); stroke-width: 1.25; }
 .brand svg .accent { stroke: var(--orange); stroke-width: 2.5; }
+.brand img { display: block; flex: 0 0 auto; width: 27px; height: 27px; object-fit: contain; }
 .status { display: flex; align-items: center; gap: 9px; font: 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; }
 .status a { color: var(--orange); text-decoration: none; border-bottom: 1px solid currentColor; }
 .status i, .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); box-shadow: 0 0 0 4px rgba(77,162,163,.14); }
 .method-button { justify-self: end; padding: 0 0 5px; color: var(--ink); background: none; border: 0; border-bottom: 1px solid var(--ink); font: 11px var(--mono); text-transform: uppercase; letter-spacing: .08em; cursor: pointer; }
+.method-button-prefix { display: inline; }
 
 .site-toc { position: fixed; z-index: 40; top: 92px; left: 18px; width: min(310px, calc(100vw - 36px)); color: var(--ink); background: var(--paper); border: 1px solid var(--line); box-shadow: 0 18px 55px rgba(19,33,38,.13); }
 .site-toc summary { min-height: 42px; padding: 0 14px; display: flex; align-items: center; justify-content: space-between; gap: 18px; list-style: none; cursor: pointer; font: 11px var(--mono); text-transform: uppercase; letter-spacing: .09em; }
@@ -800,12 +802,24 @@ body > footer { color: var(--ink); background: var(--paper); }
 body > footer { border-top: 1px solid var(--line); }
 body > footer span { color: var(--muted); opacity: 1; }
 
-dialog { width: min(650px, calc(100vw - 40px)); max-height: calc(100vh - 40px); padding: 48px; overflow: auto; color: var(--ink); background: var(--paper); border: 1px solid var(--ink); box-shadow: 0 30px 120px rgba(0,0,0,.38); }
+dialog { width: min(650px, calc(100vw - 40px)); max-height: calc(100vh - 40px); max-height: calc(100dvh - 40px); padding: 48px; overflow: auto; color: var(--ink); background: var(--paper); border: 1px solid var(--ink); box-shadow: 0 30px 120px rgba(0,0,0,.38); }
 dialog::backdrop { background: rgba(19,33,38,.72); backdrop-filter: blur(4px); }
 dialog h2 { margin-bottom: 25px; font-size: 49px; }
 dialog p:not(.eyebrow) { color: var(--muted); font-size: 13px; line-height: 1.72; }
-dialog button { position: absolute; top: 15px; right: 19px; padding: 0; color: var(--ink); background: none; border: 0; font-size: 28px; cursor: pointer; }
+dialog button { position: sticky; z-index: 2; top: 0; float: right; width: 44px; min-width: 44px; height: 44px; min-height: 44px; margin: -34px -34px 0 0; padding: 0; color: var(--ink); background: var(--paper); border: 1px solid var(--ink); font-size: 28px; line-height: 1; cursor: pointer; }
 dialog hr { height: 1px; margin: 32px 0; background: var(--line); border: 0; }
+
+@media (max-width: 480px) {
+  dialog {
+    width: calc(100vw - 24px);
+    max-height: calc(100vh - 24px);
+    max-height: calc(100dvh - 24px);
+    padding: 44px 18px 24px;
+  }
+  dialog button { margin: -34px -8px 0 0; }
+  dialog h2 { font-size: clamp(32px, 10vw, 42px); }
+  dialog .formula { display: inline-block; max-width: 100%; overflow-x: auto; vertical-align: bottom; }
+}
 
 @media (max-width: 1000px) {
   .intro h1 { font-size: clamp(65px, 13vw, 120px); }
@@ -1439,6 +1453,50 @@ body > footer { padding-inline: var(--layout-gutter); }
   .site-toc nav { border-top: 0; }
   .site-toc a { padding-right: 18px; padding-left: 18px; }
   .site-toc a.toc-subsection { padding-left: 34px; }
+}
+
+@media (max-width: 620px) {
+  .method-button-prefix { display: none; }
+}
+
+@media (max-width: 1180px), (pointer: coarse) {
+  .paper-edition button,
+  .paper-edition select {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .paper-edition .site-toc summary,
+  .paper-edition .site-toc a {
+    min-height: 44px;
+  }
+
+  .paper-edition input[type="range"] {
+    min-height: 44px;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    background-size: 100% 2px !important;
+  }
+
+  .paper-edition input[type="range"]::-webkit-slider-thumb {
+    width: 22px;
+    height: 22px;
+  }
+
+  .paper-edition input[type="range"]::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+  }
+
+  .paper-edition .measurement-slider-mark { top: 37px; }
+}
+
+@media (pointer: coarse) {
+  .measurement-canvas,
+  .branch-diagram,
+  .three-wrap canvas {
+    touch-action: pan-y;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

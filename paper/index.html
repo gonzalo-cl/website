@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="A proof-guided account of computer-assisted and bifurcation constructions of planar counterexamples to Schiffer's conjecture.">
-    <title>Paper edition · A counterexample to Schiffer's conjecture</title>
+    <meta name="description" content="The paper edition of Constructing Noncircular Schiffer Domains: a proof-guided account of a bifurcation-seeded conformal construction with validated numerics and a real-order cone construction.">
+    <title>Constructing Noncircular Schiffer Domains · Paper edition</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='16' fill='%23132126'/%3E%3Cpath d='M8 6v20M8 6c9 0 9 7 16 7M8 26c9 0 9-7 16-7' fill='none' stroke='%23f1eee5' stroke-width='1.5'/%3E%3Cpath d='M24 8v16' stroke='%23ff7449' stroke-width='2.5'/%3E%3C/svg%3E">
@@ -13,19 +13,19 @@
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.js" integrity="sha384-AtrdNsnxl/75rvBneBVH7DtOvCxSVahR2zWqle1coBKd8DEmLoviqNeJSx64gNAs" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js" integrity="sha384-bjyGPfbij8/NDKJhSGZNP/khQVgtHUE5exjm4Ydllo42FwIgYsdLO2lXGmRBf5Mz" crossorigin="anonymous"></script>
     <script defer src="../math.js"></script>
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../styles.css?v=20260830.1">
     <link rel="stylesheet" href="paper.css">
   </head>
   <body>
     <div class="noise" aria-hidden="true"></div>
 
     <header class="topbar">
-      <a class="brand" href="#top" aria-label="Schiffer bifurcation paper edition home">
-        <svg viewBox="0 0 34 34" aria-hidden="true"><path d="M6 4v26M6 4c12 0 12 8 22 8M6 30c12 0 12-8 22-8"/><path class="accent" d="M28 5v24"/></svg>
-        <span>Counterexamples to Schiffer's conjecture</span>
+      <a class="brand" href="#top" aria-label="Constructing Noncircular Schiffer Domains paper edition home">
+        <img src="../assets/website-logo-transparent.png?v=20260828" width="384" height="384" alt="">
+        <span>Constructing Noncircular Schiffer Domains</span>
       </a>
       <div class="status"><span>paper edition · <a href="../">interactive edition</a></span></div>
-      <button id="methodButton" class="method-button" type="button">Numerical methods</button>
+      <button id="methodButton" class="method-button" type="button" aria-label="Numerical methods" aria-haspopup="dialog" aria-controls="methodDialog"><span class="method-button-prefix">Numerical </span>methods</button>
     </header>
 
     <details class="site-toc">
@@ -35,7 +35,7 @@
         <a href="#borrow-flexibility"><b>03</b><span>Bifurcation on the cylinder and sphere</span></a>
         <a href="#geometric-escape"><b>04</b><span>From rotational sectors to a half-cylinder</span></a>
         <a href="#experiment"><b>05</b><span>Proof of the planar construction</span></a>
-        <a class="toc-subsection" href="#half-cylinder-strategy"><b>5.1</b><span>A branch on the half-cylinder, uniform in \(\lambda\)</span></a>
+        <a class="toc-subsection" href="#half-cylinder-strategy"><b>5.1</b><span>The half-cylinder as a limiting model</span></a>
         <a class="toc-subsection" href="#debye-experiment"><b>5.2</b><span>Bessel modes converge to cylinder modes</span></a>
         <a class="toc-subsection" href="#phase-story"><b>5.3</b><span>The cone radius decreases along the branch</span></a>
         <a class="toc-subsection" href="#modes-experiment"><b>5.4</b><span>The branch reaches an integer order</span></a>
@@ -47,10 +47,10 @@
     <main id="top">
       <section class="intro">
         <div class="intro-index">Paper edition · theorem statements, proofs, and interactive figures</div>
-        <h1>A counterexample to Schiffer's conjecture</h1>
+        <h1>Constructing Noncircular Schiffer Domains</h1>
         <div class="intro-bottom">
           <p><strong>Abstract.</strong> Let \(\Omega\subset\mathbb R^2\) be a bounded domain. Pompeiu asked whether a function \(f\) is determined by its integrals over all rigid motions \(E(\Omega)\). Williams showed that nonuniqueness occurs exactly when \(\Omega\) supports a nonconstant Laplace eigenfunction whose value is constant and whose normal derivative vanishes on \(\partial\Omega\). The disk is the classical example, and Schiffer conjectured that it is the only connected smooth planar one.</p>
-          <p>We explain two ways to construct counterexamples. In the first, we search numerically for an almost-counterexample with extremely high precision, and then use a computer-assisted proof to show that an exact counterexample lies nearby. The domain is encoded as a conformal map from the unit disk, turning the unknown boundary into a sequence of complex coefficients and moving the geometry into the equation itself. A compatible inverse for the Laplacian makes both boundary conditions automatic, leaving a single equation on coefficient space, and a Newton&ndash;Kantorovich argument closes it: interval arithmetic on a finite block, with analytic estimates for the infinitely many remaining coefficients, shows that a Newton map contracts a small ball around the numerical candidate. In the second, we look for domains with \(N\)-fold symmetry and relax the problem so that \(N\) may be any real number, which recovers Schiffer&rsquo;s problem exactly when \(N\) is an integer. Geometrically the relaxed problem lives on a cone of angle \(2\pi/N\). Bifurcation theory applied to it produces branches whose size can be taken independent of \(N\), so a branch starting close enough to an integer must reach that integer, where the cone unfolds into a genuine planar domain.</p>
+          <p>We explain two ways to construct counterexamples. The first begins at a higher \(m=10\) Wronskian crossing in the relaxed constant-flux problem. Exploratory numerical continuation follows the resulting tenfold bifurcating branch until its constant Neumann datum vanishes, producing a numerical centre. A conformal map then moves the unknown boundary to the unit disk; a compatible inverse for the Laplacian reduces the PDE and both boundary conditions to one coefficient equation. Analytic tail estimates and interval arithmetic validate an exact solution near that centre. The second introduces a real cone order \(R\), formulates the moving-boundary problem directly on a fixed finite collar, and bifurcates at noninteger Bessel crossings. Uniform finite-\(R\) estimates show that a branch starting sufficiently close to an integer reaches it, where the cone unfolds into a planar domain. Both routes therefore combine geometry, spectral analysis, and bifurcation; exact existence is closed by validated computation in the conformal construction and by uniform analytic estimates in the real-order construction. This paper edition develops the real-order route in detail.</p>
           <p class="edition-link"><a href="../">Open the visual-first interactive edition →</a></p>
         </div>
       </section>
@@ -317,24 +317,24 @@
         </details>
 
         <div class="intro-copy intro-copy-wide">
-          <p>Everything after this is a way of arranging the coincidence somewhere else. On the flat cylinder and on the sphere the two spectra do meet, which is section 03; sections 04 and 05 transport that meeting back to the plane through cone quotients, where the integer order is relaxed to a real parameter and then tuned until it lands back on an integer.</p>
+          <p>Everything after this is a way of arranging the coincidence somewhere else. On the flat cylinder and on the sphere the two spectra do meet, which is section 03. Sections 04 and 05 use the half-cylinder to identify the large-order limiting mechanism, then formulate the problem directly on finite real-order cone collars and tune a bifurcating branch until its order lands on an integer.</p>
         </div>
         <figure class="intro-shapes">
           <figcaption>
             <p class="eyebrow">A planar counterexample</p>
             <h3>One noncircular Schiffer domain and its eigenfunction.</h3>
-            <p>The bifurcation argument produces bounded, simply connected, noncircular domains with real-analytic boundary. The first panel shows one member of this family, chosen with 28-fold rotational symmetry: the black curve is \(\partial\Omega\), and the colour field is the corresponding eigenfunction \(u\). The other panels compare its repeated boundary undulations with two familiar shapes. That comparison is geometric only; no spectral property is asserted for the coin or the biscuit.</p>
+            <p>The theorem produces infinitely many bounded, simply connected, noncircular domains with real-analytic boundary and unbounded symmetry order. The first panel instead shows the paper's numerical \(D_{28}\) realization of the mechanism: the black curve is the computed boundary, and the colour field is the computed eigenfunction. Its crossing has \(\lambda_*=3.317011\ldots\), outside the proof window \([2,3]\), so it is not the particular branch selected by the nonexplicit landing argument. The other panels compare its repeated boundary undulations with two familiar shapes. That comparison is geometric only; no spectral property is asserted for the coin or the biscuit.</p>
           </figcaption>
           <div class="intro-shapes-row">
             <div class="intro-shape">
               <div class="intro-shape-media intro-shape-domain">
-                <img src="../assets/n28-domain-solution.png" width="1152" height="1152" loading="lazy" decoding="async" alt="A twenty-eight-fold noncircular domain containing the red and blue colour field of its Schiffer eigenfunction">
+                <img src="../assets/n28-domain-solution.png" width="1152" height="1152" loading="lazy" decoding="async" alt="A numerically computed twenty-eight-fold boundary and red-blue field portrait illustrating the real-order mechanism">
               </div>
               <svg viewBox="0 0 180 180" role="img" aria-label="A nearly circular outline with twenty-eight very shallow ripples, drawn at true scale">
                 <path class="intro-shape-line" d="M155.1 90.0L155.2 89.0L155.5 87.9L155.8 86.8L156.1 85.8L156.3 84.7L156.4 83.6L156.4 82.5L156.2 81.5L155.8 80.4L155.4 79.4L154.8 78.4L154.3 77.5L153.8 76.5L153.4 75.5L153.3 74.5L153.3 73.4L153.4 72.3L153.5 71.2L153.5 70.0L153.3 69.0L153.0 67.9L152.6 67.0L152.1 66.0L151.4 65.1L150.7 64.3L149.9 63.5L149.2 62.7L148.6 61.8L148.3 60.8L148.1 59.7L147.9 58.6L147.7 57.5L147.4 56.4L147.0 55.4L146.5 54.5L145.9 53.6L145.2 52.8L144.3 52.1L143.4 51.5L142.5 50.8L141.6 50.2L140.9 49.4L140.3 48.5L139.9 47.6L139.5 46.5L139.0 45.5L138.5 44.5L137.9 43.6L137.2 42.8L136.4 42.1L135.5 41.5L134.5 41.0L133.5 40.5L132.4 40.1L131.5 39.7L130.6 39.1L129.8 38.4L129.2 37.5L128.5 36.6L127.9 35.7L127.2 34.8L126.4 34.1L125.5 33.5L124.6 33.0L123.6 32.6L122.5 32.3L121.4 32.1L120.3 31.9L119.2 31.7L118.2 31.4L117.3 30.8L116.5 30.1L115.7 29.3L114.9 28.6L114.0 27.9L113.0 27.4L112.1 27.0L111.0 26.7L110.0 26.5L108.8 26.5L107.7 26.6L106.6 26.7L105.5 26.7L104.5 26.6L103.5 26.2L102.5 25.7L101.6 25.2L100.6 24.6L99.6 24.2L98.5 23.8L97.5 23.6L96.4 23.6L95.3 23.7L94.2 23.9L93.2 24.2L92.1 24.5L91.0 24.8L90.0 24.9L89.0 24.8L87.9 24.5L86.8 24.2L85.8 23.9L84.7 23.7L83.6 23.6L82.5 23.6L81.5 23.8L80.4 24.2L79.4 24.6L78.4 25.2L77.5 25.7L76.5 26.2L75.5 26.6L74.5 26.7L73.4 26.7L72.3 26.6L71.2 26.5L70.0 26.5L69.0 26.7L67.9 27.0L67.0 27.4L66.0 27.9L65.1 28.6L64.3 29.3L63.5 30.1L62.7 30.8L61.8 31.4L60.8 31.7L59.7 31.9L58.6 32.1L57.5 32.3L56.4 32.6L55.4 33.0L54.5 33.5L53.6 34.1L52.8 34.8L52.1 35.7L51.5 36.6L50.8 37.5L50.2 38.4L49.4 39.1L48.5 39.7L47.6 40.1L46.5 40.5L45.5 41.0L44.5 41.5L43.6 42.1L42.8 42.8L42.1 43.6L41.5 44.5L41.0 45.5L40.5 46.5L40.1 47.6L39.7 48.5L39.1 49.4L38.4 50.2L37.5 50.8L36.6 51.5L35.7 52.1L34.8 52.8L34.1 53.6L33.5 54.5L33.0 55.4L32.6 56.4L32.3 57.5L32.1 58.6L31.9 59.7L31.7 60.8L31.4 61.8L30.8 62.7L30.1 63.5L29.3 64.3L28.6 65.1L27.9 66.0L27.4 67.0L27.0 67.9L26.7 69.0L26.5 70.0L26.5 71.2L26.6 72.3L26.7 73.4L26.7 74.5L26.6 75.5L26.2 76.5L25.7 77.5L25.2 78.4L24.6 79.4L24.2 80.4L23.8 81.5L23.6 82.5L23.6 83.6L23.7 84.7L23.9 85.8L24.2 86.8L24.5 87.9L24.8 89.0L24.9 90.0L24.8 91.0L24.5 92.1L24.2 93.2L23.9 94.2L23.7 95.3L23.6 96.4L23.6 97.5L23.8 98.5L24.2 99.6L24.6 100.6L25.2 101.6L25.7 102.5L26.2 103.5L26.6 104.5L26.7 105.5L26.7 106.6L26.6 107.7L26.5 108.8L26.5 110.0L26.7 111.0L27.0 112.1L27.4 113.0L27.9 114.0L28.6 114.9L29.3 115.7L30.1 116.5L30.8 117.3L31.4 118.2L31.7 119.2L31.9 120.3L32.1 121.4L32.3 122.5L32.6 123.6L33.0 124.6L33.5 125.5L34.1 126.4L34.8 127.2L35.7 127.9L36.6 128.5L37.5 129.2L38.4 129.8L39.1 130.6L39.7 131.5L40.1 132.4L40.5 133.5L41.0 134.5L41.5 135.5L42.1 136.4L42.8 137.2L43.6 137.9L44.5 138.5L45.5 139.0L46.5 139.5L47.6 139.9L48.5 140.3L49.4 140.9L50.2 141.6L50.8 142.5L51.5 143.4L52.1 144.3L52.8 145.2L53.6 145.9L54.5 146.5L55.4 147.0L56.4 147.4L57.5 147.7L58.6 147.9L59.7 148.1L60.8 148.3L61.8 148.6L62.7 149.2L63.5 149.9L64.3 150.7L65.1 151.4L66.0 152.1L67.0 152.6L67.9 153.0L69.0 153.3L70.0 153.5L71.2 153.5L72.3 153.4L73.4 153.3L74.5 153.3L75.5 153.4L76.5 153.8L77.5 154.3L78.4 154.8L79.4 155.4L80.4 155.8L81.5 156.2L82.5 156.4L83.6 156.4L84.7 156.3L85.8 156.1L86.8 155.8L87.9 155.5L89.0 155.2L90.0 155.1L91.0 155.2L92.1 155.5L93.2 155.8L94.2 156.1L95.3 156.3L96.4 156.4L97.5 156.4L98.5 156.2L99.6 155.8L100.6 155.4L101.6 154.8L102.5 154.3L103.5 153.8L104.5 153.4L105.5 153.3L106.6 153.3L107.7 153.4L108.8 153.5L110.0 153.5L111.0 153.3L112.1 153.0L113.0 152.6L114.0 152.1L114.9 151.4L115.7 150.7L116.5 149.9L117.3 149.2L118.2 148.6L119.2 148.3L120.3 148.1L121.4 147.9L122.5 147.7L123.6 147.4L124.6 147.0L125.5 146.5L126.4 145.9L127.2 145.2L127.9 144.3L128.5 143.4L129.2 142.5L129.8 141.6L130.6 140.9L131.5 140.3L132.4 139.9L133.5 139.5L134.5 139.0L135.5 138.5L136.4 137.9L137.2 137.2L137.9 136.4L138.5 135.5L139.0 134.5L139.5 133.5L139.9 132.4L140.3 131.5L140.9 130.6L141.6 129.8L142.5 129.2L143.4 128.5L144.3 127.9L145.2 127.2L145.9 126.4L146.5 125.5L147.0 124.6L147.4 123.6L147.7 122.5L147.9 121.4L148.1 120.3L148.3 119.2L148.6 118.2L149.2 117.3L149.9 116.5L150.7 115.7L151.4 114.9L152.1 114.0L152.6 113.0L153.0 112.1L153.3 111.0L153.5 110.0L153.5 108.8L153.4 107.7L153.3 106.6L153.3 105.5L153.4 104.5L153.8 103.5L154.3 102.5L154.8 101.6L155.4 100.6L155.8 99.6L156.2 98.5L156.4 97.5L156.4 96.4L156.3 95.3L156.1 94.2L155.8 93.2L155.5 92.1L155.2 91.0Z"></path>
               </svg>
-              <b>One counterexample</b>
-              <small>This representative has 28-fold rotational symmetry. The colours show its associated Schiffer eigenfunction.</small>
+              <b>A numerical \(D_{28}\) realization</b>
+              <small>This finite-dimensional continuation illustrates the mechanism; the existence theorem selects other sufficiently large crossings.</small>
             </div>
             <div class="intro-shape">
               <div class="intro-shape-media intro-shape-coin">
@@ -357,7 +357,7 @@
               <small>A similar periodic boundary profile, with a larger relative amplitude.</small>
             </div>
           </div>
-          <p class="intro-shapes-credit">Images shared with the <a href="https://pompeiu-schiffer.org" target="_blank" rel="noreferrer">joint Schiffer–Pompeiu exposition</a>.</p>
+          <p class="intro-shapes-credit">Images shared with <a href="https://pompeiu-schiffer.org" target="_blank" rel="noreferrer"><em>Constructing Noncircular Schiffer Domains</em></a>.</p>
         </figure>
 
         <div class="intro-copy intro-copy-wide intro-close">
@@ -374,8 +374,8 @@
         </div>
         <ol class="paper-route" aria-label="Five steps in the proof">
           <li><a href="#introduction"><span>1</span><strong>Linearize the problem.</strong><small>The disk has only the symmetry directions.</small></a></li>
-          <li><a href="#half-cylinder-strategy"><span>2</span><strong>Construct a cylinder branch.</strong><small>The estimates are uniform for \(2\leq\lambda\leq3\).</small></a></li>
-          <li><a href="#debye-experiment"><span>3</span><strong>Pass from cylinders to cones.</strong><small>Debye asymptotics control a fixed collar.</small></a></li>
+          <li><a href="#half-cylinder-strategy"><span>2</span><strong>Formulate the real-order collar problem.</strong><small>The half-cylinder identifies its limiting coefficients.</small></a></li>
+          <li><a href="#debye-experiment"><span>3</span><strong>Prove uniform large-\(R\) estimates.</strong><small>Direct collar bounds and Debye asymptotics are crossing-independent.</small></a></li>
           <li><a href="#phase-story"><span>4</span><strong>Compute the radius drift.</strong><small>The first nonzero variation is negative and quadratic.</small></a></li>
           <li><a href="#abundance-experiment"><span>5</span><strong>Choose a near-integer crossing.</strong><small>The branch reaches an integer and unfolds to the plane.</small></a></li>
         </ol>
@@ -436,7 +436,7 @@
               \end{aligned}
               \]
             </div>
-            <p>At \(x=0\), the first wave has Neumann data and the second has Dirichlet data. Consequently, this spectral coincidence holds for every \(\lambda&gt;1\) on the half-cylinder. For \(1&lt;\lambda&lt;4\), every higher channel \(k\ge2\) is evanescent. Fall, Minlend and Weth obtain the corresponding nonlinear bifurcations on compact flat cylinders; the half-cylinder version used below follows from the same separated equations and weighted-space argument.</p>
+            <p>At \(x=0\), the first wave has Neumann data and the second has Dirichlet data. Consequently, this spectral coincidence holds for every \(\lambda&gt;1\) on the half-cylinder. For \(1&lt;\lambda&lt;4\), every higher channel \(k\ge2\) is evanescent. Fall, Minlend and Weth obtain the corresponding nonlinear bifurcations on compact flat cylinders; the supplementary half-cylinder discussion below uses the same separated equations to illuminate the large-order limit. The planar proof itself bifurcates directly at finite real \(R\).</p>
             <a class="literature-link" href="https://ems.press/journals/jems/articles/14298635" target="_blank" rel="noreferrer">Fall–Minlend–Weth, JEMS (2025) ↗</a>
           </article>
           <article>
@@ -488,7 +488,7 @@
           <div><span class="section-number">04</span><div><p class="eyebrow">The geometric limit</p><h2>From rotational sectors to a half-cylinder</h2></div></div>
           <div class="equations"><span>\(\mathbb R^2/C_N\)</span><span>\(g_R=dr^2+(r^2/R^2)d\psi^2\)</span><small>\(R=N\) only at the planar lift</small></div>
         </header>
-        <div class="geometry-lead"><h3>The quotient of an \(N\)-fold domain approaches a half-cylinder.</h3><p>We seek a noncircular planar Schiffer domain with \(N\)-fold rotational symmetry, for a large integer \(N\). Quotienting by the rotations and rescaling the angular coordinate to have period \(2\pi\) gives a cone with parameter \(R=N\). As \(N\to\infty\), the distance from the boundary to the cone point tends to infinity, and every fixed boundary collar converges to the half-cylinder \(({-\infty},0]\times S^1\). The figure displays the quotient construction, the half-cylinder limit, the bifurcation on the cone, and the lift back to the plane.</p></div>
+        <div class="geometry-lead"><h3>The quotient of an \(N\)-fold domain approaches a half-cylinder.</h3><p>We seek a noncircular planar Schiffer domain with \(N\)-fold rotational symmetry, for a large integer \(N\). Quotienting by the rotations and rescaling the angular coordinate to have period \(2\pi\) gives a cone with parameter \(R=N\). As \(N\to\infty\), the distance from the boundary to the cone point tends to infinity, and every fixed boundary collar converges to the half-cylinder \(({-\infty},0]\times S^1\). The half-cylinder is the limiting comparison, not an intermediate nonlinear domain from which a branch is transferred. The proof constructs the branch directly on the finite real-\(R\) collar problem, and the figure follows that logic through to the planar lift.</p></div>
         <div class="geometry-laboratory">
           <aside class="geometry-controls">
             <div class="control-heading"><span>Planar quotient and large-\(N\) limit</span><button id="storyGeometryResetButton" type="button">Reset</button></div>
@@ -497,8 +497,8 @@
               <button type="button" data-story-stage="0.166667"><span>02</span><strong>Choose one fundamental sector</strong><small>rescale its angular coordinate</small></button>
               <button type="button" data-story-stage="0.333333"><span>03</span><strong>Identify the radial sides</strong><small>the quotient is a cone</small></button>
               <button type="button" data-story-stage="0.5"><span>04</span><strong>Take the large-\(N\) limit</strong><small>a fixed collar tends to a half-cylinder</small></button>
-              <button type="button" data-story-stage="0.666667"><span>05</span><strong>Bifurcate on the half-cylinder</strong><small>the boundary is \(x=h(\psi)\)</small></button>
-              <button type="button" data-story-stage="0.833333"><span>06</span><strong>Return to finite \(R\)</strong><small>obtain a deformed cone</small></button>
+              <button type="button" data-story-stage="0.666667"><span>05</span><strong>Read the half-cylinder limit</strong><small>identify the limiting modes</small></button>
+              <button type="button" data-story-stage="0.833333"><span>06</span><strong>Bifurcate at finite real \(R\)</strong><small>work on the fixed cone collar</small></button>
               <button type="button" data-story-stage="1"><span>07</span><strong>Set \(R=N\) and lift to the plane</strong><small>the \(N\) sectors fit exactly</small></button>
             </div>
             <div class="geometry-scrub"><div class="control-label"><label for="storyGeometryRange">construction</label><output id="storyGeometryValue">\(N\)-fold domain</output></div><input id="storyGeometryRange" type="range" min="0" max="1" value="0" step="0.001"></div>
@@ -529,7 +529,7 @@
             </div>
           </div>
           <div class="equations" role="group" aria-label="Model equations">
-            <span>half-cylinder \(\longrightarrow\) cone</span>
+            <span>half-cylinder model \(\rightsquigarrow\) uniform finite-\(R\) estimates</span>
             <span>real \(R_*\longrightarrow R(s)=N\)</span>
             <small>planar \(N\)-fold lift</small>
           </div>
@@ -538,8 +538,8 @@
         <div class="proof-strategy-lead">
           <h3>The construction is carried out in five steps.</h3>
           <ol class="paper-proof-outline">
-            <li><strong>Subsection 5.1 constructs the limiting branch.</strong><span>The half-cylinder problem has a nontrivial branch for every \(2\leq\lambda\leq3\), with one common amplitude interval.</span></li>
-            <li><strong>Subsection 5.2 transfers the branch to cones.</strong><span>Uniform Debye estimates compare the cone and cylinder operators on a fixed boundary collar.</span></li>
+            <li><strong>Subsection 5.1 explains the limiting model.</strong><span>The half-cylinder makes the separated modes and their common large-order scale transparent.</span></li>
+            <li><strong>Subsection 5.2 works directly at finite real \(R\).</strong><span>Uniform collar estimates and Bessel asymptotics control the finite-\(R\) bifurcation problem.</span></li>
             <li><strong>Subsection 5.3 computes the direction.</strong><span>The cone order satisfies \(R''(0)&lt;0\), with a crossing-independent lower bound on the resulting decrease.</span></li>
             <li><strong>Subsection 5.4 identifies the endpoint.</strong><span>When the real cone order reaches an integer \(N\), the quotient unfolds into an \(N\)-fold planar domain.</span></li>
             <li><strong>Subsection 5.5 supplies the starting point.</strong><span>Common Bessel zeros occur closer to integers than the uniform decrease from Subsection 5.3.</span></li>
@@ -548,11 +548,11 @@
 
         <div id="half-cylinder-strategy" class="proof-strategy-subheading">
           <span>5.1 · the limiting half-cylinder</span>
-          <h3>A branch on the half-cylinder, uniform in \(\lambda\)</h3>
+          <h3>The half-cylinder as a uniform limiting model</h3>
         </div>
 
         <div class="half-cylinder-introduction">
-          <p>For every <span class="formula">\(\lambda\in[2,3]\)</span>, the flat cylinder has a nontrivial Schiffer branch. The same interval in the branch parameter <span class="formula">\(s\)</span> works throughout this spectral window.</p>
+          <p>This supplementary subsection isolates the formal large-\(R\) model and its separated modes. It is not a theorem or a logical transfer step from Cao-Labora and de Dios Pont's finite-\(R\) proof: their branch is constructed directly on real-order cone collars. The model below explains the limiting coefficients used in the uniform estimates.</p>
         </div>
 
         <div class="cylinder-spectral-seed">
@@ -604,7 +604,7 @@
                 \partial_xv(0,\theta)=\lambda f(\theta).
                 \]
               </div>
-              <p>Therefore <span class="formula">\(f(\theta)=\cos\theta\)</span> corresponds to <span class="formula">\(v=\lambda v_1/\sqrt{\lambda-1}\)</span>. This is exactly the first-order term in Theorem 5.1.</p>
+              <p>Therefore <span class="formula">\(f(\theta)=\cos\theta\)</span> corresponds to <span class="formula">\(v=\lambda v_1/\sqrt{\lambda-1}\)</span>. This is exactly the first-order term in the supplementary limiting-model statement below.</p>
             </div>
           </div>
 
@@ -615,7 +615,7 @@
         </div>
 
         <div class="cylinder-theorem">
-          <div class="theorem-label"><span>Theorem 5.1</span><small>uniform half-cylinder branch</small></div>
+          <div class="theorem-label"><span>Limiting-model statement</span><small>supplementary half-cylinder family</small></div>
           <div class="theorem-statement">
             <p>Fix <span class="formula">\(0&lt;\alpha&lt;1\)</span>. There is an <span class="formula">\(\varepsilon&gt;0\)</span> and a <span class="formula">\(C^3\)</span> family <span class="formula">\((\Omega_{\lambda,s},u_{\lambda,s})\)</span>, indexed by <span class="formula">\((\lambda,s)\in[2,3]\times(-\varepsilon,\varepsilon)\)</span>, such that <span class="formula">\(\Omega_{\lambda,s}=\{(x,\theta):x&lt;h_{\lambda,s}(\theta)\}\)</span> for some <span class="formula">\(h_{\lambda,s}\in C^{2,\alpha}(S^1)\)</span>, and</p>
             <div class="theorem-system tex-display">
@@ -650,7 +650,7 @@
         </div>
 
         <details class="uniform-cylinder-proof proof-details paper-proof">
-          <summary><span>Proof sketch of Theorem 5.1: why the interval is uniform in \(\lambda\)</span><i>expand +</i></summary>
+          <summary><span>Derivation of the limiting-model statement</span><i>expand +</i></summary>
           <div class="paper-proof-body">
             <header class="paper-proof-introduction">
               <p class="eyebrow">The quantitative point</p>
@@ -752,7 +752,7 @@
           <div class="cylinder-jet-proof-body">
             <div class="cylinder-proof-scope">
               <span>Proof of the expansion</span>
-              <p>Assume the branch supplied by Theorem 5.1 and fix <span class="formula">\(\lambda\in[2,3]\)</span>. Expanding the equation and the two boundary conditions determines its two-jet as follows.</p>
+              <p>Assume the supplementary half-cylinder family above and fix <span class="formula">\(\lambda\in[2,3]\)</span>. Expanding the equation and the two boundary conditions determines its two-jet as follows.</p>
             </div>
 
             <div class="cylinder-proof-grid">
@@ -832,7 +832,7 @@
         </details>
 
         <div class="experiment-story-lead">
-          <p>The applet below computes a finite Fourier approximation to the family in Theorem 5.1. For each <span class="formula">\((\lambda,s)\in[2,3]\times[-0.85,0.85]\)</span>, it solves simultaneously for the boundary graph and the Helmholtz field. The flat and three-dimensional panels display the same numerical solution in two coordinate systems.</p>
+          <p>The applet below computes a finite Fourier approximation to the supplementary limiting-model family. For each <span class="formula">\((\lambda,s)\in[2,3]\times[-0.85,0.85]\)</span>, it solves simultaneously for the boundary graph and the Helmholtz field. The flat and three-dimensional panels display the same numerical solution in two coordinate systems; this visualization is not the finite-\(R\) existence proof.</p>
         </div>
 
         <div class="laboratory">
@@ -952,9 +952,9 @@
         </header>
 
         <div class="cone-lead">
-          <p>The smallest candidate found in the search below order \(100\) has <span class="formula">\(R_*=28.026397\ldots\)</span>. At this value, twenty-eight copies leave a narrow angular gap. Along the computed branch, \(R\) decreases to \(28\); at that value the copies fit exactly and define a planar domain.</p>
+          <p>For a concrete numerical illustration, take <span class="formula">\(R_*=28.026397\ldots\)</span>, <span class="formula">\(\rho_*=j_{1,16}\)</span>, and <span class="formula">\(\lambda_*=3.317011\ldots\)</span>. This lies outside the proof window <span class="formula">\([2,3]\)</span>. At the crossing, twenty-eight copies leave a narrow angular gap; finite-dimensional collocation continuation reaches <span class="formula">\(R=28\)</span>, where the quotient tiles the plane exactly and produces the plotted numerical planar candidate. The theorem instead selects sufficiently large crossings inside its stated window.</p>
           <div class="candidate-stamp">
-            <small>selected crossing</small>
+            <small>numerical illustration</small>
             <strong>\(N=28\)</strong>
             <span>\(\rho_*=j_{1,16}\)</span>
             <a href="https://arxiv.org/abs/2608.05114" target="_blank" rel="noreferrer">paper / figure 1 ↗</a>
@@ -1087,7 +1087,7 @@
                 \end{gathered}
                 \]
               </div>
-              <p>The theorem applies to every sufficiently large real crossing. At any individual smaller simple crossing, the usual local bifurcation theorem gives a branch whose interval may depend on that crossing. For large \(R_*\), a fixed boundary collar converges to the half-cylinder of Theorem 5.1, which gives estimates uniform in \(R_*\). The finitely many crossings in a bounded range of \(R_*\) are handled separately.</p>
+              <p>The theorem applies to every sufficiently large real crossing. At any individual smaller simple crossing, the usual local bifurcation theorem gives a branch whose interval may depend on that crossing. For the large crossings used in the existence proof, the crossing-independent bounds are established directly for the finite-\(R\) collar map (Propositions 4.1–4.3 of Cao-Labora and de Dios Pont), using collar estimates and Bessel asymptotics. The half-cylinder explains their limiting coefficients but is not invoked as a nonlinear transfer theorem.</p>
             </article>
           </div>
         </section>
@@ -1386,7 +1386,7 @@
         <div class="phase-story-lead paper-copy">
           <p>Suppose that a real crossing has \(R_*=N+\delta\), where \(N\) is an integer and \(\delta&gt;0\). To prove that the nonlinear branch reaches \(R=N\), one needs a decrease in \(R\) that is uniform as \(R_*\to\infty\). We show that every sufficiently large crossing in the fixed window \(2\le\lambda_*\le3\) admits the same positive lower bound for this decrease.</p>
           <p>Subsection 5.2 varied \(r_0\) at fixed \(\lambda\) to display the basis limit. The proof follows a different path: at a crossing \(J_1(\rho)=J_{R_*}(\rho)=0\), it keeps \(\rho\) fixed and solves for the cone radius \(R=R(s)\). We therefore make two computations in order: the nonlinear boundary equations determine \(R''(0)\), and the fixed-\(\rho\) Debye phase converts that radius change into a phase change.</p>
-          <p>One caveat about the laboratory below. It runs on the crossing \(R_*=28.026397\ldots\), whose spectral ratio is \(\lambda_*=3.317011\ldots\), and that value lies <em>outside</em> the window \(2\le\lambda_*\le3\) assumed in Corollary 5.3 and in Theorems 5.1 and 5.2. It is shown because it is the crossing whose branch was continued numerically all the way to an integer. The proof runs instead on the crossings inside the window, which subsection 5.5 supplies; the formulas of this subsection are exact at either value.</p>
+          <p>One caveat about the laboratory below. It runs on the crossing \(R_*=28.026397\ldots\), whose spectral ratio is \(\lambda_*=3.317011\ldots\), and that value lies <em>outside</em> the window \(2\le\lambda_*\le3\) used in the limiting-model discussion, Corollary 5.3, and Theorem 5.2. It is shown because it is the crossing whose branch was continued numerically all the way to an integer. The proof runs instead on the crossings inside the window, which subsection 5.5 supplies; the formulas of this subsection are exact at either value.</p>
         </div>
         <div class="uniform-drop-theorem">
           <div class="uniform-drop-label"><span>Corollary 5.3</span><small>uniform decrease of \(R\)</small></div>
@@ -1446,7 +1446,7 @@
         </div>
         <div class="phase-story-lab">
           <aside>
-            <div class="control-heading"><span>Computed branch reaching \(N=28\)</span><button id="phaseStoryResetButton" type="button">Reset</button></div>
+            <div class="control-heading"><span>Numerically continued branch reaching \(N=28\)</span><button id="phaseStoryResetButton" type="button">Reset</button></div>
             <div class="phase-story-control"><div class="control-label"><label for="phaseStoryRange">branch amplitude</label><output id="phaseStorySValue">\(s=0\)</output></div><input id="phaseStoryRange" type="range" min="0" max="1" value="0" step="0.002"><div class="range-scale"><span>crossing</span><span>\(R=28\)</span></div></div>
             <div class="phase-story-readout"><div><span>real order \(R(s)\)</span><strong id="phaseStoryRValue">28.026397</strong></div><div><span>Debye phase \(\Delta\xi(s)\)</span><strong id="phaseStoryPhaseValue">\(0^\circ\)</strong></div><div><span>stored branch curvature</span><strong>\(R''(0)=-0.372069\)</strong></div><div><span>cylinder-limit prediction</span><strong id="phaseStoryGammaValue">\(-\Gamma(\lambda)=-0.317815\)</strong></div></div>
           </aside>
@@ -1726,23 +1726,23 @@
     </main>
 
     <footer>
-      <span>A counterexample to Schiffer's conjecture</span>
-      <span>disk rigidity → cylinder limit → cone bifurcation → planar lift</span>
+      <span>Constructing Noncircular Schiffer Domains</span>
+      <span>disk rigidity → real-order collar bifurcation → near-integer landing → planar lift</span>
       <a href="#top">Back to top ↑</a>
     </footer>
 
-    <dialog id="methodDialog">
+    <dialog id="methodDialog" aria-labelledby="methodDialogTitle">
       <button id="closeMethod" type="button" aria-label="Close">×</button>
       <p class="eyebrow">Computational notes</p>
-      <h2>What is exact, and what is computed numerically.</h2>
-      <p>The limiting problem is posed on the half-infinite cylinder <span class="formula">\(\Omega_{\lambda,s}=\{x&lt;h_{\lambda,s}(\theta)\}\)</span>. The local bifurcation argument used for compact flat-cylinder domains gives a one-ended branch with <span class="formula">\(h_{\lambda,s}=s\cos\theta+O(s^2)\)</span>, uniformly for <span class="formula">\(2\leq\lambda\leq3\)</span>. The finite window is the portion of this infinite-domain solution displayed in the browser.</p>
+      <h2 id="methodDialogTitle">What is exact, and what is computed numerically.</h2>
+      <p>The half-infinite cylinder <span class="formula">\(\Omega_{\lambda,s}=\{x&lt;h_{\lambda,s}(\theta)\}\)</span> is the limiting model solved by this visualization. It exposes the separated modes and their large-order coefficients. The planar existence proof does not transfer this nonlinear family: it formulates and bifurcates the problem directly on fixed finite collars for large real <span class="formula">\(R\)</span>, with uniform bounds proved by direct collar estimates and Bessel asymptotics.</p>
       <p>We set <span class="formula">\(\Gamma_s:x=h_s(\theta)=s\cos(\theta-\phi)+h_2\cos 2(\theta-\phi)+h_3\cos 3(\theta-\phi)\)</span>. The mean translation is fixed to zero and <span class="formula">\(h_1=s\)</span> is the amplitude gauge. The field is a truncated sum of separated solutions of <span class="formula">\((\Delta+\lambda)u=0\)</span> in the physical cylinder coordinates.</p>
       <p>The <span class="formula">\(k=0\)</span> and <span class="formula">\(k=1\)</span> radial factors are oscillatory. For <span class="formula">\(k\ge2\)</span> they are <span class="formula">\(e^{\sqrt{k^2-\lambda}\,x}\cos(k\theta)\)</span> and <span class="formula">\(e^{\sqrt{k^2-\lambda}\,x}\sin(k\theta)\)</span>, which decay as <span class="formula">\(x\to-\infty\)</span>. Consequently, the interior PDE residual is identically zero.</p>
       <p>For the selected <span class="formula">\((\lambda,s)\)</span>, a damped Gauss–Newton solve with an analytic boundary Jacobian updates the field coefficients, <span class="formula">\(h_2\)</span>, and <span class="formula">\(h_3\)</span> simultaneously on at least 256 angular samples; a final column-scaled QR solve refines the field at the recovered boundary. Exponential modes are rescaled by constants to avoid overflow without changing their span. The reported defects are evaluated on a separate grid of at least 512 shifted samples in the normalized metric <span class="formula">\(\lVert f\rVert^2=(2\pi)^{-1}\int|f(\theta)|^2\,d\theta\)</span>. The two boundary corrections and independent <span class="formula">\(\lambda,s\)</span> sliders define a finite-dimensional free-boundary approximation. The reported defects measure its truncation error.</p>
       <hr>
       <p class="eyebrow">Cone continuation</p>
-      <p>The cone panel uses the metric <span class="formula">\(dr^2+(r^2/R^2)d\psi^2\)</span>. At fixed <span class="formula">\(\rho=j_{1,16}\)</span>, the field and boundary are expanded in 13 even Fourier–Bessel modes. An offline nonlinear least-squares continuation enforces <span class="formula">\(u=1\)</span> and the exact metric normal derivative on 112 collocation angles; the displayed defects come from 512 shifted validation angles.</p>
-      <p>The browser interpolates those solved branch records and precomputed radial Bessel tables. At the final record <span class="formula">\(R=28\)</span>, the quotient angle <span class="formula">\(2\pi/R\)</span> tiles the plane exactly 28 times. The unfolded view draws the true seam angle and also includes a magnified inset because the initial mismatch is only about 0.339°.</p>
+      <p>The cone panel uses the metric <span class="formula">\(dr^2+(r^2/R^2)d\psi^2\)</span>. At fixed <span class="formula">\(\rho=j_{1,16}\)</span>, the field and boundary are expanded in 13 even Fourier–Bessel modes. This is a finite-dimensional collocation approximation: an offline nonlinear least-squares continuation enforces <span class="formula">\(u=1\)</span> and the metric normal derivative on 112 angles, while the displayed defects come from 512 shifted validation angles. It is not a validated existence certificate.</p>
+      <p>The browser interpolates those numerical branch records and precomputed radial Bessel tables. At the final record <span class="formula">\(R=28\)</span>, the quotient angle <span class="formula">\(2\pi/R\)</span> tiles the plane exactly 28 times; that tiling statement is exact, while the displayed boundary and PDE field remain numerical. The unfolded view draws the true seam angle and also includes a magnified inset because the initial mismatch is only about 0.339°.</p>
       <hr>
       <p class="eyebrow">Angular modes</p>
       <p>The enlarged-collar panel evaluates the complete 28-sector representation and its cut-centered one-wavelength collar from one interpolated branch record. Its field samples come from the precomputed normalized tables <span class="formula">\(J_{kR}(\rho_*r/R)\)</span>; the boundary uses the same continued Fourier coefficients. The enlarged collar is the coordinate representation of the cone data used in the comparison.</p>
@@ -1753,7 +1753,7 @@
       <p>The four-panel comparison displays one separated eigenfunction at a time. Its cone collar uses those same exact samples, while its whole-disk panel uses additional exact SciPy profiles at the integer orders <span class="formula">\(N=26,\ldots,30\)</span>. The heat maps, coordinate transformations, sine/cosine selection, and crop geometry are all evaluated in the browser.</p>
       <p>For <span class="formula">\(k=1\)</span>, both curves are normalized by the oscillatory Cauchy amplitude, and the cylinder curve is the unique sine/cosine combination with the exact Bessel value and derivative at the boundary. For <span class="formula">\(k=2,3\)</span>, the Bessel traces are normalized at the boundary and compared with <span class="formula">\(e^{\sqrt{k^2-\lambda}\,x}\)</span>. All vertical axes are linear and all comparison curves are solid.</p>
       <hr>
-      <p class="eyebrow">Geometric construction and phase variation</p>
+      <p class="eyebrow">Cone geometry and phase variation</p>
       <p>The seven-stage disk–cone figure describes the quotient and limiting operations geometrically. PDE data enter in the final boundary, reconstructed from the stored coefficients at the computed endpoint <span class="formula">\(R=N=28\)</span>. In the order/phase graph, cyan solid curves interpolate the continuation records, and orange solid curves show the quadratic approximation determined by <span class="formula">\(R''(0)\)</span>.</p>
       <p>The real-order family panel filters the saved exhaustive crossing data to <span class="formula">\(6\le R_*\le30\)</span> and <span class="formula">\(2\le\lambda_*\le3\)</span>. It also includes the separately computed running example <span class="formula">\(R_*=28.026397\ldots\)</span>, whose spectral ratio is <span class="formula">\(\lambda_*=3.317011\ldots\)</span>. Its cyan curves are the asymptotic two-jets <span class="formula">\(R(s)=R_*-\Gamma(\lambda_*)s^2/2\)</span>, evaluated in the browser. White rings mark where that quadratic approximation meets an integer within the plotted <span class="formula">\(|s|\le1\)</span> window.</p>
       <hr>
@@ -1764,8 +1764,8 @@
     <script defer src="../cone-data.js"></script>
     <script defer src="../debye-data.js"></script>
     <script defer src="../abundance-data.js"></script>
-    <script defer src="../app.js"></script>
-    <script defer src="../story.js"></script>
+    <script defer src="../app.js?v=20260830.2"></script>
+    <script defer src="../story.js?v=20260830.1"></script>
     <script defer src="../abundance.js"></script>
     <script defer src="../pompeiu.js"></script>
   </body>

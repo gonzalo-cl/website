@@ -2598,6 +2598,413 @@
   observeCanvas(reconstructionCanvas, drawReconstruction);
   requestAnimationFrame(updateReconstruction);
 
+  const berensteinBoundaryCanvas = document.getElementById("berensteinBoundaryCanvas");
+  const berensteinEndpointStage = document.getElementById("berensteinEndpointStage");
+  const berensteinEndpointStageValue = document.getElementById("berensteinEndpointStageValue");
+  const berensteinEndpointStatus = document.getElementById("berensteinEndpointStatus");
+  const berensteinEndpointStages = Object.freeze({
+    pair: Object.freeze({
+      label: "compare endpoints",
+      status: "Schiffer reaches height one and becomes flat. Berenstein crosses height zero with unit outward slope.",
+    }),
+    height: Object.freeze({
+      label: "boundary height",
+      status: "The boundary levels are complementary: Schiffer fixes u = 1, while the Berenstein boundary is the zero set u = 0.",
+    }),
+    slope: Object.freeze({
+      label: "outward slope",
+      status: "Schiffer arrives tangentially with slope zero. Berenstein crosses the zero level transversely with outward slope one.",
+    }),
+  });
+  let selectedBerensteinEndpointStage = "pair";
+
+  const traceSymmetricOutline = (context, centerX, centerY, radius, folds, amplitude) => {
+    context.beginPath();
+    for (let index = 0; index <= 240; index += 1) {
+      const theta = index / 240 * Math.PI * 2;
+      const localRadius = radius * (1 + amplitude * Math.cos(folds * theta));
+      const x = centerX + localRadius * Math.cos(theta);
+      const y = centerY + localRadius * Math.sin(theta);
+      if (index === 0) context.moveTo(x, y);
+      else context.lineTo(x, y);
+    }
+    context.closePath();
+  };
+
+  const drawBerensteinDomainGlyph = (context, box, kind, emphasis) => {
+    const schiffer = kind === "schiffer";
+    const folds = schiffer ? 10 : 13;
+    const color = schiffer ? colors.accent : colors.teal;
+    const centerX = box.x + box.width / 2;
+    const centerY = box.y + box.height / 2;
+    const radius = Math.max(23, Math.min(box.width, box.height) * .34);
+    traceSymmetricOutline(context, centerX, centerY, radius, folds, schiffer ? .065 : .06);
+    context.fillStyle = schiffer ? "rgba(160, 0, 0, .065)" : colors.tealLight;
+    context.fill();
+    context.strokeStyle = color;
+    context.lineWidth = emphasis === "slope" ? 2.8 : 2.2;
+    context.stroke();
+
+    if (!schiffer && (emphasis === "pair" || emphasis === "slope")) {
+      for (let index = 0; index < 13; index += 2) {
+        const theta = index / 13 * Math.PI * 2;
+        const localRadius = radius * (1 + .06 * Math.cos(13 * theta));
+        drawArrow(
+          context,
+          centerX + localRadius * Math.cos(theta),
+          centerY + localRadius * Math.sin(theta),
+          centerX + (localRadius + 14) * Math.cos(theta),
+          centerY + (localRadius + 14) * Math.sin(theta),
+          { color, width: 1.35, head: 4.5 },
+        );
+      }
+    }
+
+    if (schiffer && emphasis === "slope") {
+      const x = centerX + radius * 1.06;
+      context.beginPath();
+      context.moveTo(x - 13, centerY);
+      context.lineTo(x + 13, centerY);
+      context.strokeStyle = color;
+      context.lineWidth = 2.4;
+      context.stroke();
+    }
+
+    drawLabel(context, schiffer ? "D₁₀" : "D₁₃", centerX, centerY + 4, {
+      align: "center",
+      color,
+      size: Math.max(11, Math.min(15, box.width * .1)),
+      weight: 700,
+    });
+  };
+
+  const drawBerensteinProfile = (context, box, kind, emphasis) => {
+    const schiffer = kind === "schiffer";
+    const color = schiffer ? colors.accent : colors.teal;
+    const margin = {
+      left: Math.max(20, box.width * .09),
+      right: Math.max(14, box.width * .06),
+      top: Math.max(21, box.height * .14),
+      bottom: Math.max(23, box.height * .16),
+    };
+    const left = box.x + margin.left;
+    const right = box.x + box.width - margin.right;
+    const top = box.y + margin.top;
+    const bottom = box.y + box.height - margin.bottom;
+    const mapX = (s) => left + (s + 1) / 1.25 * (right - left);
+    const mapY = (u) => bottom - (u + 1.05) / 2.4 * (bottom - top);
+    const boundaryX = mapX(0);
+    const boundaryValue = schiffer ? 1 : 0;
+
+    context.beginPath();
+    context.moveTo(left, mapY(0));
+    context.lineTo(right, mapY(0));
+    context.strokeStyle = emphasis === "height" && !schiffer ? color : colors.rule;
+    context.lineWidth = emphasis === "height" && !schiffer ? 1.8 : 1;
+    context.setLineDash([4, 5]);
+    context.stroke();
+    context.setLineDash([]);
+
+    if (schiffer) {
+      context.beginPath();
+      context.moveTo(left, mapY(1));
+      context.lineTo(right, mapY(1));
+      context.strokeStyle = emphasis === "height" ? color : colors.rule;
+      context.lineWidth = emphasis === "height" ? 1.8 : 1;
+      context.setLineDash([4, 5]);
+      context.stroke();
+      context.setLineDash([]);
+    }
+
+    context.beginPath();
+    context.moveTo(boundaryX, top);
+    context.lineTo(boundaryX, bottom + 4);
+    context.strokeStyle = colors.ruleDark;
+    context.lineWidth = 1;
+    context.stroke();
+
+    context.beginPath();
+    for (let index = 0; index <= 150; index += 1) {
+      const s = -1 + index / 150 * 1.25;
+      const u = schiffer ? 1 - .5 * s * s : s;
+      const x = mapX(s);
+      const y = mapY(u);
+      if (index === 0) context.moveTo(x, y);
+      else context.lineTo(x, y);
+    }
+    context.strokeStyle = color;
+    context.lineWidth = emphasis === "pair" ? 2.3 : 3;
+    context.stroke();
+
+    context.beginPath();
+    context.arc(boundaryX, mapY(boundaryValue), 4.2, 0, Math.PI * 2);
+    context.fillStyle = color;
+    context.fill();
+    context.strokeStyle = colors.white;
+    context.lineWidth = 1.5;
+    context.stroke();
+
+    if (emphasis === "slope") {
+      const halfWidth = Math.max(14, box.width * .075);
+      const slope = schiffer ? 0 : 1;
+      const s1 = -halfWidth / Math.max(1, right - left) * 1.25;
+      const s2 = -s1;
+      const u1 = boundaryValue + slope * s1;
+      const u2 = boundaryValue + slope * s2;
+      context.beginPath();
+      context.moveTo(mapX(s1), mapY(u1));
+      context.lineTo(mapX(s2), mapY(u2));
+      context.strokeStyle = colors.heading;
+      context.lineWidth = 2;
+      context.stroke();
+    }
+
+    drawLabel(context, "inside", left, bottom + 17, { color: colors.muted, size: 10 });
+    drawLabel(context, "boundary", boundaryX, bottom + 17, { align: "center", color: colors.muted, size: 10 });
+    drawLabel(context, schiffer ? "u = 1" : "u = 0", boundaryX - 8, mapY(boundaryValue) - 9, {
+      align: "right",
+      color,
+      size: 12,
+      weight: 700,
+    });
+  };
+
+  const drawBerensteinEndpointPanel = (context, box, kind, emphasis) => {
+    const schiffer = kind === "schiffer";
+    const color = schiffer ? colors.accent : colors.teal;
+    const title = schiffer ? "Schiffer endpoint" : "Berenstein endpoint";
+    const data = schiffer ? "height 1 · slope 0" : "height 0 · slope 1";
+    context.beginPath();
+    context.moveTo(box.x, box.y + 1);
+    context.lineTo(box.x + box.width, box.y + 1);
+    context.strokeStyle = color;
+    context.lineWidth = 2;
+    context.stroke();
+    drawLabel(context, title, box.x, box.y + 20, { color, size: 12, weight: 700 });
+    drawLabel(context, data, box.x + box.width, box.y + 20, { align: "right", color: colors.heading, size: 12 });
+
+    const rowLayout = box.height < 270;
+    if (rowLayout) {
+      const domainWidth = Math.min(92, box.width * .36);
+      drawBerensteinDomainGlyph(context, {
+        x: box.x + 1,
+        y: box.y + 31,
+        width: domainWidth,
+        height: box.height - 39,
+      }, kind, emphasis);
+      drawBerensteinProfile(context, {
+        x: box.x + domainWidth + 3,
+        y: box.y + 27,
+        width: box.width - domainWidth - 3,
+        height: box.height - 31,
+      }, kind, emphasis);
+    } else {
+      const domainHeight = Math.min(148, box.height * .39);
+      drawBerensteinDomainGlyph(context, {
+        x: box.x + box.width * .19,
+        y: box.y + 27,
+        width: box.width * .62,
+        height: domainHeight,
+      }, kind, emphasis);
+      drawBerensteinProfile(context, {
+        x: box.x + 1,
+        y: box.y + domainHeight + 24,
+        width: box.width - 2,
+        height: box.height - domainHeight - 27,
+      }, kind, emphasis);
+    }
+  };
+
+  const drawBerensteinBoundary = () => {
+    if (!berensteinBoundaryCanvas) return;
+    const rectangle = berensteinBoundaryCanvas.getBoundingClientRect();
+    if (rectangle.width < 120 || rectangle.height < 240) return;
+    const { context, width, height } = prepareCanvas(berensteinBoundaryCanvas, { maxPixelRatio: 4 });
+    drawCanvasBackdrop(context, width, height);
+    const outer = 16;
+    const gap = width < 520 ? 22 : 34;
+    if (width < 520) {
+      const panelHeight = (height - outer * 2 - gap) / 2;
+      drawBerensteinEndpointPanel(context, {
+        x: outer,
+        y: outer,
+        width: width - outer * 2,
+        height: panelHeight,
+      }, "schiffer", selectedBerensteinEndpointStage);
+      drawBerensteinEndpointPanel(context, {
+        x: outer,
+        y: outer + panelHeight + gap,
+        width: width - outer * 2,
+        height: panelHeight,
+      }, "berenstein", selectedBerensteinEndpointStage);
+    } else {
+      const panelWidth = (width - outer * 2 - gap) / 2;
+      drawBerensteinEndpointPanel(context, {
+        x: outer,
+        y: outer,
+        width: panelWidth,
+        height: height - outer * 2,
+      }, "schiffer", selectedBerensteinEndpointStage);
+      drawBerensteinEndpointPanel(context, {
+        x: outer + panelWidth + gap,
+        y: outer,
+        width: panelWidth,
+        height: height - outer * 2,
+      }, "berenstein", selectedBerensteinEndpointStage);
+    }
+    const stage = berensteinEndpointStages[selectedBerensteinEndpointStage];
+    berensteinBoundaryCanvas.setAttribute(
+      "aria-label",
+      stage.label + ". " + stage.status,
+    );
+  };
+
+  const updateBerensteinEndpoint = () => {
+    const requested = berensteinEndpointStage?.value || "pair";
+    selectedBerensteinEndpointStage = Object.hasOwn(berensteinEndpointStages, requested) ? requested : "pair";
+    const stage = berensteinEndpointStages[selectedBerensteinEndpointStage];
+    if (berensteinEndpointStageValue) berensteinEndpointStageValue.textContent = stage.label;
+    if (berensteinEndpointStatus) berensteinEndpointStatus.textContent = stage.status;
+    drawBerensteinBoundary();
+  };
+
+  if (berensteinEndpointStage) berensteinEndpointStage.addEventListener("change", updateBerensteinEndpoint);
+  observeCanvas(berensteinBoundaryCanvas, drawBerensteinBoundary);
+  requestAnimationFrame(updateBerensteinEndpoint);
+
+  const berensteinFieldGuide = document.getElementById("berensteinFieldGuide");
+  const berensteinFieldNotes = berensteinFieldGuide?.closest(".berenstein-field-notes");
+  const berensteinFieldStage = document.getElementById("berensteinFieldStage");
+  const berensteinFieldStageValue = document.getElementById("berensteinFieldStageValue");
+  const berensteinFieldStatus = document.getElementById("berensteinFieldStatus");
+  const berensteinFieldStages = Object.freeze({
+    field: Object.freeze({
+      label: "signed field",
+      status: "Orange and blue are opposite signs of u; every dark curve between them is a zero level set.",
+    }),
+    nodal: Object.freeze({
+      label: "interior zero curves",
+      status: "Eight interior nodal curves separate alternating sign bands before the field reaches the outer boundary.",
+    }),
+    boundary: Object.freeze({
+      label: "outer nodal boundary",
+      status: "The heavy outer curve is both the physical boundary and a regular zero curve: u = 0 there and the outward slope is one.",
+    }),
+    symmetry: Object.freeze({
+      label: "thirteenfold symmetry",
+      status: "Thirteen equivalent sectors repeat around the domain. The certificate separately rules out central symmetry.",
+    }),
+  });
+
+  const polarPath = (centerX, centerY, radius, folds = 13, amplitude = 0) => {
+    const commands = [];
+    for (let index = 0; index <= 260; index += 1) {
+      const theta = index / 260 * Math.PI * 2;
+      const localRadius = radius * (1 + amplitude * Math.cos(folds * theta));
+      const x = centerX + localRadius * Math.cos(theta);
+      const y = centerY + localRadius * Math.sin(theta);
+      commands.push((index === 0 ? "M" : "L") + x.toFixed(2) + " " + y.toFixed(2));
+    }
+    commands.push("Z");
+    return commands.join(" ");
+  };
+
+  const buildBerensteinFieldGuide = () => {
+    if (!berensteinFieldGuide || berensteinFieldGuide.childElementCount) return;
+    const centerX = 140;
+    const centerY = 66;
+    const radii = [9, 15, 21, 27, 33, 39, 45, 51];
+    const definitions = createSvgNode("defs");
+    const marker = createSvgNode("marker", {
+      id: "berensteinFieldArrow",
+      viewBox: "0 0 10 10",
+      refX: "8",
+      refY: "5",
+      markerWidth: "7",
+      markerHeight: "7",
+      orient: "auto",
+    });
+    marker.appendChild(createSvgNode("path", { d: "M0 0 L10 5 L0 10 Z", class: "berenstein-guide-arrowhead" }));
+    definitions.appendChild(marker);
+    berensteinFieldGuide.appendChild(definitions);
+
+    const signLayer = createSvgNode("g", { class: "berenstein-field-layer berenstein-field-layer-sign", "data-field-layer": "field" });
+    [7, 13, 19, 25, 31, 37, 43, 49].forEach((radius, index) => {
+      signLayer.appendChild(createSvgNode("path", {
+        d: polarPath(centerX, centerY, radius, 13, .008 + index * .004),
+        class: "berenstein-guide-band berenstein-guide-band-" + (index % 2 ? "positive" : "negative"),
+      }));
+    });
+    signLayer.appendChild(createSvgNode("path", {
+      d: polarPath(centerX, centerY, 54, 13, .045),
+      class: "berenstein-guide-outline",
+    }));
+    berensteinFieldGuide.appendChild(signLayer);
+
+    const nodalLayer = createSvgNode("g", { class: "berenstein-field-layer berenstein-field-layer-nodal", "data-field-layer": "nodal" });
+    radii.forEach((radius, index) => {
+      nodalLayer.appendChild(createSvgNode("path", {
+        d: polarPath(centerX, centerY, radius, 13, .008 + index * .004),
+        class: "berenstein-guide-nodal",
+      }));
+    });
+    nodalLayer.appendChild(createSvgNode("path", {
+      d: polarPath(centerX, centerY, 54, 13, .045),
+      class: "berenstein-guide-outline",
+    }));
+    berensteinFieldGuide.appendChild(nodalLayer);
+
+    const boundaryLayer = createSvgNode("g", { class: "berenstein-field-layer berenstein-field-layer-boundary", "data-field-layer": "boundary" });
+    boundaryLayer.appendChild(createSvgNode("path", {
+      d: polarPath(centerX, centerY, 50, 13, .05),
+      class: "berenstein-guide-boundary",
+    }));
+    for (let index = 0; index < 13; index += 1) {
+      const theta = index / 13 * Math.PI * 2;
+      const radius = 50 * (1 + .05 * Math.cos(13 * theta));
+      boundaryLayer.appendChild(createSvgNode("line", {
+        x1: centerX + (radius + 2) * Math.cos(theta),
+        y1: centerY + (radius + 2) * Math.sin(theta),
+        x2: centerX + (radius + 9) * Math.cos(theta),
+        y2: centerY + (radius + 9) * Math.sin(theta),
+        class: "berenstein-guide-normal",
+        "marker-end": "url(#berensteinFieldArrow)",
+      }));
+    }
+    berensteinFieldGuide.appendChild(boundaryLayer);
+
+    const symmetryLayer = createSvgNode("g", { class: "berenstein-field-layer berenstein-field-layer-symmetry", "data-field-layer": "symmetry" });
+    symmetryLayer.appendChild(createSvgNode("path", {
+      d: polarPath(centerX, centerY, 54, 13, .045),
+      class: "berenstein-guide-outline",
+    }));
+    for (let index = 0; index < 13; index += 1) {
+      const theta = index / 13 * Math.PI * 2;
+      symmetryLayer.appendChild(createSvgNode("line", {
+        x1: centerX + 5 * Math.cos(theta),
+        y1: centerY + 5 * Math.sin(theta),
+        x2: centerX + 52 * Math.cos(theta),
+        y2: centerY + 52 * Math.sin(theta),
+        class: "berenstein-guide-symmetry-line",
+      }));
+    }
+    berensteinFieldGuide.appendChild(symmetryLayer);
+  };
+
+  const updateBerensteinField = () => {
+    buildBerensteinFieldGuide();
+    const requested = berensteinFieldStage?.value || "field";
+    const selected = Object.hasOwn(berensteinFieldStages, requested) ? requested : "field";
+    const stage = berensteinFieldStages[selected];
+    if (berensteinFieldNotes) berensteinFieldNotes.dataset.stage = selected;
+    if (berensteinFieldStageValue) berensteinFieldStageValue.textContent = stage.label;
+    if (berensteinFieldStatus) berensteinFieldStatus.textContent = stage.status;
+    if (berensteinFieldGuide) berensteinFieldGuide.setAttribute("aria-label", stage.label + ". " + stage.status);
+  };
+
+  if (berensteinFieldStage) berensteinFieldStage.addEventListener("change", updateBerensteinField);
+  requestAnimationFrame(updateBerensteinField);
+
   const computerOverviewCanvas = document.getElementById("computerOverviewCanvas");
   const computerOverviewState = document.getElementById("computerOverviewState");
   const computerOverviewPlayButton = document.getElementById("computerOverviewPlayButton");

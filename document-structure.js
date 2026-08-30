@@ -105,23 +105,152 @@
     if (heading.id) return heading;
     return heading.closest("[id]") || heading.querySelector("[id]");
   };
-  const toc = document.querySelector(".site-toc nav[data-toc-nav]");
+  const sectionNavigation = document.querySelector("[data-section-navigation]");
+  const toc = sectionNavigation?.querySelector("nav[data-toc-nav]");
   if (toc) {
     const headings = Array.from(main.querySelectorAll(".section-heading[data-number][data-title]"))
       .filter((heading) => Object.prototype.hasOwnProperty.call(tocClassByLevel, heading.dataset.toc || ""));
-    toc.replaceChildren(...headings.map((heading) => {
-      const link = document.createElement("a");
-      const className = tocClassByLevel[heading.dataset.toc];
+
+    const records = headings.map((heading) => {
       const target = headingTarget(heading);
-      if (className) link.classList.add(className);
-      link.href = target ? `#${target.id}` : "#";
+      return {
+        className: tocClassByLevel[heading.dataset.toc],
+        href: target ? `#${target.id}` : "#",
+        level: heading.dataset.toc,
+        number: heading.dataset.number,
+        title: heading.dataset.title,
+      };
+    });
+
+    const createLabel = (record, includeIndicator = false) => {
+      const fragment = document.createDocumentFragment();
       const number = document.createElement("b");
-      number.textContent = heading.dataset.number;
+      number.textContent = record.number;
+      if (!record.number) number.setAttribute("aria-hidden", "true");
       const title = document.createElement("span");
-      title.textContent = heading.dataset.title;
-      link.append(number, title);
+      title.textContent = record.title;
+      fragment.append(number, title);
+      if (includeIndicator) {
+        const indicator = document.createElement("i");
+        indicator.setAttribute("aria-hidden", "true");
+        fragment.append(indicator);
+      }
+      return fragment;
+    };
+
+    const createHeadingLink = (record) => {
+      const link = document.createElement("a");
+      link.classList.add("section-banner-link");
+      if (record.className) link.classList.add(record.className);
+      link.dataset.headingLink = "";
+      link.dataset.tocLevel = record.level;
+      link.href = record.href;
+      link.append(createLabel(record));
       return link;
-    }));
+    };
+
+    const groups = [];
+    records.forEach((record) => {
+      if (record.level === "section") {
+        groups.push({ section: record, children: [] });
+      } else if (groups.length) {
+        groups.at(-1).children.push(record);
+      }
+    });
+
+    const list = document.createElement("ol");
+    list.className = "section-banner-list";
+    groups.forEach(({ section, children }, index) => {
+      const item = document.createElement("li");
+      item.className = "section-banner-item";
+      item.dataset.sectionTarget = section.href;
+
+      if (children.length) {
+        const group = document.createElement("details");
+        group.className = "section-banner-group";
+        group.setAttribute("name", "exposition-sections");
+
+        const summary = document.createElement("summary");
+        summary.append(createLabel(section, true));
+
+        const dropdown = document.createElement("div");
+        dropdown.className = "section-banner-dropdown";
+        const sectionLink = createHeadingLink(section);
+        sectionLink.classList.add("section-banner-section-link");
+        dropdown.append(sectionLink);
+
+        const childList = document.createElement("ol");
+        childList.className = "section-banner-subsections";
+        children.forEach((child) => {
+          const childItem = document.createElement("li");
+          childItem.append(createHeadingLink(child));
+          childList.append(childItem);
+        });
+        dropdown.append(childList);
+        group.append(summary, dropdown);
+        item.append(group);
+      } else {
+        const directLink = createHeadingLink(section);
+        directLink.classList.add("section-banner-direct");
+        item.append(directLink);
+      }
+
+      item.style.setProperty("--section-index", String(index));
+      list.append(item);
+    });
+    toc.replaceChildren(list);
+
+    const groupDetails = Array.from(toc.querySelectorAll("details.section-banner-group"));
+    const closeGroups = (except = null) => {
+      groupDetails.forEach((group) => {
+        if (group !== except) group.open = false;
+      });
+    };
+    groupDetails.forEach((group) => {
+      group.addEventListener("toggle", () => {
+        if (group.open) closeGroups(group);
+      });
+    });
+
+    const compactNavigation = window.matchMedia("(max-width: 1000px)");
+    const syncNavigationMode = () => {
+      sectionNavigation.open = !compactNavigation.matches;
+      closeGroups();
+    };
+    syncNavigationMode();
+    if (compactNavigation.addEventListener) {
+      compactNavigation.addEventListener("change", syncNavigationMode);
+    } else {
+      compactNavigation.addListener?.(syncNavigationMode);
+    }
+
+    sectionNavigation.addEventListener("toggle", () => {
+      if (!sectionNavigation.open) closeGroups();
+    });
+
+    toc.addEventListener("click", (event) => {
+      if (!event.target.closest("a")) return;
+      closeGroups();
+      if (compactNavigation.matches) sectionNavigation.open = false;
+    });
+    document.addEventListener("click", (event) => {
+      if (sectionNavigation.contains(event.target)) return;
+      closeGroups();
+      if (compactNavigation.matches) sectionNavigation.open = false;
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape") return;
+      const openGroup = groupDetails.find((group) => group.open);
+      if (openGroup) {
+        openGroup.open = false;
+        openGroup.querySelector(":scope > summary")?.focus();
+        return;
+      }
+      if (compactNavigation.matches && sectionNavigation.open) {
+        sectionNavigation.open = false;
+        sectionNavigation.querySelector(":scope > summary")?.focus();
+      }
+    });
   }
 
   const statementKinds = new Set(["theorem", "lemma", "proposition", "corollary", "criterion"]);

@@ -3,9 +3,9 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="A mathematical account of two constructions of planar counterexamples to Schiffer's conjecture: computer-assisted validation and cylinder-to-cone bifurcation.">
+    <meta name="description" content="A visual mathematical account of the conformal fixed-disc and real-order bifurcation constructions of noncircular Schiffer domains, with a companion Berenstein counterexample.">
     <link rel="canonical" href="https://pompeiu-schiffer.org/">
-    <title>Counterexamples to Schiffer's conjecture · Two independent constructions</title>
+    <title>Constructing Noncircular Schiffer Domains · Interactive exposition</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="icon" type="image/png" href="assets/website-logo-transparent.png?v=20260828">
@@ -19,47 +19,46 @@
     <script defer src="lean-statements.js?v=20260828.5"></script>
     <script defer src="math.js?v=20260828.2"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tufte-css@1.9.0/tufte.min.css">
-    <link rel="stylesheet" href="styles.css?v=20260829.4">
-    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260829.11">
+    <link rel="stylesheet" href="styles.css?v=20260830.1">
+    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260830.8">
   </head>
   <body class="tufte-site">
     <div class="noise" aria-hidden="true"></div>
 
     <header class="topbar">
-      <a class="brand" href="#top" aria-label="Schiffer counterexample exposition home">
-        <svg viewBox="0 0 34 34" aria-hidden="true"><path d="M6 4v26M6 4c12 0 12 8 22 8M6 30c12 0 12-8 22-8"/><path class="accent" d="M28 5v24"/></svg>
-        <span>Counterexamples to Schiffer's conjecture</span>
+      <a class="brand" href="#top" aria-label="Constructing Noncircular Schiffer Domains home">
+        <img src="assets/website-logo-transparent.png?v=20260828" width="384" height="384" alt="">
+        <span>Constructing Noncircular Schiffer Domains</span>
       </a>
+      <button id="methodButton" class="method-button" type="button" aria-label="Numerical methods" aria-haspopup="dialog" aria-controls="methodDialog"><span class="method-button-prefix">Numerical </span>methods</button>
     </header>
 
-    <details class="site-toc">
-      <summary><span>Table of contents</span><i aria-hidden="true">open +</i></summary>
-      <nav aria-label="Table of contents" data-toc-nav></nav>
+    <details class="section-banner" data-section-navigation open>
+      <summary class="section-banner-mobile-summary"><span>Sections</span><i aria-hidden="true">open +</i></summary>
+      <nav aria-label="Exposition sections" data-toc-nav></nav>
     </details>
 
     <main id="top">
       <section class="intro">
         <p class="intro-authors">Exposition by <a href="https://people.epfl.ch/gonzalo.caolabora" target="_blank" rel="noreferrer">Gonzalo Cao-Labora</a>, <a href="https://www.damtp.cam.ac.uk/user/mjc249/home.html" target="_blank" rel="noreferrer">Matthew J. Colbrook</a>, <a href="https://jaume.dedios.cat/" target="_blank" rel="noreferrer">Jaume de Dios Pont</a>, and <a href="https://georgestepaniants.com/" target="_blank" rel="noreferrer">George Stepaniants</a>, based on <a href="https://arxiv.org/abs/2608.01579" target="_blank" rel="noreferrer"><em>A computer-assisted counterexample to the planar Pompeiu and Schiffer conjectures</em></a>, <a href="https://arxiv.org/abs/2608.05114" target="_blank" rel="noreferrer"><em>Counterexamples to Schiffer’s Conjecture</em></a>, and <a href="https://arxiv.org/abs/2608.08953" target="_blank" rel="noreferrer"><em>A computer-assisted counterexample to the planar Berenstein conjecture</em></a>. <a class="intro-acknowledgements-link" href="#acknowledgements">Acknowledgements</a>.</p>
-        <h1>Counterexamples to Schiffer's conjecture</h1>
+        <h1>Constructing Noncircular Schiffer Domains</h1>
         <div class="intro-bottom">
           <p>Let \(\Omega\subset\mathbb R^2\) be a bounded domain. Pompeiu asked whether a function \(f\) is determined by its integrals over all rigid motions \(E(\Omega)\). Williams showed that nonuniqueness occurs exactly when \(\Omega\) supports a nonconstant Laplace eigenfunction whose value is constant and whose normal derivative vanishes on \(\partial\Omega\). The disk is the classical example, and Schiffer conjectured that it is the only connected smooth planar one.</p>
-          <p>We explain two ways to construct counterexamples. In the first, we search numerically for an almost-counterexample with extremely high precision, and then use a computer-assisted proof to show that an exact counterexample lies nearby. The domain is encoded as a conformal map from the unit disk, and interval arithmetic proves that a fixed-point iteration stays in a small coefficient ball and converges to an exact solution. In the second, we look for domains with \(N\)-fold symmetry and relax the problem so that \(N\) may be any real number, which recovers Schiffer&rsquo;s problem exactly when \(N\) is an integer. Geometrically the relaxed problem lives on a cone of angle \(2\pi/N\), and bifurcation theory lets us start from a fractional \(N\) and arrive at an integer one.</p>
+          <p>We explain two constructions that both combine geometry, spectral analysis, and bifurcation. The conformal fixed-disc route starts from a tenfold bifurcation in a relaxed constant-flux problem, numerically continues that branch to zero flux, and encodes the resulting boundary by a conformal map from the unit disk. A computer-assisted contraction then proves that an exact solution lies near the numerical centre. The real-order bifurcation route writes an \(N\)-fold problem on a fixed boundary collar, allows the order \(N\) to become a real parameter \(R\), and uses uniform bifurcation theory and Bessel asymptotics to bend a branch to an integer, where it unfolds into the plane.</p>
         </div>
 
-        <div class="formal-statement-pair intro-main-result">
-          <article class="math-statement math-statement-theorem" data-kind="theorem" data-label="main-result" aria-labelledby="mainResultTitle">
-            <header class="math-statement-header"><span>Theorem</span><small>Main result</small></header>
-            <div class="math-statement-body">
-              <h3 id="mainResultTitle">A non-disk planar Schiffer domain exists.</h3>
-              <p>There is a bounded, smooth, simply connected planar domain, star-shaped with respect to the origin, which is not a disk and solves the Schiffer problem.</p>
-            </div>
-          </article>
-          <lean-statement data-statement="schiffer-star-shaped"></lean-statement>
-        </div>
+        <article class="math-statement math-statement-theorem intro-main-result" data-kind="theorem" data-label="main-result" aria-labelledby="mainResultTitle">
+          <header class="math-statement-header"><span>Theorem</span><small>Main result</small></header>
+          <div class="math-statement-body">
+            <h3 id="mainResultTitle">A non-disk planar Schiffer domain exists.</h3>
+            <p>There is a bounded, smooth, simply connected planar domain, star-shaped with respect to the origin, which is not a disk and solves the Schiffer problem.</p>
+          </div>
+        </article>
       </section>
 
       <section id="introduction" class="story-intro">
         <header class="section-heading" data-title="The problem" data-toc="section" data-label="introduction">
+          <h2>The problem</h2>
         </header>
 
         <div id="pompeiu-problem" class="intro-copy intro-copy-wide intro-chapter-heading">
@@ -92,8 +91,6 @@
             </div>
           </article>
 
-          <lean-statement data-statement="pompeiu-property"></lean-statement>
-
           <label for="pompeiu-history-note" class="margin-toggle" aria-label="Show the historical note">&#8853;</label>
           <input type="checkbox" id="pompeiu-history-note" class="margin-toggle">
           <aside class="marginnote historical-margin" data-aside="pompeiu-history">
@@ -102,7 +99,7 @@
             <p>Brown, Schreiber and Taylor proved that noncircular ellipses, polygonal regions, and compact convex sets with a corner have the property <a class="history-citation" href="#ref-bst">[5]</a>. The connected smooth-domain question remained open until the two planar counterexamples proved in 2026 <a class="history-citation" href="#ref-colbrook">[12]</a>, <a class="history-citation" href="#ref-cao-dedios">[13]</a>.</p>
           </aside>
 
-          <article class="math-statement math-statement-problem" data-kind="problem" data-label="pompeiu-problem" aria-labelledby="pompeiuProblemTitle">
+          <article class="math-statement math-statement-problem" data-kind="problem" data-label="pompeiu-measurement-problem" aria-labelledby="pompeiuProblemTitle">
             <header class="math-statement-header"><span>Problem</span><small>Pompeiu · 1929</small></header>
             <div class="math-statement-body"><p id="pompeiuProblemTitle">Does every bounded planar set have the Pompeiu property?</p></div>
           </article>
@@ -196,7 +193,6 @@
                   <p>is nonzero and satisfies \(\int_{E(B_r)}f(x)\,dx=0\) for every rigid motion \(E\). Rotations give no additional domains because \(B_r\) is rotationally invariant.</p>
                 </div>
               </article>
-              <lean-statement data-statement="disk-not-pompeiu"></lean-statement>
               <p class="disk-model-note">The margin experiment fixes \(f(x)=\cos(x_1)\) and varies the disk around the first positive zero \(r=3.8317\ldots\) of \(J_1\).</p>
 
               <div class="disk-sidequest-proof">
@@ -253,8 +249,7 @@
             <figcaption>A vibrating Chladni plate. Sand migrates from the moving regions and settles along the circular nodal lines, where the plate remains still. <a href="https://commons.wikimedia.org/wiki/File:Round_Chladni_plate_with_4_circular_nodes.JPG" target="_blank" rel="noreferrer">Pieter Kuiper, public domain.</a></figcaption>
           </figure>
           <p>A domain \(\Omega\) for which the system <a class="xref" data-ref="schiffer-system" data-ref-short></a> has a solution is called a <em>Schiffer domain</em>. The disk is one: its radial modes are multiples of \(J_0(\sqrt\lambda\,r)\), and their normal derivative vanishes at the boundary precisely when \(\sqrt\lambda\,r\) is a zero of \(J_0'\) — equivalently of \(J_1\), since \(J_0'=-J_1\).</p>
-          <p>The formal version below writes the boundary condition as \(\nabla u=0\). Indeed, constancy of \(u\) along the boundary kills every tangential derivative, while \(\partial_\nu u=0\) kills the normal component. Together they make the full gradient vanish on \(\partial\Omega\). It also normalizes \(\lambda=1\), which costs nothing: if \((u,\lambda)\) solves the system on \(\Omega\), then \(x\mapsto u(x/\sqrt\lambda)\) solves it with eigenvalue \(1\) on the rescaled domain \(\sqrt\lambda\,\Omega\). Fixing the domain and varying \(\lambda\), as the rest of this site does, is the same problem read the other way round.</p>
-          <lean-statement data-statement="schiffer-property"></lean-statement>
+          <p>Equivalently, the boundary condition can be written as \(\nabla u=0\). Indeed, constancy of \(u\) along the boundary kills every tangential derivative, while \(\partial_\nu u=0\) kills the normal component. Together they make the full gradient vanish on \(\partial\Omega\). One may also normalize \(\lambda=1\), which costs nothing: if \((u,\lambda)\) solves the system on \(\Omega\), then \(x\mapsto u(x/\sqrt\lambda)\) solves it with eigenvalue \(1\) on the rescaled domain \(\sqrt\lambda\,\Omega\). Fixing the domain and varying \(\lambda\), as the rest of this site does, is the same problem read the other way round.</p>
           <article class="math-statement math-statement-conjecture" data-kind="conjecture" data-label="schiffer-conjecture" aria-labelledby="schifferConjectureTitle">
             <header class="math-statement-header"><span>Conjecture</span><small>Schiffer</small></header>
             <div class="math-statement-body"><p id="schifferConjectureTitle">Every connected smooth bounded planar Schiffer domain is a disk.</p></div>
@@ -279,21 +274,18 @@
 
         <p>In both problems the disk produced the same arithmetic condition: the frequency times the radius must be a zero of \(J_1\). That coincidence is not an accident, and Williams made it precise.</p>
 
-        <div class="formal-statement-pair">
-          <article class="math-statement math-statement-theorem intro-theorem" data-kind="theorem" data-label="williams-equivalence" aria-labelledby="williamsTheoremTitle">
-            <header class="math-statement-header"><span>Theorem</span><small>Williams · 1976</small></header>
-            <div class="math-statement-body">
-              <h3 id="williamsTheoremTitle">The Pompeiu and Schiffer problems are equivalent.</h3>
-              <p>Let \(\Omega\subset\mathbb R^2\) be a bounded, simply connected domain with smooth boundary. Then the following statements are equivalent:</p>
-              <ol>
-                <li>There is a nonzero continuous function \(f\) such that \(\int_{E(\Omega)}f(x)\,dx=0\) for every rigid motion \(E\);</li>
-                <li>There are \(\lambda&gt;0\) and a nonconstant function \(u\) solving the Schiffer problem <a class="xref" data-ref="schiffer-system" data-ref-short></a> on \(\Omega\).</li>
-              </ol>
-              <p>Consequently, a smooth noncircular solution of the Schiffer problem also gives a smooth noncircular probe without the Pompeiu property.</p>
-            </div>
-          </article>
-          <lean-statement data-statement="schiffer-pompeiu-equivalence"></lean-statement>
-        </div>
+        <article class="math-statement math-statement-theorem intro-theorem" data-kind="theorem" data-label="williams-equivalence" aria-labelledby="williamsTheoremTitle">
+          <header class="math-statement-header"><span>Theorem</span><small>Williams · 1976</small></header>
+          <div class="math-statement-body">
+            <h3 id="williamsTheoremTitle">The Pompeiu and Schiffer problems are equivalent.</h3>
+            <p>Let \(\Omega\subset\mathbb R^2\) be a bounded, simply connected domain with smooth boundary. Then the following statements are equivalent:</p>
+            <ol>
+              <li>There is a nonzero continuous function \(f\) such that \(\int_{E(\Omega)}f(x)\,dx=0\) for every rigid motion \(E\);</li>
+              <li>There are \(\lambda&gt;0\) and a nonconstant function \(u\) solving the Schiffer problem <a class="xref" data-ref="schiffer-system" data-ref-short></a> on \(\Omega\).</li>
+            </ol>
+            <p>Consequently, a smooth noncircular solution of the Schiffer problem also gives a smooth noncircular probe without the Pompeiu property.</p>
+          </div>
+        </article>
 
         <details class="optional-digression proof-details intro-proof">
           <summary><span><small>Optional digression</small>The Schiffer&ndash;Pompeiu equivalence</span><i>expand +</i></summary>
@@ -494,7 +486,7 @@
         </header>
         <div class="borrow-lead">
           <p>The linearization in this section tells us what to look for: a radial Schiffer eigenvalue that is also a nonradial Dirichlet eigenvalue. The Bourget–Siegel theorem rules this out for the exact Schiffer problem on a disk. Nearby problems become flexible if we change the ambient geometry, the topology, or one of the boundary conditions. The diagrams below move along the resulting branches, with the symmetric domain at <span class="formula">\(s=0\)</span>.</p>
-          <p>In the first three examples, changing the geometry or topology allows the two eigenvalues to meet. Wheeler&rsquo;s planar result instead keeps a simply connected domain in the plane and allows the constant normal derivative to be nonzero. It is the closest precursor to the numerical search used in the computer-assisted proof.</p>
+          <p>In the first three examples, changing the geometry or topology allows the two eigenvalues to meet. Wheeler&rsquo;s planar result instead keeps a simply connected domain in the plane and allows the constant normal derivative to be nonzero. Its Wronskian bifurcation mechanism supplies the geometric seed for the first route: Colbrook and Stepaniants use the tenfold direction at a higher crossing and continue the resulting branch to the zero-flux numerical centre.</p>
         </div>
         <div class="world-cards margin-figure-sequence">
           <article class="margin-figure-row">
@@ -721,19 +713,19 @@
                 <div class="intro-shape-media intro-shape-domain">
                   <img src="assets/comparison-d10.webp" width="1000" height="1000" loading="lazy" decoding="async" alt="A tenfold-symmetric noncircular domain containing the blue and orange colour field and level curves of its Schiffer eigenfunction">
                 </div>
-                <p class="intro-shape-kicker">Computer-assisted proof</p>
+                <p class="intro-shape-kicker">Conformal fixed-disc route</p>
                 <b>A \(D_{10}\)-symmetric example</b>
-                <small>The computer-assisted, certified example of Colbrook and Stepaniants, together with its Schiffer eigenfunction and level curves.</small>
+                <small>A relaxed tenfold bifurcation and continuation produce the centre; a computer-assisted fixed-disc certificate proves the exact example.</small>
               </div>
               <div class="intro-shape intro-shape-result intro-shape-bifurcation">
               <div class="intro-shape-media intro-shape-domain">
-                <img src="assets/comparison-d28.webp" width="1000" height="1000" loading="lazy" decoding="async" alt="A twenty-eight-fold noncircular domain containing the red and blue colour field of its Schiffer eigenfunction">
+                <img src="assets/comparison-d28.webp" width="1000" height="1000" loading="lazy" decoding="async" alt="A numerically computed twenty-eight-fold field portrait illustrating the real-order bifurcation mechanism">
               </div>
               <svg viewBox="0 0 180 180" role="img" aria-label="A nearly circular outline with twenty-eight very shallow ripples, drawn at true scale">
                 <path class="intro-shape-line" d="M155.1 90.0L155.2 89.0L155.5 87.9L155.8 86.8L156.1 85.8L156.3 84.7L156.4 83.6L156.4 82.5L156.2 81.5L155.8 80.4L155.4 79.4L154.8 78.4L154.3 77.5L153.8 76.5L153.4 75.5L153.3 74.5L153.3 73.4L153.4 72.3L153.5 71.2L153.5 70.0L153.3 69.0L153.0 67.9L152.6 67.0L152.1 66.0L151.4 65.1L150.7 64.3L149.9 63.5L149.2 62.7L148.6 61.8L148.3 60.8L148.1 59.7L147.9 58.6L147.7 57.5L147.4 56.4L147.0 55.4L146.5 54.5L145.9 53.6L145.2 52.8L144.3 52.1L143.4 51.5L142.5 50.8L141.6 50.2L140.9 49.4L140.3 48.5L139.9 47.6L139.5 46.5L139.0 45.5L138.5 44.5L137.9 43.6L137.2 42.8L136.4 42.1L135.5 41.5L134.5 41.0L133.5 40.5L132.4 40.1L131.5 39.7L130.6 39.1L129.8 38.4L129.2 37.5L128.5 36.6L127.9 35.7L127.2 34.8L126.4 34.1L125.5 33.5L124.6 33.0L123.6 32.6L122.5 32.3L121.4 32.1L120.3 31.9L119.2 31.7L118.2 31.4L117.3 30.8L116.5 30.1L115.7 29.3L114.9 28.6L114.0 27.9L113.0 27.4L112.1 27.0L111.0 26.7L110.0 26.5L108.8 26.5L107.7 26.6L106.6 26.7L105.5 26.7L104.5 26.6L103.5 26.2L102.5 25.7L101.6 25.2L100.6 24.6L99.6 24.2L98.5 23.8L97.5 23.6L96.4 23.6L95.3 23.7L94.2 23.9L93.2 24.2L92.1 24.5L91.0 24.8L90.0 24.9L89.0 24.8L87.9 24.5L86.8 24.2L85.8 23.9L84.7 23.7L83.6 23.6L82.5 23.6L81.5 23.8L80.4 24.2L79.4 24.6L78.4 25.2L77.5 25.7L76.5 26.2L75.5 26.6L74.5 26.7L73.4 26.7L72.3 26.6L71.2 26.5L70.0 26.5L69.0 26.7L67.9 27.0L67.0 27.4L66.0 27.9L65.1 28.6L64.3 29.3L63.5 30.1L62.7 30.8L61.8 31.4L60.8 31.7L59.7 31.9L58.6 32.1L57.5 32.3L56.4 32.6L55.4 33.0L54.5 33.5L53.6 34.1L52.8 34.8L52.1 35.7L51.5 36.6L50.8 37.5L50.2 38.4L49.4 39.1L48.5 39.7L47.6 40.1L46.5 40.5L45.5 41.0L44.5 41.5L43.6 42.1L42.8 42.8L42.1 43.6L41.5 44.5L41.0 45.5L40.5 46.5L40.1 47.6L39.7 48.5L39.1 49.4L38.4 50.2L37.5 50.8L36.6 51.5L35.7 52.1L34.8 52.8L34.1 53.6L33.5 54.5L33.0 55.4L32.6 56.4L32.3 57.5L32.1 58.6L31.9 59.7L31.7 60.8L31.4 61.8L30.8 62.7L30.1 63.5L29.3 64.3L28.6 65.1L27.9 66.0L27.4 67.0L27.0 67.9L26.7 69.0L26.5 70.0L26.5 71.2L26.6 72.3L26.7 73.4L26.7 74.5L26.6 75.5L26.2 76.5L25.7 77.5L25.2 78.4L24.6 79.4L24.2 80.4L23.8 81.5L23.6 82.5L23.6 83.6L23.7 84.7L23.9 85.8L24.2 86.8L24.5 87.9L24.8 89.0L24.9 90.0L24.8 91.0L24.5 92.1L24.2 93.2L23.9 94.2L23.7 95.3L23.6 96.4L23.6 97.5L23.8 98.5L24.2 99.6L24.6 100.6L25.2 101.6L25.7 102.5L26.2 103.5L26.6 104.5L26.7 105.5L26.7 106.6L26.6 107.7L26.5 108.8L26.5 110.0L26.7 111.0L27.0 112.1L27.4 113.0L27.9 114.0L28.6 114.9L29.3 115.7L30.1 116.5L30.8 117.3L31.4 118.2L31.7 119.2L31.9 120.3L32.1 121.4L32.3 122.5L32.6 123.6L33.0 124.6L33.5 125.5L34.1 126.4L34.8 127.2L35.7 127.9L36.6 128.5L37.5 129.2L38.4 129.8L39.1 130.6L39.7 131.5L40.1 132.4L40.5 133.5L41.0 134.5L41.5 135.5L42.1 136.4L42.8 137.2L43.6 137.9L44.5 138.5L45.5 139.0L46.5 139.5L47.6 139.9L48.5 140.3L49.4 140.9L50.2 141.6L50.8 142.5L51.5 143.4L52.1 144.3L52.8 145.2L53.6 145.9L54.5 146.5L55.4 147.0L56.4 147.4L57.5 147.7L58.6 147.9L59.7 148.1L60.8 148.3L61.8 148.6L62.7 149.2L63.5 149.9L64.3 150.7L65.1 151.4L66.0 152.1L67.0 152.6L67.9 153.0L69.0 153.3L70.0 153.5L71.2 153.5L72.3 153.4L73.4 153.3L74.5 153.3L75.5 153.4L76.5 153.8L77.5 154.3L78.4 154.8L79.4 155.4L80.4 155.8L81.5 156.2L82.5 156.4L83.6 156.4L84.7 156.3L85.8 156.1L86.8 155.8L87.9 155.5L89.0 155.2L90.0 155.1L91.0 155.2L92.1 155.5L93.2 155.8L94.2 156.1L95.3 156.3L96.4 156.4L97.5 156.4L98.5 156.2L99.6 155.8L100.6 155.4L101.6 154.8L102.5 154.3L103.5 153.8L104.5 153.4L105.5 153.3L106.6 153.3L107.7 153.4L108.8 153.5L110.0 153.5L111.0 153.3L112.1 153.0L113.0 152.6L114.0 152.1L114.9 151.4L115.7 150.7L116.5 149.9L117.3 149.2L118.2 148.6L119.2 148.3L120.3 148.1L121.4 147.9L122.5 147.7L123.6 147.4L124.6 147.0L125.5 146.5L126.4 145.9L127.2 145.2L127.9 144.3L128.5 143.4L129.2 142.5L129.8 141.6L130.6 140.9L131.5 140.3L132.4 139.9L133.5 139.5L134.5 139.0L135.5 138.5L136.4 137.9L137.2 137.2L137.9 136.4L138.5 135.5L139.0 134.5L139.5 133.5L139.9 132.4L140.3 131.5L140.9 130.6L141.6 129.8L142.5 129.2L143.4 128.5L144.3 127.9L145.2 127.2L145.9 126.4L146.5 125.5L147.0 124.6L147.4 123.6L147.7 122.5L147.9 121.4L148.1 120.3L148.3 119.2L148.6 118.2L149.2 117.3L149.9 116.5L150.7 115.7L151.4 114.9L152.1 114.0L152.6 113.0L153.0 112.1L153.3 111.0L153.5 110.0L153.5 108.8L153.4 107.7L153.3 106.6L153.3 105.5L153.4 104.5L153.8 103.5L154.3 102.5L154.8 101.6L155.4 100.6L155.8 99.6L156.2 98.5L156.4 97.5L156.4 96.4L156.3 95.3L156.1 94.2L155.8 93.2L155.5 92.1L155.2 91.0Z"></path>
               </svg>
-              <p class="intro-shape-kicker">Bifurcation proof</p>
-              <b>A \(D_{28}\)-symmetric example</b>
+              <p class="intro-shape-kicker">Real-order bifurcation route</p>
+              <b>A numerical \(D_{28}\) realization</b>
               <small>An informal numerical illustration of the pattern predicted by the asymptotic proof.</small>
               </div>
             </div>
@@ -769,22 +761,19 @@
           </div>
         </figure>
 
-          <p>The two planar constructions now proceed differently. The computer-assisted construction follows a relaxed constant-flux family to locate a precise candidate, then uses rigorous fixed-point bounds to prove that an exact solution lies nearby. The geometric construction transports the cylindrical spectral coincidence through cone quotients, allows the order to vary continuously, and follows a bifurcation branch until the quotient closes in the plane.</p>
-          <p>The field at left depicts the certified \(D_{10}\)-symmetric solution obtained by the computer-assisted construction. The field at right is a \(D_{28}\)-symmetric numerical realization of the large-order asymptotic construction. In both cases the picture is an illustration: the rigorous conclusions come from the computer-assisted certificate and the bifurcation argument, respectively. In both pictures the outer curve is \(\partial\Omega\), and the colour field is the corresponding solution \(u\). The coin and biscuit provide familiar examples of the same kind of periodically undulating boundary.</p>
+          <p>The two planar constructions now proceed differently, although both use bifurcation. The conformal fixed-disc construction follows a bifurcating relaxed constant-flux family to locate a precise zero-flux candidate, then uses rigorous fixed-point bounds to prove that an exact solution lies nearby. The real-order construction poses the moving-boundary problem on a fixed collar, bifurcates at a noninteger Bessel crossing, and proves that a uniformly controlled branch bends until its order reaches an integer.</p>
+          <p>The field at left depicts the certified \(D_{10}\)-symmetric solution obtained by the conformal fixed-disc construction. The field at right is a \(D_{28}\)-symmetric numerical realization of the real-order bifurcation mechanism. In both cases the picture is an illustration: the rigorous conclusions come from a validated coefficient-space contraction and from uniform analytic bifurcation with Bessel asymptotics, respectively. In both pictures the outer curve is \(\partial\Omega\), and the colour field is the corresponding solution \(u\). The coin and biscuit provide familiar examples of the same kind of periodically undulating boundary.</p>
           <p>Both questions were answered in early August 2026, by <a href="https://arxiv.org/abs/2608.01579" target="_blank" rel="noreferrer">Colbrook–Stepaniants</a> and <a href="https://arxiv.org/abs/2608.05114" target="_blank" rel="noreferrer">Cao-Labora–de Dios Pont</a>. The rest of the site exposes those proofs.</p>
         </div>
         <div class="paper-copy pompeiu-corollary-intro">
           <p>Combining <a class="xref" data-ref="main-result"></a> with the equivalence in <a class="xref" data-ref="williams-equivalence"></a> gives planar counterexamples to Pompeiu&rsquo;s problem.</p>
         </div>
-        <div class="formal-statement-pair">
-          <article class="math-statement" data-kind="corollary" data-label="pompeiu-star-shaped" aria-labelledby="pompeiuCorollaryTitle">
-            <header class="math-statement-header"><span>Corollary</span><small>planar Pompeiu counterexample</small></header>
-            <div class="math-statement-body">
-              <p id="pompeiuCorollaryTitle">There is a bounded, nonempty planar domain with regular \(C^2\) boundary, star-shaped with respect to the origin, which is not a disk and does not have the Pompeiu property.</p>
-            </div>
-          </article>
-          <lean-statement data-statement="pompeiu-star-shaped"></lean-statement>
-        </div>
+        <article class="math-statement" data-kind="corollary" data-label="pompeiu-star-shaped" aria-labelledby="pompeiuCorollaryTitle">
+          <header class="math-statement-header"><span>Corollary</span><small>planar Pompeiu counterexample</small></header>
+          <div class="math-statement-body">
+            <p id="pompeiuCorollaryTitle">There is a bounded, nonempty planar domain with regular \(C^2\) boundary, star-shaped with respect to the origin, which is not a disk and does not have the Pompeiu property.</p>
+          </div>
+        </article>
         <div class="paper-copy berenstein-companion" aria-labelledby="berensteinCompanionTitle">
           <label for="berenstein-companion-note" class="margin-toggle" aria-label="Show the Berenstein counterexample">&#8853;</label>
           <input type="checkbox" id="berenstein-companion-note" class="margin-toggle">
@@ -794,7 +783,7 @@
           </figure>
           <p class="eyebrow">Companion result · Berenstein conjecture</p>
           <h3 id="berensteinCompanionTitle">The switched conditions also allow a non-disc</h3>
-          <p>A <a href="https://arxiv.org/abs/2608.08953" target="_blank" rel="noreferrer">companion computer-assisted proof</a> by Colbrook, Sadeghi and Stepaniants finds a non-disc with \(u=0\) on its boundary and a constant normal derivative different from zero. This disproves the unrestricted planar Berenstein conjecture. Its eigenfunction changes sign, so versions that assume one sign are not contradicted.</p>
+          <p>A <a href="https://arxiv.org/abs/2608.08953" target="_blank" rel="noreferrer">companion conformal fixed-disc proof</a>, completed by computer-assisted validation, is due to Colbrook, Sadeghi and Stepaniants. It finds a non-disc with \(u=0\) on its boundary and a constant normal derivative different from zero. This disproves the unrestricted planar Berenstein conjecture. Its eigenfunction changes sign, so versions that assume one sign are not contradicted.</p>
         </div>
       </section>
       </section>
@@ -806,38 +795,74 @@
         </header>
 
         <div class="geometry-lead counterexample-routes-lead">
-          <p>The two constructions take different routes around the disk's linear rigidity. The computer-assisted route follows a relaxed constant-flux family to find a precise candidate, then rigorously proves that an exact solution lies in a small ball around it. The geometric route changes the ambient geometry until the missing linearized direction appears, then uses a cone bifurcation and returns to the plane.</p>
+          <p>The two constructions take different routes around the disk's linear rigidity, but geometry and bifurcation belong to both. In the conformal fixed-disc route, bifurcation and continuation construct the numerical centre and validated computation closes the exact existence argument. In the real-order route, the quotient and collar geometry lead to a bifurcation problem whose uniform analytic estimates carry the branch to an integer.</p>
         </div>
 
-        <header id="numerical-route" class="section-heading proof-strategy-subheading route-subheading" data-title="Computer-assisted: search, then validate" data-toc="proof-subsection">
-          <h3>Computer-assisted: search, then validate</h3>
+        <section class="route-comparison data-table" aria-labelledby="routeComparisonTitle">
+          <header>
+            <span>Parallel terminology</span>
+            <h3 id="routeComparisonTitle">Compare the two constructions on the same three levels.</h3>
+          </header>
+          <div class="route-comparison-table-wrap">
+            <table class="route-comparison-table">
+              <caption>Both routes have a geometric mechanism, an analytic reduction, and a distinct rigorous closure.</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Level</th>
+                  <th scope="col">Conformal fixed-disc route</th>
+                  <th scope="col">Real-order bifurcation route</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">Geometric mechanism</th>
+                  <td data-route="Conformal fixed-disc route">A \(D_{10}\) branch bifurcates in the relaxed constant-flux problem and is continued to zero flux; \(p=k\phi'\) encodes its boundary.</td>
+                  <td data-route="Real-order bifurcation route">An \(N\)-fold quotient is encoded on a fixed collar; real order lets a branch bend until the quotient closes at an integer.</td>
+                </tr>
+                <tr>
+                  <th scope="row">Analytic reduction</th>
+                  <td data-route="Conformal fixed-disc route">A compatible inverse reduces the moving-domain problem to a cubic equation on the fixed disk.</td>
+                  <td data-route="Real-order bifurcation route">A Dirichlet-to-Neumann map reduces the problem to \(\mathcal G(R,v)=0\) on a fixed collar.</td>
+                </tr>
+                <tr>
+                  <th scope="row">Rigorous closure</th>
+                  <td data-route="Conformal fixed-disc route">A validated contraction combines interval arithmetic on a finite block with analytic control of every tail coefficient.</td>
+                  <td data-route="Real-order bifurcation route">Uniform Crandall&ndash;Rabinowitz theory, Bessel asymptotics, and quadratic branch bending force an integer crossing.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <header id="numerical-route" class="section-heading proof-strategy-subheading route-subheading" data-title="Fixed disc: bifurcate, continue, and certify" data-toc="proof-subsection">
+          <h3>Fixed disc: bifurcate, continue, and certify</h3>
         </header>
         <div class="geometry-lead numerical-route-lead">
           <label for="numerical-route-note" class="margin-toggle" aria-label="Show the certified numerical domain">&#8853;</label>
           <input type="checkbox" id="numerical-route-note" class="margin-toggle">
           <figure class="marginnote side-figure numerical-route-aside" data-figure="numerical-continuation-centre">
             <img src="assets/computer-assisted-domain-solution.png" width="1152" height="1152" loading="lazy" decoding="async" alt="The certified tenfold-symmetric Schiffer domain, coloured by its eigenfunction and level curves">
-            <figcaption>The \(D_{10}\)-symmetric domain found numerically and then enclosed by a rigorous certificate.</figcaption>
+            <figcaption>The \(D_{10}\)-symmetric numerical centre obtained by continuing the bifurcation-seeded branch to zero flux, then enclosed by a rigorous certificate.</figcaption>
           </figure>
-          <p>The disk has no nontrivial first-order Schiffer deformation, so the computer-assisted construction does not try to start a local branch there. Instead it first relaxes the zero-flux condition to \(\partial_\nu u=c\), begins at a known solution with \(c\ne0\), and numerically continues that branch toward \(c=0\). At the endpoint, the computation has found an extremely accurate noncircular approximate Schiffer domain.</p>
+          <p>The disk has no nontrivial first-order Schiffer deformation at zero flux. The fixed-disc construction therefore relaxes the condition to \(\partial_\nu u=c\). In that relaxed problem, a tenfold Wronskian crossing supplies a bifurcation from the radial disk family. Numerical continuation follows the resulting noncircular branch from \(c\ne0\) to \(c=0\), producing the extremely accurate approximate Schiffer domain used as the numerical centre.</p>
           <p>The continuation produces an approximate solution of the boundary equations. To prove existence, <a class="xref" data-ref="computer-assisted-proof"></a> pulls the moving-domain problem back to the unit disk and builds a small ball around that approximation. A Newton-like iteration stays inside the ball and moves any two coefficient lists closer together, so it converges to one exact domain.</p>
         </div>
 
         <figure class="geometry-laboratory computer-overview-laboratory interactive-plate annotated-plate reading-figure" data-figure="computer-proof-overview" aria-labelledby="computerOverviewFigureTitle">
           <aside class="geometry-controls paper-demo-controls">
-            <div class="computer-overview-stages geometry-stages" aria-label="Five stages of the computer-assisted construction">
+            <div class="computer-overview-stages geometry-stages" aria-label="Five stages of the conformal fixed-disc construction">
               <button type="button" data-computer-overview-stage="0"><span>01</span><strong>Follow \(c\) to zero</strong></button>
               <button type="button" data-computer-overview-stage="1"><span>02</span><strong>Move to one disk</strong></button>
               <button type="button" data-computer-overview-stage="2"><span>03</span><strong>One point, two functions</strong></button>
               <button type="button" data-computer-overview-stage="3"><span>04</span><strong>Prove convergence</strong></button>
               <button type="button" data-computer-overview-stage="4"><span>05</span><strong>Final non-disk domain</strong></button>
             </div>
-            <p id="computerOverviewState" class="geometry-stage-note" hidden aria-hidden="true">Start from a disk solving the relaxed condition \(\partial_\nu u=c\). Numerical continuation changes the domain and \(c\); stop when \(c\) reaches zero, and store that endpoint as \(x^\circ\).</p>
+            <p id="computerOverviewState" class="geometry-stage-note" hidden aria-hidden="true">At the higher tenfold Wronskian crossing, bifurcate in the relaxed problem \(\partial_\nu u=c\). Continue the noncircular branch until \(c=0\), then store that endpoint as \(x^\circ\).</p>
             <button id="computerOverviewPlayButton" class="play-button" type="button"><span id="computerOverviewPlayIcon" aria-hidden="true">▶</span><span id="computerOverviewPlayLabel">Animate</span></button>
           </aside>
           <section class="geometry-canvas-panel" aria-label="Animated overview of the numerical search, fixed-domain reformulation, infinite-dimensional estimates, fixed-point certificate, and final non-disk domain">
             <div id="computerOverviewCanvasWrap" class="geometry-canvas-wrap">
-              <canvas id="computerOverviewCanvas" class="computer-overview-canvas" role="img" aria-label="First of five stages: start from a relaxed disk solution, continue through noncircular domains while tracking the constant boundary derivative, stop when it reaches zero, and store the endpoint as the numerical centre">An animated overview of the computer-assisted proof.</canvas>
+              <canvas id="computerOverviewCanvas" class="computer-overview-canvas" role="img" aria-label="First of five stages: bifurcate from a relaxed disk solution, continue through noncircular domains while tracking the constant boundary derivative, stop when it reaches zero, and store the endpoint as the numerical centre">An animated overview of the conformal fixed-disc construction.</canvas>
               <div id="computerOverviewLabelLayer" class="computer-overview-label-layer" aria-hidden="true">
                 <span id="overviewSearchFlux" class="computer-overview-label tone-gold">\(\partial_\nu u=c\)</span>
                 <span id="overviewSearchFluxZero" class="computer-overview-label tone-accent">\(\partial_\nu u=0\)</span>
@@ -873,10 +898,10 @@
           <figcaption id="computerOverviewFigureTitle">Here \(x=(g,p)\): \(g\) controls the field and \(p\) the shape. The pictures of \(X\) are schematic; the numerical bounds and final coefficient test are certified.</figcaption>
         </figure>
 
-        <header id="cone-route" class="section-heading proof-strategy-subheading route-subheading" data-title="Geometrically: pass through the half-cylinder" data-toc="proof-subsection">
-          <h3>Geometrically: pass through the half-cylinder</h3>
+        <header id="cone-route" class="section-heading proof-strategy-subheading route-subheading" data-title="Real order: bifurcate, bend, and close" data-toc="proof-subsection">
+          <h3>Real order: bifurcate, bend, and close</h3>
         </header>
-        <div class="geometry-lead"><p>An \(N\)-fold domain can be divided by its rotations and its angular coordinate rescaled to period \(2\pi\). The quotient is a cone with metric \(g_R=dr^2+(r^2/R^2)d\psi^2\), where the planar case requires \(R=N\). As \(N\to\infty\), the cone point recedes and every fixed boundary collar approaches the half-cylinder \(({-\infty},0]\times S^1\). <a class="xref" data-ref="cone-quotient-construction"></a> follows this quotient, its cylindrical limit, the bifurcation, and the lift back to the plane.</p></div>
+        <div class="geometry-lead"><p>An \(N\)-fold domain can be divided by its rotations and its angular coordinate rescaled to period \(2\pi\). The quotient is a cone with metric \(g_R=dr^2+(r^2/R^2)d\psi^2\), where the planar case requires \(R=N\). As \(R\to\infty\), every fixed boundary collar approaches a half-cylinder; this is the limiting model visualized in <a class="xref" data-ref="cone-quotient-construction"></a>. The proof itself works directly on a finite collar for every large real \(R\): it bifurcates at a noninteger crossing, obtains estimates uniform in the crossing, bends the branch to an integer, and only then unfolds the quotient into the plane.</p></div>
         <figure class="geometry-laboratory interactive-plate annotated-plate reading-figure" data-figure="cone-quotient-construction">
           <aside class="geometry-controls paper-demo-controls">
             <div class="control-heading control-heading-reset" hidden aria-hidden="true"><button id="storyGeometryResetButton" type="button" hidden aria-hidden="true">Reset</button></div>
@@ -884,10 +909,10 @@
               <button type="button" data-story-stage="0"><span>01</span><strong>\(N\)-fold symmetry</strong></button>
               <button type="button" data-story-stage="0.166667"><span>02</span><strong>Choose a sector</strong></button>
               <button type="button" data-story-stage="0.333333"><span>03</span><strong>Identify sides</strong></button>
-              <button type="button" data-story-stage="0.5"><span>04</span><strong>Large-\(N\) limit</strong></button>
-              <button type="button" data-story-stage="0.666667"><span>05</span><strong>Bifurcate</strong></button>
-              <button type="button" data-story-stage="0.833333"><span>06</span><strong>Finite \(R\)</strong></button>
-              <button type="button" data-story-stage="1"><span>07</span><strong>Lift to the plane</strong></button>
+              <button type="button" data-story-stage="0.5"><span>04</span><strong>Limiting model</strong></button>
+              <button type="button" data-story-stage="0.666667"><span>05</span><strong>Read the mechanism</strong></button>
+              <button type="button" data-story-stage="0.833333"><span>06</span><strong>Work at finite \(R\)</strong></button>
+              <button type="button" data-story-stage="1"><span>07</span><strong>Close at integer \(R\)</strong></button>
             </div>
             <p id="storyGeometryState" class="geometry-stage-note" hidden aria-hidden="true">The same angular profile repeats \(N\) times.</p>
             <div class="geometry-scrub"><div class="control-label"><label for="storyGeometryRange">construction</label><output id="storyGeometryValue">stage 1</output></div><input id="storyGeometryRange" type="range" min="0" max="1" value="0" step="0.001"></div>
@@ -903,7 +928,7 @@
               </div>
             </div>
           </section>
-          <figcaption>Each stage uses the same angular profile: first on an \(N\)-fold disk, then on its cone quotient, in the limiting half-cylinder, and finally in the closed planar lift.</figcaption>
+          <figcaption>The half-cylinder stage is a limiting picture of the local mechanism, not the logical starting point of the planar proof. The proof works on the finite-\(R\) collar, continues until \(R\) is an integer, and then lifts the quotient to the plane.</figcaption>
         </figure>
       </section>
 
@@ -914,7 +939,7 @@
         </header>
 
         <div class="computer-assisted-lead">
-          <p>The computer proof turns a numerically computed candidate into an exact solution. A point \(x=(g,p)\) is an infinite list of coefficients: \(g\) describes the field inside the domain and \(p\) describes its shape and frequency. Numerical computation gives a finite centre \(x^\circ\). The proof chooses the radius \(r=10^{-6}\), then checks rigorously that the ball of that radius around \(x^\circ\) contains a true solution \(x^*\).</p>
+          <p>The computer-assisted certification turns the centre constructed by bifurcation and numerical continuation into an exact solution. A point \(x=(g,p)\) is an infinite list of coefficients: \(g\) describes the field inside the domain and \(p\) describes its shape and frequency. The search gives a finite centre \(x^\circ\). The proof chooses the radius \(r=10^{-6}\), then checks rigorously that the ball of that radius around \(x^\circ\) contains a true solution \(x^*\).</p>
           <p>The steps below explain what is being bounded and why iteration inside the chosen ball must converge.</p>
         </div>
 
@@ -935,7 +960,7 @@
           <h3>Find a promising shape</h3>
         </header>
         <div class="computer-assisted-copy paper-copy">
-          <p class="proof-step-purpose"><strong>Why this step matters.</strong> The rigorous certificate needs a good centre \(x^\circ\). Numerical continuation finds that centre; the existence claim comes from the validation that follows.</p>
+          <p class="proof-step-purpose"><strong>Why this step matters.</strong> The higher tenfold Wronskian crossing supplies a bifurcating constant-flux branch. Numerical continuation follows that branch to zero flux and constructs the centre \(x^\circ\); the exact existence claim comes from the validation that follows.</p>
           <p>A direct small deformation of the disk would require two different integer-order Bessel functions to vanish at the same positive number, which they do not. The search therefore solves a relaxed problem first: it allows the outward derivative to be a constant \(c\), rather than demanding \(c=0\) from the start.</p>
           <p>For a radial solution on the disk, this constant is</p>
           <div class="tex-display">
@@ -1038,7 +1063,7 @@
           <section class="computer-assisted-canvas-panel apparatus-visual">
             <svg id="pullbackCanvas" class="computer-assisted-vector" role="img" aria-label="The fixed disk mapped to the physical domain, with one point and its field value carried across"><title>Conformal pullback to the fixed disk</title><desc>The same field is shown before and after the conformal change of coordinates.</desc></svg>
           </section>
-          <aside class="computer-assisted-controls paper-demo-controls apparatus-controls conformal-transfer-key">
+          <aside class="computer-assisted-controls apparatus-controls conformal-transfer-key">
             <p class="eyebrow">One exact change of coordinates</p>
             <p class="computer-assisted-status">The colors match point for point: if \(x=\phi_p(z)\), then \(U(z)=u(x)\).</p>
             <p class="computer-assisted-status">The boundary motion reappears in the disk equation through \(|p|^2=k^2|\phi_p'|^2\).</p>
@@ -1416,7 +1441,7 @@
 
         <div class="computer-assisted-copy paper-copy computer-assisted-close">
           <p>Here is that last implication directly. Insert the plane wave \(e^{-ik\omega\cdot x}\) into Green's identity with \(u\). The two interior Helmholtz terms cancel. Since \(u=1\) and \(\partial_\nu u=0\) on the boundary, what remains is \(-k^2\int_\Omega e^{-ik\omega\cdot x}\,dx=0\). This is exactly the displayed Fourier-transform identity.</p>
-          <p>The computer-assisted proof is now complete: it constructs one exact noncircular Schiffer domain and shows that the same domain also fails the Pompeiu property. The bifurcation proof that follows reaches the existence conclusion by a different route.</p>
+          <p>The bifurcation-seeded fixed-disc proof is now complete: conformal reduction and a computer-assisted contraction construct one exact noncircular Schiffer domain and show that the same domain also fails the Pompeiu property. The companion construction below switches which boundary datum vanishes; the bifurcation proof then closes existence analytically through a different real-order mechanism.</p>
         </div>
 
         <details class="proof-details computer-assisted-details">
@@ -1425,6 +1450,142 @@
             <p>The released archive contains the exact stored centre, the finite approximate inverse, interval-arithmetic checks, a reproduction script, and a separate exact-fraction checker. The proof materials are available in the <a href="https://doi.org/10.5281/zenodo.21765287" target="_blank" rel="noreferrer">archived certificate</a> and <a href="https://github.com/MColbrook/Pompeiu_Schiffer" target="_blank" rel="noreferrer">source repository</a>.</p>
           </div>
         </details>
+
+        <header id="computer-berenstein" class="section-heading proof-strategy-subheading" data-title="Berenstein companion: the Dirichlet endpoint" data-toc="proof-subsection">
+          <h3>Berenstein companion: the Dirichlet endpoint</h3>
+        </header>
+
+        <div class="computer-assisted-copy paper-copy berenstein-proof-intro">
+          <p class="proof-step-purpose"><strong>The companion question.</strong> What happens if the boundary value is forced to vanish, while the outward derivative is kept constant and nonzero?</p>
+          <p>The portrait near the start of this article previews the answer. Think of \(u\) as a <em>height</em> and \(\partial_\nu u\) as its <em>outward slope</em> at the boundary. Schiffer prescribes the pair \((1,0)\). After rescaling the field, Berenstein prescribes the complementary pair \((0,1)\).</p>
+          <p>The numerical search and the contraction argument still follow the route developed above. The point of this subsection is to show exactly where exchanging those two numbers changes the geometry, the Fourier cancellation, and the fixed-disk equation.</p>
+        </div>
+
+        <article class="math-statement math-statement-theorem berenstein-theorem" data-kind="theorem" data-label="berenstein-computer-assisted-existence" aria-labelledby="berensteinComputerTheoremTitle">
+          <header class="math-statement-header"><span>Theorem</span><small>Colbrook–Sadeghi–Stepaniants · 2026</small></header>
+          <div class="math-statement-body">
+            <p id="berensteinComputerTheoremTitle">There is a bounded, simply connected domain \(\Omega\subset\mathbb R^2\) with real-analytic Jordan boundary, invariant under \(D_{13}\), together with a frequency \(k\) satisfying</p>
+            <div class="tex-display berenstein-frequency-display">
+              \[
+              27.4381178838&lt;k&lt;27.4381198839,
+              \]
+            </div>
+            <p>and a nonzero real-analytic function \(u\) satisfying \((\Delta+k^2)u=0\) in \(\Omega\), with \(u=0\) and \(\partial_\nu u=1\) on \(\partial\Omega\). The domain is neither a disk nor centrally symmetric, and \(u\) changes sign. Consequently the unrestricted planar Berenstein conjecture is false <a class="history-citation" href="#ref-berenstein">[16]</a>.</p>
+          </div>
+        </article>
+
+        <figure class="computer-assisted-figure interactive-plate figure-band berenstein-endpoint-comparison" data-apparatus="visual-aside" data-figure="berenstein-boundary-data" aria-labelledby="berensteinEndpointTitle">
+          <section class="computer-assisted-canvas-panel apparatus-visual">
+            <svg id="berensteinBoundaryCanvas" class="computer-assisted-vector" role="img" aria-label="Comparison of the Schiffer and Berenstein boundary data"><title>How the two fields meet their boundaries</title><desc>The stage selector compares boundary height and outward slope for the Schiffer and Berenstein endpoints.</desc></svg>
+          </section>
+          <aside class="computer-assisted-controls paper-demo-controls apparatus-controls" aria-label="Explore the two boundary conditions">
+            <h3 id="berensteinEndpointTitle">Touch the level, or cross it?</h3>
+            <div class="computer-assisted-control apparatus-control">
+              <label for="berensteinEndpointStage">Boundary view <output id="berensteinEndpointStageValue" for="berensteinEndpointStage">compare endpoints</output></label>
+              <select id="berensteinEndpointStage">
+                <option value="pair">1 · compare endpoints</option>
+                <option value="height">2 · compare boundary height</option>
+                <option value="slope">3 · compare outward slope</option>
+              </select>
+            </div>
+            <output id="berensteinEndpointStatus" class="computer-assisted-status" for="berensteinEndpointStage" aria-live="polite">Schiffer reaches height one and becomes flat. Berenstein crosses height zero with unit outward slope.</output>
+          </aside>
+          <figcaption>What to see: the selector separates the two pieces of Cauchy data. Schiffer fixes a nonzero boundary height and zero slope; Berenstein fixes zero height and nonzero slope. The tenfold and thirteenfold outlines indicate the symmetry types of the two certified constructions.</figcaption>
+        </figure>
+
+        <figure class="computer-assisted-figure interactive-plate figure-band berenstein-field-comparison" data-apparatus="visual-aside" data-figure="berenstein-field-comparison" aria-labelledby="berensteinFieldComparisonTitle">
+          <section class="computer-assisted-canvas-panel apparatus-visual berenstein-field-portrait" aria-label="Certified Berenstein field portrait">
+            <div id="berensteinFieldViewport" class="berenstein-field-viewport">
+              <img src="assets/berenstein-domain-solution.png" width="1890" height="1560" loading="lazy" decoding="async" alt="The certified numerical centre of the thirteenfold Berenstein domain, coloured blue and orange in alternating sign bands and separated by dark zero curves">
+            </div>
+            <div class="berenstein-field-legend" aria-label="Field colour key">
+              <span><i class="berenstein-legend-positive"></i>positive \(u\)</span>
+              <span><i class="berenstein-legend-zero"></i>zero curve</span>
+              <span><i class="berenstein-legend-negative"></i>negative \(u\)</span>
+            </div>
+          </section>
+          <aside class="computer-assisted-controls paper-demo-controls apparatus-controls berenstein-field-notes" aria-label="Explore the certified Berenstein field">
+            <h3 id="berensteinFieldComparisonTitle">Read the field from the outside in</h3>
+            <div class="computer-assisted-control apparatus-control">
+              <label for="berensteinFieldStage">Field layer <output id="berensteinFieldStageValue" for="berensteinFieldStage">signed field</output></label>
+              <select id="berensteinFieldStage">
+                <option value="field">1 · signed field</option>
+                <option value="nodal">2 · interior zero curves</option>
+                <option value="boundary">3 · outer nodal boundary</option>
+                <option value="symmetry">4 · thirteenfold symmetry</option>
+              </select>
+            </div>
+            <div class="berenstein-field-guide-wrap">
+              <span>separate reading guide</span>
+              <svg id="berensteinFieldGuide" class="berenstein-field-guide" viewBox="0 0 280 132" role="img" aria-label="Signed-field reading guide"></svg>
+            </div>
+            <output id="berensteinFieldStatus" class="computer-assisted-status" for="berensteinFieldStage" aria-live="polite">Orange and blue are opposite signs of \(u\); every dark curve between them is a zero level set.</output>
+            <dl class="berenstein-field-facts">
+              <div><dt>symmetry</dt><dd>\(D_{13}\)-symmetric; the certificate also rules out central symmetry</dd></div>
+              <div><dt>nodal set</dt><dd>eight interior zero curves, plus the physical boundary</dd></div>
+            </dl>
+          </aside>
+          <figcaption>The image is the finite numerical centre enclosed by the proof, not a picture substituted for proof. It remains untouched while the selector changes the separate reading guide. The exact boundary is within \(4.67\times10^{-10}\) of the plotted one and the pulled-back exact field is within \(2.5\times10^{-7}\) of the plotted field.</figcaption>
+        </figure>
+
+        <div class="computer-assisted-copy paper-copy berenstein-fourier-copy">
+          <h4>Why the alternating sign bands matter</h4>
+          <p>A one-signed solution would be a first Dirichlet mode, and the classical overdetermined symmetry theorem would force the domain to be a disk. The alternating orange and blue regions are therefore essential. Writing \(\sigma_{\partial\Omega}\) for boundary arclength measure, Green's identity gives, for every \(\omega\in S^1\),</p>
+          <div class="tex-display">
+            \[
+            \widehat{\sigma_{\partial\Omega}}(k\omega)=0.
+            \]
+          </div>
+          <p><strong>Area versus rim.</strong> Schiffer makes each plane wave cancel across the filled area \(\mathbf 1_\Omega\,dx\); Berenstein makes it cancel while walking only around the boundary.</p>
+        </div>
+        <article class="math-statement berenstein-proof-comparison" data-kind="comparison" data-label="berenstein-fixed-disc-comparison" aria-labelledby="berensteinFixedDiscTitle">
+          <header class="math-statement-header"><span>Proof comparison</span><small>the fixed-disk formulation</small></header>
+          <div class="math-statement-body">
+            <h4 id="berensteinFixedDiscTitle">Why exchanging the boundary data changes the equation</h4>
+            <p>Both certificates encode the boundary by a conformal map and pull the field back to the unit disk. The zero datum behaves simply under this change of coordinates; the nonzero datum is multiplied by the local boundary stretch.</p>
+
+            <section class="berenstein-proof-lane berenstein-proof-lane-schiffer" aria-labelledby="berensteinSchifferLaneTitle">
+              <h5 id="berensteinSchifferLaneTitle">Schiffer: both zero traces are built into one inverse</h5>
+              <p>Write \(p=k\phi'\) and \(U=1+Kg\). The compatible inverse \(K\) from <a class="xref" data-ref="compatible-inverse"></a> enforces \(U-1=0\) and \(\partial_rU=0\) on \(\mathbb T\), leaving the single interior equation</p>
+              <div class="tex-display">
+                \[
+                g+|p|^2(1+Kg)=0.
+                \]
+              </div>
+            </section>
+
+            <section class="berenstein-proof-lane berenstein-proof-lane-berenstein" aria-labelledby="berensteinBerensteinLaneTitle">
+              <h5 id="berensteinBerensteinLaneTitle">Berenstein: the normal derivative becomes a second equation</h5>
+              <p>Now set \(a=\phi'\). Let \(K_Dg\) solve \(\Delta K_Dg=g\) in \(\mathbb D\) with \(K_Dg=0\) on \(\mathbb T\), and write \(Ng:=\partial_r(K_Dg)|_{\mathbb T}\) for its radial trace.</p>
+              <p>Since \(U=K_Dg\) and \(\partial_rU=|\phi'|\,\partial_\nu u\), the physical condition \(\partial_\nu u=1\) becomes \(Ng=|a|\). The polynomial system validated by the computer is therefore</p>
+              <div class="tex-display">
+                \[
+                g+k^2|a|^2K_Dg=0,\quad (Ng)^2=|a|^2.
+                \]
+              </div>
+            </section>
+
+            <p class="berenstein-sign-gate"><strong>The extra sign gate.</strong> Squaring \(Ng=|a|\) permits the wrong sign. The certificate separately proves \(Ng\ge 0.6058177>0\), so the squared equation recovers the required positive boundary derivative.</p>
+
+            <dl class="berenstein-proof-differences">
+              <div><dt>A boundary lane remains.</dt><dd>The nonzero flux keeps harmonic source modes in play, so the proof must control both \(K_D\) and \(N\), not only an interior inverse.</dd></div>
+              <div><dt>The infinite problem is still covered.</dt><dd>The \(882\)-variable finite block is joined to exact support identities and analytic estimates for every omitted coefficient.</dd></div>
+              <div><dt>The solution is global.</dt><dd>The \(K_D\)-system constructs the field on the whole disk; analytic continuation then carries it across the unit circle. Local Cauchy data alone would not give this conclusion.</dd></div>
+            </dl>
+          </div>
+        </article>
+
+        <details class="proof-details computer-assisted-details berenstein-certificate-details">
+          <summary><span>Certificate bounds, source, and independent replay</span><i>expand +</i></summary>
+          <div class="computer-assisted-details-body">
+            <p>Directed interval arithmetic proves \(Y<3.63\times10^{-9}\), \(Z<0.474\), and strict contraction on the radius-\(10^{-6}\) coefficient ball. The trace \(N\) annihilates every disk-polynomial mode with radial index \(s\ge1\); exact support identities handle the nearby source and shape coefficients, while monotone estimates cover the remaining tail.</p>
+            <p>The exact coefficient bounds also prove injectivity of the conformal map, real-analyticity, noncircularity, and the positive trace used in the sign gate. The full argument and replay materials are available in the <a href="https://arxiv.org/abs/2608.08953" target="_blank" rel="noreferrer">companion paper</a>, the <a href="https://github.com/sgstepaniants/Berenstein" target="_blank" rel="noreferrer">source repository</a>, and the <a href="https://doi.org/10.5281/zenodo.21865020" target="_blank" rel="noreferrer">archived certificate</a>.</p>
+          </div>
+        </details>
+
+        <div class="computer-assisted-copy paper-copy berenstein-close">
+          <p>This completes the companion computer-assisted certificate. We now turn to the bifurcation construction, where existence comes from a real-order collar problem rather than a validated coefficient ball.</p>
+        </div>
       </section>
 
       <section id="experiment" class="experiment">
@@ -1468,8 +1629,8 @@
           <div class="tex-display">
             \[ \partial_r^2+\partial_\psi^2+\lambda. \]
           </div>
-          <p>This is why a cone of large order behaves like a half-infinite cylinder, and it is what the transfer argument makes quantitative.</p>
-          <p>with the appropriate regularity condition at \(r=0\). The radial solutions are Bessel functions of order \(0\), and the first nonradial angular mode brings in Bessel functions of order \(R\). By the criterion of <a class="xref" data-ref="linearized-schiffer-criterion"></a>, a bifurcation needs the radial Neumann condition and a nonradial Dirichlet condition to hold at the same radius, which is to say a \(\rho\) with</p>
+          <p>This is why the half-cylinder is the correct limiting model. It guides the uniform estimates that are proved directly for the finite-\(R\) collar problem.</p>
+          <p>The finite-\(R\) problem also carries the appropriate regularity condition at \(r=0\). Its radial solutions are Bessel functions of order \(0\), and the first nonradial angular mode brings in Bessel functions of order \(R\). By the criterion of <a class="xref" data-ref="linearized-schiffer-criterion"></a>, a bifurcation needs the radial Neumann condition and a nonradial Dirichlet condition to hold at the same radius, which is to say a \(\rho\) with</p>
           <div class="tex-display">
             \[ J_1(\rho)=0 \qquad\text{and}\qquad J_R(\rho)=0. \]
           </div>
@@ -1485,7 +1646,7 @@
               <p>Moreover \(\lambda:=\rho^2/R^2\) lies in \([2,3]\), and \(R-\lfloor R\rfloor\) can be taken as small as we wish.</p>
             </div>
           </article>
-          <p>Such crossings are abundant, and how abundant is the subject of <a class="xref" data-ref="near-integer-crossings"></a>. Take \(\rho=j_{1,16}=51.0435\ldots\), the sixteenth positive zero of \(J_1\), and solve \(J_R(\rho)=0\) for the order: this gives \(R_\star=28.0264\ldots\), not an integer, but close to one. The difficulty of the proof is now visible. A crossing at non-integer order is not yet a counterexample, because the cone folds back into a planar domain only at integer order. What remains is to show that the bifurcation branch leaving such a crossing is long enough to carry the order the remaining \(0.0264\) of the way to \(28\).</p>
+          <p>Such crossings are abundant, and how abundant is the subject of <a class="xref" data-ref="near-integer-crossings"></a>. For a concrete numerical illustration outside the proof window \(2\le\lambda\le3\), take \(\rho=j_{1,16}=51.0435\ldots\) and solve \(J_R(\rho)=0\): this gives \(R_\star=28.0264\ldots\) and \(\lambda_\star=3.3170\ldots\). The proof instead selects sufficiently large near-integer crossings inside the stated window. In either case, a noninteger crossing is not yet a planar counterexample; the rigorous task is to show that a uniformly controlled branch bends far enough to meet an integer.</p>
         </div>
 
 <header id="fixed-domain" class="section-heading proof-strategy-subheading" data-title="Expressing the problem on a fixed domain" data-toc="proof-subsection">
@@ -1550,8 +1711,8 @@
         <p>Second, the extra term is not a trick but the leading correction. Pulling \(w_0\) back through \(\Phi^{h}_R\) rather than evaluating it on the unperturbed cone produces exactly \(\chi\,\partial_yw_0\,h\) at first order in \(h\); we are simply carrying that term along explicitly. And it is what repairs the boundary conditions: since \(\chi(0)=1\) and \(\chi'(0)=0\), the normalization of \(w_0\) gives \(w_1^v(0,\cdot)=0\) together with \(\partial_yw_1^v(0,\cdot)=\partial_yv(0,\cdot)-\lambda h_v=0\). So a merely Dirichlet \(v\) produces a \(w^v\) satisfying both conditions, which is the cancellation that makes the whole scheme work.</p>
         <p>Third, the spaces must be anisotropic. Since \(h_v\) is a Neumann trace of \(v\), it has one derivative less than \(v\), while the coefficients of \(L^h_R\) involve \(h''\). The saving observation is that \(h''\) never multiplies \(\partial_y^2\): it appears only in the coefficient of \(\partial_y\). Measuring \(v\) in a space with one more derivative in \(y\) than in \(\psi\) therefore makes \(L^{h_v}_R w^v\) lose exactly two derivatives and no more, and the loss that would otherwise defeat the argument disappears.</p>
         </div>
-        <header id="half-cylinder-strategy" class="section-heading proof-strategy-subheading" data-title="Uniform half-cylinder bifurcation for 2 ≤ λ ≤ 3" data-toc="proof-subsection">
-          <h3>Uniform half-cylinder bifurcation for 2 ≤ λ ≤ 3</h3>
+        <header id="half-cylinder-strategy" class="section-heading proof-strategy-subheading" data-title="The half-cylinder as a uniform limiting model" data-toc="proof-subsection">
+          <h3>The half-cylinder as a uniform limiting model</h3>
         </header>
 
         <div class="half-cylinder-introduction">
@@ -1630,12 +1791,12 @@
             <figcaption>The two views show the same computed Helmholtz field on a bifurcating half-cylinder. The controls vary \(\lambda\) and move along the branch.</figcaption>
           </figure>
 
-          <p>The goal of this subsection is to construct the bifurcation on the half-infinite cylinder. Graphically, we seek the continuous two-parameter family of Schiffer domains and eigenfunctions shown in <a class="xref" data-ref="half-cylinder-family"></a>.</p>
-          <p>Mathematically, we want a single bifurcation statement that holds throughout <span class="formula">\(2\leq\lambda\leq3\)</span>, with one common interval for the branch parameter.</p>
+          <p>This supplementary subsection studies the half-infinite cylinder that appears as the large-\(R\) limit and visualizes the continuous two-parameter family in <a class="xref" data-ref="half-cylinder-family"></a>. Cao-Labora and de Dios Pont do not obtain the planar theorem by transferring this nonlinear family to cones: their proof constructs the required branches directly on finite real-\(R\) collars.</p>
+          <p>The model nevertheless explains why one expects a common bifurcation scale throughout <span class="formula">\(2\leq\lambda\leq3\)</span> and makes the limiting separated modes transparent.</p>
         </div>
 
         <article class="math-statement math-statement-theorem cylinder-theorem" data-kind="theorem" data-label="half-cylinder-bifurcation" aria-labelledby="halfCylinderTheoremTitle">
-          <header class="math-statement-header"><span>Theorem</span><small>Uniform half-cylinder bifurcation</small></header>
+          <header class="math-statement-header"><span>Model theorem</span><small>supplementary half-cylinder statement</small></header>
           <div class="math-statement-body theorem-statement">
             <p id="halfCylinderTheoremTitle">Fix <span class="formula">\(0&lt;\alpha&lt;1\)</span> and write <span class="formula">\(\mathcal C_-=(-\infty,0)\times S^1\)</span>. There are <span class="formula">\(\varepsilon&gt;0\)</span> and a <span class="formula">\(C^3\)</span> family <span class="formula">\((\Omega_{\lambda,s},u_{\lambda,s})\)</span>, indexed by <span class="formula">\((\lambda,s)\in[2,3]\times(-\varepsilon,\varepsilon)\)</span>, such that</p>
             <div class="tex-display">
@@ -1812,7 +1973,7 @@
               \]
             </div>
             <p>The first angular channel gives the Crandall–Rabinowitz transversality condition. The remaining Fourier channels stay uniformly separated: for <span class="formula">\(2\leq\lambda\leq3\)</span>, every <span class="formula">\(k\geq2\)</span> has decay rate <span class="formula">\(\sqrt{k^2-\lambda}\)</span>, bounded below by <span class="formula">\(1\)</span>, while the radial and first channels are removed by the gauges and kernel projection. The inverse on the complementary space is therefore uniformly bounded.</p>
-            <p>The transformed operator depends smoothly on <span class="formula">\(\lambda\)</span>, and <span class="formula">\([2,3]\)</span> is compact. Uniform inverse and nonlinear bounds let the contraction and implicit-function estimates be made with the same radius at every parameter value. Crandall–Rabinowitz then supplies the family in the theorem with one <span class="formula">\(\varepsilon&gt;0\)</span>. This is the half-cylinder analogue of the compact-cylinder argument of <a href="https://ems.press/journals/jems/articles/14298635" target="_blank" rel="noreferrer">Fall–Minlend–Weth, <em>JEMS</em> (2025) ↗</a>; boundedness as <span class="formula">\(x\to-\infty\)</span> replaces the condition at the second end.</p>
+            <p>The transformed operator depends smoothly on <span class="formula">\(\lambda\)</span>, and <span class="formula">\([2,3]\)</span> is compact. Uniform inverse and nonlinear bounds let the contraction and implicit-function estimates be made with the same radius at every parameter value. Crandall–Rabinowitz then supplies the family in the theorem with one <span class="formula">\(\varepsilon&gt;0\)</span>. This is the half-cylinder analogue of the compact-cylinder argument of <a href="https://ems.press/journals/jems/articles/14298635" target="_blank" rel="noreferrer">Fall–Minlend–Weth, <em>JEMS</em> (2025) ↗</a>; boundedness as <span class="formula">\(x\to-\infty\)</span> replaces the condition at the second end. This supplementary model clarifies the limiting mechanism, but it is not invoked as a nonlinear transfer theorem in the finite-\(R\) proof.</p>
           </div>
         </details>
 
@@ -1832,8 +1993,8 @@
         </div>
 
       <section id="debye-experiment" class="debye-experiment">
-        <header class="section-heading experiment-header debye-header" data-title="Transfer from the half-cylinder to large cones" data-toc="proof-subsection">
-          <h3>Transfer from the half-cylinder to large cones</h3>
+        <header class="section-heading experiment-header debye-header" data-title="Uniform collar comparison for large cones" data-toc="proof-subsection">
+          <h3>Uniform collar comparison for large cones</h3>
         </header>
 
         <div class="debye-lead paper-copy">
@@ -1860,7 +2021,7 @@
             </svg>
             <p class="sketch-caption" id="coneCylinderSketchCaption">The highlighted fixed collars approach the same geometry.</p>
           </aside>
-          <p>On the half-cylinder, separation of variables is elementary. Each angular mode has a radial factor made from sines and cosines when \(k^2&lt;\lambda\), and from a bounded exponential when \(k^2&gt;\lambda\). These are the modes used in the uniform cylinder bifurcation above.</p>
+          <p>On the half-cylinder, separation of variables is elementary. Each angular mode has a radial factor made from sines and cosines when \(k^2&lt;\lambda\), and from a bounded exponential when \(k^2&gt;\lambda\). These are the limiting profiles against which the finite-\(R\) collar modes are compared.</p>
           <p>On a cone, the corresponding regular modes are Bessel functions \(J_{kR}(\sqrt\lambda\,r)\). Their formula is less transparent, but a long cone is almost cylindrical near its rim: on every collar of fixed depth, the curvature tends to zero as \(R\to\infty\). We therefore expect its Bessel modes to approach the cylinder modes. The applet below makes this comparison visible.</p>
         </div>
 
@@ -1947,7 +2108,7 @@
         </article>
 
         <div class="debye-lead paper-copy transfer-conclusion">
-          <p>The informal statement is the linear core of the nonlinear transfer. The disclosure below records the angular quotient, the normalization of each mode, the oscillatory and evanescent Debye estimates, and the uniform error bounds used in the Crandall–Rabinowitz argument.</p>
+          <p>The informal statement supplies asymptotic input to the direct finite-\(R\) estimates. The disclosure below records the angular quotient, the normalization of each mode, the oscillatory and evanescent Debye estimates, and the uniform error bounds used in the Crandall–Rabinowitz argument.</p>
         </div>
 
         <details class="proof-details transfer-proof-details">
@@ -2303,7 +2464,7 @@
         </div>
 
         <div class="cone-lead">
-          <p>For the visualization, choose the computed crossing <span class="formula">\(R_*=28.026397\ldots\)</span>, with <span class="formula">\(\rho_*=j_{1,16}\)</span>. At this value, twenty-eight copies leave a narrow angular gap. Along its branch, \(R\) decreases to \(28\); at that value the copies fit exactly and define the planar domain promised by the general landing argument above. This is the numerical example shown in <a href="https://arxiv.org/abs/2608.05114" target="_blank" rel="noreferrer">Figure 1 of the paper</a>.</p>
+          <p>For the visualization, choose the computed crossing <span class="formula">\(R_*=28.026397\ldots\)</span>, with <span class="formula">\(\rho_*=j_{1,16}\)</span> and <span class="formula">\(\lambda_*=3.317011\ldots\)</span>, outside the proof window \([2,3]\). At this value, twenty-eight copies leave a narrow angular gap. Finite-dimensional numerical continuation carries this illustrative branch to \(R=28\), producing the planar candidate shown in <a href="https://arxiv.org/abs/2608.05114" target="_blank" rel="noreferrer">Figure 1 of the paper</a>. The rigorous landing argument instead applies to sufficiently large crossings inside the stated spectral window.</p>
         </div>
 
         <figure class="laboratory cone-laboratory interactive-plate figure-band">
@@ -2380,7 +2541,6 @@
           </section>
 
           <aside class="modes-controls apparatus-controls light-controls paper-demo-controls" aria-label="Cone branch controls">
-            <p class="apparatus-note">The animation follows the concrete \(D_{28}\) branch from the noninteger crossing \(R_*=28.026\ldots\) to \(R=28\). The same solution appears globally at left and in isotropically enlarged collar coordinates \(x=r-R\), \(\psi=R\phi\) at right.</p>
             <div class="control-heading" hidden aria-hidden="true">
               <button id="modesResetButton" type="button" hidden aria-hidden="true">Reset</button>
             </div>
@@ -2429,7 +2589,7 @@
             </div>
           </aside>
 
-          <figcaption>The crop box and its connector lines identify the same boundary collar in the global and local views. The enlargement at right is isotropic: equal lengths in \(x\) and \(\psi\) have equal lengths on the page. The missing angular sector is slightly exaggerated so that its closure remains legible.</figcaption>
+          <figcaption>The animation follows the numerically continued \(D_{28}\) branch from the noninteger crossing \(R_*=28.026\ldots\) to \(R=28\). This is an illustration outside the proof window, not the branch selected by the nonexplicit existence argument. The same numerical field appears globally at left and in isotropically enlarged collar coordinates \(x=r-R\), \(\psi=R\phi\) at right. The crop box and its connector lines identify the same boundary collar in the global and local views. The enlargement is isotropic: equal lengths in \(x\) and \(\psi\) have equal lengths on the page. The missing angular sector is slightly exaggerated so that its closure remains legible.</figcaption>
         </figure>
 
       </section>
@@ -2465,7 +2625,7 @@
             <li id="ref-williams-analyticity"><span>[22]</span><p>S. A. Williams, <em>Analyticity of the boundary for Lipschitz domains without the Pompeiu property</em>, <em>Indiana University Mathematics Journal</em> <b>30</b> (1981), no. 3, 357&ndash;369. A Lipschitz planar counterexample already has real-analytic boundary.</p></li>
           
             <li id="ref-willms-gladwell"><span>[23]</span><p>N. B. Willms and G. M. L. Gladwell, <a href="https://doi.org/10.1007/BF00942843" target="_blank" rel="noreferrer"><em>Saddle points and overdetermined problems for the Helmholtz equation</em></a>, <em>Zeitschrift f&uuml;r angewandte Mathematik und Physik</em> <b>45</b> (1994), 1&ndash;26. Rigidity for simply connected planar domains whose eigenfunction has no saddle points.</p></li>
-            <li id="ref-wheeler"><span>[24]</span><p>M. H. Wheeler, <a href="https://arxiv.org/abs/2509.00455" target="_blank" rel="noreferrer"><em>Non-symmetric solutions to an overdetermined problem for the Helmholtz equation in the plane</em></a>, arXiv:2509.00455 (2025). Local noncircular branches for the planar constant-flux problem; its Wronskian mechanism supplies the seed for the numerical continuation used in the computer-assisted proof.</p></li>
+            <li id="ref-wheeler"><span>[24]</span><p>M. H. Wheeler, <a href="https://arxiv.org/abs/2509.00455" target="_blank" rel="noreferrer"><em>Non-symmetric solutions to an overdetermined problem for the Helmholtz equation in the plane</em></a>, arXiv:2509.00455 (2025). Local noncircular branches for the planar constant-flux problem; its Wronskian mechanism supplies the seed for the numerical continuation that constructs the centre of the validated conformal proof.</p></li>
           </ol>
       </section>
 
@@ -2482,29 +2642,29 @@
     </main>
 
     <footer>
-      <span>Counterexamples to Schiffer's conjecture</span>
+      <span>Constructing Noncircular Schiffer Domains</span>
       <span>validated conformal map &nbsp;∥&nbsp; real-order cone bifurcation</span>
       <a href="#top">Back to top ↑</a>
     </footer>
 
-    <dialog id="methodDialog">
+    <dialog id="methodDialog" aria-labelledby="methodDialogTitle">
       <button id="closeMethod" type="button" aria-label="Close">×</button>
       <p class="eyebrow">Computational notes</p>
-      <h2>What is exact, and what is computed numerically.</h2>
-      <p class="eyebrow">Computer-assisted validation</p>
-      <p>The \(D_{10}\)-symmetric centre is found by numerical continuation in the relaxed constant-flux problem. The rigorous certificate keeps the final stored coefficient list \(x^\circ\) and, without using the search path, proves that the full infinite equation has one exact solution in the ball \(\|x-x^\circ\|_X\le10^{-6}\).</p>
+      <h2 id="methodDialogTitle">What is exact, and what is computed numerically.</h2>
+      <p class="eyebrow">Fixed-disc certificate</p>
+      <p>The \(D_{10}\)-symmetric centre comes from numerical continuation of the tenfold branch seeded by a higher Wronskian crossing in the relaxed constant-flux problem. The rigorous certificate keeps the final stored coefficient list \(x^\circ\) and, without using the search path, proves that the full infinite equation has one exact solution in the ball \(\|x-x^\circ\|_X\le10^{-6}\).</p>
       <p>The change of coordinates \(p=k\phi'\) puts every candidate domain on the unit disk. Writing \(g=\Delta(U-1)\) and removing its harmonic coordinates makes both boundary conditions compatible. The explicit three-term operator \(K\) then gives \(\Delta Kg=g\), \(Kg=0\), and \(\partial_rKg=0\) at the circle. The PDE and both boundary conditions reduce to \(F(g,p)=g+|p|^2(1+Kg)=0\).</p>
       <p>The main finite calculation contains \(2471\) variables. Interval arithmetic bounds this core and every nearby coefficient that can interact with it; decreasing formulas cover all more distant coefficients. A separate exact-fraction checker combines the bounds, so rounded numbers do not decide the theorem.</p>
       <p>At \(r=10^{-6}\), the checker proves that \(T(x)=x-\mathcal AF(x)\) sends the ball into itself and shrinks distances by a factor at most \(0.621244000000036\). Banach's theorem therefore makes \(x_{n+1}=T(x_n)\) converge to the unique exact solution \(x^*\), with \(\|x^*-x^\circ\|_X&lt;4.20\times10^{-10}\). Further bounds prove that the resulting map is one-to-one, nonlinear, and within \(7.13\times10^{-11}\) of the plotted boundary.</p>
       <hr>
       <p class="eyebrow">Real-order bifurcation</p>
-      <p>The limiting problem is posed on the half-infinite cylinder <span class="formula">\(\Omega_{\lambda,s}=\{x&lt;h_{\lambda,s}(\theta)\}\)</span>. The local bifurcation argument used for compact flat-cylinder domains gives a one-ended branch with <span class="formula">\(h_{\lambda,s}=s\cos\theta+O(s^2)\)</span>, uniformly for <span class="formula">\(2\leq\lambda\leq3\)</span>. The finite window is the portion of this infinite-domain solution displayed in the browser.</p>
+      <p>The half-infinite cylinder <span class="formula">\(\Omega_{\lambda,s}=\{x&lt;h_{\lambda,s}(\theta)\}\)</span> is the limiting model solved by this visualization. The planar existence proof is posed directly on a fixed finite collar for every large real \(R\); it uses the cylindrical profiles to guide uniform estimates rather than transferring this numerical nonlinear family to a cone.</p>
       <p>We set <span class="formula">\(\Gamma_s:x=h_s(\theta)=s\cos(\theta-\phi)+h_2\cos 2(\theta-\phi)+h_3\cos 3(\theta-\phi)\)</span>. The mean translation is fixed to zero and <span class="formula">\(h_1=s\)</span> is the amplitude gauge. The field is a truncated sum of separated solutions of <span class="formula">\((\Delta+\lambda)u=0\)</span> in the physical cylinder coordinates.</p>
       <p>The <span class="formula">\(k=0\)</span> and <span class="formula">\(k=1\)</span> radial factors are oscillatory. For <span class="formula">\(k\ge2\)</span> they are <span class="formula">\(e^{\sqrt{k^2-\lambda}\,x}\cos(k\theta)\)</span> and <span class="formula">\(e^{\sqrt{k^2-\lambda}\,x}\sin(k\theta)\)</span>, which decay as <span class="formula">\(x\to-\infty\)</span>. Consequently, the interior PDE residual is identically zero.</p>
       <p>For the selected <span class="formula">\((\lambda,s)\)</span>, a damped Gauss–Newton solve with an analytic boundary Jacobian updates the field coefficients, <span class="formula">\(h_2\)</span>, and <span class="formula">\(h_3\)</span> simultaneously on at least 256 angular samples; a final column-scaled QR solve refines the field at the recovered boundary. Exponential modes are rescaled by constants to avoid overflow without changing their span. The reported defects are evaluated on a separate grid of at least 512 shifted samples in the normalized metric <span class="formula">\(\lVert f\rVert^2=(2\pi)^{-1}\int|f(\theta)|^2\,d\theta\)</span>. The two boundary corrections and independent <span class="formula">\(\lambda,s\)</span> sliders define a finite-dimensional free-boundary approximation. The reported defects measure its truncation error.</p>
       <hr>
       <p class="eyebrow">Cone continuation</p>
-      <p>The cone panel uses the metric <span class="formula">\(dr^2+(r^2/R^2)d\psi^2\)</span>. At fixed <span class="formula">\(\rho=j_{1,16}\)</span>, the field and boundary are expanded in 13 even Fourier–Bessel modes. An offline nonlinear least-squares continuation enforces <span class="formula">\(u=1\)</span> and the exact metric normal derivative on 112 collocation angles; the displayed defects come from 512 shifted validation angles.</p>
+      <p>The cone panel is a finite-dimensional numerical approximation using the metric <span class="formula">\(dr^2+(r^2/R^2)d\psi^2\)</span>. At fixed <span class="formula">\(\rho=j_{1,16}\)</span>, outside the theorem's \(2\le\lambda\le3\) window, the field and boundary are expanded in 13 even Fourier–Bessel modes. An offline nonlinear least-squares continuation enforces <span class="formula">\(u=1\)</span> and the exact metric normal derivative on 112 collocation angles; the displayed defects come from 512 shifted validation angles and are not a validated existence certificate.</p>
       <p>The browser interpolates those solved branch records and precomputed radial Bessel tables. At the final record <span class="formula">\(R=28\)</span>, the quotient angle <span class="formula">\(2\pi/R\)</span> tiles the plane exactly 28 times. The unfolded view draws the true seam angle and also includes a magnified inset because the initial mismatch is only about 0.339°.</p>
       <hr>
       <p class="eyebrow">Angular modes</p>
@@ -2516,7 +2676,7 @@
       <p>The four-panel comparison displays one separated eigenfunction at a time, using the cosine representative of each nonradial angular mode. Its cone collar uses those same exact samples, while its whole-disk panel uses additional exact SciPy profiles at the integer orders <span class="formula">\(N=26,\ldots,30\)</span>. The heat maps, coordinate transformations, and crop geometry are all evaluated in the browser.</p>
       <p>For <span class="formula">\(k=0\)</span>, the browser phase-normalizes the radial profile by <span class="formula">\(\sigma_R=(J_0(\rho_R)^2+J_0'(\rho_R)^2)^{1/2}\)</span> and compares it with the oscillatory cylinder solution having the same value and derivative at the rim. For <span class="formula">\(k=1\)</span>, the Bessel trace satisfies <span class="formula">\(B_R(0)=1\)</span>, <span class="formula">\(B_R'(0)=0\)</span>; the cylinder curve is <span class="formula">\(\cos(\sqrt{\lambda_R-1}\,x)\)</span> with the same Neumann data. For <span class="formula">\(k=2,3\)</span>, the Bessel traces are normalized at the boundary and compared with <span class="formula">\(e^{\sqrt{k^2-\lambda_R}\,x}\)</span>. All vertical axes are linear and all comparison curves are solid.</p>
       <hr>
-      <p class="eyebrow">Geometric construction and phase variation</p>
+      <p class="eyebrow">Real-order bifurcation and phase variation</p>
       <p>The seven-stage disk–cone figure describes the quotient and limiting operations geometrically. PDE data enter in the final boundary, reconstructed from the stored coefficients at the computed endpoint <span class="formula">\(R=N=28\)</span>. In the order/phase graph, cyan solid curves interpolate the continuation records, and orange solid curves show the quadratic approximation determined by <span class="formula">\(R''(0)\)</span>.</p>
       <p>The real-order family panel filters the saved exhaustive crossing data to <span class="formula">\(6\le R_*\le30\)</span> and <span class="formula">\(2\le\lambda_*\le3\)</span>. It also includes the separately computed running example <span class="formula">\(R_*=28.026397\ldots\)</span>, whose spectral ratio is <span class="formula">\(\lambda_*=3.317011\ldots\)</span>. Its cyan curves are the asymptotic two-jets <span class="formula">\(R(s)=R_*-\Gamma(\lambda_*)s^2/2\)</span>, evaluated in the browser. White rings mark where that quadratic approximation meets an integer within the plotted <span class="formula">\(|s|\le1\)</span> window.</p>
       <hr>
@@ -2524,16 +2684,16 @@
       <p>The final scatter plot filters the saved common-zero data to <span class="formula">\(N\le200\)</span> and uses a logarithmic horizontal <span class="formula">\(R\)</span>-axis. The small table lists five particularly close examples from separated order ranges in the full search through <span class="formula">\(R\approx841\)</span>. The proof uses simultaneous McMahon and Debye phase alignment through Kronecker's theorem. The finite data illustrate the resulting distribution of crossings.</p>
     </dialog>
 
-    <script defer src="document-structure.js?v=20260828.2"></script>
+    <script defer src="document-structure.js?v=20260830.1"></script>
     <script defer src="cone-data.js"></script>
     <script defer src="debye-data.js?v=20260828.1"></script>
     <script defer src="abundance-data.js"></script>
-    <script defer src="app.js?v=20260829.2"></script>
-    <script defer src="story.js?v=20260829.7"></script>
+    <script defer src="app.js?v=20260830.2"></script>
+    <script defer src="story.js?v=20260830.1"></script>
     <script defer src="abundance.js?v=20260828.2"></script>
     <script defer src="pompeiu.js?v=20260828.4"></script>
-    <script defer src="computer-assisted.js?v=20260829.43"></script>
+    <script defer src="computer-assisted.js?v=20260830.1"></script>
     <script defer src="applet-layout.js?v=20260829.1"></script>
-    <script defer src="tufte/layout-contract.js?v=20260829.4"></script>
+    <script defer src="tufte/layout-contract.js?v=20260830.6"></script>
   </body>
 </html>

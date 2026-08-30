@@ -559,6 +559,7 @@ function resizeThreeRenderer() {
   const wrap = $("#threeWrap");
   const width = Math.max(1, wrap.clientWidth || 900);
   const height = Math.max(1, wrap.clientHeight || 580);
+  threeState.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   threeState.renderer.setSize(width, height, false);
   threeState.camera.aspect = width / height;
   // Keep the cylinder's horizontal scale stable when the paper layout crops
@@ -991,9 +992,16 @@ $("#resetButton").addEventListener("click", () => {
   scheduleUpdate();
 });
 
-$("#methodButton")?.addEventListener("click", () => $("#methodDialog").showModal());
-$("#closeMethod").addEventListener("click", () => $("#methodDialog").close());
-$("#methodDialog").addEventListener("click", (event) => { if (event.target === $("#methodDialog")) $("#methodDialog").close(); });
+const methodDialog = $("#methodDialog");
+$("#methodButton")?.addEventListener("click", () => methodDialog?.showModal());
+$("#closeMethod")?.addEventListener("click", () => methodDialog?.close());
+methodDialog?.addEventListener("click", (event) => {
+  if (event.target !== methodDialog) return;
+  const bounds = methodDialog.getBoundingClientRect();
+  const onBackdrop = event.clientX < bounds.left || event.clientX > bounds.right
+    || event.clientY < bounds.top || event.clientY > bounds.bottom;
+  if (onBackdrop) methodDialog.close();
+});
 
 let resizeTimer;
 window.addEventListener("resize", () => {
@@ -1440,6 +1448,7 @@ function resizeConeThreeRenderer() {
   const wrap = $("#coneThreeWrap");
   const width = Math.max(1, wrap.clientWidth || 900);
   const height = Math.max(1, wrap.clientHeight || 620);
+  coneThreeState.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   coneThreeState.renderer.setSize(width, height, false);
   coneThreeState.camera.aspect = width / height;
   coneThreeState.camera.updateProjectionMatrix();
@@ -2480,7 +2489,12 @@ if (debyeData) {
   const debyeState = {
     radius: debyeData.rReference,
     mode: 2,
+    playing: false,
+    playFrame: null,
   };
+  const debyeOrderRange = $("#debyeOrderRange");
+  const debyeModeRange = $("#debyeModeRange");
+  const debyeUsesRadiusControls = Boolean(debyeOrderRange);
 
   function debyeRadiusIndices(radius) {
     const scaled = (radius - debyeData.rMin) / debyeData.rStep;
@@ -2629,6 +2643,7 @@ if (debyeData) {
 
   function renderCollarHalfCylinder() {
     const canvas = $("#collarHalfCylinderCanvas");
+    if (!canvas) return;
     const wrap = canvas.parentElement;
     const cell = wrap.parentElement;
     const diskWrap = $("#collarDiskCanvas").parentElement;
@@ -3084,18 +3099,53 @@ if (debyeData) {
     context.fillStyle = SCHIFFER_VISUAL_THEME.background;
     context.fillRect(0, 0, width, height);
     const panels = [];
-    const gap = 10;
-    const panelHeight = (height - gap * 3) / 2;
-    for (let index = 0; index < 2; index++) {
-      panels.push({ left: gap, top: gap + index * (panelHeight + gap), width: width - 2 * gap, height: panelHeight });
+    let modes;
+    if (debyeUsesRadiusControls) {
+      const compact = width < 620;
+      modes = [1, 2, 3];
+      if (compact) {
+        const gap = 12;
+        const panelHeight = (height - gap * 4) / 3;
+        for (let index = 0; index < 3; index++) {
+          panels.push({ left: 12, top: gap + index * (panelHeight + gap), width: width - 24, height: panelHeight });
+        }
+      } else {
+        const gap = 14;
+        const panelWidth = (width - gap * 4) / 3;
+        for (let index = 0; index < 3; index++) {
+          panels.push({ left: gap + index * (panelWidth + gap), top: 18, width: panelWidth, height: height - 36 });
+        }
+      }
+    } else {
+      const gap = 10;
+      const panelHeight = (height - gap * 3) / 2;
+      modes = [1, debyeState.mode];
+      for (let index = 0; index < 2; index++) {
+        panels.push({ left: gap, top: gap + index * (panelHeight + gap), width: width - 2 * gap, height: panelHeight });
+      }
     }
-    const seriesList = [1, debyeState.mode].map((mode) => debyeSeries(mode));
+    const seriesList = modes.map((mode) => debyeSeries(mode));
     seriesList.forEach((series, index) => debyeDrawPanel(context, panels[index], series));
     updateDebyeCanvasFormulas(panels, seriesList);
-    canvas.setAttribute("aria-label", `At boundary radius ${debyeState.radius.toFixed(0)}, the exact k equals one and k equals ${debyeState.mode} Bessel profiles are compared with their half-cylinder limits on the five-unit collar.`);
+    canvas.setAttribute("aria-label", debyeUsesRadiusControls
+      ? `At boundary radius ${debyeState.radius.toFixed(2)}, exact regular Bessel modes k equals one, two, and three are compared with their half-cylinder limits on the five-unit collar.`
+      : `At boundary radius ${debyeState.radius.toFixed(0)}, the exact k equals one and k equals ${debyeState.mode} Bessel profiles are compared with their half-cylinder limits on the five-unit collar.`);
   }
 
   function updateDebyeReadouts() {
+    if (debyeUsesRadiusControls) {
+      const lambda = debyeLambdaAt(debyeState.radius);
+      const rho = debyeRhoAt(debyeState.radius);
+      const alpha2 = Math.sqrt(4 - lambda);
+      const alpha3 = Math.sqrt(9 - lambda);
+      $("#debyeOrderValue").textContent = debyeState.radius.toFixed(2);
+      setMath("#debyeLambdaValue", `\\lambda_R=${lambda.toFixed(5)}`);
+      setMath("#debyePhaseValue", "J_R'(\\rho_R)=0");
+      setMath("#debyeBetaValue", `\\rho_R=${rho.toFixed(5)}`);
+      $("#debyeDecayValue").textContent = `${alpha2.toFixed(4)}, ${alpha3.toFixed(4)}`;
+      $("#debyePlotState").textContent = "exact Bessel samples · Neumann data matched at the boundary";
+      return;
+    }
     setMath("#debyeModeValue", `k=${debyeState.mode}`);
     $("#debyePlotState").textContent = `fixed R = 28 · k = 1 and k = ${debyeState.mode}`;
   }
@@ -3105,12 +3155,69 @@ if (debyeData) {
     renderDebyeComparison();
   }
 
-  setRangeFill($("#debyeModeRange"));
-  $("#debyeModeRange").addEventListener("input", (event) => {
-    debyeState.mode = Number(event.target.value);
-    setRangeFill(event.target);
-    updateDebyeComparison();
-  });
+  function stopDebyePlayback() {
+    debyeState.playing = false;
+    if (debyeState.playFrame) cancelAnimationFrame(debyeState.playFrame);
+    debyeState.playFrame = null;
+    const playIcon = $("#debyePlayIcon");
+    const playLabel = $("#debyePlayLabel");
+    if (playIcon) playIcon.textContent = "▶";
+    if (playLabel) {
+      setMath(playLabel, debyeState.radius > debyeData.rMax - .01
+        ? "\\text{Repeat}"
+        : "\\text{Animate}");
+    }
+  }
+
+  function toggleDebyePlayback() {
+    if (debyeState.playing) { stopDebyePlayback(); return; }
+    if (debyeState.radius > debyeData.rMax - .01) debyeState.radius = debyeData.rMin;
+    debyeState.playing = true;
+    $("#debyePlayIcon").textContent = "Ⅱ";
+    $("#debyePlayLabel").textContent = "Pause";
+    const startRadius = debyeState.radius;
+    const start = performance.now();
+    let lastRender = 0;
+    const duration = Math.max(900, 8200 * (debyeData.rMax - startRadius) / (debyeData.rMax - debyeData.rMin));
+    const tick = (now) => {
+      if (!debyeState.playing) return;
+      const amount = Math.min(1, (now - start) / duration);
+      debyeState.radius = interpolateNumber(startRadius, debyeData.rMax, amount);
+      debyeOrderRange.value = debyeState.radius;
+      setRangeFill(debyeOrderRange);
+      if (now - lastRender > 45 || amount >= 1) { updateDebyeComparison(); lastRender = now; }
+      if (amount >= 1) { stopDebyePlayback(); return; }
+      debyeState.playFrame = requestAnimationFrame(tick);
+    };
+    debyeState.playFrame = requestAnimationFrame(tick);
+  }
+
+  if (debyeModeRange) {
+    setRangeFill(debyeModeRange);
+    debyeModeRange.addEventListener("input", (event) => {
+      debyeState.mode = Number(event.target.value);
+      setRangeFill(event.target);
+      updateDebyeComparison();
+    });
+  }
+
+  if (debyeOrderRange) {
+    setRangeFill(debyeOrderRange);
+    debyeOrderRange.addEventListener("input", (event) => {
+      stopDebyePlayback();
+      debyeState.radius = Number(event.target.value);
+      setRangeFill(event.target);
+      updateDebyeComparison();
+    });
+    $("#debyePlayButton")?.addEventListener("click", toggleDebyePlayback);
+    $("#debyeResetButton")?.addEventListener("click", () => {
+      stopDebyePlayback();
+      debyeState.radius = debyeData.rReference;
+      debyeOrderRange.value = debyeState.radius;
+      setRangeFill(debyeOrderRange);
+      updateDebyeComparison();
+    });
+  }
 
   let debyeResizeTimer;
   window.addEventListener("resize", () => {

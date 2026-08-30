@@ -1043,15 +1043,18 @@
     if (segment === 0) drawNfoldDisk(context, width, height, { cx: geometryVisualCenter(width), selection: ease(local), divisions: 1, showCaption: false });
     else if (segment === 1) drawFoldingSector(context, width, height, local);
     else if (segment === 2) drawConeCylinder(context, width, height, local, 0);
-    else if (segment === 3) drawConeCylinder(context, width, height, 1, ease(local));
-    else if (segment === 4) drawConeCylinder(context, width, height, 1 - ease(local), 1, true);
+    // The cylinder is the large-order comparison, not the domain on which the
+    // proof bifurcates. Return to a finite real-R collar before growing the
+    // boundary wave, then continue that finite-R branch to integer order.
+    else if (segment === 3) drawConeCylinder(context, width, height, 1 - ease(local), .2 * ease(local), true);
+    else if (segment === 4) drawConeCylinder(context, width, height, 0, .2 + .8 * ease(local), true);
     else drawUnfolding(context, width, height, local);
   }
 
   function drawCollarFrame(context, width, height, opacity) {
     context.save();
     context.globalAlpha = opacity;
-    drawFrameLabel(context, width, "03 / local solve", "The boundary collar is approximately cylindrical", "five radial units · one angular wavelength");
+    drawFrameLabel(context, width, "03 / finite-R bifurcation", "Bifurcate on the finite real-order collar", "half-cylinder supplies the limiting comparison");
     const plot = { left: width * .12, top: height * .22, width: width * .76, height: height * .6 };
     roundedPanel(context, plot.left, plot.top, plot.width, plot.height);
     context.fillStyle = visualTheme.backgroundAlt; context.fill();
@@ -1111,9 +1114,9 @@
   }
 
   const geometryState = { progress: 0, playing: false, frame: null };
-  const geometryNames = ["start with rotational symmetry", "choose one fundamental sector", "identify the radial sides", "take the large-order limit", "bifurcate on the half-cylinder", "return to finite order", "lift the integral-order cone to the plane"];
-  const geometryStates = ["the field is repeated around the disk", "one fundamental sector in rescaled coordinates", "identifying the radial sides gives the cone quotient", "a fixed boundary collar converges to the half-cylinder", "the rim follows the bifurcating boundary graph", "the half-cylinder branch determines a branch on finite cones", "the sectors fit exactly in the plane"];
-  const geometryCaptions = ["the same angular profile repeats N times", "follow one material sector", "the radial sides meet along the quotient seam", "the boundary collar straightens into an exact cylinder", "the rim acquires the Schiffer deformation", "the same deformed surface returns to finite radius", "adjacent copies open in order; each boundary profile stays on its sector"];
+  const geometryNames = ["start with rotational symmetry", "choose one fundamental sector", "identify the radial sides", "inspect the large-order limit", "read the limiting mechanism", "bifurcate at finite real order", "close at an integer and lift to the plane"];
+  const geometryStates = ["the field is repeated around the disk", "one fundamental sector in rescaled coordinates", "identifying the radial sides gives the cone quotient", "a fixed boundary collar converges to the half-cylinder", "the half-cylinder reveals the limiting modes and scale", "the branch is constructed on the finite real-order collar", "the sectors fit exactly in the plane"];
+  const geometryCaptions = ["the same angular profile repeats N times", "follow one material sector", "the radial sides meet along the quotient seam", "this is the limiting comparison, not a nonlinear transfer step", "the illustrative rim displays the limiting deformation", "direct finite-order estimates control the deformed cone", "adjacent copies open in order; each boundary profile stays on its sector"];
 
   function drawGeometryNarrative() {}
 
@@ -1136,8 +1139,8 @@
     let waveAmount = 0;
     let returning = false;
     if (segment === 2) cylinderAmount = local;
-    if (segment === 3) { cylinderAmount = 1; waveAmount = ease(local); }
-    if (segment === 4) { cylinderAmount = 1 - ease(local); waveAmount = 1; returning = true; }
+    if (segment === 3) { cylinderAmount = 1 - ease(local); waveAmount = .2 * ease(local); returning = true; }
+    if (segment === 4) { cylinderAmount = 0; waveAmount = .2 + .8 * ease(local); returning = true; }
 
     if (cylinderAmount !== null) {
       const t = ease(cylinderAmount);
@@ -1153,13 +1156,21 @@
       order.style.top = `${orderY}px`;
       order.style.opacity = String(orderOpacity);
 
-      const wallOpacity = ease((waveAmount - .12) / .28) * ease(t / .15);
+      const wallOpacity = ease((waveAmount - .12) / .28) * (segment === 4 ? 1 : ease(t / .15));
       const wallX = width < 620 ? 24 : Math.max(surfaceLeft + 100, width * GEOMETRY_TRAJECTORY.coneRight - 330);
       const wallY = height * .54 - half - (width < 620 ? 37 : 42);
       setFormula(wall, "x=h_s(\\psi)=s\\cos(\\psi-\\phi)+O(s^2)", { serif: true });
       wall.style.left = `${wallX}px`;
       wall.style.top = `${wallY}px`;
       wall.style.opacity = String(wallOpacity);
+    }
+
+    if (segment === 4) {
+      setFormula(orderExpression, "R=R(s)\\in\\mathbb R,\\qquad R(s)\\to28", { serif: true });
+      orderNote.textContent = "finite real-order collar bifurcation";
+      order.style.left = `${width < 620 ? 24 : width * .08 + 92}px`;
+      order.style.top = `${height * .54 - Math.min(118, height * .23) - (width < 620 ? 62 : 41)}px`;
+      order.style.opacity = "1";
     }
 
     if (segment === 5) {

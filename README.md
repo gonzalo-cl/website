@@ -1,6 +1,7 @@
-# Pompeiu–Schiffer interactive exposition
+# Constructing Noncircular Schiffer Domains
 
-This repository serves the interactive mathematical exposition at
+**Constructing Noncircular Schiffer Domains** is the interactive mathematical
+exposition served at
 [pompeiu-schiffer.org](https://pompeiu-schiffer.org/).
 
 The production page is a static, Tufte-style account of the Pompeiu and
@@ -25,7 +26,7 @@ The site previously on **main** is preserved without modification on
 layout with the Tufte exposition and incorporates the strongest material from
 that version:
 
-- the numerical continuation that locates the D₁₀ construction;
+- the higher m = 10 Wronskian mechanism and numerical continuation to the D₁₀ zero-flux centre;
 - the fixed-disk conformal formulation;
 - the compatible inverse and cubic coefficient equation;
 - the full-space contraction certificate and its exact sign check;
@@ -35,23 +36,28 @@ The mathematical narrative is now:
 
 1. Pompeiu's measurement problem and Schiffer's spectral formulation;
 2. linear rigidity of the disk and bifurcation in other geometries;
-3. two routes to a counterexample: numerical continuation followed by
-   computer-assisted validation, and the cone/half-cylinder bifurcation;
-4. the computer-assisted validation of the numerical centre;
-5. the cylinder-to-cone bifurcation proof and planar lift.
+3. two routes to a counterexample: a bifurcation-seeded conformal fixed-disc
+   construction closed by computer-assisted validation, and a real-order
+   cone-collar bifurcation construction;
+4. the conformal reduction and computer-assisted validation of the
+   bifurcation-generated numerical centre;
+5. the real-order collar bifurcation, uniform estimates, near-integer landing
+   and planar lift.
 
-The two proof tracks have parallel navigation and visual weight. The
-computer-assisted chapter follows the numerical search, printed conformal
+The two proof tracks have parallel navigation and visual weight. The conformal
+fixed-disc chapter begins with the higher-root m = 10 Wronskian seed and
+exploratory continuation to zero flux, then follows the printed numerical
 centre, fixed-disc pullback, exact compatible inverse, finite/tail split,
 certified fixed-point iteration and geometric reconstruction. Its applets mark
 schematic search data separately from exact algebra and certified bounds; the
 iteration figure shows how a Newton-like map stays inside a coefficient ball
-and contracts toward the unique exact solution. The
-bifurcation chapter follows the half-cylinder branch, large-cone transfer,
-real-order collar problem, uniform second variation, near-integer phase
-argument and planar lift. In both chapters, observable numerical or geometric
-evidence is followed by the precise result and the proof mechanism that makes
-it rigorous.
+and contracts toward the unique exact solution. The real-order chapter poses
+the bifurcation problem directly on finite cone collars, uses the half-cylinder
+as its large-order limiting model, proves uniform estimates, computes the
+second variation, finds near-integer crossings and performs the planar lift.
+In both chapters, the geometric mechanism and analytic reduction are separated
+from illustrative computation, then followed by the rigorous argument that
+closes existence.
 
 The HTML supplies semantic sections, statements, disclosures, figures and
 controls. Page measures are owned by
@@ -124,14 +130,19 @@ being stretched under another on first load or after a breakpoint transition.
 
 ## Numerical data
 
-The interactive page does not present floating-point plots as proofs. The
-computer-assisted theorem uses the archived exact dyadic centre, interval
-enclosures, analytic tail estimates and exact-rational checker available from
-the [certificate archive](https://doi.org/10.5281/zenodo.21765287) and
+The interactive page does not present floating-point plots as proofs. In the
+first construction, exploratory continuation of the bifurcation-seeded branch
+produces the numerical centre. Computer assistance enters the proof through
+the archived exact dyadic centre, interval enclosures, analytic tail estimates
+and exact-rational checker available from the
+[certificate archive](https://doi.org/10.5281/zenodo.21765287) and
 [source repository](https://github.com/MColbrook/Pompeiu_Schiffer).
 
-The cone applets use precomputed Fourier–Bessel data. Regeneration commands and
-Python dependencies are documented in [numerics/](numerics/); the committed
+The cone applets use precomputed Fourier–Bessel data. The displayed
+D₂₈ continuation is a finite-dimensional numerical illustration with
+λ* ≈ 3.317, outside the proof window [2, 3]; the theorem
+selects other sufficiently large crossings. Regeneration commands and Python
+dependencies are documented in [numerics/](numerics/); the committed
 JavaScript data files make the published page self-contained.
 
 ## License

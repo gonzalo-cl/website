@@ -3,12 +3,6 @@
 
   const headingSelector = "body.tufte-site main .section-heading[data-number][data-title]";
   const layoutCheckEnabled = new URLSearchParams(window.location.search).has("layout-check");
-  const tocClassByLevel = {
-    section: "",
-    subsection: "toc-nested",
-    "proof-subsection": "toc-subsection",
-  };
-
   const normalizeText = (value) => (value || "")
     .replace(/\s+/g, " ")
     .trim();
@@ -41,6 +35,12 @@
   if (main) {
     new MutationObserver(scheduleContract).observe(main, { childList: true, subtree: true });
     main.querySelectorAll("details").forEach((details) => details.addEventListener("toggle", scheduleContract));
+  }
+  const sectionNavigation = document.querySelector("[data-section-navigation]");
+  if (sectionNavigation) {
+    new MutationObserver(scheduleContract).observe(sectionNavigation, { childList: true, subtree: true });
+    sectionNavigation.querySelectorAll("details").forEach((details) => details.addEventListener("toggle", scheduleContract));
+    sectionNavigation.addEventListener("toggle", scheduleContract);
   }
 
   const rounded = (value) => Math.round(value * 10) / 10;
@@ -121,7 +121,8 @@
       if (!box.width || !box.height || !canvas.width || !canvas.height) return;
       const cssRatio = box.width / box.height;
       const bitmapRatio = canvas.width / canvas.height;
-      if (Math.abs(cssRatio / bitmapRatio - 1) > .01) {
+      const rasterQuantization = 1 / Math.max(1, Math.min(canvas.width, canvas.height));
+      if (Math.abs(cssRatio / bitmapRatio - 1) > Math.max(.01, rasterQuantization)) {
         errors.push(`${canvas.id || "unnamed canvas"} has mismatched CSS and bitmap aspect ratios`);
       }
     };
@@ -135,12 +136,6 @@
     });
 
     const expectedLeanStatements = [
-      "schiffer-star-shaped",
-      "pompeiu-property",
-      "disk-not-pompeiu",
-      "schiffer-property",
-      "schiffer-pompeiu-equivalence",
-      "pompeiu-star-shaped",
       "uniform-cone-bifurcation",
       "near-integer-crossings",
     ];
@@ -152,7 +147,6 @@
 
     const expectedSectionOrder = [
       "introduction",
-      "linear-rigidity",
       "geometric-escape",
       "computer-assisted-proof",
       "experiment",
@@ -178,6 +172,7 @@
       "computer-finite-tail",
       "computer-contraction",
       "computer-reconstruction",
+      "computer-berenstein",
     ];
     const actualComputerProofOrder = Array.from(
       document.querySelectorAll("#computer-assisted-proof > header.section-heading[id]"),
@@ -195,6 +190,8 @@
       "finite-tail-certificate",
       "radii-polynomial-certificate",
       "computer-assisted-reconstruction",
+      "berenstein-boundary-data",
+      "berenstein-field-comparison",
     ];
     const actualComputerFigures = Array.from(
       document.querySelectorAll("#computer-assisted-proof > figure[data-figure]"),
@@ -217,16 +214,19 @@
       errors.push("Section V proof subsections do not follow source reading order");
     }
     const transferSection = document.querySelector("#debye-experiment");
+    const finiteOrderSection = document.querySelector("#bifurcation-setting");
     const collarComparison = document.querySelector("[data-figure='collar-coordinate-comparison']");
     const uniformConeTheorem = document.querySelector("[data-label='uniform-cone-bifurcation']");
-    const uniformConeLean = document.querySelector("#debye-experiment > .lean-statement[data-statement='uniform-cone-bifurcation']");
+    const uniformConeLean = document.querySelector("#bifurcation-setting > .lean-statement[data-statement='uniform-cone-bifurcation']");
     if (!transferSection || !collarComparison || !uniformConeTheorem
         || !(collarComparison.compareDocumentPosition(uniformConeTheorem) & Node.DOCUMENT_POSITION_FOLLOWING)) {
       errors.push("the large-cone comparison must precede the uniform cone theorem");
     }
-    if (!uniformConeTheorem || !uniformConeLean || transferSection?.lastElementChild !== uniformConeLean
+    if (!uniformConeTheorem || !uniformConeLean || !finiteOrderSection
+        || finiteOrderSection.lastElementChild !== uniformConeLean
+        || uniformConeTheorem.parentElement !== finiteOrderSection
         || !(uniformConeTheorem.compareDocumentPosition(uniformConeLean) & Node.DOCUMENT_POSITION_FOLLOWING)) {
-      errors.push("the uniform cone theorem and its Lean counterpart must close the transfer subsection");
+      errors.push("the uniform cone theorem and its Lean counterpart must close the finite-order bifurcation subsection");
     }
     const nearIntegerTheorem = document.querySelector("[data-label='near-integer-crossings']");
     const nearIntegerLean = document.querySelector(".lean-statement[data-statement='near-integer-crossings']");
@@ -236,29 +236,32 @@
     }
 
     const expectedHeadingContract = [
-      ["1", "Pompeiu’s problem: When does a measuring probe lose information?", "#introduction", "section"],
-      ["1.1", "Schiffer’s problem: Can a membrane vibrate with constant amplitude along its boundary?", "#schiffer-problem", "subsection"],
-      ["2", "Linear rigidity", "#linear-rigidity", "section"],
-      ["2.1", "Changing the ambient geometry: what if linear rigidity fails?", "#borrow-flexibility", "subsection"],
-      ["3", "Two routes to a counterexample", "#geometric-escape", "section"],
-      ["3.1", "Computer-assisted: search, then validate", "#numerical-route", "proof-subsection"],
-      ["3.2", "Geometrically: pass through the half-cylinder", "#cone-route", "proof-subsection"],
-      ["4", "The computer-assisted proof", "#computer-assisted-proof", "section"],
-      ["4.1", "Find a promising shape", "#computer-search", "proof-subsection"],
-      ["4.2", "Move the problem to one fixed disk", "#computer-fixed-disc", "proof-subsection"],
-      ["4.3", "Solve both boundary conditions at once", "#computer-compatible-inverse", "proof-subsection"],
-      ["4.4", "Control every coefficient, including the infinite tail", "#computer-finite-tail", "proof-subsection"],
-      ["4.5", "Prove that fixed-point iteration converges", "#computer-contraction", "proof-subsection"],
-      ["4.6", "Turn the coefficient solution back into a domain", "#computer-reconstruction", "proof-subsection"],
-      ["5", "The bifurcation proof", "#experiment", "section"],
-      ["5.1", "Remapping the problem to a cone", "#cone-remap", "proof-subsection"],
-      ["5.2", "Expressing the problem on a fixed domain", "#fixed-domain", "proof-subsection"],
-      ["5.3", "Uniform half-cylinder bifurcation for 2 ≤ λ ≤ 3", "#half-cylinder-strategy", "proof-subsection"],
-      ["5.4", "Transfer from the half-cylinder to large cones", "#debye-experiment", "proof-subsection"],
-      ["5.5", "The bifurcation setting: a collar problem for every real order", "#bifurcation-setting", "proof-subsection"],
-      ["5.6", "Exploring the cone bifurcation", "#phase-story", "proof-subsection"],
-      ["5.7", "Equidistributed phases supply near-integer crossing orders", "#abundance-experiment", "proof-subsection"],
-      ["5.8", "Closing the argument", "#modes-experiment", "proof-subsection"],
+      ["1", "The problem", "#introduction", "section"],
+      ["1.1", "Pompeiu’s problem: When does a measuring probe lose information?", "#pompeiu-problem", "subsection"],
+      ["1.2", "Schiffer’s problem: Can a membrane vibrate with constant amplitude along its boundary?", "#schiffer-problem", "subsection"],
+      ["1.3", "Classical facts: the rigidity direction", "#linear-rigidity", "subsection"],
+      ["1.4", "Recent results: the flexibility direction", "#borrow-flexibility", "subsection"],
+      ["1.5", "The new counterexamples", "#new-counterexamples", "subsection"],
+      ["2", "Two routes to a counterexample", "#geometric-escape", "section"],
+      ["2.1", "Fixed disc: bifurcate, continue, and certify", "#numerical-route", "proof-subsection"],
+      ["2.2", "Real order: bifurcate, bend, and close", "#cone-route", "proof-subsection"],
+      ["3", "The computer-assisted proof", "#computer-assisted-proof", "section"],
+      ["3.1", "Find a promising shape", "#computer-search", "proof-subsection"],
+      ["3.2", "Move the problem to one fixed disk", "#computer-fixed-disc", "proof-subsection"],
+      ["3.3", "Solve both boundary conditions at once", "#computer-compatible-inverse", "proof-subsection"],
+      ["3.4", "Control every coefficient, including the infinite tail", "#computer-finite-tail", "proof-subsection"],
+      ["3.5", "Prove that fixed-point iteration converges", "#computer-contraction", "proof-subsection"],
+      ["3.6", "Turn the coefficient solution back into a domain", "#computer-reconstruction", "proof-subsection"],
+      ["3.7", "Berenstein companion: the Dirichlet endpoint", "#computer-berenstein", "proof-subsection"],
+      ["4", "The bifurcation proof", "#experiment", "section"],
+      ["4.1", "Remapping the problem to a cone", "#cone-remap", "proof-subsection"],
+      ["4.2", "Expressing the problem on a fixed domain", "#fixed-domain", "proof-subsection"],
+      ["4.3", "The half-cylinder as a uniform limiting model", "#half-cylinder-strategy", "proof-subsection"],
+      ["4.4", "Uniform collar comparison for large cones", "#debye-experiment", "proof-subsection"],
+      ["4.5", "The bifurcation setting: a collar problem for every real order", "#bifurcation-setting", "proof-subsection"],
+      ["4.6", "Exploring the cone bifurcation", "#phase-story", "proof-subsection"],
+      ["4.7", "Equidistributed phases supply near-integer crossing orders", "#abundance-experiment", "proof-subsection"],
+      ["4.8", "Closing the argument", "#modes-experiment", "proof-subsection"],
       ["", "References", "#references", "section"],
       ["", "Acknowledgements", "#acknowledgements", "section"],
     ];
@@ -336,26 +339,48 @@
         }
       }
     });
-    const expectedTocContents = expectedHeadingContract
+    const expectedNavigationContents = expectedHeadingContract
       .filter(([, , , toc]) => toc)
-      .map(([number, title, href, toc]) => [number, title, href, tocClassByLevel[toc]]);
-    const actualTocContents = Array.from(document.querySelectorAll(".site-toc nav[data-toc-nav] a"), (link) => [
+      .map(([number, title, href, toc]) => [number, title, href, toc]);
+    const actualNavigationContents = Array.from(document.querySelectorAll(".section-banner [data-heading-link]"), (link) => [
       normalizeText(link.querySelector("b")?.textContent),
       normalizeText(link.querySelector("span")?.textContent),
       link.getAttribute("href"),
-      link.className,
+      link.dataset.tocLevel,
     ]);
-    if (expectedTocContents.some(([number, title, href, className], index) => {
-      const actual = actualTocContents[index];
-      return !actual || actual[0] !== number || actual[1] !== title || actual[2] !== href || actual[3] !== className;
-    }) || actualTocContents.length !== expectedTocContents.length) {
-      errors.push("table of contents does not match the shared heading contract");
+    if (expectedNavigationContents.some(([number, title, href, level], index) => {
+      const actual = actualNavigationContents[index];
+      return !actual || actual[0] !== number || actual[1] !== title || actual[2] !== href || actual[3] !== level;
+    }) || actualNavigationContents.length !== expectedNavigationContents.length) {
+      errors.push("section banner does not match the shared heading contract");
     }
-    const tocNumberColors = new Set(Array.from(document.querySelectorAll(".site-toc nav[data-toc-nav] a b"), (number) => (
+    const navigationNumberColors = new Set(Array.from(document.querySelectorAll(".section-banner [data-heading-link] b"), (number) => (
       getComputedStyle(number).color
     )));
-    if (tocNumberColors.size > 1) errors.push("table of contents numbers do not share one colour role");
-    checkType(".site-toc nav[data-toc-nav] a b", typeLabel, "contents number");
+    if (navigationNumberColors.size > 1) errors.push("section-banner numbers do not share one colour role");
+    checkType(".section-banner [data-heading-link] b", typeLabel, "section-banner number");
+
+    const expectedPrimaryNavigation = expectedNavigationContents
+      .filter(([, , , level]) => level === "section")
+      .map(([, title, href]) => [title, href]);
+    const actualPrimaryNavigation = Array.from(document.querySelectorAll(".section-banner-list > .section-banner-item"), (item) => [
+      normalizeText(item.querySelector(":scope > details > summary > span, :scope > a > span")?.textContent),
+      item.dataset.sectionTarget,
+    ]);
+    if (expectedPrimaryNavigation.some(([title, href], index) => {
+      const actual = actualPrimaryNavigation[index];
+      return !actual || actual[0] !== title || actual[1] !== href;
+    }) || actualPrimaryNavigation.length !== expectedPrimaryNavigation.length) {
+      errors.push("section-banner primary groups do not match the document sections");
+    }
+    if (document.querySelectorAll("nav[data-toc-nav]").length !== 1) {
+      errors.push("the document must expose exactly one generated section navigation landmark");
+    }
+    const navigationHrefs = actualNavigationContents.map(([, , href]) => href);
+    if (new Set(navigationHrefs).size !== navigationHrefs.length
+        || navigationHrefs.some((href) => !href || !document.querySelector(href))) {
+      errors.push("section-banner links do not resolve to unique document targets");
+    }
 
     document.querySelectorAll("details.optional-digression").forEach((details, index) => {
       const summary = details.querySelector(":scope > summary");
@@ -380,7 +405,7 @@
       if (!optionalTitles.includes(title)) errors.push(`missing optional digression: ${title}`);
     });
 
-    const transferTheorem = document.querySelector("#debye-experiment > #uniformConeBifurcation.math-statement");
+    const transferTheorem = document.querySelector("#bifurcation-setting > #uniformConeBifurcation.math-statement");
     const transferDetails = document.querySelector("#debye-experiment > details.transfer-proof-details");
     const transferAside = transferDetails?.querySelector(".side-applet[data-figure='fixed-collar-profiles']");
     const transferVisual = transferAside?.querySelector(":scope > section.stacked-plot");
@@ -393,21 +418,21 @@
     }
     if (!transferAside || !transferVisual || !transferControls
         || !(transferVisual.compareDocumentPosition(transferControls) & Node.DOCUMENT_POSITION_FOLLOWING)) {
-      errors.push("Subsection 5.4 does not keep the fixed-collar plot inside its technical disclosure");
+      errors.push("Subsection 4.4 does not keep the fixed-collar plot inside its technical disclosure");
     }
-    if (!transferSketch || !transferComparison || !informalDebye || !transferDetails
+    if (!transferSketch || !transferComparison || !informalDebye || !transferDetails || !transferTheorem
         || !(transferComparison.compareDocumentPosition(informalDebye) & Node.DOCUMENT_POSITION_FOLLOWING)
         || !(informalDebye.compareDocumentPosition(transferDetails) & Node.DOCUMENT_POSITION_FOLLOWING)
         || !(transferDetails.compareDocumentPosition(transferTheorem) & Node.DOCUMENT_POSITION_FOLLOWING)) {
-      errors.push("Subsection 5.4 does not follow observation → applet → informal theorem → details → uniform theorem");
+      errors.push("Subsection 4.4 does not follow observation → applet → informal theorem → details → uniform theorem");
     }
     if (document.querySelector("#debye-experiment > details.collar-coordinate-details")) {
-      errors.push("Subsection 5.4 has split its mode normalization into an unexplained second disclosure");
+      errors.push("Subsection 4.4 has split its mode normalization into an unexplained second disclosure");
     }
     if (!/angular quotient.+normalization.+oscillatory.+evanescent.+uniform error bounds/i.test(
       document.querySelector("#debye-experiment .transfer-conclusion")?.textContent || ""
     )) {
-      errors.push("Subsection 5.4 does not tell the reader what its technical disclosure contains");
+      errors.push("Subsection 4.4 does not tell the reader what its technical disclosure contains");
     }
     const halfCylinderIntro = document.querySelector("#experiment .half-cylinder-introduction");
     const halfCylinderApplet = halfCylinderIntro?.querySelector(":scope > .side-applet");
@@ -969,7 +994,7 @@
     };
     window.__TUFTE_LAYOUT_CHECK__ = result;
     document.documentElement.dataset.layoutContract = result.ok ? "pass" : "fail";
-    if (!result.ok) console.error("Tufte layout contract failed", errors);
+    if (!result.ok) console.error(`Tufte layout contract failed: ${errors.join(" | ")}`);
     return result;
   }
 

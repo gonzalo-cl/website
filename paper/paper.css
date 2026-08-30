@@ -474,6 +474,45 @@
     font-size: clamp(42px, 12vw, 52px);
   }
 
+  .paper-edition .site-toc summary,
+  .paper-edition .site-toc a {
+    min-height: 44px;
+  }
+
+  .paper-edition .canvas-panel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .paper-edition .canvas-toolbar > div:first-child {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .paper-edition .canvas-toolbar strong {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .paper-edition .cylinder-theorem {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .paper-edition .cylinder-theorem > * {
+    min-width: 0;
+  }
+
+  .paper-edition .axis-footer {
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .paper-edition .axis-footer > :first-child,
+  .paper-edition .axis-footer > :last-child {
+    display: none;
+  }
+
   .paper-edition .intro-bottom {
     padding-left: 20px;
   }
@@ -551,6 +590,72 @@
 
   .paper-references {
     padding: 70px 24px 82px;
+  }
+}
+
+@media (min-width: 841px) and (max-width: 1279px) {
+  .paper-edition .site-toc {
+    max-height: calc(100vh - 110px);
+    max-height: calc(100dvh - 110px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}
+
+.paper-edition .pompeiu-figure {
+  width: 100%;
+  max-width: 100%;
+  margin: 2rem 0;
+}
+
+.paper-edition .pompeiu-panel,
+.paper-edition .pompeiu-side {
+  min-width: 0;
+}
+
+.paper-edition #pompeiuCanvas {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
+
+.paper-edition .pompeiu-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .35rem;
+}
+
+.paper-edition .shape-variation-diagrams {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 1rem;
+  align-items: center;
+  min-width: 0;
+}
+
+.paper-edition .shape-variation-diagrams svg {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  min-width: 0;
+}
+
+.paper-edition .variation-map {
+  display: grid;
+  gap: .35rem;
+  justify-items: center;
+  text-align: center;
+}
+
+@media (max-width: 840px) {
+  .paper-edition .shape-variation-diagrams {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .paper-edition .variation-map i {
+    transform: rotate(90deg);
   }
 }
 
