@@ -1462,3 +1462,20 @@ body > footer { padding-inline: var(--layout-gutter); }
   stroke: rgba(243,232,220,.42);
   stroke-width: .8;
 }
+
+/* The crossing is the only place the nontrivial branch exists; it lights up
+   when the marker is on the trivial line and has arrived there.  Inert on the
+   cards that do not offer trivial-line dragging, since nothing sets the class. */
+.branch-diagram .branch-crossing {
+  fill: none;
+  stroke: rgba(255,116,73,.0);
+  stroke-width: 1.4;
+  transition: stroke .18s ease;
+  pointer-events: none;
+}
+.branch-diagram .branch-crossing.branch-crossing-live {
+  stroke: rgba(255,116,73,.75);
+}
+.branch-diagram .branch-marker.branch-marker-trivial {
+  fill: #9fb7bd;
+}

@@ -163,7 +163,21 @@
     };
   }
 
-  function renderBranchDiagram(diagram, amount) {
+  /* The marker has two degrees of freedom, not one.  Off the branch it slides
+     along the trivial line, where the domain is the unperturbed one and the
+     only thing changing is the parameter on the horizontal axis: the radially
+     symmetric domain growing or shrinking.  Only at the crossing does the
+     nontrivial branch exist, so only there can the marker leave the line.
+     `trivial` is the horizontal position in [-1, 1] with 0 at the crossing;
+     when the amplitude is nonzero the marker is on the parabola and `trivial`
+     is ignored, because the branch fixes the horizontal position itself. */
+  function branchTrivialGeometry(trivial) {
+    const { axisY, left, right, criticalX } = BRANCH_DIAGRAM;
+    const span = trivial < 0 ? criticalX - left : right - criticalX;
+    return { x: criticalX + span * trivial, y: axisY };
+  }
+
+  function renderBranchDiagram(diagram, amount, trivial = 0) {
     if (!diagram) return;
     const curve = diagram.querySelector(".branch-nontrivial");
     const marker = diagram.querySelector(".branch-marker");
@@ -173,21 +187,54 @@
       points.push(branchDiagramGeometry(-1 + 2 * index / 48));
     }
     curve.setAttribute("d", worldPath(points));
-    const here = branchDiagramGeometry(amount);
+    const onBranch = Math.abs(amount) > .001;
+    const here = onBranch ? branchDiagramGeometry(amount) : branchTrivialGeometry(trivial);
     marker.setAttribute("cx", here.x.toFixed(2));
     marker.setAttribute("cy", here.y.toFixed(2));
+    marker.classList.toggle("branch-marker-trivial", !onBranch);
+    // The crossing is where the branch is available; mark it when we are not on it.
+    const node = diagram.querySelector(".branch-crossing");
+    if (node) node.classList.toggle("branch-crossing-live", !onBranch && Math.abs(trivial) < .06);
   }
 
-  function bindBranchDiagram(diagram, range) {
+  function bindBranchDiagram(diagram, range, options = {}) {
     if (!diagram || !range) return;
-    const { axisY, top, bottom } = BRANCH_DIAGRAM;
+    const { axisY, top, bottom, left, right, criticalX } = BRANCH_DIAGRAM;
     const halfHeight = (bottom - top) / 2;
+    // Dragging horizontally along the trivial line is only meaningful where the
+    // renderer knows what the trivial domain looks like, so it is opt-in.
+    const onTrivial = options.onTrivial;
+    const state = { trivial: 0 };
     const setFromPointer = (event) => {
       const box = diagram.getBoundingClientRect();
-      if (!box.height) return;
+      if (!box.height || !box.width) return;
       // Map the pointer back through the viewBox: s is the vertical coordinate.
       const viewY = (event.clientY - box.top) / box.height * 104;
+      const viewX = (event.clientX - box.left) / box.width * 260;
       const amount = Math.max(-1, Math.min(1, (axisY - viewY) / halfHeight));
+      if (!onTrivial) {
+        range.value = amount.toFixed(2);
+        range.dispatchEvent(new Event("input", { bubbles: true }));
+        return;
+      }
+      /* Leaving the line requires being at the crossing: away from it there is
+         no branch to step onto, which is the content of the picture.  Near the
+         line we stay on it and the horizontal position becomes the unknown. */
+      const nearLine = Math.abs(amount) < .12;
+      const atCrossing = Math.abs(state.trivial) < .08;
+      if (nearLine || !atCrossing) {
+        const span = viewX < criticalX ? criticalX - left : right - criticalX;
+        state.trivial = Math.max(-1, Math.min(1, (viewX - criticalX) / span));
+        if (Number(range.value) !== 0) {
+          range.value = "0";
+          range.dispatchEvent(new Event("input", { bubbles: true }));
+        }
+        onTrivial(state.trivial);
+        renderBranchDiagram(diagram, 0, state.trivial);
+        return;
+      }
+      state.trivial = 0;
+      onTrivial(0);
       range.value = amount.toFixed(2);
       range.dispatchEvent(new Event("input", { bubbles: true }));
     };
@@ -211,6 +258,7 @@
     });
   }
 
+  let annulusTrivial = 0;
   function renderAnnulusBifurcation(branchAmount) {
     if (!annulusDomainFill || !annulusBoundaryOuter || !annulusBoundaryInner) return;
     // Enciso-Fernandez-Ruiz-Sicbaldi bifurcate from the annulus {a < r < 1} at
@@ -219,7 +267,12 @@
     const centreX = 260;
     const centreY = 143;
     const outerRadius = 111;
-    const innerFraction = .1409893;
+    /* On the trivial line the domain is the round annulus and the free
+       parameter is its inner radius a.  a_4 = 0.140989 is the crossing; moving
+       off it along the line grows or shrinks the hole, and no branch exists
+       there.  The displayed range is deliberately narrow, since the crossing is
+       what the picture is about. */
+    const innerFraction = .1409893 * (1 + .55 * annulusTrivial);
     // Both boundaries move as cos(4 theta), but not by the same amount: the
     // true ratio of the two amplitudes is -27.883, computed from the crossing
     // eigenfunctions.  At that exact ratio the inner ripple is 1.0 px
@@ -248,7 +301,9 @@
     annulusDomainFill.setAttribute("d", `${outerPath}${innerPath}`);
     annulusBoundaryOuter.setAttribute("d", outerPath);
     annulusBoundaryInner.setAttribute("d", innerPath);
-    renderBranchDiagram(annulusBranchDiagram, branchAmount);
+    const innerReference = document.querySelector(".annulus-inner-reference");
+    if (innerReference) innerReference.setAttribute("r", (outerRadius * innerFraction).toFixed(2));
+    renderBranchDiagram(annulusBranchDiagram, branchAmount, annulusTrivial);
   }
 
   function renderSphereBifurcation(branchAmount) {
@@ -365,7 +420,12 @@
     bindWorldBranch(wheelerBranchRange, wheelerBranchValue, renderWheelerBifurcation);
     bindBranchDiagram(cylinderBranchDiagram, cylinderBranchRange);
     bindBranchDiagram(sphereBranchDiagram, sphereBranchRange);
-    bindBranchDiagram(annulusBranchDiagram, annulusBranchRange);
+    bindBranchDiagram(annulusBranchDiagram, annulusBranchRange, {
+    onTrivial: (trivial) => {
+      annulusTrivial = trivial;
+      renderAnnulusBifurcation(Number(annulusBranchRange.value) || 0);
+    },
+  });
   }
 
   function fillRange(input) {

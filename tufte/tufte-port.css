@@ -3263,3 +3263,16 @@ body.tufte-site main .shape-variation-figure .variation-original-boundary {
   font-size: 10px;
   font-style: normal;
 }
+
+.branch-diagram .branch-crossing {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 1.4;
+  pointer-events: none;
+}
+.branch-diagram .branch-crossing.branch-crossing-live {
+  stroke: var(--teal, #388f91);
+}
+.branch-diagram .branch-marker.branch-marker-trivial {
+  fill: var(--muted);
+}
