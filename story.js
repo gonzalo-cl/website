@@ -222,12 +222,16 @@
     const innerFraction = .1409893;
     // Both boundaries move as cos(4 theta), but not by the same amount: the
     // true ratio of the two amplitudes is -27.883, computed from the crossing
-    // eigenfunctions.  The common factor is enlarged for sight, so the outer
-    // ripple is visible while the inner one stays almost imperceptible --
-    // which is the honest picture.  The sign makes the domain thicken where
+    // eigenfunctions.  At that exact ratio the inner ripple is 1.0 px
+    // peak-to-peak against the outer's 28.9, which reads as an unperturbed
+    // circle and misinforms: the point is that the inner boundary moves much
+    // less, not that it stays put.  INNER_RIPPLE_GAIN opens it to 6.2 px, still
+    // 4.6 times smaller than the outer ripple, so the comparison survives while
+    // the motion becomes visible.  The sign makes the domain thicken where
     // cos(4 theta) is positive.
     const outerAmplitude = .13;
-    const innerAmplitude = -outerAmplitude / 27.883;
+    const INNER_RIPPLE_GAIN = 6;
+    const innerAmplitude = -INNER_RIPPLE_GAIN * outerAmplitude / 27.883;
     const outer = [];
     const inner = [];
     for (let index = 0; index <= 192; index++) {

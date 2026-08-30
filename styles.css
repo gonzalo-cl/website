@@ -1445,3 +1445,20 @@ body > footer { padding-inline: var(--layout-gutter); }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+/* Boundary values on the annulus card: u = 1 outside, u = c inside. */
+.world-sketch .annulus-value-label {
+  fill: #f3e8dc;
+  font: 400 12px/1 var(--serif, Georgia, serif);
+  font-style: italic;
+}
+.world-sketch .annulus-value-label-note {
+  fill: rgba(243,232,220,.62);
+  font-size: 10.5px;
+  font-style: normal;
+}
+.world-sketch .annulus-leader {
+  fill: none;
+  stroke: rgba(243,232,220,.42);
+  stroke-width: .8;
+}

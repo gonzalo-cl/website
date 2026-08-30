@@ -914,7 +914,23 @@ body.tufte-site main .margin-figure-row > .side-figure {
   padding: .7rem 0 0;
   border: 0;
 }
-.world-cards .world-sketch text:not(.world-domain-label) { display: none; }
+.world-cards .world-sketch text:not(.world-domain-label):not(.annulus-value-label) { display: none; }
+/* The two boundary values are the content of this card, not a legend. */
+.world-cards .world-sketch .annulus-value-label {
+  fill: var(--ink);
+  font: 400 12px/1 var(--serif);
+  font-style: italic;
+}
+.world-cards .world-sketch .annulus-value-label-note {
+  fill: var(--muted);
+  font-size: 10.5px;
+  font-style: normal;
+}
+.world-cards .world-sketch .annulus-leader {
+  fill: none;
+  stroke: var(--muted);
+  stroke-width: .8;
+}
 .world-cards article > span { margin-top: 0; }
 .world-cards h3 { font-style: normal; }
 .borrow-lead p + p { margin-top: 1.4rem; }
