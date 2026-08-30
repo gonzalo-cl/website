@@ -20,6 +20,10 @@
   /* The production math layer owns typesetting.  This file only audits the
      result, after renderers, fonts, and disclosure layout have settled. */
   let contractFrame = 0;
+  let contractRetryTimer = 0;
+  let pendingFailureSignature = "";
+  let pendingFailureSince = 0;
+  let reportedFailureSignature = "";
   const scheduleContract = () => {
     if (contractFrame) cancelAnimationFrame(contractFrame);
     contractFrame = requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(() => {
@@ -179,6 +183,7 @@
       "computer-contraction",
       "computer-reconstruction",
       "computer-berenstein",
+      "computer-local-global",
     ];
     const actualComputerProofOrder = Array.from(
       document.querySelectorAll("#computer-assisted-proof > header.section-heading[id]"),
@@ -198,6 +203,7 @@
       "computer-assisted-reconstruction",
       "berenstein-boundary-data",
       "berenstein-field-comparison",
+      "local-global-solvability",
     ];
     const actualComputerFigures = Array.from(
       document.querySelectorAll("#computer-assisted-proof > figure[data-figure]"),
@@ -259,6 +265,7 @@
       ["3.5", "Prove that fixed-point iteration converges", "#computer-contraction", "proof-subsection"],
       ["3.6", "Turn the coefficient solution back into a domain", "#computer-reconstruction", "proof-subsection"],
       ["3.7", "Berenstein companion: the Dirichlet endpoint", "#computer-berenstein", "proof-subsection"],
+      ["3.8", "Local boundary data versus global solvability", "#computer-local-global", "proof-subsection"],
       ["4", "The bifurcation proof", "#experiment", "section"],
       ["4.1", "Remapping the problem to a cone", "#cone-remap", "proof-subsection"],
       ["4.2", "Expressing the problem on a fixed domain", "#fixed-domain", "proof-subsection"],
@@ -1022,8 +1029,42 @@
       errors,
     };
     window.__TUFTE_LAYOUT_CHECK__ = result;
-    document.documentElement.dataset.layoutContract = result.ok ? "pass" : "fail";
-    if (!result.ok) console.error(`Tufte layout contract failed: ${errors.join(" | ")}`);
+    if (result.ok) {
+      pendingFailureSignature = "";
+      pendingFailureSince = 0;
+      reportedFailureSignature = "";
+      if (contractRetryTimer) {
+        clearTimeout(contractRetryTimer);
+        contractRetryTimer = 0;
+      }
+      document.documentElement.dataset.layoutContract = "pass";
+    } else {
+      const signature = errors.join("\n");
+      const now = performance.now();
+      if (signature !== pendingFailureSignature) {
+        pendingFailureSignature = signature;
+        pendingFailureSince = now;
+      }
+
+      /* A canvas can briefly retain its previous bitmap dimensions while its
+         responsive drawing script handles the same resize.  Wait for one
+         short, stable interval before reporting a failure, so the audit still
+         catches persistent defects without emitting false console errors. */
+      if (now - pendingFailureSince < 240) {
+        document.documentElement.dataset.layoutContract = "checking";
+        if (contractRetryTimer) clearTimeout(contractRetryTimer);
+        contractRetryTimer = window.setTimeout(() => {
+          contractRetryTimer = 0;
+          scheduleContract();
+        }, 260);
+      } else {
+        document.documentElement.dataset.layoutContract = "fail";
+        if (signature !== reportedFailureSignature) {
+          console.error(`Tufte layout contract failed: ${errors.join(" | ")}`);
+          reportedFailureSignature = signature;
+        }
+      }
+    }
     return result;
   }
 

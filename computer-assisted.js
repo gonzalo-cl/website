@@ -306,6 +306,19 @@
     .replaceAll("8", "⁸")
     .replaceAll("9", "⁹");
 
+  const subscript = (value) => String(value)
+    .replaceAll("-", "₋")
+    .replaceAll("0", "₀")
+    .replaceAll("1", "₁")
+    .replaceAll("2", "₂")
+    .replaceAll("3", "₃")
+    .replaceAll("4", "₄")
+    .replaceAll("5", "₅")
+    .replaceAll("6", "₆")
+    .replaceAll("7", "₇")
+    .replaceAll("8", "₈")
+    .replaceAll("9", "₉");
+
   const formatScientific = (value, digits = 5) => {
     if (value === 0) return "0";
     const [mantissa, exponent] = value.toExponential(digits).split("e");
@@ -341,7 +354,7 @@
     context.fillRect(0, 0, width, height);
   };
 
-  const conformalCoefficients = Object.freeze([
+  const normalizedConformalCoefficients = Object.freeze([
     3.45993909539293071e-2, 7.08236502050214939e-3, 2.50705956641803957e-3,
     6.93948928139134676e-4, 1.83066145144108530e-4, 4.93110147154087685e-5,
     1.33365835762374103e-5, 3.59790219332492309e-6, 9.70097629016086860e-7,
@@ -363,7 +376,7 @@
     let y = Math.sin(theta);
     for (let index = 0; index < cutoff; index += 1) {
       const frequency = 10 * (index + 1) + 1;
-      const coefficient = conformalCoefficients[index];
+      const coefficient = normalizedConformalCoefficients[index];
       x += coefficient * Math.cos(frequency * theta);
       y += coefficient * Math.sin(frequency * theta);
     }
@@ -375,7 +388,7 @@
     let y = radius * Math.sin(theta);
     for (let index = 0; index < cutoff; index += 1) {
       const frequency = 10 * (index + 1) + 1;
-      const coefficient = amplitude * conformalCoefficients[index] * radius ** frequency;
+      const coefficient = amplitude * normalizedConformalCoefficients[index] * radius ** frequency;
       x += coefficient * Math.cos(frequency * theta);
       y += coefficient * Math.sin(frequency * theta);
     }
@@ -387,7 +400,7 @@
     let imaginary = 0;
     for (let index = 0; index < cutoff; index += 1) {
       const exponent = 10 * (index + 1);
-      const coefficient = conformalCoefficients[index] * (exponent + 1) * radius ** exponent;
+      const coefficient = normalizedConformalCoefficients[index] * (exponent + 1) * radius ** exponent;
       real += coefficient * Math.cos(exponent * theta);
       imaginary += coefficient * Math.sin(exponent * theta);
     }
@@ -425,7 +438,7 @@
     const centerY = domain.y + domain.height / 2 + 6;
     const scale = Math.min(domain.width, domain.height) * .43 / 1.075;
 
-    drawLabel(context, `Boundary from ${cutoff} coefficient${cutoff === 1 ? "" : "s"}`, centerX, domain.y - 8, {
+    drawLabel(context, `Boundary from q₁,…,q${subscript(cutoff)}`, centerX, domain.y - 8, {
       align: "center",
       color: colors.heading,
       size: 14,
@@ -454,18 +467,18 @@
     context.lineWidth = 2.3;
     context.stroke();
 
-    drawLabel(context, "Size of each boundary correction", plot.x, plot.y, {
+    drawLabel(context, "Normalized map coefficients |qⱼ|", plot.x, plot.y, {
       color: colors.heading,
       size: 14,
       weight: 700,
     });
-    const selectedCoefficient = conformalCoefficients[cutoff - 1];
+    const selectedCoefficient = normalizedConformalCoefficients[cutoff - 1];
     drawLabel(
       context,
-      `#${cutoff}: ${formatScientific(selectedCoefficient, 2)} · ${10 * cutoff} ripples`,
+      `|q${subscript(cutoff)}| = ${formatScientific(selectedCoefficient, 2)} · ${10 * cutoff}-fold correction`,
       plot.x,
       plot.y + 18,
-      { color: colors.muted, size: 14 },
+      { color: colors.muted, size: compact ? 12 : 14 },
     );
 
     const chart = {
@@ -490,7 +503,7 @@
       drawLabel(context, `10${superscript(exponent)}`, chart.x - 7, y + 4, {
         align: "right",
         color: colors.muted,
-        size: 14,
+        size: compact ? 12 : 14,
       });
     });
     context.strokeStyle = colors.ruleDark;
@@ -501,7 +514,7 @@
     context.lineTo(chart.x + chart.width, chart.y + chart.height);
     context.stroke();
 
-    const coefficientLogs = conformalCoefficients.map((coefficient) => Math.log10(coefficient));
+    const coefficientLogs = normalizedConformalCoefficients.map((coefficient) => Math.log10(coefficient));
     context.beginPath();
     coefficientLogs.forEach((value, index) => {
       const x = projectCoefficient(index);
@@ -550,17 +563,17 @@
         size: 14,
       });
     });
-    drawLabel(context, "coefficient number", chart.x + chart.width / 2, chart.y + chart.height + 34, {
+    drawLabel(context, "normalized coefficient j", chart.x + chart.width / 2, chart.y + chart.height + 34, {
       align: "center",
       color: colors.muted,
       size: 14,
     });
 
     if (boundaryModesValue) boundaryModesValue.textContent = `${cutoff} of 30`;
-    if (boundaryModes) boundaryModes.setAttribute("aria-valuetext", `${cutoff} of 30 printed conformal coefficients`);
+    if (boundaryModes) boundaryModes.setAttribute("aria-valuetext", `${cutoff} of 30 normalized conformal-map coefficients q j`);
     boundaryCanvas.setAttribute(
       "aria-label",
-      `Numerical ten-fold conformal boundary using ${cutoff} of 30 printed coefficients, compared with the dashed unit circle. The newest included coefficient has size ${selectedCoefficient.toExponential(3)} and adds a ${10 * cutoff}-fold correction. The coefficient-size graph decays from about ten to the minus two to ten to the minus eighteen. Overall radial range ${minimumRadius.toFixed(6)} to ${maximumRadius.toFixed(6)}.`,
+      `Exploratory computation from finite numerical data. Ten-fold conformal boundary using ${cutoff} of 30 normalized coefficients q j, compared with the dashed unit circle. The newest included coefficient has size ${selectedCoefficient.toExponential(3)} and adds a ${10 * cutoff}-fold correction. The certificate later controls the omitted infinite tail. Overall radial range ${minimumRadius.toFixed(6)} to ${maximumRadius.toFixed(6)}.`,
     );
   };
 
@@ -575,24 +588,24 @@
   const searchStages = Object.freeze([
     Object.freeze({
       label: "ten-fold direction",
-      title: "The circle can move in a ten-lobed direction",
-      status: "At this disk frequency, the equations allow a ten-lobed first motion.",
+      title: "A ten-lobed kernel at the disk",
+      status: "Exact linear mechanism: W₁,₁₀(μ) = 0 makes the cos(10θ) displacement a kernel direction in the relaxed problem.",
       amplitude: 0,
       flux: .82,
       showDirection: true,
     }),
     Object.freeze({
       label: "relaxed solutions",
-      title: "Follow noncircular relaxed solutions",
-      status: "The search changes the field, shape and frequency while keeping the normal derivative equal to one constant c around the boundary.",
+      title: "A schematic continuation route",
+      status: "The intermediate silhouette is schematic, not sampled continuation data. The search varies field, shape, frequency and the constant c.",
       amplitude: .52,
       flux: .48,
       trail: Object.freeze([.26]),
     }),
     Object.freeze({
       label: "zero-flux centre",
-      title: "Stop when the normal change is zero",
-      status: "At c = 0 the relaxed boundary condition becomes the target condition. This endpoint is stored as the computed centre x°.",
+      title: "The stored zero-flux centre",
+      status: "Exploratory computation: at c = 0 the stored endpoint is the numerical centre x°. The later contraction proves existence independently.",
       amplitude: 1,
       flux: 0,
       trail: Object.freeze([.50]),
@@ -698,6 +711,12 @@
         lineWidth: 1.5,
         cutoff: 1,
       });
+      drawLabel(context, "W₁,₁₀(μ) = 0 · cos(10θ) kernel", domainCenterX, domainCenterY - domainRadius - 14, {
+        align: "center",
+        color: colors.teal,
+        size: compact ? 11 : 13,
+        weight: 700,
+      });
     }
     if (stage.trail) {
       stage.trail.forEach((amplitude, index) => {
@@ -705,6 +724,14 @@
           stroke: `rgba(38, 36, 31, ${.10 + index * .035})`,
           lineWidth: 1.1,
         });
+      });
+    }
+    if (selectedSearchStage === 1) {
+      drawLabel(context, "schematic continuation path", domainCenterX, domainCenterY - domainRadius - 14, {
+        align: "center",
+        color: colors.gold,
+        size: compact ? 11 : 13,
+        weight: 700,
       });
     }
     traceConformalBoundary(context, domainCenterX, domainCenterY, domainRadius, stage.amplitude, {
@@ -721,13 +748,13 @@
       stage.amplitude,
       stage.flux,
     );
-    drawLabel(context, stage.flux > 0 ? "same normal change all around" : "zero normal change all around", domainCenterX, domainCenterY + domainRadius + 48, {
+    drawLabel(context, stage.flux > 0 ? "constant normal derivative c all around" : "constant normal derivative c = 0", domainCenterX, domainCenterY + domainRadius + 48, {
       align: "center",
       color: stage.flux > 0 ? colors.teal : colors.accent,
       size: 14,
       weight: 700,
     });
-    drawLabel(context, stage.endpoint ? "computed centre" : selectedSearchStage === 0 ? "disk" : "relaxed solution", domainCenterX, domainCenterY + 4, {
+    drawLabel(context, stage.endpoint ? "numerical centre x°" : selectedSearchStage === 0 ? "disk · c ≠ 0" : "relaxed solution", domainCenterX, domainCenterY + 4, {
       align: "center",
       color: stage.endpoint ? colors.accent : colors.muted,
       size: 14,
@@ -736,7 +763,7 @@
 
     searchCanvas.setAttribute(
       "aria-label",
-      `Numerical-search stage ${selectedSearchStage + 1} of 3: ${stage.label}. ${stage.status} Equal teal arrows represent the constant normal derivative on the whole boundary; hollow boundary markers in the last stage represent zero normal derivative. The intermediate shapes are schematic.`,
+      `Numerical-search stage ${selectedSearchStage + 1} of 3: ${stage.label}. ${stage.status} Equal teal arrows represent the constant normal derivative on the whole boundary; hollow boundary markers at the stored numerical centre represent zero normal derivative. Only the endpoint uses the thirty printed numerical coefficients.`,
     );
   };
 
@@ -903,8 +930,8 @@
       stroke: colors.accent,
     });
     if (compact) {
-      drawLabel(context, "fixed disk 𝔻", diskCenter.x, diskCenter.y - radius - 18, { align: "center", color: colors.heading, size: 14, weight: 700 });
-      drawLabel(context, "physical domain Ω", domainCenter.x, domainCenter.y - radius - 18, { align: "center", color: colors.heading, size: 14, weight: 700 });
+      drawLabel(context, "fixed disk 𝔻", diskCenter.x, diskCenter.y - radius - 4, { align: "center", color: colors.heading, size: 14, weight: 700 });
+      drawLabel(context, "physical domain Ω", domainCenter.x, domainCenter.y - radius - 4, { align: "center", color: colors.heading, size: 14, weight: 700 });
     } else {
       drawLabel(context, "physical domain Ω", domainCenter.x, domainCenter.y - radius - 24, { align: "center", color: colors.heading, size: 14, weight: 700 });
       drawLabel(context, "fixed disk 𝔻", diskCenter.x, diskCenter.y - radius - 24, { align: "center", color: colors.heading, size: 14, weight: 700 });
@@ -949,15 +976,15 @@
 
     drawLabel(
       context,
-      "the color at z is carried to the color at x",
+      "schematic scalar field · same sampled color at z and x",
       width / 2,
       height - 16,
-      { align: "center", color: colors.muted, size: 14 },
+      { align: "center", color: colors.muted, size: compact ? 12 : 14 },
     );
 
     pullbackCanvas.setAttribute(
       "aria-label",
-      "The fixed disk is mapped by phi sub p to the physical domain. A marked disk point z maps to x equals phi sub p of z, and matching colors show that the field value is unchanged: U of z equals u of x.",
+      "Schematic mechanism. The fixed disk is mapped by phi sub p to the physical domain. A marked disk point z maps to x equals phi sub p of z, and its sampled color matches exactly on both sides. The colors are an illustrative scalar field for the coordinate transfer, not the certified eigenfunction. The exact identity is U of z equals u of x.",
     );
   };
 
@@ -1049,79 +1076,6 @@
     return maximum;
   };
 
-  const drawBalanceRow = (context, box, title, contributions) => {
-    const positiveTotal = contributions.reduce((sum, item) => sum + Math.max(0, item.value), 0);
-    const negativeTotal = contributions.reduce((sum, item) => sum + Math.max(0, -item.value), 0);
-    const scaleTotal = Math.max(positiveTotal, negativeTotal, 1e-15);
-    const centerX = box.x + box.width / 2;
-    const halfWidth = box.width * .38;
-    const barY = box.y + 35;
-    const barHeight = 24;
-
-    drawLabel(context, title, box.x, box.y + 10, {
-      color: colors.heading,
-      size: 12,
-      weight: 700,
-    });
-    drawLabel(context, "sum = 0", box.x + box.width, box.y + 10, {
-      align: "right",
-      color: colors.teal,
-      size: 12,
-      weight: 700,
-    });
-
-    let positiveOffset = 0;
-    let negativeOffset = 0;
-    contributions.forEach((item) => {
-      const segmentWidth = Math.abs(item.value) / scaleTotal * halfWidth;
-      const isPositive = item.value >= 0;
-      const x = isPositive
-        ? centerX + positiveOffset
-        : centerX - negativeOffset - segmentWidth;
-      if (segmentWidth > .5) {
-        context.fillStyle = item.color;
-        context.globalAlpha = .78;
-        context.fillRect(x, barY, segmentWidth, barHeight);
-        context.globalAlpha = 1;
-        context.strokeStyle = item.color;
-        context.lineWidth = 1.1;
-        context.strokeRect(x + .5, barY + .5, Math.max(0, segmentWidth - 1), barHeight - 1);
-      } else {
-        context.beginPath();
-        context.arc(centerX, barY + barHeight / 2, 2.5, 0, Math.PI * 2);
-        context.fillStyle = item.color;
-        context.fill();
-      }
-      if (segmentWidth >= 24) {
-        drawLabel(context, item.label, x + segmentWidth / 2, barY + barHeight / 2 + 1, {
-          align: "center",
-          baseline: "middle",
-          color: colors.white,
-          size: 11,
-          weight: 700,
-        });
-      }
-      if (isPositive) positiveOffset += segmentWidth;
-      else negativeOffset += segmentWidth;
-    });
-
-    context.beginPath();
-    context.moveTo(centerX, barY - 6);
-    context.lineTo(centerX, barY + barHeight + 6);
-    context.strokeStyle = colors.heading;
-    context.lineWidth = 1.3;
-    context.stroke();
-    drawLabel(context, "negative", centerX - halfWidth, barY + barHeight + 18, {
-      color: colors.muted,
-      size: 10,
-    });
-    drawLabel(context, "positive", centerX + halfWidth, barY + barHeight + 18, {
-      align: "right",
-      color: colors.muted,
-      size: 10,
-    });
-  };
-
   const drawInverse = () => {
     if (!inverseCanvas) return;
     const rectangle = inverseCanvas.getBoundingClientRect();
@@ -1144,7 +1098,7 @@
     ];
 
     const sourceHeaderX = compact ? width * .21 : width * .235;
-    const responseHeaderX = compact ? width * .80 : width * .765;
+    const responseHeaderX = compact ? width * .77 : width * .765;
     const headerArrowStart = compact ? width * .37 : width * .38;
     const headerArrowEnd = compact ? width * .57 : width * .60;
     drawLabel(context, `source Φ${selectedInverseAngular},${selectedInverseRadial}`, sourceHeaderX, 27, {
@@ -1161,7 +1115,7 @@
     drawLabel(context, "K", (headerArrowStart + headerArrowEnd) / 2, 15, {
       align: "center",
       color: colors.accent,
-      size: compact ? 16 : 18,
+      size: 16,
       weight: 700,
     });
     drawLabel(context, "response v = KΦ", responseHeaderX, 27, {
@@ -1180,9 +1134,9 @@
     const axisLabelY = legendBox.y - 10;
     const plot = {
       x: compact ? 34 : 46,
-      y: compact ? 67 : 68,
-      width: width - (compact ? 60 : 154),
-      height: axisLabelY - 23 - (compact ? 67 : 68),
+      y: compact ? 82 : 68,
+      width: width - (compact ? 120 : 190),
+      height: axisLabelY - 23 - (compact ? 82 : 68),
     };
     const sampleCount = 240;
     const componentSamples = weights.map((weight, index) => {
@@ -1203,7 +1157,7 @@
     let maximumValue = 0;
     for (let step = 0; step <= sampleCount; step += 1) {
       const value = componentSamples.reduce((sum, samples) => sum + samples[step], 0);
-      sumSamples.push(step === sampleCount ? 0 : value);
+      sumSamples.push(value);
       componentSamples.forEach((samples) => {
         minimumValue = Math.min(minimumValue, samples[step]);
         maximumValue = Math.max(maximumValue, samples[step]);
@@ -1260,34 +1214,42 @@
     context.stroke();
 
     const endpointX = plot.x + plot.width;
+    const endpointValue = sumSamples[sampleCount];
+    const endpointY = mapY(endpointValue);
     context.beginPath();
-    context.arc(endpointX, zeroY, 4.5, 0, Math.PI * 2);
+    context.arc(endpointX, endpointY, 4.5, 0, Math.PI * 2);
     context.fillStyle = colors.white;
     context.fill();
     context.strokeStyle = colors.accent;
     context.lineWidth = 2.1;
     context.stroke();
     context.beginPath();
-    context.moveTo(endpointX - 34, zeroY);
-    context.lineTo(Math.min(width - 16, endpointX + 52), zeroY);
+    context.moveTo(endpointX - 34, endpointY);
+    context.lineTo(Math.min(width - 16, endpointX + 52), endpointY);
     context.strokeStyle = colors.accent;
     context.lineWidth = 2;
     context.stroke();
 
-    drawLabel(context, "centre", plot.x, axisLabelY, {
+    if (compact) {
+      drawLabel(context, "radial slice at θ = 0", plot.x, plot.y - 22, {
+        color: colors.muted,
+        size: 13,
+      });
+    }
+    drawLabel(context, compact ? "centre" : "radial slice at θ = 0 · centre", plot.x, axisLabelY, {
       color: colors.muted,
-      size: compact ? 16 : 17,
+      size: compact ? 13 : 17,
     });
     drawLabel(context, "boundary r = 1", endpointX, axisLabelY, {
       align: compact ? "right" : "center",
       color: colors.heading,
-      size: compact ? 16 : 17,
+      size: compact ? 13 : 17,
       weight: 700,
     });
-    drawLabel(context, "hits zero", Math.min(width - 14, endpointX + 58), zeroY - 22, {
-      align: "right",
+    drawLabel(context, "value = 0", endpointX + 12, endpointY - 22, {
+      align: "left",
       color: colors.accent,
-      size: compact ? 16 : 17,
+      size: compact ? 13 : 15,
       weight: 700,
     });
 
@@ -1321,16 +1283,16 @@
         weight: index === legendItems.length - 1 ? 700 : 400,
       });
     });
-    drawLabel(context, "arrives flat", Math.min(width - 14, endpointX + 58), zeroY + 25, {
-      align: "right",
+    drawLabel(context, "slope = 0", endpointX + 12, endpointY + 25, {
+      align: "left",
       color: colors.accent,
-      size: compact ? 16 : 17,
+      size: compact ? 13 : 15,
       weight: 700,
     });
 
     inverseCanvas.setAttribute(
       "aria-label",
-      `For source mode ell ${selectedInverseAngular}, radial index ${selectedInverseRadial}, the compatible inverse combines radial indices ${selectedInverseRadial - 1}, ${selectedInverseRadial}, and ${selectedInverseRadial + 1}. The three colored radial profiles sum to the black response, which reaches value zero with slope zero at the boundary.`,
+      `Exact algebra on the radial slice theta equals zero. For source mode ell ${selectedInverseAngular}, radial index ${selectedInverseRadial}, the compatible inverse combines radial indices ${selectedInverseRadial - 1}, ${selectedInverseRadial}, and ${selectedInverseRadial + 1}. The exact balances A plus B plus C equals zero and A beta s minus one plus B beta s plus C beta s plus one equals zero make the black response reach value zero with slope zero at the boundary.`,
     );
   };
 
@@ -1338,9 +1300,21 @@
     selectedInverseAngular = clamp(Math.round(Number(inverseAngularMode?.value || 1)), 0, 3);
     selectedInverseRadial = clamp(Math.round(Number(inverseRadialMode?.value || 1)), 1, 4);
     const D = 10 * selectedInverseAngular + 2 * selectedInverseRadial;
+    const weights = [
+      1 / (4 * D * (D + 1)),
+      -1 / (2 * D * (D + 2)),
+      1 / (4 * (D + 1) * (D + 2)),
+    ];
+    const beta = (radial) => 10 * selectedInverseAngular
+      + 2 * radial * (radial + 10 * selectedInverseAngular + 1);
+    const valueBalance = weights.reduce((sum, value) => sum + value, 0);
+    const slopeBalance = weights.reduce(
+      (sum, value, index) => sum + value * beta(selectedInverseRadial + index - 1),
+      0,
+    );
     setMath(inverseAngularModeValue, `\\ell=${selectedInverseAngular}`);
     setMath(inverseRadialModeValue, `s=${selectedInverseRadial}`);
-    if (inverseStatus) inverseStatus.textContent = `Here D = ${D}. The three weighted profiles cancel exactly at r = 1: their response has value 0 and radial derivative 0.`;
+    if (inverseStatus) inverseStatus.textContent = `Exact algebra at D = ${D}: A + B + C = ${Math.abs(valueBalance) < 1e-14 ? "0" : valueBalance.toExponential(2)}, and Aβₛ₋₁ + Bβₛ + Cβₛ₊₁ = ${Math.abs(slopeBalance) < 1e-14 ? "0" : slopeBalance.toExponential(2)}.`;
     drawInverse();
   };
   if (inverseAngularMode) inverseAngularMode.addEventListener("change", updateInverse);
@@ -1354,10 +1328,10 @@
   const tailStatus = document.getElementById("tailStatus");
   const tailStages = Object.freeze([
     Object.freeze({ label: "finite core", status: "The finite matrix contains 2,440 field coefficients and 31 shape-and-frequency coefficients." }),
-    Object.freeze({ label: "omitted equations", status: "Every equation just outside those finite blocks that can be reached from the stored centre is listed." }),
-    Object.freeze({ label: "nearby tail", status: "Every nearby coefficient that can interact with a finite block is bounded explicitly." }),
-    Object.freeze({ label: "remote tail", status: "A decreasing formula covers every larger angular, radial, and shape index." }),
-    Object.freeze({ label: "all bounds combined", status: "An exact-fraction checker combines the finite core and both tail regions." }),
+    Object.freeze({ label: "checked outer equations", status: "Equation rows reached by the finite centre are enumerated separately from the unknown blocks." }),
+    Object.freeze({ label: "nearby interaction band", status: "Every nearby coefficient that can couple to the stored centre is bounded explicitly; this band meets the remote estimate." }),
+    Object.freeze({ label: "remote analytic tail", status: "Decreasing field and shape estimates cover every larger index, beginning where the nearby band ends." }),
+    Object.freeze({ label: "all bounds combined", status: "An exact-fraction checker combines the finite core, reached equations, nearby enumeration, and analytic tails into Y, Z, C₂ and C₃." }),
   ]);
   let selectedTailStage = 0;
 
@@ -1382,6 +1356,12 @@
     const gHeight = diagram.height * .48;
     const pTop = diagram.y + diagram.height * .72;
     const pHeight = Math.max(30, diagram.height * .13);
+
+    drawLabel(context, "index regions schematic · not to scale", diagram.x, diagram.y + 10, {
+      color: colors.muted,
+      size: compact ? 11 : 13,
+      weight: 700,
+    });
 
     drawLabel(context, "g array", diagram.x, gTop + 18, {
       color: colors.heading,
@@ -1460,10 +1440,16 @@
       context.strokeRect(omittedX + .5, pTop + .5, omittedWidth - 1, pHeight - 1);
       context.strokeRect(finiteG.x + .5, gTop - 12.5, finiteG.width + omittedWidth - 1, 12);
       context.setLineDash([]);
-      drawLabel(context, "reached equations", finiteG.x, gTop - 19, {
+      drawLabel(context, "reached equations", finiteG.x + 6, gTop - 6.5, {
+        baseline: "middle",
         color: colors.accent,
-        size: 14,
+        size: compact ? 9 : 11,
         weight: 700,
+      });
+      drawLabel(context, "rows ≠ unknowns", omittedX + omittedWidth / 2, pTop + pHeight + 18, {
+        align: "center",
+        color: colors.accent,
+        size: compact ? 10 : 12,
       });
     }
     if (selectedTailStage >= 2) {
@@ -1480,6 +1466,16 @@
         color: colors.gold,
         size: 14,
         weight: 700,
+      });
+      drawArrow(context, finiteG.x + finiteG.width * .72, gTop + gHeight * .28, nearbyX + nearbyWidth * .58, gTop + gHeight * .28, {
+        color: colors.gold,
+        width: 1.4,
+        head: 5,
+      });
+      drawArrow(context, finiteP.x + finiteP.width * .72, pTop + pHeight * .50, nearbyX + nearbyWidth * .58, pTop + pHeight * .50, {
+        color: colors.gold,
+        width: 1.4,
+        head: 5,
       });
     }
     if (selectedTailStage >= 3) {
@@ -1499,6 +1495,12 @@
         baseline: "middle",
         color: colors.blue,
         size: 14,
+        weight: 700,
+      });
+      drawLabel(context, "K-mode bound ~ D⁻²", remoteX + remoteWidth / 2, gTop + gHeight + 18, {
+        align: "center",
+        color: colors.blue,
+        size: compact ? 10 : 12,
         weight: 700,
       });
     }
@@ -1536,7 +1538,7 @@
     }
     tailCanvas.setAttribute(
       "aria-label",
-      `Certificate layer ${selectedTailStage + 1} of 5: ${tailStages[selectedTailStage].label}. The two-dimensional field array g and the one-dimensional shape-and-frequency list p are shown separately. ${tailStages[selectedTailStage].status}`,
+      `Certificate-structure schematic, not to scale. Layer ${selectedTailStage + 1} of 5: ${tailStages[selectedTailStage].label}. The two-dimensional field array g and the one-dimensional shape-and-frequency list p are shown separately. ${tailStages[selectedTailStage].status} There is no unchecked gap between the explicitly enumerated near region and the remote decreasing bound.`,
     );
   };
 
@@ -1552,8 +1554,8 @@
   requestAnimationFrame(updateTail);
 
   const certificateCanvas = document.getElementById("certificateCanvas");
-  const certificateRadius = document.getElementById("certificateRadius");
-  const certificateRadiusValue = document.getElementById("certificateRadiusValue");
+  const certificateView = document.getElementById("certificateView");
+  const certificateViewValue = document.getElementById("certificateViewValue");
   const certificateValue = document.getElementById("certificateValue");
   const certificateDerivative = document.getElementById("certificateDerivative");
   const certificateIteration = document.getElementById("certificateIteration");
@@ -1562,8 +1564,10 @@
   const certificatePlayIcon = document.getElementById("certificatePlayIcon");
   const certificatePlayLabel = document.getElementById("certificatePlayLabel");
   const certificateBounds = Object.freeze({ Y: 1.59e-10, Z: .621, C2: 122, C3: .012 });
+  const certificateRadius = 1e-6;
   const certificateMaximumIteration = 8;
-  let selectedMicroRadius = 1;
+  const certificateReducedMotionQuery = window.matchMedia?.("(prefers-reduced-motion: reduce)") || null;
+  let selectedCertificateView = "radius";
   let certificateIterationProgress = 0;
   let certificateAnimationFrame = null;
   let certificateAnimationStart = null;
@@ -1572,346 +1576,201 @@
     + (certificateBounds.Z - 1) * value
     + certificateBounds.C2 * value * value
     + certificateBounds.C3 * value * value * value;
-  const radiiDerivative = (value) => certificateBounds.Z - 1
+  const contractionFactor = (value) => certificateBounds.Z
     + 2 * certificateBounds.C2 * value
     + 3 * certificateBounds.C3 * value * value;
-  const contractionFactor = (value) => 1 + radiiDerivative(value);
   const imageRadiusBound = (value) => certificateBounds.Y
     + certificateBounds.Z * value
     + certificateBounds.C2 * value * value
     + certificateBounds.C3 * value * value * value;
 
-  const rationalAdd = (left, right) => ({
-    numerator: left.numerator * right.denominator + right.numerator * left.denominator,
-    denominator: left.denominator * right.denominator,
-  });
-  const rationalMultiply = (left, right) => ({
-    numerator: left.numerator * right.numerator,
-    denominator: left.denominator * right.denominator,
-  });
-  const exactCertificateSigns = (microThousandths) => {
-    const t = { numerator: BigInt(microThousandths), denominator: 1000000000n };
-    const square = rationalMultiply(t, t);
-    const cube = rationalMultiply(square, t);
-    const value = [
-      { numerator: 159n, denominator: 1000000000000n },
-      rationalMultiply({ numerator: -379n, denominator: 1000n }, t),
-      rationalMultiply({ numerator: 122n, denominator: 1n }, square),
-      rationalMultiply({ numerator: 3n, denominator: 250n }, cube),
-    ].reduce(rationalAdd);
-    const derivative = [
-      { numerator: -379n, denominator: 1000n },
-      rationalMultiply({ numerator: 244n, denominator: 1n }, t),
-      rationalMultiply({ numerator: 9n, denominator: 250n }, square),
-    ].reduce(rationalAdd);
-    return { value: value.numerator < 0n, derivative: derivative.numerator < 0n };
-  };
-
   const currentCertificateData = () => {
-    const microThousandths = Math.round(selectedMicroRadius * 1000);
-    const radius = microThousandths * 1e-9;
-    const signs = exactCertificateSigns(microThousandths);
-    const q = contractionFactor(radius);
-    const mappedRadius = imageRadiusBound(radius);
+    const q = contractionFactor(certificateRadius);
+    const mappedRadius = imageRadiusBound(certificateRadius);
     return {
-      microThousandths,
-      radius,
-      signs,
+      radius: certificateRadius,
       q,
       mappedRadius,
-      fixedPointBound: q < 1 ? certificateBounds.Y / (1 - q) : Number.POSITIVE_INFINITY,
-      pass: signs.value && signs.derivative,
+      enclosureRatio: mappedRadius / certificateRadius,
+      fixedPointBound: certificateBounds.Y / (1 - q),
+      radiiValue: radiiPolynomial(certificateRadius),
     };
   };
 
-  const orbitPoint = (targetX, targetY, ballRadius, q, step) => {
-    const distance = ballRadius * .62 * q ** step;
-    const angle = -.35 + .72 * step;
-    return {
-      x: targetX + distance * Math.cos(angle),
-      y: targetY - distance * Math.sin(angle),
+  const drawRadiiCertificate = (context, width, height, data) => {
+    const compact = width < 520;
+    const plot = {
+      x: compact ? 48 : 66,
+      y: compact ? 72 : 76,
+      width: width - (compact ? 66 : 96),
+      height: height - (compact ? 154 : 150),
     };
-  };
+    const logMinimum = -10;
+    const logMaximum = Math.log10(2e-6);
+    const valueMinimum = -.45;
+    const valueMaximum = 1.30;
+    const mapX = (value) => plot.x
+      + (Math.log10(value) - logMinimum) / (logMaximum - logMinimum) * plot.width;
+    const mapY = (value) => plot.y
+      + (valueMaximum - clamp(value, valueMinimum, valueMaximum))
+      / (valueMaximum - valueMinimum) * plot.height;
+    const zeroY = mapY(0);
+    const passingStart = 4.20e-10;
 
-  const drawIterationBall = (context, area, data) => {
-    const compact = area.compact;
-    const centerX = compact ? area.width / 2 : area.width * .27;
-    const centerY = compact ? area.height * .275 : area.height * .53;
-    const ballRadius = Math.min(
-      compact ? area.width * .225 : area.width * .185,
-      compact ? area.height * .19 : area.height * .34,
-    );
-    const mappedRatio = data.radius > 0 ? data.mappedRadius / data.radius : Number.POSITIVE_INFINITY;
-    const mappedScreenRadius = ballRadius * Math.min(mappedRatio, 1.17);
-
-    drawLabel(context, "1 · stays inside the chosen ball", centerX, compact ? 18 : 24, {
+    drawLabel(context, "Rigorous certificate · two normalized margins", width / 2, 27, {
       align: "center",
-      color: data.signs.value ? colors.teal : colors.accent,
-      size: compact ? 11 : 12,
-      weight: 700,
-    });
-
-    context.beginPath();
-    context.arc(centerX, centerY, ballRadius, 0, Math.PI * 2);
-    context.fillStyle = colors.accentLight;
-    context.fill();
-    context.strokeStyle = colors.heading;
-    context.lineWidth = 1.6;
-    context.stroke();
-
-    context.beginPath();
-    context.arc(centerX, centerY, mappedScreenRadius, 0, Math.PI * 2);
-    context.fillStyle = data.signs.value ? colors.tealLight : "rgba(160, 0, 0, .06)";
-    context.fill();
-    context.strokeStyle = data.signs.value ? colors.teal : colors.accent;
-    context.lineWidth = 1.6;
-    if (!data.signs.value) context.setLineDash([5, 4]);
-    context.stroke();
-    context.setLineDash([]);
-
-    drawLabel(context, "Bᵣ(x°)", centerX - ballRadius * .72, centerY - ballRadius * .71, {
       color: colors.heading,
-      size: 11,
+      size: compact ? 13 : 15,
       weight: 700,
     });
-    drawLabel(
-      context,
-      data.signs.value
-        ? "every T(x) lands in the teal disk"
-        : "the bound for T(x) reaches outside",
-      centerX,
-      centerY + ballRadius + 23,
-      {
-        align: "center",
-        color: data.signs.value ? colors.teal : colors.accent,
-        size: compact ? 10 : 11,
-      },
-    );
-
-    if (data.pass) {
-      const fixedRatio = data.radius > 0 ? data.fixedPointBound / data.radius : 1;
-      const coreRadius = clamp(ballRadius * fixedRatio, 8, ballRadius * .72);
-      const fixedPointX = centerX + coreRadius * .42;
-      const fixedPointY = centerY - coreRadius * .25;
-      context.beginPath();
-      context.arc(centerX, centerY, coreRadius, 0, Math.PI * 2);
-      context.fillStyle = "rgba(160, 0, 0, .10)";
-      context.fill();
-      context.strokeStyle = colors.accent;
-      context.lineWidth = 1;
-      context.setLineDash([3, 3]);
-      context.stroke();
-      context.setLineDash([]);
-
-      context.strokeStyle = colors.heading;
-      context.lineWidth = 1.2;
-      context.beginPath();
-      context.moveTo(centerX - 4, centerY);
-      context.lineTo(centerX + 4, centerY);
-      context.moveTo(centerX, centerY - 4);
-      context.lineTo(centerX, centerY + 4);
-      context.stroke();
-      drawLabel(context, "x°", centerX - 7, centerY + 15, {
-        align: "right",
-        color: colors.heading,
-        size: 11,
-        weight: 700,
-      });
-      context.beginPath();
-      context.arc(fixedPointX, fixedPointY, 2.8, 0, Math.PI * 2);
-      context.fillStyle = colors.accent;
-      context.fill();
-      drawLabel(context, "x*", fixedPointX + 6, fixedPointY - 5, {
-        color: colors.accent,
-        size: 11,
-        weight: 700,
-      });
-
-      const progress = clamp(certificateIterationProgress, 0, certificateMaximumIteration);
-      const completeSteps = Math.floor(progress);
-      const partial = progress - completeSteps;
-      const points = [];
-      for (let step = 0; step <= completeSteps; step += 1) {
-        points.push(orbitPoint(fixedPointX, fixedPointY, ballRadius, data.q, step));
-      }
-      if (partial > 0 && completeSteps < certificateMaximumIteration) {
-        const from = orbitPoint(fixedPointX, fixedPointY, ballRadius, data.q, completeSteps);
-        const to = orbitPoint(fixedPointX, fixedPointY, ballRadius, data.q, completeSteps + 1);
-        points.push({
-          x: mix(from.x, to.x, partial),
-          y: mix(from.y, to.y, partial),
-          partial: true,
-        });
-      }
-
-      if (points.length > 1) {
-        context.beginPath();
-        points.forEach((point, index) => {
-          if (index === 0) context.moveTo(point.x, point.y);
-          else context.lineTo(point.x, point.y);
-        });
-        context.strokeStyle = colors.accent;
-        context.lineWidth = 1.7;
-        context.stroke();
-      }
-      points.forEach((point, index) => {
-        context.beginPath();
-        context.arc(point.x, point.y, index === points.length - 1 ? 4.2 : 2.7, 0, Math.PI * 2);
-        context.fillStyle = index === 0 ? colors.heading : colors.accent;
-        context.fill();
-      });
-      const initialPoint = orbitPoint(fixedPointX, fixedPointY, ballRadius, data.q, 0);
-      drawLabel(context, "x₀", initialPoint.x + 8, initialPoint.y - 7, {
-        color: colors.heading,
-        size: 11,
-        weight: 700,
-      });
-      if (points.length > 1) {
-        const current = points[points.length - 1];
-        const shownStep = Math.min(certificateMaximumIteration, Math.ceil(progress));
-        drawLabel(context, "x" + String(shownStep), current.x + 8, current.y - 7, {
-          color: colors.accent,
-          size: 11,
-          weight: 700,
-        });
-      }
-      drawLabel(context, "certified x* enclosure · enlarged", centerX, centerY + coreRadius + 14, {
-        align: "center",
-        color: colors.accent,
-        size: compact ? 10 : 11,
-      });
-    }
-  };
-
-  const drawConvergencePlot = (context, area, data) => {
-    const compact = area.compact;
-    const plot = compact
-      ? { x: 48, y: area.height * .64, width: area.width - 68, height: area.height * .22 }
-      : { x: area.width * .58, y: area.height * .23, width: area.width * .36, height: area.height * .54 };
-    const titleY = compact ? plot.y - 24 : area.height * .09;
-    drawLabel(context, "2 · distances shrink", plot.x + plot.width / 2, titleY, {
+    drawLabel(context, "both must lie below zero", width / 2, 48, {
       align: "center",
-      color: data.signs.derivative ? colors.teal : colors.accent,
-      size: compact ? 11 : 12,
+      color: colors.muted,
+      size: compact ? 11 : 13,
+    });
+
+    context.fillStyle = "rgba(7, 87, 96, .08)";
+    context.fillRect(mapX(passingStart), zeroY, plot.x + plot.width - mapX(passingStart), plot.y + plot.height - zeroY);
+    drawLabel(context, "both tests < 0", mapX(passingStart) + 7, plot.y + plot.height - 9, {
+      color: colors.teal,
+      size: compact ? 10 : 12,
       weight: 700,
     });
 
-    const mapX = (step) => plot.x + step / certificateMaximumIteration * plot.width;
-    const mapY = (value) => plot.y + (1 - clamp(value, 0, 1)) * plot.height;
-    [0, .5, 1].forEach((value) => {
-      const y = mapY(value);
+    [-.4, 0, .4, .8, 1.2].forEach((tick) => {
+      const y = mapY(tick);
       context.beginPath();
       context.moveTo(plot.x, y);
       context.lineTo(plot.x + plot.width, y);
-      context.strokeStyle = value === 0 ? colors.ruleDark : colors.rule;
-      context.lineWidth = 1;
+      context.strokeStyle = tick === 0 ? colors.ruleDark : colors.rule;
+      context.lineWidth = tick === 0 ? 1.5 : 1;
       context.stroke();
-      drawLabel(context, value.toFixed(1), plot.x - 8, y, {
+      drawLabel(context, tick.toFixed(1), plot.x - 7, y + 1, {
         align: "right",
         baseline: "middle",
+        color: tick === 0 ? colors.heading : colors.muted,
         size: 10,
       });
     });
-    for (let step = 0; step <= certificateMaximumIteration; step += 2) {
-      const x = mapX(step);
-      drawLabel(context, String(step), x, plot.y + plot.height + 18, {
-        align: "center",
+
+    [
+      [1e-10, "10⁻¹⁰"],
+      [1e-9, "10⁻⁹"],
+      [1e-8, "10⁻⁸"],
+      [1e-7, "10⁻⁷"],
+      [2e-6, "2×10⁻⁶"],
+    ].forEach(([value, label], index, ticks) => {
+      const x = mapX(value);
+      context.beginPath();
+      context.moveTo(x, plot.y + plot.height);
+      context.lineTo(x, plot.y + plot.height + 5);
+      context.strokeStyle = colors.ruleDark;
+      context.lineWidth = 1;
+      context.stroke();
+      drawLabel(context, label, x, plot.y + plot.height + 18, {
+        align: index === ticks.length - 1 ? "right" : "center",
+        color: colors.muted,
         size: 10,
       });
-    }
+    });
 
+    const drawMargin = (valueAt, color, dashed = false) => {
+      context.beginPath();
+      const samples = 180;
+      for (let index = 0; index <= samples; index += 1) {
+        const logarithm = mix(logMinimum, logMaximum, index / samples);
+        const radius = 10 ** logarithm;
+        const x = mapX(radius);
+        const y = mapY(valueAt(radius));
+        if (index === 0) context.moveTo(x, y);
+        else context.lineTo(x, y);
+      }
+      context.strokeStyle = color;
+      context.lineWidth = 2.2;
+      if (dashed) context.setLineDash([6, 4]);
+      context.stroke();
+      context.setLineDash([]);
+    };
+    drawMargin((radius) => radiiPolynomial(radius) / radius, colors.accent);
+    drawMargin((radius) => contractionFactor(radius) - 1, colors.teal, true);
+
+    const chosenX = mapX(certificateRadius);
     context.beginPath();
-    for (let step = 0; step <= certificateMaximumIteration * 20; step += 1) {
-      const continuousStep = step / 20;
-      const x = mapX(continuousStep);
-      const y = mapY(data.q ** continuousStep);
-      if (step === 0) context.moveTo(x, y);
-      else context.lineTo(x, y);
-    }
-    context.strokeStyle = data.signs.derivative ? colors.teal : colors.accent;
-    context.lineWidth = 2.2;
+    context.moveTo(chosenX, plot.y - 4);
+    context.lineTo(chosenX, plot.y + plot.height);
+    context.strokeStyle = colors.heading;
+    context.lineWidth = 1.4;
+    context.setLineDash([3, 3]);
     context.stroke();
-
-    const progress = clamp(certificateIterationProgress, 0, certificateMaximumIteration);
-    const markerX = mapX(progress);
-    const markerY = mapY(data.q ** progress);
+    context.setLineDash([]);
     context.beginPath();
-    context.arc(markerX, markerY, 4.2, 0, Math.PI * 2);
+    context.arc(chosenX, mapY(data.radiiValue / certificateRadius), 4, 0, Math.PI * 2);
     context.fillStyle = colors.white;
     context.fill();
     context.strokeStyle = colors.accent;
-    context.lineWidth = 1.8;
+    context.lineWidth = 2;
     context.stroke();
-
-    drawLabel(context, "relative error bound qⁿ", plot.x, plot.y - 10, {
+    context.beginPath();
+    context.arc(chosenX, mapY(data.q - 1), 4, 0, Math.PI * 2);
+    context.fillStyle = colors.white;
+    context.fill();
+    context.strokeStyle = colors.teal;
+    context.lineWidth = 2;
+    context.stroke();
+    drawLabel(context, "chosen r = 10⁻⁶", chosenX - 6, plot.y + 14, {
+      align: "right",
       color: colors.heading,
-      size: 11,
-    });
-    drawLabel(context, "iteration n", plot.x + plot.width, plot.y + plot.height + 18, {
-      align: "right",
-      size: 10,
-    });
-    drawLabel(context, "q ≤ " + data.q.toFixed(6), plot.x + plot.width, plot.y + 14, {
-      align: "right",
-      color: data.signs.derivative ? colors.teal : colors.accent,
-      size: 11,
+      size: compact ? 10 : 12,
       weight: 700,
     });
-    const explanation = data.pass
-      ? "both tests pass: the orbit stays inside and converges"
-      : "shrinking alone is not enough if the chosen ball is too small";
-    drawLabel(context, explanation, compact ? area.width / 2 : plot.x + plot.width / 2, area.height - 14, {
-      align: "center",
-      color: data.pass ? colors.teal : colors.accent,
-      size: compact ? 10 : 11,
+
+    const legendY = height - 22;
+    context.beginPath();
+    context.moveTo(plot.x, legendY);
+    context.lineTo(plot.x + 24, legendY);
+    context.strokeStyle = colors.accent;
+    context.lineWidth = 2.2;
+    context.stroke();
+    drawLabel(context, "ℛ(t)/t", plot.x + 31, legendY + 1, {
+      baseline: "middle",
+      color: colors.accent,
+      size: compact ? 11 : 13,
+      weight: 700,
+    });
+    const secondLegendX = compact ? plot.x + plot.width * .53 : plot.x + plot.width * .42;
+    context.beginPath();
+    context.moveTo(secondLegendX, legendY);
+    context.lineTo(secondLegendX + 24, legendY);
+    context.strokeStyle = colors.teal;
+    context.lineWidth = 2.2;
+    context.setLineDash([6, 4]);
+    context.stroke();
+    context.setLineDash([]);
+    drawLabel(context, "q(t) − 1", secondLegendX + 31, legendY + 1, {
+      baseline: "middle",
+      color: colors.teal,
+      size: compact ? 11 : 13,
+      weight: 700,
     });
   };
 
-  const drawSimpleCertificate = (context, area, data) => {
-    const compact = area.compact;
-    const equationX = compact ? area.width / 2 : area.width * .115;
-    const equationAlign = compact ? "center" : "left";
-    const firstEquationY = compact ? 32 : area.height * .39;
-    const secondEquationY = compact ? 86 : area.height * .57;
-    const selfMapColor = data.signs.value ? colors.teal : colors.accent;
-    const contractionColor = data.signs.derivative ? colors.teal : colors.accent;
-
-    drawLabel(context, data.signs.value ? "T(Bᵣ(x°)) ⊂ Bᵣ(x°)" : "self-map inclusion not certified", equationX, firstEquationY, {
-      align: equationAlign,
-      color: selfMapColor,
-      size: compact ? 17 : 20,
-      weight: 700,
-    });
-    drawLabel(
-      context,
-      data.signs.value ? "the whole ball maps back inside" : "this ball is not mapped inside itself",
-      equationX,
-      firstEquationY + 26,
-      { align: equationAlign, color: data.signs.value ? colors.muted : colors.accent, size: compact ? 16 : 17 },
-    );
-    drawLabel(context, data.signs.derivative ? "‖T(x)−T(y)‖ ≤ 0.622 ‖x−y‖" : "contraction not certified", equationX, secondEquationY, {
-      align: equationAlign,
-      color: contractionColor,
-      size: compact ? 17 : 20,
-      weight: 700,
-    });
-    drawLabel(
-      context,
-      data.signs.derivative ? "each iteration shortens every distance" : "distances are not certified to shrink",
-      equationX,
-      secondEquationY + 26,
-      { align: equationAlign, color: data.signs.derivative ? colors.muted : colors.accent, size: compact ? 16 : 17 },
-    );
-
+  const drawIterationCertificate = (context, width, height, data) => {
+    const compact = width < 520;
     const center = compact
-      ? { x: area.width / 2, y: area.height * .67 }
-      : { x: area.width * .685, y: area.height * .53 };
+      ? { x: width / 2, y: height * .27 }
+      : { x: width * .27, y: height * .52 };
     const ballRadius = Math.min(
-      compact ? area.width * .27 : area.width * .18,
-      compact ? area.height * .23 : area.height * .32,
+      compact ? width * .27 : width * .19,
+      compact ? height * .18 : height * .30,
     );
-    const mappedRatio = data.radius > 0 ? data.mappedRadius / data.radius : Number.POSITIVE_INFINITY;
-    const imageRadius = ballRadius * Math.min(mappedRatio, 1.14);
+    const enclosureRadius = ballRadius * data.enclosureRatio;
+
+    drawLabel(context, "Rigorous enclosure · schematic geometry", width / 2, 27, {
+      align: "center",
+      color: colors.heading,
+      size: compact ? 13 : 15,
+      weight: 700,
+    });
 
     context.beginPath();
     context.arc(center.x, center.y, ballRadius, 0, Math.PI * 2);
@@ -1922,146 +1781,166 @@
     context.stroke();
 
     context.beginPath();
-    context.arc(center.x, center.y, imageRadius, 0, Math.PI * 2);
-    context.fillStyle = data.signs.value ? "rgba(7, 87, 96, .11)" : "rgba(160, 0, 0, .06)";
+    context.arc(center.x, center.y, enclosureRadius, 0, Math.PI * 2);
+    context.fillStyle = colors.tealLight;
     context.fill();
-    context.strokeStyle = selfMapColor;
+    context.strokeStyle = colors.teal;
     context.lineWidth = 1.8;
-    if (!data.signs.value) context.setLineDash([5, 4]);
+    context.setLineDash([6, 4]);
     context.stroke();
     context.setLineDash([]);
 
-    drawLabel(context, "x = (g, p) coefficient space", center.x, center.y - ballRadius - 27, {
-      align: "center",
-      color: colors.heading,
-      size: 16,
-      weight: 700,
-    });
-    drawLabel(context, "chosen ball Bᵣ(x°)", center.x, center.y - ballRadius - 8, {
-      align: "center",
-      color: colors.muted,
-      size: 16,
-    });
-    drawLabel(
-      context,
-      data.signs.value ? "all possible T(x)" : "bound for all possible T(x)",
-      center.x,
-      center.y + imageRadius + 16,
-      { align: "center", color: selfMapColor, size: 16, weight: 700 },
-    );
-
     context.beginPath();
-    context.arc(center.x, center.y, 3.2, 0, Math.PI * 2);
-    context.fillStyle = colors.heading;
-    context.fill();
-    drawLabel(context, "x° = x₀", center.x - 8, center.y + 17, {
+    context.moveTo(center.x - 5, center.y);
+    context.lineTo(center.x + 5, center.y);
+    context.moveTo(center.x, center.y - 5);
+    context.lineTo(center.x, center.y + 5);
+    context.strokeStyle = colors.heading;
+    context.lineWidth = 1.3;
+    context.stroke();
+    drawLabel(context, "x°", center.x - 8, center.y + 18, {
       align: "right",
       color: colors.heading,
-      size: 16,
+      size: 12,
+      weight: 700,
+    });
+    drawLabel(context, "Bᵣ(x°)", center.x - ballRadius * .72, center.y - ballRadius * .73, {
+      color: colors.heading,
+      size: 12,
+      weight: 700,
+    });
+    drawLabel(context, "certified enclosure containing T(Bᵣ)", center.x, center.y + enclosureRadius + 18, {
+      align: "center",
+      color: colors.teal,
+      size: compact ? 10 : 12,
+      weight: 700,
+    });
+    drawLabel(context, "x* enclosure about x° is subpixel", center.x, center.y + ballRadius + 22, {
+      align: "center",
+      color: colors.accent,
+      size: compact ? 10 : 12,
+    });
+
+    context.beginPath();
+    context.arc(center.x, center.y, 2.2, 0, Math.PI * 2);
+    context.fillStyle = colors.accent;
+    context.fill();
+
+    const inset = compact
+      ? { x: 22, y: height * .57, width: width - 44, height: height * .35 }
+      : { x: width * .55, y: height * .18, width: width * .40, height: height * .68 };
+    context.fillStyle = "rgba(255, 255, 248, .96)";
+    context.fillRect(inset.x, inset.y, inset.width, inset.height);
+    context.strokeStyle = colors.ruleDark;
+    context.lineWidth = 1.2;
+    context.strokeRect(inset.x + .5, inset.y + .5, inset.width - 1, inset.height - 1);
+    drawLabel(context, "~600× magnified schematic inset", inset.x + inset.width / 2, inset.y + 22, {
+      align: "center",
+      color: colors.heading,
+      size: compact ? 11 : 13,
+      weight: 700,
+    });
+    drawLabel(context, "orientation and path are illustrative", inset.x + inset.width / 2, inset.y + 40, {
+      align: "center",
+      color: colors.muted,
+      size: compact ? 9 : 11,
+    });
+
+    const insetCenter = {
+      x: inset.x + inset.width * .48,
+      y: inset.y + inset.height * .58,
+    };
+    const insetRadius = Math.min(inset.width, inset.height) * .27;
+    context.beginPath();
+    context.arc(insetCenter.x, insetCenter.y, insetRadius, 0, Math.PI * 2);
+    context.fillStyle = "rgba(160, 0, 0, .07)";
+    context.fill();
+    context.strokeStyle = colors.accent;
+    context.lineWidth = 1.4;
+    context.setLineDash([4, 3]);
+    context.stroke();
+    context.setLineDash([]);
+    drawLabel(context, "‖x*−x°‖/r < 0.000420", insetCenter.x, insetCenter.y + insetRadius + 17, {
+      align: "center",
+      color: colors.accent,
+      size: compact ? 9 : 11,
       weight: 700,
     });
 
-    if (data.pass) {
-      const target = {
-        x: center.x + ballRadius * .22,
-        y: center.y - ballRadius * .16,
+    const representative = {
+      x: insetCenter.x + insetRadius * .38,
+      y: insetCenter.y - insetRadius * .25,
+    };
+    const orbitPoint = (step) => {
+      const startX = insetCenter.x - representative.x;
+      const startY = insetCenter.y - representative.y;
+      const shrink = data.q ** step;
+      const angle = step * .52;
+      return {
+        x: representative.x + shrink * (startX * Math.cos(angle) - startY * Math.sin(angle)),
+        y: representative.y + shrink * (startX * Math.sin(angle) + startY * Math.cos(angle)),
       };
-      const pointAt = (step) => {
-        const startDx = center.x - target.x;
-        const startDy = center.y - target.y;
-        const scale = data.q ** step;
-        const angle = step * .58;
-        return {
-          x: target.x + scale * (startDx * Math.cos(angle) - startDy * Math.sin(angle)),
-          y: target.y + scale * (startDx * Math.sin(angle) + startDy * Math.cos(angle)),
-        };
-      };
-      const progress = clamp(certificateIterationProgress, 0, certificateMaximumIteration);
-      const fullSteps = Math.floor(progress);
-      const points = [];
-      for (let step = 0; step <= fullSteps; step += 1) points.push(pointAt(step));
-      if (fullSteps < certificateMaximumIteration && progress > fullSteps) {
-        const from = pointAt(fullSteps);
-        const to = pointAt(fullSteps + 1);
-        const partial = progress - fullSteps;
-        points.push({ x: mix(from.x, to.x, partial), y: mix(from.y, to.y, partial) });
-      }
-      if (points.length > 1) {
-        context.beginPath();
-        points.forEach((point, index) => {
-          if (index === 0) context.moveTo(point.x, point.y);
-          else context.lineTo(point.x, point.y);
-        });
-        context.strokeStyle = colors.accent;
-        context.lineWidth = 2;
-        context.stroke();
-      }
-      points.slice(1).forEach((point, index) => {
-        context.beginPath();
-        context.arc(point.x, point.y, index === points.length - 2 ? 3.8 : 2.6, 0, Math.PI * 2);
-        context.fillStyle = colors.accent;
-        context.fill();
+    };
+    const progress = clamp(certificateIterationProgress, 0, certificateMaximumIteration);
+    const completed = Math.floor(progress);
+    const points = [];
+    for (let step = 0; step <= completed; step += 1) points.push(orbitPoint(step));
+    if (progress > completed && completed < certificateMaximumIteration) {
+      const from = orbitPoint(completed);
+      const to = orbitPoint(completed + 1);
+      points.push({
+        x: mix(from.x, to.x, progress - completed),
+        y: mix(from.y, to.y, progress - completed),
       });
-      context.beginPath();
-      context.arc(target.x, target.y, 4.2, 0, Math.PI * 2);
-      context.fillStyle = colors.white;
-      context.fill();
-      context.strokeStyle = colors.accent;
-      context.lineWidth = 2.2;
-      context.stroke();
-      drawLabel(context, "x*", target.x + 8, target.y - 8, {
-        color: colors.accent,
-        size: 16,
-        weight: 700,
-      });
-      if (points.length > 1) {
-        const current = points[points.length - 1];
-        drawLabel(context, "xₙ", current.x + 7, current.y + 15, {
-          color: colors.accent,
-          size: 16,
-          weight: 700,
-        });
-      }
     }
+    if (points.length > 1) {
+      context.beginPath();
+      points.forEach((point, index) => {
+        if (index === 0) context.moveTo(point.x, point.y);
+        else context.lineTo(point.x, point.y);
+      });
+      context.strokeStyle = colors.accent;
+      context.lineWidth = 1.8;
+      context.stroke();
+    }
+    points.forEach((point, index) => {
+      context.beginPath();
+      context.arc(point.x, point.y, index === points.length - 1 ? 3.5 : 2.2, 0, Math.PI * 2);
+      context.fillStyle = index === 0 ? colors.heading : colors.accent;
+      context.fill();
+    });
+    context.beginPath();
+    context.arc(representative.x, representative.y, 4, 0, Math.PI * 2);
+    context.fillStyle = colors.white;
+    context.fill();
+    context.strokeStyle = colors.accent;
+    context.lineWidth = 2;
+    context.stroke();
+    drawLabel(context, "representative x*", representative.x + 7, representative.y - 7, {
+      color: colors.accent,
+      size: compact ? 10 : 12,
+      weight: 700,
+    });
+    drawLabel(context, "distance bound ≤ qⁿ of the start", inset.x + inset.width / 2, inset.y + inset.height - 12, {
+      align: "center",
+      color: colors.teal,
+      size: compact ? 9 : 11,
+      weight: 700,
+    });
 
-    const iterationY = center.y + ballRadius + (compact ? 25 : 31);
-    const iterationWidth = 159;
-    let iterationX = center.x - iterationWidth / 2;
-    drawLabel(context, "repeat", iterationX, iterationY, {
-      color: colors.accent,
-      size: 16,
-      weight: 700,
-    });
-    iterationX += 54;
-    drawLabel(context, "x", iterationX, iterationY, {
-      color: colors.accent,
-      size: 20,
-      weight: 700,
-    });
-    iterationX += 11;
-    drawLabel(context, "n+1", iterationX, iterationY + 5, {
-      color: colors.accent,
-      size: 15,
-      weight: 700,
-    });
-    iterationX += 30;
-    drawLabel(context, "= T(x", iterationX, iterationY, {
-      color: colors.accent,
-      size: 20,
-      weight: 700,
-    });
-    iterationX += 49;
-    drawLabel(context, "n", iterationX, iterationY + 5, {
-      color: colors.accent,
-      size: 15,
-      weight: 700,
-    });
-    iterationX += 8;
-    drawLabel(context, ")", iterationX, iterationY, {
-      color: colors.accent,
-      size: 20,
-      weight: 700,
-    });
+    if (compact) {
+      drawArrow(context, center.x, center.y + ballRadius + 28, inset.x + inset.width * .80, inset.y - 6, {
+        color: colors.ruleDark,
+        dashed: true,
+        head: 6,
+      });
+    } else {
+      drawArrow(context, center.x + 4, center.y - 4, inset.x - 11, inset.y + inset.height * .48, {
+        color: colors.ruleDark,
+        dashed: true,
+        head: 6,
+      });
+    }
   };
 
   const drawCertificate = () => {
@@ -2071,23 +1950,14 @@
     const { context, width, height } = prepareCanvas(certificateCanvas, { maxPixelRatio: 4 });
     drawCanvasBackdrop(context, width, height);
     const data = currentCertificateData();
-    const isProofRadius = data.microThousandths === 1000;
-    const area = { width, height, compact: width < 520 };
-    drawSimpleCertificate(context, area, data);
+    if (selectedCertificateView === "radius") drawRadiiCertificate(context, width, height, data);
+    else drawIterationCertificate(context, width, height, data);
+
     certificateCanvas.setAttribute(
       "aria-label",
-      "Coefficient-space fixed-point diagram at radius "
-        + selectedMicroRadius.toFixed(3)
-        + " times ten to the minus six. "
-        + (isProofRadius ? "This is the radius used in the proof. " : "This is an exploratory nearby radius. ")
-        + "The image of the ball has radius bound "
-        + formatScientific(data.mappedRadius)
-        + ". The contraction factor is at most "
-        + data.q.toFixed(6)
-        + ". "
-        + (data.pass
-          ? "Both conditions pass. The schematic iterates follow the certified geometric distance decrease toward the unique solution of F(x) equals zero."
-          : "The selected ball is not certified by both conditions."),
+      selectedCertificateView === "radius"
+        ? "Rigorous certificate. Logarithmic radius chart of the normalized radii-polynomial margin R of t divided by t and the contraction margin q of t minus one. Both are negative at the marked proof radius ten to the minus six. The exact-fraction checker gives image enclosure ratio at most 0.621281000000012 and contraction factor at most 0.621244000000036."
+        : "Rigorous certificate shown with schematic two-dimensional geometry. The outer circle is the ball B r about x degree. A dashed teal circle is a certified enclosure containing T of the ball, with radius ratio at most 0.621281000000012; it is not the literal image set. The exact-solution enclosure has radius ratio below 0.000420 and is subpixel in the main view. A roughly six-hundred-times magnified inset shows an illustrative orbit; only the distance factor q to the n is certified.",
     );
   };
 
@@ -2099,48 +1969,45 @@
     certificateAnimationStart = null;
   };
 
-  const updateIterationReadout = (data) => {
+  const updateIterationReadout = (data, state = "ready") => {
     if (!certificateIteration) return;
-    if (!data.pass) {
-      certificateIteration.textContent = "Unavailable until both checks pass.";
+    if (selectedCertificateView === "radius") {
+      certificateIteration.textContent = "At r: R(r) ≈ −3.78719 × 10⁻⁷.";
       return;
     }
-    const step = clamp(certificateIterationProgress, 0, certificateMaximumIteration);
-    if (step === 0) {
-      certificateIteration.textContent = "Ready — repeat xₙ₊₁ = T(xₙ).";
+    if (state === "running") {
+      certificateIteration.textContent = "Running schematic orbit; certified distance bound is qⁿ.";
       return;
     }
-    const shownStep = Math.min(certificateMaximumIteration, Math.max(1, Math.floor(step)));
-    certificateIteration.textContent = "Step "
-      + String(shownStep)
-      + " of "
-      + String(certificateMaximumIteration)
-      + " — remaining distance ≤ "
-      + (data.q ** shownStep).toFixed(4)
-      + " of the start.";
+    if (state === "finished") {
+      certificateIteration.textContent = "Step 8 — distance bound ≤ "
+        + (data.q ** certificateMaximumIteration).toFixed(4)
+        + " of the start.";
+      return;
+    }
+    certificateIteration.textContent = "Ready — the inset path is schematic; the bound qⁿ is rigorous.";
   };
 
   const finishCertificateAnimation = (data) => {
     certificateAnimationFrame = null;
     certificateAnimationStart = null;
-    if (certificatePlayButton) certificatePlayButton.disabled = false;
+    if (certificatePlayButton) {
+      certificatePlayButton.disabled = false;
+      certificatePlayButton.removeAttribute("aria-disabled");
+      certificatePlayButton.removeAttribute("aria-busy");
+    }
     if (certificatePlayIcon) certificatePlayIcon.textContent = "↻";
     if (certificatePlayLabel) certificatePlayLabel.textContent = "Replay iteration";
-    updateIterationReadout(data);
+    updateIterationReadout(data, "finished");
   };
 
   const animateCertificate = (timestamp) => {
     const data = currentCertificateData();
-    if (!data.pass) {
-      stopCertificateAnimation();
-      return;
-    }
     if (certificateAnimationStart === null) certificateAnimationStart = timestamp;
     certificateIterationProgress = Math.min(
       certificateMaximumIteration,
       (timestamp - certificateAnimationStart) / 430,
     );
-    updateIterationReadout(data);
     drawCertificate();
     if (certificateIterationProgress < certificateMaximumIteration) {
       certificateAnimationFrame = requestAnimationFrame(animateCertificate);
@@ -2150,14 +2017,19 @@
   };
 
   const startCertificateAnimation = () => {
+    if (certificatePlayButton?.getAttribute("aria-disabled") === "true") return;
     const data = currentCertificateData();
-    if (!data.pass) return;
     stopCertificateAnimation();
     certificateIterationProgress = 0;
     if (certificatePlayIcon) certificatePlayIcon.textContent = "●";
     if (certificatePlayLabel) certificatePlayLabel.textContent = "Iterating…";
-    if (certificatePlayButton) certificatePlayButton.disabled = true;
-    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (certificatePlayButton) {
+      certificatePlayButton.disabled = false;
+      certificatePlayButton.setAttribute("aria-disabled", "true");
+      certificatePlayButton.setAttribute("aria-busy", "true");
+    }
+    updateIterationReadout(data, "running");
+    if (certificateReducedMotionQuery?.matches) {
       certificateIterationProgress = certificateMaximumIteration;
       drawCertificate();
       finishCertificateAnimation(data);
@@ -2169,41 +2041,38 @@
   const updateCertificate = () => {
     stopCertificateAnimation();
     certificateIterationProgress = 0;
-    selectedMicroRadius = Math.max(0, Math.min(2, Number(certificateRadius?.value || 1)));
-    const microThousandths = Math.round(selectedMicroRadius * 1000);
-    selectedMicroRadius = microThousandths / 1000;
+    selectedCertificateView = certificateView?.value === "iteration" ? "iteration" : "radius";
     const data = currentCertificateData();
-    const isProofRadius = microThousandths === 1000;
-    const selfMapRatio = data.radius > 0 ? data.mappedRadius / data.radius : Number.POSITIVE_INFINITY;
-    if (certificateRadiusValue) certificateRadiusValue.textContent = selectedMicroRadius.toFixed(3);
-    if (certificateValue) certificateValue.textContent = data.signs.value
-      ? "Pass — image radius ≤ " + selfMapRatio.toFixed(6) + "r."
-      : "Fail — the image is not contained in the ball.";
-    if (certificateDerivative) certificateDerivative.textContent = data.signs.derivative
-      ? "Pass — q ≤ " + data.q.toFixed(6) + " < 1."
-      : "Fail — distances are not certified to shrink.";
-    updateIterationReadout(data);
-    if (certificateVerdict) certificateVerdict.textContent = data.pass
-      ? (isProofRadius
-        ? "Proof radius: exactly one zero of F lies in this ball."
-        : "Both fixed-point conditions hold at this radius.")
-      : "The two fixed-point conditions do not both hold.";
-    if (certificatePlayButton) certificatePlayButton.disabled = !data.pass;
+    if (certificateViewValue) certificateViewValue.textContent = selectedCertificateView === "radius"
+      ? "why the radius works"
+      : "why iteration converges";
+    if (certificateValue) certificateValue.textContent = "Pass — enclosure/r ≤ 0.621281000000012 < 1.";
+    if (certificateDerivative) certificateDerivative.textContent = "Pass — q(r) ≤ 0.621244000000036 < 1.";
+    if (certificateVerdict) certificateVerdict.textContent = selectedCertificateView === "radius"
+      ? "Exact-fraction verdict: both strict margins are negative at r."
+      : "Banach gives one exact zero inside this validated ball.";
+    if (certificatePlayButton) {
+      certificatePlayButton.hidden = selectedCertificateView !== "iteration";
+      certificatePlayButton.disabled = false;
+      certificatePlayButton.removeAttribute("aria-disabled");
+      certificatePlayButton.removeAttribute("aria-busy");
+    }
     if (certificatePlayIcon) certificatePlayIcon.textContent = "▶";
-    if (certificatePlayLabel) certificatePlayLabel.textContent = data.pass
-      ? "Run iteration"
-      : "Choose a passing radius";
-    if (certificateRadius) certificateRadius.setAttribute(
-      "aria-valuetext",
-      selectedMicroRadius.toFixed(3)
-        + " times ten to the minus six; "
-        + (data.pass ? "self-map and contraction conditions pass" : "not certified by both conditions"),
-    );
+    if (certificatePlayLabel) certificatePlayLabel.textContent = "Run iteration";
+    updateIterationReadout(data);
     drawCertificate();
   };
 
-  if (certificateRadius) certificateRadius.addEventListener("input", updateCertificate);
+  if (certificateView) certificateView.addEventListener("change", updateCertificate);
   if (certificatePlayButton) certificatePlayButton.addEventListener("click", startCertificateAnimation);
+  certificateReducedMotionQuery?.addEventListener?.("change", (event) => {
+    if (!event.matches || certificateAnimationFrame === null) return;
+    stopCertificateAnimation();
+    certificateIterationProgress = certificateMaximumIteration;
+    const data = currentCertificateData();
+    drawCertificate();
+    finishCertificateAnimation(data);
+  });
   observeCanvas(certificateCanvas, drawCertificate);
   requestAnimationFrame(updateCertificate);
 
@@ -2247,7 +2116,7 @@
       lineWidth: 2.3,
       fill: colors.tealLight,
     });
-    drawLabel(context, "computed boundary", centerX, centerY - radius - 20, {
+    drawLabel(context, "finite numerical centre", centerX, centerY - radius - 20, {
       align: "center",
       color: colors.heading,
       size: 14,
@@ -2270,7 +2139,7 @@
     context.stroke();
 
     const inset = compact
-      ? { x: 22, y: height * .62, width: width - 44, height: height * .25 }
+      ? { x: 22, y: height * .58, width: width - 44, height: height * .34 }
       : { x: width * .56, y: height * .28, width: width * .38, height: height * .47 };
     context.fillStyle = "rgba(255, 255, 248, .92)";
     context.fillRect(inset.x, inset.y, inset.width, inset.height);
@@ -2280,7 +2149,7 @@
     drawLabel(context, "one boundary segment · greatly enlarged", inset.x + inset.width / 2, inset.y + 23, {
       align: "center",
       color: colors.heading,
-      size: 14,
+      size: compact ? 12 : 14,
       weight: 700,
     });
 
@@ -2330,19 +2199,19 @@
 
     drawLabel(context, "computed", lineLeft, lineCenterY - tubeHalfWidth - 8, {
       color: colors.accent,
-      size: 14,
+      size: compact ? 12 : 14,
       weight: 700,
     });
-    drawLabel(context, "exact stays inside tube", lineRight, lineCenterY - tubeHalfWidth - 8, {
+    drawLabel(context, "schematic candidate inside tube", lineRight, lineCenterY + tubeHalfWidth + (compact ? 16 : 18), {
       align: "right",
       color: colors.teal,
-      size: 14,
+      size: compact ? 12 : 14,
       weight: 700,
     });
-    drawLabel(context, "distance ≤ 7.13 × 10⁻¹¹", inset.x + inset.width / 2, inset.y + inset.height - 14, {
+    drawLabel(context, "distance ≤ 7.13 × 10⁻¹¹", inset.x + inset.width / 2, inset.y + inset.height - (compact ? 4 : 14), {
       align: "center",
       color: colors.heading,
-      size: 14,
+      size: compact ? 12 : 14,
       weight: 700,
     });
 
@@ -2393,7 +2262,7 @@
       size: 14,
       weight: 700,
     });
-    drawLabel(context, "final domain", domainCenter.x, domainCenter.y - radius - 20, {
+    drawLabel(context, "numerical centre map shown", domainCenter.x, domainCenter.y - radius - 20, {
       align: "center",
       color: colors.heading,
       size: 14,
@@ -2482,7 +2351,7 @@
       drawLabel(context, "φₚ*", (fromX + toX) / 2, diskCenter.y - 14, { align: "center", color: colors.accent, size: 14, weight: 700 });
     }
 
-    drawLabel(context, "Re φ′ > 0.35: each chord moves forward", width / 2, height - 18, {
+    drawLabel(context, "Re φ′ > 0.35 is certified for the whole ball", width / 2, height - 18, {
       align: "center",
       color: colors.teal,
       size: 14,
@@ -2493,7 +2362,7 @@
   const drawReconstructionSpectrum = (context, width, height) => {
     const compact = width < 520;
     const radius = Math.min(
-      compact ? width * .235 : width * .175,
+      compact ? width * .21 : width * .175,
       compact ? height * .17 : height * .30,
     );
     const circleCenter = compact
@@ -2510,7 +2379,7 @@
     context.strokeStyle = colors.heading;
     context.lineWidth = 2;
     context.stroke();
-    drawLabel(context, "linear map", circleCenter.x, circleCenter.y - radius - 20, {
+    drawLabel(context, "linear map", circleCenter.x, circleCenter.y - radius - (compact ? 5 : 20), {
       align: "center",
       color: colors.heading,
       size: 14,
@@ -2534,16 +2403,16 @@
       stroke: colors.accent,
       lineWidth: 2.5,
     });
-    drawLabel(context, "final conformal map", domainCenter.x, domainCenter.y - radius - 20, {
+    drawLabel(context, "numerical centre", domainCenter.x, domainCenter.y - radius - 24, {
       align: "center",
       color: colors.heading,
       size: 14,
       weight: 700,
     });
-    drawLabel(context, "ten-lobed boundary", domainCenter.x, domainCenter.y + 5, {
+    drawLabel(context, "exact boundary is indistinguishable at this scale", domainCenter.x, domainCenter.y - radius - 5, {
       align: "center",
       color: colors.accent,
-      size: 14,
+      size: 12,
       weight: 700,
     });
 
@@ -2590,7 +2459,7 @@
     const stage = reconstructionStages[selectedReconstructionStage];
     reconstructionCanvas.setAttribute(
       "aria-label",
-      `Geometric reconstruction check ${selectedReconstructionStage + 1} of 3: ${stage.label}. ${stage.status}`,
+      `Certified reconstruction check ${selectedReconstructionStage + 1} of 3: ${stage.label}. The plotted outline is the finite numerical centre; the exact boundary lies inside the certified enclosure and is visually indistinguishable at this scale. ${stage.status}`,
     );
   };
 
@@ -2613,14 +2482,17 @@
     pair: Object.freeze({
       label: "compare endpoints",
       status: "Schiffer reaches height one and becomes flat. Berenstein crosses height zero with unit outward slope.",
+      statusMath: "Schiffer reaches \\(u=1\\) and becomes flat. Berenstein crosses \\(u=0\\) with \\(\\partial_\\nu u=1\\).",
     }),
     height: Object.freeze({
       label: "boundary height",
       status: "The boundary levels are complementary: Schiffer fixes u = 1, while the Berenstein boundary is the zero set u = 0.",
+      statusMath: "The boundary levels are complementary: Schiffer fixes \\(u=1\\), while the Berenstein boundary is the zero set \\(u=0\\).",
     }),
     slope: Object.freeze({
       label: "outward slope",
       status: "Schiffer arrives tangentially with slope zero. Berenstein crosses the zero level transversely with outward slope one.",
+      statusMath: "Schiffer has \\(\\partial_\\nu u=0\\). Berenstein crosses transversely with \\(\\partial_\\nu u=1\\).",
     }),
   });
   let selectedBerensteinEndpointStage = "pair";
@@ -2767,7 +2639,8 @@
     }
 
     drawLabel(context, "inside", left, bottom + 17, { color: colors.muted, size: 10 });
-    drawLabel(context, "boundary", boundaryX, bottom + 17, { align: "center", color: colors.muted, size: 10 });
+    drawLabel(context, "boundary", boundaryX - 18, bottom + 17, { align: "right", color: colors.muted, size: 10 });
+    drawLabel(context, "outside", right, bottom + 17, { align: "right", color: colors.muted, size: 10 });
     drawLabel(context, schiffer ? "u = 1" : "u = 0", boundaryX - 8, mapY(boundaryValue) - 9, {
       align: "right",
       color,
@@ -2862,7 +2735,7 @@
     const stage = berensteinEndpointStages[selectedBerensteinEndpointStage];
     berensteinBoundaryCanvas.setAttribute(
       "aria-label",
-      stage.label + ". " + stage.status,
+      "Local normal-profile schematic. " + stage.label + ". " + stage.status + " The normalized profiles are not reconstructed eigenfunctions; inside means negative signed normal coordinate, the boundary is zero, and outside is positive.",
     );
   };
 
@@ -2871,7 +2744,7 @@
     selectedBerensteinEndpointStage = Object.hasOwn(berensteinEndpointStages, requested) ? requested : "pair";
     const stage = berensteinEndpointStages[selectedBerensteinEndpointStage];
     if (berensteinEndpointStageValue) berensteinEndpointStageValue.textContent = stage.label;
-    if (berensteinEndpointStatus) berensteinEndpointStatus.textContent = stage.status;
+    setInlineMathContent(berensteinEndpointStatus, stage.statusMath);
     drawBerensteinBoundary();
   };
 
@@ -2886,24 +2759,24 @@
   const berensteinFieldStatus = document.getElementById("berensteinFieldStatus");
   const berensteinFieldStages = Object.freeze({
     field: Object.freeze({
-      label: "signed field",
-      status: "Orange and blue are opposite signs of u; every dark curve between them is a zero level set.",
-      statusMath: "Orange and blue are opposite signs of \\(u\\); every dark curve between them is a zero level set.",
+      label: "signed regions",
+      status: "The certified image remains unchanged; the guide shows nine alternating sign regions, beginning and ending negative.",
+      statusMath: "The certified image remains unchanged; the guide shows nine alternating sign regions of \\(u\\), beginning and ending negative.",
     }),
     nodal: Object.freeze({
       label: "interior zero curves",
-      status: "Eight interior nodal curves separate alternating sign bands before the field reaches the outer boundary.",
-      statusMath: "Eight interior nodal curves separate alternating sign bands before the field reaches the outer boundary.",
+      status: "The certified image remains unchanged; the guide marks eight plotted interior zero curves, all strictly inside the physical boundary.",
+      statusMath: "The certified image remains unchanged; the guide marks eight plotted interior zero curves, all strictly inside the physical boundary.",
     }),
     boundary: Object.freeze({
       label: "outer nodal boundary",
-      status: "The heavy outer curve is both the physical boundary and a regular zero curve: u = 0 there and the outward slope is one.",
-      statusMath: "The heavy outer curve is both the physical boundary and a regular zero curve: \\(u=0\\) there and the outward slope is one.",
+      status: "The certified image remains unchanged; the heavy outer curve is the physical nodal boundary, outside all eight plotted interior curves.",
+      statusMath: "The certified image remains unchanged; the heavy outer curve is the physical nodal boundary, where \\(u=0\\) and \\(\\partial_\\nu u=1\\).",
     }),
     symmetry: Object.freeze({
       label: "thirteenfold symmetry",
-      status: "Thirteen equivalent sectors repeat around the domain. The certificate separately rules out central symmetry.",
-      statusMath: "Thirteen equivalent sectors repeat around the domain. The certificate separately rules out central symmetry.",
+      status: "The certified image remains unchanged; the guide shows thirteen equivalent sectors, while the certificate rules out central symmetry.",
+      statusMath: "The certified image remains unchanged; the guide shows thirteen equivalent sectors, while the certificate rules out central symmetry.",
     }),
   });
 
@@ -2924,6 +2797,7 @@
     if (!berensteinFieldGuide || berensteinFieldGuide.childElementCount) return;
     const centerX = 140;
     const centerY = 66;
+    const boundaryRadius = 54;
     const radii = [9, 15, 21, 27, 33, 39, 45, 51];
     const definitions = createSvgNode("defs");
     const marker = createSvgNode("marker", {
@@ -2940,14 +2814,14 @@
     berensteinFieldGuide.appendChild(definitions);
 
     const signLayer = createSvgNode("g", { class: "berenstein-field-layer berenstein-field-layer-sign", "data-field-layer": "field" });
-    [7, 13, 19, 25, 31, 37, 43, 49].forEach((radius, index) => {
+    [4.5, 12, 18, 24, 30, 36, 42, 48, 52.5].forEach((radius, index) => {
       signLayer.appendChild(createSvgNode("path", {
         d: polarPath(centerX, centerY, radius, 13, .008 + index * .004),
         class: "berenstein-guide-band berenstein-guide-band-" + (index % 2 ? "positive" : "negative"),
       }));
     });
     signLayer.appendChild(createSvgNode("path", {
-      d: polarPath(centerX, centerY, 54, 13, .045),
+      d: polarPath(centerX, centerY, boundaryRadius, 13, .045),
       class: "berenstein-guide-outline",
     }));
     berensteinFieldGuide.appendChild(signLayer);
@@ -2960,19 +2834,19 @@
       }));
     });
     nodalLayer.appendChild(createSvgNode("path", {
-      d: polarPath(centerX, centerY, 54, 13, .045),
+      d: polarPath(centerX, centerY, boundaryRadius, 13, .045),
       class: "berenstein-guide-outline",
     }));
     berensteinFieldGuide.appendChild(nodalLayer);
 
     const boundaryLayer = createSvgNode("g", { class: "berenstein-field-layer berenstein-field-layer-boundary", "data-field-layer": "boundary" });
     boundaryLayer.appendChild(createSvgNode("path", {
-      d: polarPath(centerX, centerY, 50, 13, .05),
+      d: polarPath(centerX, centerY, boundaryRadius, 13, .045),
       class: "berenstein-guide-boundary",
     }));
     for (let index = 0; index < 13; index += 1) {
       const theta = index / 13 * Math.PI * 2;
-      const radius = 50 * (1 + .05 * Math.cos(13 * theta));
+      const radius = boundaryRadius * (1 + .045 * Math.cos(13 * theta));
       boundaryLayer.appendChild(createSvgNode("line", {
         x1: centerX + (radius + 2) * Math.cos(theta),
         y1: centerY + (radius + 2) * Math.sin(theta),
@@ -2986,7 +2860,7 @@
 
     const symmetryLayer = createSvgNode("g", { class: "berenstein-field-layer berenstein-field-layer-symmetry", "data-field-layer": "symmetry" });
     symmetryLayer.appendChild(createSvgNode("path", {
-      d: polarPath(centerX, centerY, 54, 13, .045),
+      d: polarPath(centerX, centerY, boundaryRadius, 13, .045),
       class: "berenstein-guide-outline",
     }));
     for (let index = 0; index < 13; index += 1) {
@@ -3015,6 +2889,191 @@
 
   if (berensteinFieldStage) berensteinFieldStage.addEventListener("change", updateBerensteinField);
   requestAnimationFrame(updateBerensteinField);
+
+  const localGlobalCanvas = document.getElementById("localGlobalCanvas");
+  const localGlobalProblem = document.getElementById("localGlobalProblem");
+  const localGlobalProblemValue = document.getElementById("localGlobalProblemValue");
+  const localGlobalScope = document.getElementById("localGlobalScope");
+  const localGlobalScopeValue = document.getElementById("localGlobalScopeValue");
+  const localGlobalStatus = document.getElementById("localGlobalStatus");
+  let selectedLocalGlobalProblem = "schiffer";
+  let selectedLocalGlobalScope = "local";
+
+  const localGlobalStates = Object.freeze({
+    schiffer: Object.freeze({
+      label: "Schiffer",
+      folds: 10,
+      data: "(u, ∂νu) = (1, 0)",
+      localMath: "Local analytic Cauchy theory makes \\(u=1\\) with \\(\\partial_\\nu u=0\\) in a collar, but does not close the solution through the interior.",
+      globalMath: "The fixed-disk equation, harmonic compatibility rows, and tail bounds close the Schiffer field on all of \\(\\mathbb D\\).",
+    }),
+    berenstein: Object.freeze({
+      label: "Berenstein",
+      folds: 13,
+      data: "(u, ∂νu) = (0, 1)",
+      localMath: "Local analytic Cauchy theory makes \\(u=0\\) with \\(\\partial_\\nu u=1\\) in a collar, but does not close the solution through the interior.",
+      globalMath: "The interior equation, boundary trace equation, sign gate, and tail bounds close the Berenstein field on all of \\(\\mathbb D\\).",
+    }),
+  });
+
+  const drawLocalGlobal = () => {
+    if (!localGlobalCanvas) return;
+    const rectangle = localGlobalCanvas.getBoundingClientRect();
+    if (rectangle.width < 120 || rectangle.height < 180) return;
+    const { context, width, height } = prepareCanvas(localGlobalCanvas, { maxPixelRatio: 4 });
+    drawCanvasBackdrop(context, width, height);
+    const compact = width < 520;
+    const state = localGlobalStates[selectedLocalGlobalProblem];
+    const isGlobal = selectedLocalGlobalScope === "global";
+    const centerX = width / 2;
+    const centerY = height * .52;
+    const radius = Math.min(width * (compact ? .31 : .27), height * .32);
+    const amplitude = selectedLocalGlobalProblem === "schiffer" ? .05 : .045;
+
+    drawLabel(context, isGlobal ? "Global closure on the whole disk" : "Local analytic collar", centerX, 28, {
+      align: "center",
+      color: isGlobal ? colors.teal : colors.gold,
+      size: compact ? 14 : 16,
+      weight: 700,
+    });
+    drawLabel(context, state.label + " · " + state.data, centerX, 50, {
+      align: "center",
+      color: colors.heading,
+      size: compact ? 11 : 13,
+      weight: 700,
+    });
+
+    if (isGlobal) {
+      for (let band = 8; band >= 1; band -= 1) {
+        const bandRadius = radius * band / 8;
+        traceSymmetricOutline(context, centerX, centerY, bandRadius, state.folds, amplitude * band / 8);
+        const negative = selectedLocalGlobalProblem === "berenstein"
+          ? band % 2 === 0
+          : band % 3 === 0;
+        context.fillStyle = negative ? "rgba(50, 95, 123, .13)" : "rgba(215, 106, 12, .10)";
+        context.fill();
+        context.strokeStyle = "rgba(17, 17, 17, .10)";
+        context.lineWidth = .7;
+        context.stroke();
+      }
+      traceSymmetricOutline(context, centerX, centerY, radius, state.folds, amplitude);
+      context.strokeStyle = colors.teal;
+      context.lineWidth = 2.5;
+      context.stroke();
+      drawLabel(context, "all interior and boundary rows satisfied", centerX, centerY + 4, {
+        align: "center",
+        color: colors.teal,
+        size: compact ? 11 : 13,
+        weight: 700,
+      });
+    } else {
+      traceSymmetricOutline(context, centerX, centerY, radius, state.folds, amplitude);
+      context.fillStyle = "rgba(255, 255, 248, .98)";
+      context.fill();
+      context.strokeStyle = selectedLocalGlobalProblem === "schiffer" ? colors.accent : colors.teal;
+      context.lineWidth = 28;
+      context.globalAlpha = .16;
+      context.stroke();
+      context.globalAlpha = 1;
+      traceSymmetricOutline(context, centerX, centerY, radius, state.folds, amplitude);
+      context.strokeStyle = selectedLocalGlobalProblem === "schiffer" ? colors.accent : colors.teal;
+      context.lineWidth = 2.4;
+      context.stroke();
+      context.beginPath();
+      context.arc(centerX, centerY, radius * .67, 0, Math.PI * 2);
+      context.strokeStyle = colors.ruleDark;
+      context.lineWidth = 1.2;
+      context.setLineDash([5, 5]);
+      context.stroke();
+      context.setLineDash([]);
+      drawLabel(context, "interior unresolved", centerX, centerY - 3, {
+        align: "center",
+        color: colors.muted,
+        size: compact ? 12 : 14,
+        weight: 700,
+      });
+      drawLabel(context, "local theory does not fill this region", centerX, centerY + 18, {
+        align: "center",
+        color: colors.muted,
+        size: compact ? 9 : 11,
+      });
+    }
+
+    if (selectedLocalGlobalProblem === "berenstein") {
+      for (let index = 0; index < 13; index += 2) {
+        const theta = index / 13 * Math.PI * 2;
+        const localRadius = radius * (1 + amplitude * Math.cos(13 * theta));
+        drawArrow(
+          context,
+          centerX + (localRadius + 2) * Math.cos(theta),
+          centerY + (localRadius + 2) * Math.sin(theta),
+          centerX + (localRadius + 13) * Math.cos(theta),
+          centerY + (localRadius + 13) * Math.sin(theta),
+          { color: colors.teal, width: 1.2, head: 4.5 },
+        );
+      }
+    } else {
+      for (let index = 0; index < 10; index += 1) {
+        const theta = index / 10 * Math.PI * 2;
+        const localRadius = radius * (1 + amplitude * Math.cos(10 * theta));
+        context.beginPath();
+        context.arc(
+          centerX + localRadius * Math.cos(theta),
+          centerY + localRadius * Math.sin(theta),
+          2.6,
+          0,
+          Math.PI * 2,
+        );
+        context.fillStyle = colors.white;
+        context.fill();
+        context.strokeStyle = colors.accent;
+        context.lineWidth = 1.2;
+        context.stroke();
+      }
+    }
+
+    drawLabel(
+      context,
+      isGlobal
+        ? "fixed-disk equations + compatibility + infinite tails"
+        : "analytic Cauchy data ⇒ a sufficiently thin collar",
+      centerX,
+      height - 18,
+      {
+        align: "center",
+        color: isGlobal ? colors.teal : colors.gold,
+        size: compact ? 10 : 12,
+        weight: 700,
+      },
+    );
+    localGlobalCanvas.setAttribute(
+      "aria-label",
+      "Schematic mechanism. " + state.label + " boundary data " + state.data + ". "
+        + (isGlobal
+          ? "The whole disk is filled to show global closure: all interior equations, boundary or compatibility equations, and infinite-tail equations hold simultaneously. This is conceptual, not a computed field."
+          : "Only a boundary collar is filled. Local analytic Cauchy theory supplies this collar but leaves the centre unresolved and therefore does not by itself produce a counterexample."),
+    );
+  };
+
+  const updateLocalGlobal = () => {
+    selectedLocalGlobalProblem = localGlobalProblem?.value === "berenstein" ? "berenstein" : "schiffer";
+    selectedLocalGlobalScope = localGlobalScope?.value === "global" ? "global" : "local";
+    const state = localGlobalStates[selectedLocalGlobalProblem];
+    if (localGlobalProblemValue) localGlobalProblemValue.textContent = state.label;
+    if (localGlobalScopeValue) localGlobalScopeValue.textContent = selectedLocalGlobalScope === "global"
+      ? "global closure"
+      : "local collar";
+    setInlineMathContent(
+      localGlobalStatus,
+      selectedLocalGlobalScope === "global" ? state.globalMath : state.localMath,
+    );
+    drawLocalGlobal();
+  };
+
+  if (localGlobalProblem) localGlobalProblem.addEventListener("change", updateLocalGlobal);
+  if (localGlobalScope) localGlobalScope.addEventListener("change", updateLocalGlobal);
+  observeCanvas(localGlobalCanvas, drawLocalGlobal);
+  requestAnimationFrame(updateLocalGlobal);
 
   const computerOverviewCanvas = document.getElementById("computerOverviewCanvas");
   const computerOverviewState = document.getElementById("computerOverviewState");
@@ -3451,7 +3510,7 @@
     context.fill();
     placeComputerOverviewLabel("overviewFixedCenter", center.x - 7, center.y + 15, { align: "right" });
 
-    const q = .621244;
+    const q = .621244000000036;
     const orbit = [];
     for (let step = 0; step <= 6; step += 1) {
       const distance = radius * .72 * q ** step;

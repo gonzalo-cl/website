@@ -51,7 +51,11 @@ centre, fixed-disc pullback, exact compatible inverse, finite/tail split,
 certified fixed-point iteration and geometric reconstruction. Its applets mark
 schematic search data separately from exact algebra and certified bounds; the
 iteration figure shows how a Newton-like map stays inside a coefficient ball
-and contracts toward the unique exact solution. The real-order chapter poses
+and contracts toward the locally unique exact solution in that validated
+ball. The companion Berenstein subsection explains its thirteenfold
+bifurcation seed, separate boundary-trace equation, sign gate and certified
+reconstruction; a final local-versus-global subsection distinguishes analytic
+collar data from global solvability. The real-order chapter poses
 the bifurcation problem directly on finite cone collars, uses the half-cylinder
 as its large-order limiting model, proves uniform estimates, computes the
 second variation, finds near-integer crossings and performs the planar lift.

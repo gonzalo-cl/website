@@ -2457,7 +2457,7 @@ body.tufte-site main :is(
 ) > div > span {
   font-size: var(--type-label) !important;
 }
-body.tufte-site main .apparatus-controls > h3 { text-wrap: balance; }
+body.tufte-site main .apparatus-controls > :is(h3, h4) { text-wrap: balance; }
 body.tufte-site main :is(
   .solver-readout,
   .modes-status,
@@ -2677,7 +2677,8 @@ body.tufte-site main .computer-assisted-canvas-panel #pullbackCanvas,
 body.tufte-site main .computer-assisted-canvas-panel #inverseCanvas,
 body.tufte-site main .computer-assisted-canvas-panel #tailCanvas,
 body.tufte-site main .computer-assisted-canvas-panel #certificateCanvas,
-body.tufte-site main .computer-assisted-canvas-panel #reconstructionCanvas {
+body.tufte-site main .computer-assisted-canvas-panel #reconstructionCanvas,
+body.tufte-site main .computer-assisted-canvas-panel #localGlobalCanvas {
   height: clamp(330px, 34vw, 470px);
 }
 
@@ -2727,14 +2728,14 @@ body.tufte-site main .computer-assisted-controls {
   padding-top: 0;
 }
 
-body.tufte-site main .computer-assisted-controls h3 {
+body.tufte-site main .computer-assisted-controls :is(h3, h4) {
   display: block !important;
   width: 100%;
   max-width: 100%;
   margin: 0;
 }
 
-body.tufte-site main .computer-assisted-controls h3 {
+body.tufte-site main .computer-assisted-controls :is(h3, h4) {
   font: italic 400 var(--type-subsection)/1.16 var(--serif);
 }
 
@@ -2821,8 +2822,8 @@ body.tufte-site main .computer-assisted-control select:focus-visible {
   outline-offset: 2px;
 }
 
-body.tufte-site main .certificate-play-button:disabled {
-  cursor: not-allowed;
+body.tufte-site main .certificate-play-button:is(:disabled, [aria-disabled="true"]) {
+  cursor: progress;
   color: var(--muted) !important;
   opacity: .64;
 }
@@ -2927,10 +2928,251 @@ body.tufte-site main .certificate-bound-list strong {
   font-weight: 400;
 }
 
+body.tufte-site main .compact-definition-display {
+  margin-top: .65rem;
+  margin-bottom: .65rem;
+}
+
+body.tufte-site main .shape-equation-mechanism {
+  box-sizing: border-box;
+  width: var(--measure-figure);
+  max-width: var(--measure-figure);
+  margin: 2.75rem 0 3.5rem;
+  padding: 1.15rem 0 0;
+  border-top: 2px solid var(--teal);
+  border-bottom: 1px solid var(--line);
+}
+
+body.tufte-site main .shape-equation-mechanism > header :is(.eyebrow, h4) {
+  width: 100%;
+  max-width: 100%;
+  margin-left: 0;
+}
+
+body.tufte-site main .shape-equation-mechanism > header .eyebrow {
+  margin-bottom: .35rem;
+  color: var(--teal);
+}
+
+body.tufte-site main .shape-equation-mechanism > header h4 {
+  margin-top: 0;
+  margin-bottom: 1.15rem;
+  font: italic 400 var(--type-subsection)/1.2 var(--serif);
+}
+
+body.tufte-site main .shape-equation-lanes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+}
+
+body.tufte-site main .shape-equation-lanes > section {
+  box-sizing: border-box;
+  min-width: 0;
+  padding: 1rem 1.15rem 1.15rem 0;
+  border-top: 1px solid var(--line);
+}
+
+body.tufte-site main .shape-equation-lanes > section + section {
+  padding-right: 0;
+  padding-left: 1.15rem;
+  border-left: 1px dashed var(--line-strong);
+}
+
+body.tufte-site main .shape-equation-index {
+  display: block;
+  margin-bottom: .3rem;
+  color: var(--teal);
+  font-family: var(--mono);
+  font-size: var(--type-label);
+  font-variant: small-caps;
+  letter-spacing: .035em;
+}
+
+body.tufte-site main .shape-equation-lanes strong {
+  display: block;
+  margin-bottom: .35rem;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: var(--type-note);
+  font-style: italic;
+  font-weight: 400;
+}
+
+body.tufte-site main .shape-equation-lanes p,
+body.tufte-site main .shape-equation-conclusion {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  font-size: var(--type-proof);
+  line-height: var(--leading-proof);
+}
+
+body.tufte-site main .shape-equation-lanes .tex-display {
+  width: 100%;
+  margin: .55rem 0;
+  padding: 0;
+}
+
+body.tufte-site main .shape-equation-conclusion {
+  box-sizing: border-box;
+  padding: .9rem 0 .95rem;
+  color: var(--muted);
+  border-top: 1px solid var(--line);
+}
+
+body.tufte-site main .shape-equation-conclusion strong {
+  color: var(--teal);
+  font-weight: 400;
+}
+
+body.tufte-site main .coefficient-norm-grid,
+body.tufte-site main .operator-bound-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  width: var(--measure-figure);
+  max-width: var(--measure-figure);
+  margin: 1.35rem 0 1.6rem;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+body.tufte-site main :is(.coefficient-norm-grid, .operator-bound-grid) > .tex-display {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: .8rem .8rem .8rem 0 !important;
+  overflow-x: auto;
+}
+
+body.tufte-site main :is(.coefficient-norm-grid, .operator-bound-grid) > .tex-display:nth-child(even) {
+  padding-right: 0 !important;
+  padding-left: .8rem !important;
+  border-left: 1px solid var(--line) !important;
+}
+
+body.tufte-site main .coefficient-norm-total {
+  grid-column: 1 / -1;
+  padding-right: 0 !important;
+  border-top: 1px solid var(--line) !important;
+}
+
+body.tufte-site main .certificate-scale-budget {
+  box-sizing: border-box;
+  width: var(--measure-figure);
+  max-width: var(--measure-figure);
+  margin: 2rem 0 2.6rem;
+  padding: 1rem 0 1.1rem;
+  border-top: 2px solid var(--orange);
+  border-bottom: 1px solid var(--line);
+}
+
+body.tufte-site main .certificate-scale-budget h4 {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 0 .8rem;
+  font: italic 400 var(--type-note)/1.25 var(--serif);
+}
+
+body.tufte-site main .certificate-scale-budget > div {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .55rem 1.2rem;
+}
+
+body.tufte-site main .certificate-scale-budget span {
+  display: block;
+  min-width: 0;
+  color: var(--ink);
+  font-size: var(--type-note);
+}
+
+body.tufte-site main .certificate-scale-budget b {
+  display: block;
+  color: var(--orange);
+  font-family: var(--mono);
+  font-size: var(--type-label);
+  font-variant: small-caps;
+  font-weight: 400;
+  letter-spacing: .035em;
+}
+
+body.tufte-site main .certificate-scale-budget p {
+  width: 100%;
+  max-width: 100%;
+  margin: .85rem 0 0;
+  color: var(--muted);
+  font-size: var(--type-proof);
+  line-height: var(--leading-proof);
+}
+
 /* Berenstein companion.  Its two explanations use the same visual/aside
    apparatus as the preceding certificate, so the controls keep a stable
    reading position while the selected mathematical layer changes. */
 body.tufte-site main .berenstein-proof-intro { margin-bottom: 2.5rem; }
+
+body.tufte-site main .berenstein-proof-intro > h4 {
+  width: 100%;
+  max-width: 100%;
+  margin: 2rem 0 .65rem;
+  color: var(--teal);
+  font: italic 400 var(--type-subsection)/1.2 var(--serif);
+}
+
+body.tufte-site main .berenstein-search-display {
+  width: 100%;
+  max-width: 100%;
+  margin: 1rem 0;
+  overflow-x: auto;
+}
+
+body.tufte-site main .berenstein-search-route {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  width: var(--measure-figure);
+  max-width: var(--measure-figure);
+  margin: 1.6rem 0 0;
+  padding: 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  list-style: none;
+}
+
+body.tufte-site main .berenstein-search-route li {
+  box-sizing: border-box;
+  min-width: 0;
+  padding: .8rem .7rem .85rem 0;
+}
+
+body.tufte-site main .berenstein-search-route li + li {
+  padding-left: .7rem;
+  border-left: 1px solid var(--line);
+}
+
+body.tufte-site main .berenstein-search-route li > span,
+body.tufte-site main .berenstein-search-route li > b {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+body.tufte-site main .berenstein-search-route li > span {
+  margin-bottom: .3rem;
+  color: var(--teal);
+  font-family: var(--mono);
+  font-size: var(--type-label);
+  font-variant: small-caps;
+  letter-spacing: .035em;
+}
+
+body.tufte-site main .berenstein-search-route li > b {
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: var(--type-proof);
+  font-weight: 400;
+  line-height: 1.35;
+}
 
 body.tufte-site main .berenstein-theorem {
   margin-top: 2.5rem;
@@ -3025,11 +3267,14 @@ body.tufte-site main .berenstein-guide-symmetry-line {
 }
 
 body.tufte-site main .berenstein-guide-band {
-  stroke-width: 5.5;
+  stroke-width: 4;
   opacity: .76;
 }
 
-body.tufte-site main .berenstein-guide-band-positive { stroke: #d76a0c; }
+body.tufte-site main .berenstein-guide-band-positive {
+  stroke: #d76a0c;
+  stroke-dasharray: 1 1.8;
+}
 body.tufte-site main .berenstein-guide-band-negative { stroke: #325f7b; }
 
 body.tufte-site main .berenstein-guide-outline {
@@ -3195,6 +3440,90 @@ body.tufte-site main .berenstein-proof-lane .tex-display {
   overflow-x: auto;
 }
 
+body.tufte-site main :is(
+  .berenstein-finite-core,
+  .berenstein-norm,
+  .berenstein-sign-flow
+) {
+  box-sizing: border-box;
+  width: 100%;
+  margin: 1.55rem 0 0;
+  padding: 1rem 0 0;
+  border-top: 1px solid var(--line);
+}
+
+body.tufte-site main :is(
+  .berenstein-finite-core,
+  .berenstein-norm,
+  .berenstein-sign-flow
+) > h5 {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 0 .55rem;
+  color: var(--teal);
+  font: italic 400 var(--type-note)/1.3 var(--serif);
+}
+
+body.tufte-site main :is(.berenstein-finite-core, .berenstein-norm) > p {
+  width: 100%;
+  max-width: 100%;
+  margin: .45rem 0 0;
+  color: var(--muted);
+  font-size: var(--type-proof);
+  line-height: var(--leading-proof);
+}
+
+body.tufte-site main :is(.berenstein-finite-core, .berenstein-norm) > .tex-display {
+  width: 100%;
+  margin: .6rem 0;
+  padding: 0;
+  overflow-x: auto;
+}
+
+body.tufte-site main .berenstein-sign-flow ol {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  width: 100%;
+  margin: .8rem 0 0;
+  padding: 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  list-style: none;
+}
+
+body.tufte-site main .berenstein-sign-flow li {
+  box-sizing: border-box;
+  min-width: 0;
+  padding: .75rem .7rem .8rem 0;
+}
+
+body.tufte-site main .berenstein-sign-flow li + li {
+  padding-left: .7rem;
+  border-left: 1px solid var(--line);
+}
+
+body.tufte-site main .berenstein-sign-flow li > span,
+body.tufte-site main .berenstein-sign-flow li > b {
+  display: block;
+}
+
+body.tufte-site main .berenstein-sign-flow li > span {
+  margin-bottom: .3rem;
+  color: var(--teal);
+  font-family: var(--mono);
+  font-size: var(--type-label);
+  font-variant: small-caps;
+  letter-spacing: .035em;
+}
+
+body.tufte-site main .berenstein-sign-flow li > b {
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: var(--type-proof);
+  font-weight: 400;
+  line-height: 1.35;
+}
+
 body.tufte-site main .berenstein-sign-gate {
   box-sizing: border-box;
   width: 100%;
@@ -3207,6 +3536,21 @@ body.tufte-site main .berenstein-sign-gate {
 
 body.tufte-site main .berenstein-sign-gate strong {
   color: var(--teal);
+  font-weight: 400;
+}
+
+body.tufte-site main .berenstein-central-symmetry {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  margin: 1.6rem 0 .25rem;
+  padding: .15rem 0 .15rem .85rem;
+  color: var(--muted);
+  border-left: 2px solid var(--orange);
+}
+
+body.tufte-site main .berenstein-central-symmetry strong {
+  color: var(--orange);
   font-weight: 400;
 }
 
@@ -3249,6 +3593,15 @@ body.tufte-site main .berenstein-certificate-details {
 body.tufte-site main .berenstein-close {
   margin-top: 2.5rem;
   margin-bottom: 0;
+}
+
+body.tufte-site main .local-global-copy {
+  margin-bottom: 2rem;
+}
+
+body.tufte-site main .local-global-figure {
+  margin-top: 2.25rem;
+  margin-bottom: 3.5rem;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -3306,6 +3659,7 @@ body > footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: .75rem;
     padding: 0 .85rem;
     color: var(--ink);
     list-style: none;
@@ -3315,8 +3669,10 @@ body > footer {
     font-variant: small-caps;
     letter-spacing: .04em;
   }
+  .section-banner > .section-banner-mobile-summary > span { flex: 1 1 auto; }
   .section-banner > .section-banner-mobile-summary::-webkit-details-marker { display: none; }
   .section-banner > .section-banner-mobile-summary i {
+    flex: 0 0 auto;
     color: var(--orange);
     font-family: var(--mono);
     font-size: var(--type-label);
@@ -3565,7 +3921,8 @@ body > footer {
   body.tufte-site main .computer-assisted-canvas-panel #inverseCanvas,
   body.tufte-site main .computer-assisted-canvas-panel #tailCanvas,
   body.tufte-site main .computer-assisted-canvas-panel #certificateCanvas,
-  body.tufte-site main .computer-assisted-canvas-panel #reconstructionCanvas {
+  body.tufte-site main .computer-assisted-canvas-panel #reconstructionCanvas,
+  body.tufte-site main .computer-assisted-canvas-panel #localGlobalCanvas {
     height: clamp(350px, 112vw, 480px);
   }
   body.tufte-site main .computer-assisted-canvas-panel #inverseCanvas {
@@ -3586,6 +3943,14 @@ body > footer {
   }
   body.tufte-site main .certificate-bound-list > span:nth-child(4) {
     border-top: 1px solid var(--line);
+  }
+  body.tufte-site main .shape-equation-mechanism,
+  body.tufte-site main .coefficient-norm-grid,
+  body.tufte-site main .operator-bound-grid,
+  body.tufte-site main .certificate-scale-budget,
+  body.tufte-site main .berenstein-search-route {
+    width: 100%;
+    max-width: 100%;
   }
   .phase-story-lab > aside,
   .debye-controls { margin: 0; padding: 1.4rem 0 0; }
@@ -4207,6 +4572,42 @@ body.tufte-site main :is(.three-wrap canvas, #phaseFamilyCanvas):focus-visible {
 }
 
 @media (max-width: 620px) {
+  body.tufte-site main .shape-equation-lanes,
+  body.tufte-site main :is(.coefficient-norm-grid, .operator-bound-grid),
+  body.tufte-site main .certificate-scale-budget > div,
+  body.tufte-site main .berenstein-search-route,
+  body.tufte-site main .berenstein-sign-flow ol {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body.tufte-site main .shape-equation-lanes > section + section {
+    padding-left: 0;
+    border-top: 1px dashed var(--line-strong);
+    border-left: 0;
+  }
+
+  body.tufte-site main :is(.coefficient-norm-grid, .operator-bound-grid) > .tex-display,
+  body.tufte-site main :is(.coefficient-norm-grid, .operator-bound-grid) > .tex-display:nth-child(even) {
+    padding: .75rem 0 !important;
+    border-top: 1px solid var(--line) !important;
+    border-left: 0 !important;
+  }
+
+  body.tufte-site main :is(.coefficient-norm-grid, .operator-bound-grid) > .tex-display:first-child {
+    border-top: 0 !important;
+  }
+
+  body.tufte-site main :is(.berenstein-search-route, .berenstein-sign-flow ol) li,
+  body.tufte-site main :is(.berenstein-search-route, .berenstein-sign-flow ol) li + li {
+    padding: .72rem 0;
+    border-top: 1px solid var(--line);
+    border-left: 0;
+  }
+
+  body.tufte-site main :is(.berenstein-search-route, .berenstein-sign-flow ol) li:first-child {
+    border-top: 0;
+  }
+
   body.tufte-site main :is(.berenstein-proof-differences, .berenstein-field-facts) > div {
     grid-template-columns: minmax(0, 1fr);
     gap: .35rem;
