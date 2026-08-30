@@ -113,13 +113,22 @@
     return points;
   }
 
+  /* On the trivial line the Fall-Minlend-Weth domain is the straight band
+     between two round loops, and the free parameter is its width: the loops
+     slide apart and together while both stay exact circles.  The crossing width
+     is the one at which the branch appears. */
+  let cylinderTrivial = 0;
+
   function renderCylinderBifurcation(branchAmount) {
     if (!cylinderDomainBack || !cylinderDomainFront || !cylinderBoundaryBack
         || !cylinderBoundaryFront) return;
-    const leftFront = cylinderBoundaryHalf(165, -Math.PI / 2, Math.PI / 2, branchAmount);
-    const rightFront = cylinderBoundaryHalf(355, -Math.PI / 2, Math.PI / 2, branchAmount);
-    const leftBack = cylinderBoundaryHalf(165, Math.PI / 2, 3 * Math.PI / 2, branchAmount);
-    const rightBack = cylinderBoundaryHalf(355, Math.PI / 2, 3 * Math.PI / 2, branchAmount);
+    const spread = 95 * cylinderTrivial;
+    const leftBase = 165 - spread;
+    const rightBase = 355 + spread;
+    const leftFront = cylinderBoundaryHalf(leftBase, -Math.PI / 2, Math.PI / 2, branchAmount);
+    const rightFront = cylinderBoundaryHalf(rightBase, -Math.PI / 2, Math.PI / 2, branchAmount);
+    const leftBack = cylinderBoundaryHalf(leftBase, Math.PI / 2, 3 * Math.PI / 2, branchAmount);
+    const rightBack = cylinderBoundaryHalf(rightBase, Math.PI / 2, 3 * Math.PI / 2, branchAmount);
     cylinderDomainFront.setAttribute("d", worldPath([...leftFront, ...[...rightFront].reverse()], true));
     cylinderDomainBack.setAttribute("d", worldPath([...leftBack, ...[...rightBack].reverse()], true));
     cylinderBoundaryFront.setAttribute("d", `${worldPath(leftFront)}${worldPath(rightFront)}`);
@@ -290,6 +299,7 @@
     renderBranchDiagram(annulusBranchDiagram, branchAmount, annulusTrivial);
   }
 
+  let sphereTrivial = 0;
   function renderSphereBifurcation(branchAmount) {
     if (!sphereDomainFill || !sphereBoundaryBack || !sphereBoundaryFront) return;
     const sphereFront = [];
@@ -299,8 +309,12 @@
     // We view the north-pole cap obliquely but from within it, so its projected
     // image is a closed domain inside the sphere rather than a band cut along
     // the equator.  The angular amplitude is deliberately enlarged for sight.
-    const crossingHeight = .477;
-    const baseLatitude = Math.asin(crossingHeight);
+    /* On the trivial line the domain is the round spherical cap and the free
+       parameter is its latitude: a_* = 0.477 is the crossing, and moving off it
+       opens or closes the cap while its boundary stays an exact circle of
+       latitude. */
+    const crossingHeight = .477 * (1 + .42 * sphereTrivial);
+    const baseLatitude = Math.asin(Math.max(.06, Math.min(.94, crossingHeight)));
     const displayedAngularAmplitude = .095;
     const equatorMinorRadius = 85;
     const projectedPoleRadius = Math.sqrt(sphereRadius ** 2 - equatorMinorRadius ** 2);
@@ -394,16 +408,26 @@
   if (worldSection) {
     bindWorldBranch(cylinderBranchRange, cylinderBranchValue, (amount) => {
       renderCylinderBifurcation(amount);
-      renderBranchDiagram(cylinderBranchDiagram, amount);
+      renderBranchDiagram(cylinderBranchDiagram, amount, cylinderTrivial);
     });
     bindWorldBranch(sphereBranchRange, sphereBranchValue, (amount) => {
       renderSphereBifurcation(amount);
-      renderBranchDiagram(sphereBranchDiagram, amount);
+      renderBranchDiagram(sphereBranchDiagram, amount, sphereTrivial);
     });
     bindWorldBranch(annulusBranchRange, annulusBranchValue, renderAnnulusBifurcation);
     bindWorldBranch(wheelerBranchRange, wheelerBranchValue, renderWheelerBifurcation);
-    bindBranchDiagram(cylinderBranchDiagram, cylinderBranchRange);
-    bindBranchDiagram(sphereBranchDiagram, sphereBranchRange);
+    bindBranchDiagram(cylinderBranchDiagram, cylinderBranchRange, {
+      onTrivial: (trivial) => {
+        cylinderTrivial = trivial;
+        renderCylinderBifurcation(Number(cylinderBranchRange.value) || 0);
+      },
+    });
+    bindBranchDiagram(sphereBranchDiagram, sphereBranchRange, {
+      onTrivial: (trivial) => {
+        sphereTrivial = trivial;
+        renderSphereBifurcation(Number(sphereBranchRange.value) || 0);
+      },
+    });
     bindBranchDiagram(annulusBranchDiagram, annulusBranchRange, {
     onTrivial: (trivial) => {
       annulusTrivial = trivial;
