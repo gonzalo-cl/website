@@ -5,6 +5,7 @@
   if (!data) return;
   const crossingData = window.SCHIFFER_ABUNDANCE_DATA;
   const select = (selector) => document.querySelector(selector);
+  const last = (items) => items[items.length - 1];
   const setMath = (elementOrSelector, source, options) => window.SchifferMath?.render(elementOrSelector, source, options);
   const setFormula = (element, source, options) => {
     if (!element || element.dataset.tex === source) return;
@@ -435,7 +436,24 @@
 
   function roundedPanel(context, x, y, width, height, radius = 2) {
     context.beginPath();
-    context.roundRect(x, y, width, height, radius);
+    if (typeof context.roundRect === "function") {
+      context.roundRect(x, y, width, height, radius);
+      return;
+    }
+    // Safari before 15.4 has no CanvasRenderingContext2D.roundRect.  Keep the
+    // renderer self-contained instead of allowing one decorative panel to
+    // abort initialization of every later canvas on the page.
+    const r = Math.max(0, Math.min(radius, Math.abs(width) / 2, Math.abs(height) / 2));
+    context.moveTo(x + r, y);
+    context.lineTo(x + width - r, y);
+    context.quadraticCurveTo(x + width, y, x + width, y + r);
+    context.lineTo(x + width, y + height - r);
+    context.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+    context.lineTo(x + r, y + height);
+    context.quadraticCurveTo(x, y + height, x, y + height - r);
+    context.lineTo(x, y + r);
+    context.quadraticCurveTo(x, y, x + r, y);
+    context.closePath();
   }
 
   function drawFrameLabel(context, width, eyebrow, title, detail) {
@@ -547,7 +565,7 @@
   }
 
   function landingWall(psi) {
-    const coefficients = data.records.at(-1).h;
+    const coefficients = last(data.records).h;
     let value = 0;
     coefficients.forEach((coefficient, mode) => { value += coefficient * Math.cos(mode * psi); });
     return value;
@@ -1283,7 +1301,7 @@
     const targetS = Math.max(0, Math.min(1, progress)) * data.landingS;
     const records = data.records;
     if (targetS <= records[0].s) return records[0];
-    if (targetS >= records.at(-1).s) return records.at(-1);
+    if (targetS >= last(records).s) return last(records);
     let upper = 1;
     while (records[upper].s < targetS) upper++;
     const left = records[upper - 1];

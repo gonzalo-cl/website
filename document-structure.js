@@ -14,6 +14,7 @@
    */
   const main = document.querySelector("main");
   if (!main) return;
+  const last = (items) => items[items.length - 1];
 
   const registry = new Map();
   const tocClassByLevel = Object.freeze({
@@ -158,7 +159,7 @@
       if (record.level === "section") {
         groups.push({ section: record, children: [] });
       } else if (groups.length) {
-        groups.at(-1).children.push(record);
+        last(groups).children.push(record);
       }
     });
     groups.forEach(({ section, children }) => {
@@ -365,7 +366,7 @@
       });
       const atDocumentEnd = window.scrollY + window.innerHeight
         >= document.documentElement.scrollHeight - 2;
-      if (atDocumentEnd && trackedRecords.length) nextRecord = trackedRecords.at(-1);
+      if (atDocumentEnd && trackedRecords.length) nextRecord = last(trackedRecords);
 
       /* A small upward movement should not make the banner jump back a
          subsection while the current heading is still plainly in view.  The

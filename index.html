@@ -20,7 +20,7 @@
     <script defer src="math.js?v=20260830.1"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tufte-css@1.9.0/tufte.min.css">
     <link rel="stylesheet" href="styles.css?v=20260830.5">
-    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260830.16">
+    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260830.17">
   </head>
   <body class="tufte-site">
     <a class="skip-link" href="#top">Skip to the exposition</a>
@@ -44,13 +44,16 @@
         <h1>Constructing Noncircular Schiffer Domains</h1>
         <p class="intro-authors">Exposition by <a href="https://people.epfl.ch/gonzalo.caolabora" target="_blank" rel="noreferrer">Gonzalo Cao-Labora</a>, <a href="https://www.damtp.cam.ac.uk/user/mjc249/home.html" target="_blank" rel="noreferrer">Matthew J. Colbrook</a>, <a href="https://jaume.dedios.cat/" target="_blank" rel="noreferrer">Jaume de Dios Pont</a>, and <a href="https://georgestepaniants.com/" target="_blank" rel="noreferrer">George Stepaniants</a>.</p>
         <p class="intro-sources"><span>Based on</span> <a href="https://arxiv.org/abs/2608.01579" target="_blank" rel="noreferrer"><em>A computer-assisted counterexample to the planar Pompeiu and Schiffer conjectures</em></a>, <a href="https://arxiv.org/abs/2608.05114" target="_blank" rel="noreferrer"><em>Counterexamples to Schiffer’s Conjecture</em></a>, and <a href="https://arxiv.org/abs/2608.08953" target="_blank" rel="noreferrer"><em>A computer-assisted counterexample to the planar Berenstein conjecture</em></a>. <a class="intro-acknowledgements-link" href="#acknowledgements">Acknowledgements</a>.</p>
-        <article class="math-statement math-statement-theorem intro-main-result" data-kind="theorem" data-label="main-result" aria-labelledby="mainResultTitle">
-          <header class="math-statement-header"><span>Theorem</span><small>Main result</small></header>
-          <div class="math-statement-body">
-            <h3 id="mainResultTitle">A non-disk planar Schiffer domain exists.</h3>
-            <p>There is a bounded, smooth, simply connected planar domain, star-shaped with respect to the origin, which is not a disk and solves the Schiffer problem.</p>
-          </div>
-        </article>
+        <div class="formal-statement-pair">
+          <article class="math-statement math-statement-theorem intro-main-result" data-kind="theorem" data-label="main-result" aria-labelledby="mainResultTitle">
+            <header class="math-statement-header"><span>Theorem</span><small>Main result</small></header>
+            <div class="math-statement-body">
+              <h3 id="mainResultTitle">A non-disk planar Schiffer domain exists.</h3>
+              <p>There is a bounded, smooth, simply connected planar domain, star-shaped with respect to the origin, which is not a disk and solves the Schiffer problem.</p>
+            </div>
+          </article>
+          <lean-statement data-statement="schiffer-star-shaped"></lean-statement>
+        </div>
 
         <div class="intro-bottom">
           <p>Let \(\Omega\subset\mathbb R^2\) be a bounded domain. Pompeiu asked whether a function \(f\) is determined by its integrals over all rigid motions \(E(\Omega)\). Williams showed that nonuniqueness occurs exactly when \(\Omega\) supports a nonconstant Laplace eigenfunction whose value is constant and whose normal derivative vanishes on \(\partial\Omega\). The disk is the classical example, and Schiffer conjectured that it is the only connected smooth planar one.</p>
@@ -74,27 +77,30 @@
 
         <div class="intro-copy intro-copy-wide intro-pompeiu-copy">
           <p>Suppose that you are designing a probe to measure a physical quantity that varies across a sample: its temperature, its local composition, or the roughness of its surface. One choice in the design is the probe's footprint \(\Omega\), the region over which it takes a reading. Physical limitations prevent the instrument from measuring the field at a single point, so it returns an average over this footprint. You want to choose \(\Omega\) so that these averaged measurements retain as much information as possible.</p>
-          <p>Once the footprint has been chosen, suppose that you may translate and rotate the probe and take as many readings as you wish. If the unknown field is \(f\) and \(E\) is a rigid motion, write \(E(\Omega)\) for the transformed footprint. We model the reading in configuration \(E\) by</p>
+          <p>Once the footprint has been chosen, suppose that you may translate and rotate the probe and take as many readings as you wish. Given a rigid motion \(E\), we denote by \(E(\Omega)\) the transformed footprint. If the unknown field is \(f\), we model the reading in the configuration given by \(E\) as</p>
           <div class="tex-display intro-inline-display">
             \[
             M_\Omega f(E)=\int_{E(\Omega)}f(x)\,dx.
             \]
           </div>
           <p>Pompeiu asked in 1929 whether the collection of all these readings determines the unknown field. Mathematically, this asks whether the map \(f\mapsto M_\Omega f\) is injective.</p>
-          <article class="math-statement math-statement-definition" data-kind="definition" data-label="pompeiu-property-definition" aria-labelledby="pompeiuDefinitionTitle">
-            <header class="math-statement-header"><span>Definition</span><small>Pompeiu property</small></header>
-            <div class="math-statement-body">
-              <p id="pompeiuDefinitionTitle">A bounded set \(\Omega\) has the <em>Pompeiu property</em> when \(f\mapsto M_\Omega f\) is injective. Since \(M_\Omega\) is linear, this is equivalent to saying that, for every function \(f\),</p>
-              <div class="tex-display">
-                \[
-                \int_{E(\Omega)}f(x)\,dx=0
-                \quad\text{for every rigid motion }E
-                \qquad\Longrightarrow\qquad
-                f=0.
-                \]
+          <div class="formal-statement-pair">
+            <article class="math-statement math-statement-definition" data-kind="definition" data-label="pompeiu-property-definition" aria-labelledby="pompeiuDefinitionTitle">
+              <header class="math-statement-header"><span>Definition</span><small>Pompeiu property</small></header>
+              <div class="math-statement-body">
+                <p id="pompeiuDefinitionTitle">A bounded set \(\Omega\) has the <em>Pompeiu property</em> when \(f\mapsto M_\Omega f\) is injective. Since \(M_\Omega\) is linear, this is equivalent to saying that, for every function \(f\),</p>
+                <div class="tex-display">
+                  \[
+                  \int_{E(\Omega)}f(x)\,dx=0
+                  \quad\text{for every rigid motion }E
+                  \qquad\Longrightarrow\qquad
+                  f=0.
+                  \]
+                </div>
               </div>
-            </div>
-          </article>
+            </article>
+            <lean-statement data-statement="pompeiu-property"></lean-statement>
+          </div>
 
           <label for="pompeiu-history-note" class="margin-toggle" aria-label="Show the historical note">&#8853;</label>
           <input type="checkbox" id="pompeiu-history-note" class="margin-toggle">
@@ -109,8 +115,7 @@
             <div class="math-statement-body"><p id="pompeiuProblemTitle">Does every bounded planar set have the Pompeiu property?</p></div>
           </article>
 
-          <p>Chakalov showed in 1944 that the answer is no: every disk fails to have the Pompeiu property. Rotational symmetry makes the loss of information plausible, since rotating a disk produces no new footprint. Concretely, on the disk of radius \(r\) the plane wave \(\cos(\sqrt\lambda\,x_1)\) has integral zero over every rigid motion of it precisely when \(\sqrt\lambda\,r\) is a zero of \(J_1\), the Bessel function of the first kind of order one. The optional digression below proves this.</p>
-          <p>Finite disjoint unions of congruent disks give further examples. A function whose integral vanishes over every moved disk also has integral zero over every moved copy of such a union. We shall therefore consider connected smooth bounded domains. The modern Pompeiu conjecture asserts that, in this class, only disks fail to have the Pompeiu property.</p>
+          <p>Chakalov showed in 1944 that the answer is no: every disk fails to have the Pompeiu property. Rotational symmetry makes the loss of information plausible, since rotating a disk produces no new footprint. Concretely, on the disk of radius \(r\) the plane wave \(\cos(\sqrt\lambda\,x_1)\) has integral zero over every rigid motion of it precisely when \(\sqrt\lambda\,r\) is a zero of \(J_1\), the Bessel function of the first kind of order one.</p>
         </div>
 
         <details class="disk-sidequest">
@@ -185,19 +190,22 @@
               </figure>
 
               <p class="eyebrow">A two-dimensional model</p>
-              <article class="math-statement math-statement-proposition" data-kind="proposition" data-label="disk-pompeiu-counterexample" aria-labelledby="diskPropositionTitle">
-                <header class="math-statement-header"><span>Proposition</span><small>disk counterexample</small></header>
-                <div class="math-statement-body">
-                  <h3 id="diskPropositionTitle">Every disk fails the Pompeiu property.</h3>
-                  <p>Let \(B_r\) be a disk of radius \(r\), and let \(\rho_\star&gt;0\) be a zero of \(J_1\). Then</p>
-                  <div class="tex-display">
-                    \[
-                    f(x)=\cos\!\left(\frac{\rho_\star}{r}x_1\right)
-                    \]
+              <div class="formal-statement-pair">
+                <article class="math-statement math-statement-proposition" data-kind="proposition" data-label="disk-pompeiu-counterexample" aria-labelledby="diskPropositionTitle">
+                  <header class="math-statement-header"><span>Proposition</span><small>disk counterexample</small></header>
+                  <div class="math-statement-body">
+                    <h3 id="diskPropositionTitle">Every disk fails the Pompeiu property.</h3>
+                    <p>Let \(B_r\) be a disk of radius \(r\), and let \(\rho_\star&gt;0\) be a zero of \(J_1\). Then</p>
+                    <div class="tex-display">
+                      \[
+                      f(x)=\cos\!\left(\frac{\rho_\star}{r}x_1\right)
+                      \]
+                    </div>
+                    <p>is nonzero and satisfies \(\int_{E(B_r)}f(x)\,dx=0\) for every rigid motion \(E\). Rotations give no additional domains because \(B_r\) is rotationally invariant.</p>
                   </div>
-                  <p>is nonzero and satisfies \(\int_{E(B_r)}f(x)\,dx=0\) for every rigid motion \(E\). Rotations give no additional domains because \(B_r\) is rotationally invariant.</p>
-                </div>
-              </article>
+                </article>
+                <lean-statement data-statement="disk-not-pompeiu"></lean-statement>
+              </div>
               <p class="disk-model-note">The margin experiment fixes \(f(x)=\cos(x_1)\) and varies the disk around the first positive zero \(r=3.8317\ldots\) of \(J_1\).</p>
 
               <div class="disk-sidequest-proof">
@@ -232,11 +240,15 @@
           </div>
         </details>
 
+        <div class="intro-copy intro-copy-wide intro-pompeiu-copy">
+          <p>Finite disjoint unions of congruent disks give further examples. A function whose integral vanishes over every moved disk also has integral zero over every moved copy of such a union. We shall therefore consider connected smooth bounded domains. The modern Pompeiu conjecture asserts that, in this class, only disks fail to have the Pompeiu property.</p>
+        </div>
+
         <div id="schiffer-problem" class="intro-copy intro-copy-wide intro-chapter-heading">
           <header class="section-heading inline-section-heading" data-title="Schiffer’s problem: Can a membrane vibrate with constant amplitude along its boundary?" data-toc="subsection">
             <h3>Schiffer&rsquo;s problem: Can a membrane vibrate with constant amplitude along its boundary?</h3>
           </header>
-          <p>A normal mode of a scalar membrane has the form \(w(x,t)=u(x)\cos(\sqrt\lambda\,t)\), where the spatial profile satisfies \((\Delta+\lambda)u=0\). The Neumann condition \(\partial_\nu u=0\) describes a reflecting boundary. Schiffer asked for domains carrying a nonconstant normal mode whose value is constant along the boundary. After rescaling the mode, the problem is</p>
+          <p>A normal vibrational mode of a scalar membrane has the form \(w(x,t)=u(x)\cos(\sqrt\lambda\,t)\), where the spatial profile satisfies \((\Delta+\lambda)u=0\). The Neumann condition \(\partial_\nu u=0\) describes a reflecting boundary. Schiffer asked for domains carrying a nonconstant normal mode whose value is constant along the boundary. After rescaling the mode, the problem is</p>
           <div class="tex-display schiffer-intro-system" data-equation="schiffer-system">
             \[
             \begin{cases}
@@ -255,6 +267,7 @@
           </figure>
           <p>A domain \(\Omega\) for which the system <a class="xref" data-ref="schiffer-system" data-ref-short></a> has a solution is called a <em>Schiffer domain</em>. The disk is one: its radial modes are multiples of \(J_0(\sqrt\lambda\,r)\), and their normal derivative vanishes at the boundary precisely when \(\sqrt\lambda\,r\) is a zero of \(J_0'\) — equivalently of \(J_1\), since \(J_0'=-J_1\).</p>
           <p>Equivalently, the boundary condition can be written as \(\nabla u=0\). Indeed, constancy of \(u\) along the boundary kills every tangential derivative, while \(\partial_\nu u=0\) kills the normal component. Together they make the full gradient vanish on \(\partial\Omega\). One may also normalize \(\lambda=1\), which costs nothing: if \((u,\lambda)\) solves the system on \(\Omega\), then \(x\mapsto u(x/\sqrt\lambda)\) solves it with eigenvalue \(1\) on the rescaled domain \(\sqrt\lambda\,\Omega\). Fixing the domain and varying \(\lambda\), as the rest of this site does, is the same problem read the other way round.</p>
+          <lean-statement data-statement="schiffer-property"></lean-statement>
           <article class="math-statement math-statement-conjecture" data-kind="conjecture" data-label="schiffer-conjecture" aria-labelledby="schifferConjectureTitle">
             <header class="math-statement-header"><span>Conjecture</span><small>Schiffer</small></header>
             <div class="math-statement-body"><p id="schifferConjectureTitle">Every connected smooth bounded planar Schiffer domain is a disk.</p></div>
@@ -279,18 +292,21 @@
 
         <p>In both problems the disk produced the same arithmetic condition: the frequency times the radius must be a zero of \(J_1\). That coincidence is not an accident, and Williams made it precise.</p>
 
-        <article class="math-statement math-statement-theorem intro-theorem" data-kind="theorem" data-label="williams-equivalence" aria-labelledby="williamsTheoremTitle">
-          <header class="math-statement-header"><span>Theorem</span><small>Williams · 1976</small></header>
-          <div class="math-statement-body">
-            <h3 id="williamsTheoremTitle">The Pompeiu and Schiffer problems are equivalent.</h3>
-            <p>Let \(\Omega\subset\mathbb R^2\) be a bounded, simply connected domain with smooth boundary. Then the following statements are equivalent:</p>
-            <ol>
-              <li>There is a nonzero continuous function \(f\) such that \(\int_{E(\Omega)}f(x)\,dx=0\) for every rigid motion \(E\);</li>
-              <li>There are \(\lambda&gt;0\) and a nonconstant function \(u\) solving the Schiffer problem <a class="xref" data-ref="schiffer-system" data-ref-short></a> on \(\Omega\).</li>
-            </ol>
-            <p>Consequently, a smooth noncircular solution of the Schiffer problem also gives a smooth noncircular probe without the Pompeiu property.</p>
-          </div>
-        </article>
+        <div class="formal-statement-pair">
+          <article class="math-statement math-statement-theorem intro-theorem" data-kind="theorem" data-label="williams-equivalence" aria-labelledby="williamsTheoremTitle">
+            <header class="math-statement-header"><span>Theorem</span><small>Williams · 1976</small></header>
+            <div class="math-statement-body">
+              <h3 id="williamsTheoremTitle">The Pompeiu and Schiffer problems are equivalent.</h3>
+              <p>Let \(\Omega\subset\mathbb R^2\) be a bounded, simply connected domain with smooth boundary. Then the following statements are equivalent:</p>
+              <ol>
+                <li>There is a nonzero continuous function \(f\) such that \(\int_{E(\Omega)}f(x)\,dx=0\) for every rigid motion \(E\);</li>
+                <li>There are \(\lambda&gt;0\) and a nonconstant function \(u\) solving the Schiffer problem <a class="xref" data-ref="schiffer-system" data-ref-short></a> on \(\Omega\).</li>
+              </ol>
+              <p>Consequently, a smooth noncircular solution of the Schiffer problem also gives a smooth noncircular probe without the Pompeiu property.</p>
+            </div>
+          </article>
+          <lean-statement data-statement="schiffer-pompeiu-equivalence"></lean-statement>
+        </div>
 
         <details class="optional-digression proof-details intro-proof">
           <summary><span><small>Optional digression</small>The Schiffer&ndash;Pompeiu equivalence</span><i>expand +</i></summary>
@@ -773,12 +789,15 @@
         <div class="paper-copy pompeiu-corollary-intro">
           <p>Combining <a class="xref" data-ref="main-result"></a> with the equivalence in <a class="xref" data-ref="williams-equivalence"></a> gives planar counterexamples to Pompeiu&rsquo;s problem.</p>
         </div>
-        <article class="math-statement" data-kind="corollary" data-label="pompeiu-star-shaped" aria-labelledby="pompeiuCorollaryTitle">
-          <header class="math-statement-header"><span>Corollary</span><small>planar Pompeiu counterexample</small></header>
-          <div class="math-statement-body">
-            <p id="pompeiuCorollaryTitle">There is a bounded, nonempty planar domain with regular \(C^2\) boundary, star-shaped with respect to the origin, which is not a disk and does not have the Pompeiu property.</p>
-          </div>
-        </article>
+        <div class="formal-statement-pair">
+          <article class="math-statement" data-kind="corollary" data-label="pompeiu-star-shaped" aria-labelledby="pompeiuCorollaryTitle">
+            <header class="math-statement-header"><span>Corollary</span><small>planar Pompeiu counterexample</small></header>
+            <div class="math-statement-body">
+              <p id="pompeiuCorollaryTitle">There is a bounded, nonempty planar domain with regular \(C^2\) boundary, star-shaped with respect to the origin, which is not a disk and does not have the Pompeiu property.</p>
+            </div>
+          </article>
+          <lean-statement data-statement="pompeiu-star-shaped"></lean-statement>
+        </div>
         <div class="paper-copy berenstein-companion" aria-labelledby="berensteinCompanionTitle">
           <label for="berenstein-companion-note" class="margin-toggle" aria-label="Show the Berenstein counterexample">&#8853;</label>
           <input type="checkbox" id="berenstein-companion-note" class="margin-toggle">
@@ -2695,16 +2714,16 @@
       <p>The final scatter plot filters the saved common-zero data to <span class="formula">\(N\le200\)</span> and uses a logarithmic horizontal <span class="formula">\(R\)</span>-axis. The small table lists five particularly close examples from separated order ranges in the full search through <span class="formula">\(R\approx841\)</span>. The proof uses simultaneous McMahon and Debye phase alignment through Kronecker's theorem. The finite data illustrate the resulting distribution of crossings.</p>
     </dialog>
 
-    <script defer src="document-structure.js?v=20260830.6"></script>
+    <script defer src="document-structure.js?v=20260830.7"></script>
     <script defer src="cone-data.js"></script>
     <script defer src="debye-data.js?v=20260828.1"></script>
     <script defer src="abundance-data.js"></script>
-    <script defer src="app.js?v=20260830.5"></script>
-    <script defer src="story.js?v=20260830.5"></script>
+    <script defer src="app.js?v=20260830.6"></script>
+    <script defer src="story.js?v=20260830.6"></script>
     <script defer src="abundance.js?v=20260830.1"></script>
     <script defer src="pompeiu.js?v=20260830.1"></script>
     <script defer src="computer-assisted.js?v=20260830.6"></script>
     <script defer src="applet-layout.js?v=20260830.1"></script>
-    <script defer src="tufte/layout-contract.js?v=20260830.9"></script>
+    <script defer src="tufte/layout-contract.js?v=20260830.10"></script>
   </body>
 </html>

@@ -1,5 +1,6 @@
 const SVG_NS = "http://www.w3.org/2000/svg";
 const $ = (selector) => document.querySelector(selector);
+const last = (items) => items[items.length - 1];
 const setMath = (elementOrSelector, source, options) => window.SchifferMath?.render(elementOrSelector, source, options);
 
 /* Every renderer reads the same visual theme.  The content markup selects the
@@ -499,7 +500,7 @@ const COLOR_STOPS = [
 function colorFor(value) {
   const t = Math.max(0, Math.min(1, (value + 1.15) / 2.3));
   let left = COLOR_STOPS[0];
-  let right = COLOR_STOPS.at(-1);
+  let right = last(COLOR_STOPS);
   for (let i = 1; i < COLOR_STOPS.length; i++) {
     if (t <= COLOR_STOPS[i].t) { left = COLOR_STOPS[i - 1]; right = COLOR_STOPS[i]; break; }
   }
@@ -1138,7 +1139,7 @@ function coneRecordAt(progress) {
   const targetS = Math.max(0, Math.min(1, progress)) * coneNumerics.landingS;
   const records = coneNumerics.records;
   if (targetS <= records[0].s) return { ...records[0], h: [...records[0].h], a: [...records[0].a] };
-  if (targetS >= records.at(-1).s) return { ...records.at(-1), h: [...records.at(-1).h], a: [...records.at(-1).a] };
+  if (targetS >= last(records).s) return { ...last(records), h: [...last(records).h], a: [...last(records).a] };
   let upperIndex = 1;
   while (records[upperIndex].s < targetS) upperIndex++;
   const left = records[upperIndex - 1];
@@ -1166,8 +1167,8 @@ function coneBoundaryGraph(psi, solution = coneState.solution) {
 
 function tableValue(grid, values, q) {
   if (q <= grid[0]) return values[0];
-  if (q >= grid.at(-1)) return values.at(-1);
-  const scaled = (q - grid[0]) / (grid.at(-1) - grid[0]) * (grid.length - 1);
+  if (q >= last(grid)) return last(values);
+  const scaled = (q - grid[0]) / (last(grid) - grid[0]) * (grid.length - 1);
   const index = Math.min(grid.length - 2, Math.max(0, Math.floor(scaled)));
   return interpolateNumber(values[index], values[index + 1], scaled - index);
 }
@@ -2070,7 +2071,7 @@ function modesPolarPoint(plot, radius, angle, R) {
 
 function modesFastField(solution) {
   const sampleCount = coneNumerics.profileGrid.length;
-  const qMax = coneNumerics.profileGrid.at(-1);
+  const qMax = last(coneNumerics.profileGrid);
   const radial = solution.a.map((_, mode) => {
     const samples = [];
     for (let index = 0; index < sampleCount; index++) {
@@ -2263,7 +2264,7 @@ function modesRadialComparison(solution) {
     - R * Math.acos(R / coneNumerics.rho) - Math.PI / 4;
   const phase = debyePhaseAt(solution.R) - debyePhaseAt(coneNumerics.RStar);
 
-  const landingRecord = coneNumerics.records.at(-1);
+  const landingRecord = last(coneNumerics.records);
   const landingPhase = debyePhaseAt(landingRecord.R) - debyePhaseAt(coneNumerics.RStar);
   const phaseFraction = landingPhase > 1e-12
     ? Math.max(0, Math.min(1, phase / landingPhase))

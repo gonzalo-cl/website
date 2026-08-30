@@ -74,6 +74,7 @@
   /* Page grammar. Components consume these measures; article markup never
      chooses widths. */
   --measure-reading: 55%;
+  --measure-reading-page: 55cqw;
   --measure-margin: 40%;
   --measure-gutter: 5%;
   /* Native Tufte marginalia occupy half the reading measure: 27.5% of the
@@ -813,8 +814,8 @@ body.tufte-site main .math-statement-body li {
    unit. The pair owns a reading measure; neither the HTML instance nor the
    Lean registry chooses a width. */
 body.tufte-site main .formal-statement-pair {
-  width: var(--measure-reading);
-  max-width: var(--measure-reading);
+  width: min(100%, var(--measure-reading-page));
+  max-width: var(--measure-reading-page);
   margin: 3rem 0;
 }
 body.tufte-site main .formal-statement-pair > .math-statement,
@@ -1324,8 +1325,8 @@ body.tufte-site main details:not(.secondary-controls)[open] > summary { border-b
    Authors therefore never choose a width when adding Lean source. */
 body.tufte-site main details.lean-statement {
   box-sizing: border-box;
-  width: min(100%, 55cqw);
-  max-width: 55cqw;
+  width: min(100%, var(--measure-reading-page));
+  max-width: var(--measure-reading-page);
   margin: 1.25rem 0 1.8rem;
   border: 1px solid var(--line);
 }

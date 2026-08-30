@@ -136,6 +136,12 @@
     });
 
     const expectedLeanStatements = [
+      "schiffer-star-shaped",
+      "pompeiu-property",
+      "disk-not-pompeiu",
+      "schiffer-property",
+      "schiffer-pompeiu-equivalence",
+      "pompeiu-star-shaped",
       "uniform-cone-bifurcation",
       "near-integer-crossings",
     ];
