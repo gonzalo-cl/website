@@ -30,23 +30,6 @@
     label.style.transform = position.transform || "";
     return label;
   };
-  const siteToc = select(".site-toc");
-  const tocRailQuery = window.matchMedia("(min-width: 1280px)");
-  const syncTocMode = () => {
-    if (siteToc) siteToc.open = tocRailQuery.matches;
-  };
-  syncTocMode();
-  tocRailQuery.addEventListener?.("change", syncTocMode);
-  siteToc?.querySelector("summary")?.addEventListener("click", (event) => {
-    if (!tocRailQuery.matches) return;
-    event.preventDefault();
-    siteToc.open = true;
-  });
-  siteToc?.querySelectorAll("a").forEach((link) => {
-    link.addEventListener("click", () => {
-      if (!tocRailQuery.matches) siteToc.open = false;
-    });
-  });
   const TAU = Math.PI * 2;
   const GEOMETRY_PROFILE_PHASE = -Math.PI / 2;
   const GEOMETRY_TRAJECTORY = Object.freeze({
@@ -73,8 +56,8 @@
   const colors = {
     ink: visualTheme.background,
     paper: visualTheme.ink,
-    orange: "#ff7449",
-    cyan: "#4da2a3",
+    orange: visualTheme.accent || "#a00000",
+    cyan: visualTheme.teal || "#075760",
     grid: visualTheme.line,
     faint: visualTheme.muted,
     panel: visualTheme.panel,
@@ -516,7 +499,7 @@
     context.moveTo(cx, cy);
     context.arc(cx, cy, radius, -halfAngle, halfAngle);
     context.closePath();
-    context.fillStyle = "rgba(77,162,163,.8)";
+    context.fillStyle = "rgba(7,87,96,.8)";
     context.fill();
     context.strokeStyle = colors.orange; context.lineWidth = 1.5; context.stroke();
     context.fillStyle = colors.paper;
@@ -536,9 +519,9 @@
     const cy = height * .56;
     const rimHalf = Math.min(84, height * .22);
     const gradient = context.createLinearGradient(left, 0, right, 0);
-    gradient.addColorStop(0, "rgba(77,162,163,.08)");
-    gradient.addColorStop(.76, "rgba(77,162,163,.34)");
-    gradient.addColorStop(1, "rgba(255,116,73,.42)");
+    gradient.addColorStop(0, "rgba(7,87,96,.08)");
+    gradient.addColorStop(.76, "rgba(7,87,96,.34)");
+    gradient.addColorStop(1, "rgba(160,0,0,.42)");
     context.beginPath();
     context.moveTo(left, cy);
     context.lineTo(right, cy - rimHalf);
@@ -550,7 +533,7 @@
     context.ellipse(right, cy, 12, rimHalf, 0, 0, TAU);
     context.strokeStyle = colors.orange; context.lineWidth = 2.2; context.stroke();
     const collarLeft = right - (right - left) * 5 / 28;
-    context.fillStyle = "rgba(255,116,73,.14)";
+    context.fillStyle = "rgba(160,0,0,.14)";
     context.fillRect(collarLeft, cy - rimHalf, right - collarLeft, rimHalf * 2);
     context.strokeStyle = colors.cyan; context.setLineDash([4, 5]);
     context.beginPath(); context.moveTo(collarLeft, cy - rimHalf); context.lineTo(collarLeft, cy + rimHalf); context.stroke();
@@ -612,8 +595,8 @@
       context.lineTo(cx + localRadius * Math.cos(a1), cy + localRadius * Math.sin(a1));
       context.closePath();
       context.fillStyle = value > 0
-        ? `rgba(255,116,73,${.19 + .18 * value})`
-        : `rgba(77,162,163,${.21 - .22 * value})`;
+        ? `rgba(160,0,0,${.19 + .18 * value})`
+        : `rgba(7,87,96,${.21 - .22 * value})`;
       context.fill();
     }
 
@@ -622,7 +605,7 @@
       context.beginPath(); context.moveTo(cx, cy);
       context.lineTo(cx + radius * Math.cos(-halfAngle), cy + radius * Math.sin(-halfAngle));
       context.arc(cx, cy, radius, -halfAngle, halfAngle);
-      context.closePath(); context.fillStyle = `rgba(255,116,73,${.08 + .24 * selection})`; context.fill();
+      context.closePath(); context.fillStyle = `rgba(160,0,0,${.08 + .24 * selection})`; context.fill();
       context.strokeStyle = colors.orange; context.lineWidth = 2.4; context.stroke();
     }
 
@@ -632,15 +615,15 @@
         const endAngle = (index + .5) / copies * TAU;
         context.beginPath(); context.moveTo(cx, cy); context.arc(cx, cy, radius, startAngle, endAngle); context.closePath();
         context.fillStyle = index % 2
-          ? `rgba(255,116,73,${.018 * divisions})`
-          : `rgba(77,162,163,${.024 * divisions})`;
+          ? `rgba(160,0,0,${.018 * divisions})`
+          : `rgba(7,87,96,${.024 * divisions})`;
         context.fill();
         const angle = (index + .5) / copies * TAU;
         context.beginPath(); context.moveTo(cx, cy);
         context.lineTo(cx + radius * Math.cos(angle), cy + radius * Math.sin(angle));
         context.strokeStyle = index % 2
-          ? `rgba(255,116,73,${.12 + .18 * divisions})`
-          : `rgba(77,162,163,${.12 + .18 * divisions})`;
+          ? `rgba(160,0,0,${.12 + .18 * divisions})`
+          : `rgba(7,87,96,${.12 + .18 * divisions})`;
         context.lineWidth = .7; context.stroke();
       }
     }
@@ -726,8 +709,8 @@
     const value = Math.cos(Math.PI * angular + GEOMETRY_PROFILE_PHASE);
     const alpha = .2 + .1 * Math.abs(value) + .055 * fold * Math.max(0, depth);
     return value >= 0
-      ? `rgba(255,116,73,${alpha})`
-      : `rgba(77,162,163,${alpha + .015})`;
+      ? `rgba(160,0,0,${alpha})`
+      : `rgba(7,87,96,${alpha + .015})`;
   }
 
   function drawGeometrySheet(context, sheet, options = {}) {
@@ -763,7 +746,7 @@
       const start = geometrySheetPoint(sheet, sheet.radialStart, angular);
       const end = geometrySheetPoint(sheet, 1, angular);
       context.beginPath(); context.moveTo(start.x, start.y); context.lineTo(end.x, end.y);
-      context.strokeStyle = index % 2 ? colors.grid : "rgba(77,162,163,.28)";
+      context.strokeStyle = index % 2 ? colors.grid : "rgba(7,87,96,.28)";
       context.lineWidth = .8; context.stroke();
     }
 
@@ -774,7 +757,7 @@
         const point = geometrySheetPoint(sheet, radial, -1 + 2 * index / 160);
         if (!index) context.moveTo(point.x, point.y); else context.lineTo(point.x, point.y);
       }
-      context.strokeStyle = radialIndex % 2 ? "rgba(255,116,73,.28)" : colors.grid;
+      context.strokeStyle = radialIndex % 2 ? "rgba(160,0,0,.28)" : colors.grid;
       context.lineWidth = radialIndex === 7 ? 1.25 : .8; context.stroke();
     }
 
@@ -784,7 +767,7 @@
         const point = geometrySheetPoint(sheet, 1, -1 + 2 * index / 280, false);
         if (!index) context.moveTo(point.x, point.y); else context.lineTo(point.x, point.y);
       }
-      context.strokeStyle = `rgba(77,162,163,${.7 * sheet.wave})`;
+      context.strokeStyle = `rgba(7,87,96,${.7 * sheet.wave})`;
       context.setLineDash([4, 5]); context.lineWidth = 1.2; context.stroke(); context.setLineDash([]);
     }
 
@@ -802,7 +785,7 @@
         const start = geometrySheetPoint(sheet, sheet.radialStart, angular);
         const end = geometrySheetPoint(sheet, 1, angular);
         context.beginPath(); context.moveTo(start.x, start.y); context.lineTo(end.x, end.y);
-        context.strokeStyle = `rgba(77,162,163,${seamOpacity})`;
+        context.strokeStyle = `rgba(7,87,96,${seamOpacity})`;
         context.lineWidth = 2.2; context.stroke();
       });
     }
@@ -871,9 +854,12 @@
     drawUnfolding(context, width, height, 1 - Math.max(0, Math.min(1, coneFoldState.progress)));
     const active = coneFoldStage();
     const value = select("#coneFoldValue");
-    if (value) value.textContent = `stage ${active + 1}`;
+    const stageLabel = `stage ${active + 1}`;
+    if (value && value.textContent !== stageLabel) value.textContent = stageLabel;
+    select("#coneFoldRange")?.setAttribute("aria-valuetext", `${stageLabel}: ${coneFoldCaptions[active]}`);
     document.querySelectorAll("[data-conefold-stage]").forEach((button, index) => {
       button.classList.toggle("active", index === active);
+      button.setAttribute("aria-pressed", String(index === active));
     });
     canvas.setAttribute("aria-label", `Folding stage ${active + 1} of 4: ${coneFoldCaptions[active]}`);
   }
@@ -894,6 +880,7 @@
     const icon = select("#coneFoldPlayIcon"); const label = select("#coneFoldPlayLabel");
     if (icon) icon.textContent = "\u25B6";
     if (label) label.textContent = coneFoldState.progress > .999 ? "Unfold" : "Fold";
+    select("#coneFoldPlayButton")?.setAttribute("aria-pressed", "false");
   }
 
   function animateConeFoldTo(target, speed = 6000) {
@@ -912,6 +899,7 @@
     const icon = select("#coneFoldPlayIcon"); const label = select("#coneFoldPlayLabel");
     if (icon) icon.textContent = "\u2161";
     if (label) label.textContent = "Pause";
+    select("#coneFoldPlayButton")?.setAttribute("aria-pressed", "true");
     const start = performance.now();
     const duration = Math.max(420, speed * distance);
     const tick = (now) => {
@@ -1063,7 +1051,7 @@
       const y = plot.top + index / bands * plot.height;
       const psi = Math.PI - (index + .5) / bands * TAU;
       const wave = Math.sin(1.53 * -3.2 + .8 * Math.cos(psi));
-      context.fillStyle = wave > 0 ? `rgba(255,116,73,${.08 + .15 * wave})` : `rgba(77,162,163,${.08 - .14 * wave})`;
+      context.fillStyle = wave > 0 ? `rgba(160,0,0,${.08 + .15 * wave})` : `rgba(7,87,96,${.08 - .14 * wave})`;
       context.fillRect(plot.left, y, plot.width, plot.height / bands + 1);
     }
     context.strokeStyle = colors.grid; context.setLineDash([4, 6]);
@@ -1132,6 +1120,11 @@
     wall.style.opacity = "0";
     lift.style.opacity = "0";
 
+    // These positions use the canvas width, so their alignment must use the
+    // same breakpoint instead of a viewport-width media query.
+    const compact = width < 620;
+    order.style.transform = compact ? "none" : "translateX(-50%)";
+
     const scaled = Math.max(0, Math.min(1, progress)) * 6;
     const segment = Math.min(5, Math.floor(scaled));
     const local = scaled - segment;
@@ -1142,14 +1135,17 @@
     if (segment === 3) { cylinderAmount = 1 - ease(local); waveAmount = .2 * ease(local); returning = true; }
     if (segment === 4) { cylinderAmount = 0; waveAmount = .2 + .8 * ease(local); returning = true; }
 
+    const overlayHalf = Math.min(118, height * .23);
+    const unclampedOrderY = height * .54 - overlayHalf - (compact ? 62 : 41);
+    const overlayOrderY = compact ? Math.max(8, unclampedOrderY) : unclampedOrderY;
+
     if (cylinderAmount !== null) {
       const t = ease(cylinderAmount);
       const surfaceLeft = lerp(width * GEOMETRY_TRAJECTORY.coneTip, width * GEOMETRY_TRAJECTORY.cylinderLeft, t);
       const sheetOrder = 28 / Math.max(.035, 1 - t);
-      const half = Math.min(118, height * .23);
       const orderOpacity = ease(t / .12);
-      const orderX = width < 620 ? 24 : width * .08 + 92;
-      const orderY = height * .54 - half - (width < 620 ? 62 : 41);
+      const orderX = compact ? 24 : width * .08 + 92;
+      const orderY = overlayOrderY;
       setFormula(orderExpression, t > .965 ? "R\\to\\infty" : `R\\approx ${Math.round(sheetOrder)}`, { serif: true });
       orderNote.textContent = t > .965 ? "half-cylinder limit" : returning ? "R decreases" : "R increases";
       order.style.left = `${orderX}px`;
@@ -1157,8 +1153,10 @@
       order.style.opacity = String(orderOpacity);
 
       const wallOpacity = ease((waveAmount - .12) / .28) * (segment === 4 ? 1 : ease(t / .15));
-      const wallX = width < 620 ? 24 : Math.max(surfaceLeft + 100, width * GEOMETRY_TRAJECTORY.coneRight - 330);
-      const wallY = height * .54 - half - (width < 620 ? 37 : 42);
+      const wallX = compact ? 24 : Math.max(surfaceLeft + 100, width * GEOMETRY_TRAJECTORY.coneRight - 330);
+      // Keep the wall formula on a distinct row. The order label can wrap on
+      // compact canvases, while the desktop labels previously shared a row.
+      const wallY = orderY + (compact ? 38 : 28);
       setFormula(wall, "x=h_s(\\psi)=s\\cos(\\psi-\\phi)+O(s^2)", { serif: true });
       wall.style.left = `${wallX}px`;
       wall.style.top = `${wallY}px`;
@@ -1168,8 +1166,8 @@
     if (segment === 4) {
       setFormula(orderExpression, "R=R(s)\\in\\mathbb R,\\qquad R(s)\\to28", { serif: true });
       orderNote.textContent = "finite real-order collar bifurcation";
-      order.style.left = `${width < 620 ? 24 : width * .08 + 92}px`;
-      order.style.top = `${height * .54 - Math.min(118, height * .23) - (width < 620 ? 62 : 41)}px`;
+      order.style.left = `${compact ? 24 : width * .08 + 92}px`;
+      order.style.top = `${overlayOrderY}px`;
       order.style.opacity = "1";
     }
 
@@ -1198,9 +1196,14 @@
           : Math.min(6, segment + 1);
     const stageValue = select("#storyGeometryValue");
     const stageNote = select("#storyGeometryState");
-    if (stageValue) stageValue.textContent = `stage ${active + 1}`;
+    const stageLabel = `stage ${active + 1}`;
+    if (stageValue && stageValue.textContent !== stageLabel) stageValue.textContent = stageLabel;
     if (stageNote) stageNote.textContent = geometryCaptions[active];
-    document.querySelectorAll("[data-story-stage]").forEach((button, index) => button.classList.toggle("active", index === active));
+    select("#storyGeometryRange")?.setAttribute("aria-valuetext", `${stageLabel}: ${geometryCaptions[active]}`);
+    document.querySelectorAll("[data-story-stage]").forEach((button, index) => {
+      button.classList.toggle("active", index === active);
+      button.setAttribute("aria-pressed", String(index === active));
+    });
     canvas.setAttribute("aria-label", `Construction stage ${active + 1} of 7: ${geometryStates[active]}. The sector and its boundary wave remain continuous through the entire construction.`);
   }
 
@@ -1210,6 +1213,7 @@
     geometryState.frame = null;
     select("#storyGeometryPlayIcon").textContent = "▶";
     select("#storyGeometryPlayLabel").textContent = geometryState.progress > .999 ? "Repeat" : "Animate";
+    select("#storyGeometryPlayButton").setAttribute("aria-pressed", "false");
   }
 
   function playGeometryStory() {
@@ -1218,6 +1222,7 @@
     geometryState.playing = true;
     select("#storyGeometryPlayIcon").textContent = "Ⅱ";
     select("#storyGeometryPlayLabel").textContent = "Pause";
+    select("#storyGeometryPlayButton").setAttribute("aria-pressed", "true");
     const startProgress = geometryState.progress;
     const start = performance.now();
     const duration = Math.max(900, 12000 * (1 - startProgress));
@@ -1249,6 +1254,7 @@
     geometryState.playing = true;
     select("#storyGeometryPlayIcon").textContent = "Ⅱ";
     select("#storyGeometryPlayLabel").textContent = "Pause";
+    select("#storyGeometryPlayButton").setAttribute("aria-pressed", "true");
     const start = performance.now();
     const duration = Math.max(480, 9000 * distance);
     const tick = (now) => {
@@ -1291,7 +1297,7 @@
   }
 
   const phaseStoryState = { progress: 0 };
-  const phaseFamilyState = { hoverIndex: -1, geometry: null };
+  const phaseFamilyState = { hoverIndex: -1, selectedIndex: -1, geometry: null };
   const phaseFamilyRMin = 6;
   const phaseFamilyRMax = 30;
 
@@ -1317,6 +1323,48 @@
     return rows;
   }
 
+  function phaseFamilySelectionText(row, index, total) {
+    const integerPart = Math.floor(row.R);
+    const integerGap = row.R - integerPart;
+    const quadraticDrop = row.gamma / 2;
+    const reachesInteger = integerGap > 0 && integerGap <= quadraticDrop;
+    const landing = reachesInteger
+      ? ` The quadratic approximation reaches integer order ${integerPart} at absolute branch parameter ${Math.sqrt(integerGap / quadraticDrop).toFixed(4)}.`
+      : " This does not reach the next lower integer.";
+    return `Crossing ${index + 1} of ${total}. Order ${row.R.toFixed(6)}; spectral ratio ${row.lambda.toFixed(4)}; unit-amplitude quadratic drop ${quadraticDrop.toFixed(4)}.${landing}`;
+  }
+
+  function ensurePhaseFamilyStatus(canvas) {
+    const wrap = select("#phaseFamilyCanvasWrap");
+    if (!canvas || !wrap) return null;
+    let status = select("#phaseFamilyInteractionStatus");
+    if (!status) {
+      status = document.createElement("span");
+      status.id = "phaseFamilyInteractionStatus";
+      status.setAttribute("aria-live", "polite");
+      status.setAttribute("aria-atomic", "true");
+      Object.assign(status.style, {
+        position: "absolute",
+        width: "1px",
+        height: "1px",
+        padding: "0",
+        margin: "-1px",
+        overflow: "hidden",
+        clip: "rect(0, 0, 0, 0)",
+        whiteSpace: "nowrap",
+        border: "0",
+      });
+      wrap.appendChild(status);
+    }
+    canvas.tabIndex = 0;
+    canvas.style.touchAction = "pan-y pinch-zoom";
+    canvas.setAttribute("role", "img");
+    canvas.setAttribute("aria-roledescription", "interactive crossing plot");
+    canvas.setAttribute("aria-describedby", status.id);
+    canvas.setAttribute("aria-keyshortcuts", "ArrowLeft ArrowRight Home End Escape");
+    return status;
+  }
+
   function renderPhaseFamily() {
     const canvas = select("#phaseFamilyCanvas");
     const wrap = select("#phaseFamilyCanvasWrap");
@@ -1324,6 +1372,10 @@
     const minimumHeight = window.innerWidth < 680 ? 520 : 390;
     const { context, width, height } = canvasMetrics("#phaseFamilyCanvas", "#phaseFamilyCanvasWrap", minimumHeight);
     const rows = phaseFamilyRows();
+    if (phaseFamilyState.selectedIndex >= rows.length) phaseFamilyState.selectedIndex = -1;
+    const activeIndex = phaseFamilyState.selectedIndex >= 0
+      ? phaseFamilyState.selectedIndex
+      : phaseFamilyState.hoverIndex;
     context.clearRect(0, 0, width, height);
     context.fillStyle = colors.ink;
     context.fillRect(0, 0, width, height);
@@ -1402,7 +1454,7 @@
 
     const pointGeometry = [];
     rows.forEach((row, rowIndex) => {
-      const active = rowIndex === phaseFamilyState.hoverIndex;
+      const active = rowIndex === activeIndex;
       const integerGap = row.R - Math.floor(row.R);
       const predictedLanding = integerGap > 0 && integerGap <= row.gamma / 2;
       context.beginPath();
@@ -1414,7 +1466,7 @@
         const y = yMap(s);
         if (sample === 0) context.moveTo(x, y); else context.lineTo(x, y);
       }
-      context.strokeStyle = active || predictedLanding || row.reference ? "#72c9c6" : "rgba(77,162,163,.48)";
+      context.strokeStyle = active || predictedLanding || row.reference ? colors.cyan : "rgba(7,87,96,.48)";
       context.lineWidth = active ? 2.8 : (row.reference ? 2.35 : (predictedLanding ? 2.1 : 1.25));
       context.stroke();
 
@@ -1461,8 +1513,8 @@
       context.fillText("white rings mark a two-jet reaching an integer within |s| ≤ 1", plot.left + 8, plot.top + 26);
     }
 
-    if (!paperEdition && phaseFamilyState.hoverIndex >= 0 && pointGeometry[phaseFamilyState.hoverIndex]) {
-      const point = pointGeometry[phaseFamilyState.hoverIndex];
+    if (!paperEdition && activeIndex >= 0 && pointGeometry[activeIndex]) {
+      const point = pointGeometry[activeIndex];
       const boxWidth = compact ? 174 : 205;
       const boxHeight = point.row.reference ? 82 : 66;
       const boxX = Math.min(Math.max(point.x + 12, plot.left + 4), plot.left + plot.width - boxWidth - 4);
@@ -1471,7 +1523,7 @@
         : point.y + 15;
       context.fillStyle = colors.tooltip;
       context.fillRect(boxX, boxY, boxWidth, boxHeight);
-      context.strokeStyle = "rgba(255,116,73,.7)";
+      context.strokeStyle = "rgba(160,0,0,.7)";
       context.strokeRect(boxX + .5, boxY + .5, boxWidth - 1, boxHeight - 1);
       context.textAlign = "left";
       context.textBaseline = "top";
@@ -1491,9 +1543,10 @@
 
     phaseFamilyState.geometry = { pointGeometry, width, height };
     const windowRows = rows.filter((row) => !row.reference).length;
-    canvas.setAttribute("aria-label", paperEdition
+    const phaseFamilyLabel = paperEdition
       ? "Real-order crossing plot with integer fold symmetries, common-zero crossings at the branch origin, and predicted quadratic branch jets bending toward smaller real order."
-      : `${windowRows} computed crossings with real order between 6 and 30 and spectral ratio between 2 and 3, together with the separately computed running example at order 28.026397. Every displayed quadratic branch jet bends toward smaller real order as the magnitude of s increases.`);
+      : `${windowRows} computed crossings with real order between 6 and 30 and spectral ratio between 2 and 3, together with the separately computed running example at order 28.026397. Every displayed quadratic branch jet bends toward smaller real order as the magnitude of s increases. Tap a point, or use the left and right arrow keys after focusing the plot, to inspect exact values.`;
+    if (canvas.getAttribute("aria-label") !== phaseFamilyLabel) canvas.setAttribute("aria-label", phaseFamilyLabel);
   }
 
   function drawPhasePanel(context, rect, options) {
@@ -1522,7 +1575,7 @@
       });
       context.strokeStyle = color; context.lineWidth = width; context.setLineDash(dash); context.stroke(); context.setLineDash([]);
     };
-    draw(options.quadratic, colors.orange, [], 1.5);
+    draw(options.quadratic, colors.orange, [7, 5], 1.5);
     draw(options.actual, colors.cyan, [], 2.2);
     const current = options.valueAt(branchAt(phaseStoryState.progress));
     const currentS = phaseStoryState.progress * data.landingS;
@@ -1567,7 +1620,7 @@
     });
     const current = branchAt(phaseStoryState.progress);
     const phaseDegrees = (xi(current.R) - baseXi) * 180 / Math.PI;
-    canvas.setAttribute("aria-label", `At branch amplitude ${current.s.toFixed(4)}, the continued order has decreased to ${current.R.toFixed(6)} and the Debye collar phase has increased by ${phaseDegrees.toFixed(4)} degrees. Cyan solid curves use stored continuation records; orange solid curves are their base quadratic laws.`);
+    canvas.setAttribute("aria-label", `At branch amplitude ${current.s.toFixed(4)}, the continued order has decreased to ${current.R.toFixed(6)} and the Debye collar phase has increased by ${phaseDegrees.toFixed(4)} degrees. Solid dark-teal curves use stored continuation records; dashed dark-red curves are their base quadratic laws.`);
   }
 
   function updatePhaseStory() {
@@ -1582,6 +1635,12 @@
 
   const geometryRange = select("#storyGeometryRange");
   fillRange(geometryRange);
+  geometryRange?.setAttribute("aria-label", "Quotient construction stage");
+  const geometryStageButtons = Array.from(document.querySelectorAll("[data-story-stage]"));
+  geometryStageButtons[0]?.parentElement?.setAttribute("role", "group");
+  select("#storyGeometryValue")?.setAttribute("aria-live", "polite");
+  select("#storyGeometryValue")?.setAttribute("aria-atomic", "true");
+  select("#storyGeometryPlayButton")?.setAttribute("aria-pressed", "false");
   geometryRange.addEventListener("input", (event) => {
     stopGeometryPlayback(); geometryState.progress = Number(event.target.value); fillRange(event.target); renderGeometryStory();
   });
@@ -1589,7 +1648,7 @@
   select("#storyGeometryResetButton").addEventListener("click", () => {
     stopGeometryPlayback(); geometryState.progress = 0; geometryRange.value = 0; fillRange(geometryRange); renderGeometryStory();
   });
-  document.querySelectorAll("[data-story-stage]").forEach((button) => button.addEventListener("click", () => {
+  geometryStageButtons.forEach((button) => button.addEventListener("click", () => {
     animateGeometryTo(Number(button.dataset.storyStage));
   }));
 
@@ -1602,32 +1661,118 @@
 
   const phaseFamilyCanvas = select("#phaseFamilyCanvas");
   if (phaseFamilyCanvas) {
-    phaseFamilyCanvas.addEventListener("pointermove", (event) => {
-      if (!phaseFamilyState.geometry) return;
+    const phaseFamilyStatus = ensurePhaseFamilyStatus(phaseFamilyCanvas);
+    let phaseFamilyTouch = null;
+    const nearestPhaseFamilyPoint = (event, threshold) => {
+      if (!phaseFamilyState.geometry) return -1;
       const bounds = phaseFamilyCanvas.getBoundingClientRect();
       const x = (event.clientX - bounds.left) * phaseFamilyState.geometry.width / bounds.width;
       const y = (event.clientY - bounds.top) * phaseFamilyState.geometry.height / bounds.height;
       let nearest = -1;
-      let nearestDistance = 15;
+      let nearestDistance = threshold;
       phaseFamilyState.geometry.pointGeometry.forEach((point, index) => {
         const distance = Math.hypot(point.x - x, point.y - y);
         if (distance < nearestDistance) { nearest = index; nearestDistance = distance; }
       });
+      return nearest;
+    };
+    const selectPhaseFamilyPoint = (index, announce = true) => {
+      const points = phaseFamilyState.geometry?.pointGeometry || [];
+      if (!points.length) return;
+      const selected = Math.max(0, Math.min(points.length - 1, index));
+      phaseFamilyState.selectedIndex = selected;
+      phaseFamilyState.hoverIndex = -1;
+      renderPhaseFamily();
+      const currentPoints = phaseFamilyState.geometry?.pointGeometry || points;
+      if (announce && phaseFamilyStatus && currentPoints[selected]) {
+        phaseFamilyStatus.textContent = phaseFamilySelectionText(currentPoints[selected].row, selected, currentPoints.length);
+      }
+    };
+
+    phaseFamilyCanvas.addEventListener("pointermove", (event) => {
+      if (event.pointerType === "touch") {
+        if (phaseFamilyTouch?.id === event.pointerId
+          && Math.hypot(event.clientX - phaseFamilyTouch.x, event.clientY - phaseFamilyTouch.y) > 10) {
+          phaseFamilyTouch.moved = true;
+        }
+        return;
+      }
+      if (phaseFamilyState.selectedIndex >= 0) return;
+      const nearest = nearestPhaseFamilyPoint(event, 15);
       if (nearest !== phaseFamilyState.hoverIndex) {
         phaseFamilyState.hoverIndex = nearest;
         renderPhaseFamily();
       }
     });
     phaseFamilyCanvas.addEventListener("pointerleave", () => {
+      if (phaseFamilyState.selectedIndex >= 0) return;
       if (phaseFamilyState.hoverIndex < 0) return;
       phaseFamilyState.hoverIndex = -1;
       renderPhaseFamily();
+    });
+    phaseFamilyCanvas.addEventListener("pointerdown", (event) => {
+      if (event.pointerType === "touch") {
+        phaseFamilyTouch = { id: event.pointerId, x: event.clientX, y: event.clientY, moved: false };
+        return;
+      }
+      const nearest = nearestPhaseFamilyPoint(event, 18);
+      if (nearest < 0) {
+        if (phaseFamilyState.selectedIndex < 0) return;
+        phaseFamilyState.selectedIndex = -1;
+        phaseFamilyState.hoverIndex = -1;
+        renderPhaseFamily();
+        if (phaseFamilyStatus) phaseFamilyStatus.textContent = "Crossing selection cleared.";
+        return;
+      }
+      phaseFamilyCanvas.focus({ preventScroll: true });
+      selectPhaseFamilyPoint(nearest);
+    });
+    phaseFamilyCanvas.addEventListener("pointerup", (event) => {
+      if (event.pointerType !== "touch" || phaseFamilyTouch?.id !== event.pointerId) return;
+      const touch = phaseFamilyTouch;
+      phaseFamilyTouch = null;
+      if (touch.moved) return;
+      const nearest = nearestPhaseFamilyPoint(event, 30);
+      if (nearest < 0) {
+        if (phaseFamilyState.selectedIndex < 0) return;
+        phaseFamilyState.selectedIndex = -1;
+        phaseFamilyState.hoverIndex = -1;
+        renderPhaseFamily();
+        if (phaseFamilyStatus) phaseFamilyStatus.textContent = "Crossing selection cleared.";
+        return;
+      }
+      phaseFamilyCanvas.focus({ preventScroll: true });
+      selectPhaseFamilyPoint(nearest);
+    });
+    phaseFamilyCanvas.addEventListener("pointercancel", (event) => {
+      if (phaseFamilyTouch?.id === event.pointerId) phaseFamilyTouch = null;
+    });
+    phaseFamilyCanvas.addEventListener("keydown", (event) => {
+      const points = phaseFamilyState.geometry?.pointGeometry || [];
+      if (!points.length) return;
+      let next = phaseFamilyState.selectedIndex;
+      if (event.key === "ArrowRight") next = next < 0 ? 0 : Math.min(points.length - 1, next + 1);
+      else if (event.key === "ArrowLeft") next = next < 0 ? points.length - 1 : Math.max(0, next - 1);
+      else if (event.key === "Home") next = 0;
+      else if (event.key === "End") next = points.length - 1;
+      else if (event.key === "Escape") {
+        if (next < 0) return;
+        event.preventDefault();
+        phaseFamilyState.selectedIndex = -1;
+        phaseFamilyState.hoverIndex = -1;
+        renderPhaseFamily();
+        if (phaseFamilyStatus) phaseFamilyStatus.textContent = "Crossing selection cleared.";
+        return;
+      } else return;
+      event.preventDefault();
+      selectPhaseFamilyPoint(next);
     });
   }
 
   const coneFoldRange = select("#coneFoldRange");
   if (coneFoldRange) {
     fillRange(coneFoldRange);
+    coneFoldRange.setAttribute("aria-label", "Cone folding stage");
     coneFoldRange.addEventListener("input", (event) => {
       stopConeFold();
       coneFoldState.progress = Number(event.target.value);
@@ -1636,8 +1781,15 @@
     });
   }
   const coneFoldPlay = select("#coneFoldPlayButton");
-  if (coneFoldPlay) coneFoldPlay.addEventListener("click", playConeFold);
-  document.querySelectorAll("[data-conefold-stage]").forEach((button) => {
+  if (coneFoldPlay) {
+    coneFoldPlay.setAttribute("aria-pressed", "false");
+    coneFoldPlay.addEventListener("click", playConeFold);
+  }
+  const coneFoldStageButtons = Array.from(document.querySelectorAll("[data-conefold-stage]"));
+  coneFoldStageButtons[0]?.parentElement?.setAttribute("role", "group");
+  select("#coneFoldValue")?.setAttribute("aria-live", "polite");
+  select("#coneFoldValue")?.setAttribute("aria-atomic", "true");
+  coneFoldStageButtons.forEach((button) => {
     button.addEventListener("click", () => animateConeFoldTo(Number(button.dataset.conefoldStage)));
   });
 

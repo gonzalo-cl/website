@@ -427,6 +427,7 @@
   if (!context || !valueOut || !lengthInput || !lengthOut) return;
 
   const VIEW = 4 * Math.PI;
+  const accent = window.SCHIFFER_VISUAL_THEME?.accent || "#a00000";
   const state = { length: 2 * Math.PI, centre: 0, dragging: false };
   let width = 0, height = 0, dpr = 1;
 
@@ -491,7 +492,7 @@
     for (let px = Math.max(0, left); px < Math.min(width, right); px += 2) {
       const value = Math.cos(toField(px + 1));
       const y = mid - amplitude * value;
-      context.fillStyle = value >= 0 ? "rgba(255,116,73,.22)" : "rgba(42,116,125,.20)";
+      context.fillStyle = value >= 0 ? "rgba(160,0,0,.18)" : "rgba(7,87,96,.20)";
       context.fillRect(px, Math.min(mid, y), 2.5, Math.abs(mid - y));
     }
 
@@ -505,8 +506,8 @@
     context.lineWidth = 2;
     context.stroke();
 
-    context.strokeStyle = "#ff7449";
-    context.fillStyle = "#ff7449";
+    context.strokeStyle = accent;
+    context.fillStyle = accent;
     context.lineWidth = 2.5;
     const intervalY = height - 29;
     context.beginPath();
@@ -788,7 +789,7 @@
     context.lineTo(rimPoint.x, rimPoint.y);
     context.stroke();
     context.setLineDash([]);
-    context.fillStyle = "#ff7449";
+    context.fillStyle = visualTheme.accent || "#a00000";
     context.beginPath();
     context.arc(rimPoint.x, rimPoint.y, 3, 0, Math.PI * 2);
     context.fill();
@@ -798,7 +799,7 @@
       context.font = '500 11px "DM Mono", ui-monospace, monospace';
       context.textAlign = "left";
       context.fillText("shallow 3D displacement", width * .06, height * .11);
-      context.fillStyle = "#ff7449";
+      context.fillStyle = visualTheme.accent || "#a00000";
       context.fillText("constant value along the rim", width * .06, height * .92);
     }
   }
@@ -832,7 +833,7 @@
       const y = graphMid - graphAmplitude * besselJ0(state.mode.rho * radial) * temporal;
       if (i === 0) context.moveTo(x, y); else context.lineTo(x, y);
     }
-    context.strokeStyle = "#ff7449";
+    context.strokeStyle = visualTheme.accent || "#a00000";
     context.lineWidth = 2.4;
     context.stroke();
 
@@ -868,7 +869,7 @@
   function syncPlayButton() {
     playButton.textContent = state.running ? "pause" : "play";
     playButton.setAttribute("aria-label", state.running ? "Pause radial mode animation" : "Play radial mode animation");
-    playButton.setAttribute("aria-pressed", String(!state.running));
+    playButton.setAttribute("aria-pressed", String(state.running));
   }
 
   function animate(now) {

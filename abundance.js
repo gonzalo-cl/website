@@ -35,8 +35,8 @@
     faint: visualTheme.faint,
     grid: visualTheme.line,
     point: visualTheme.muted,
-    teal: "#4da2a3",
-    orange: "#ff7449",
+    teal: visualTheme.teal || "#075760",
+    orange: visualTheme.accent || "#a00000",
     red: "#d83a55",
   };
 
@@ -393,9 +393,9 @@
       context.fillRect(0, 0, state.width, state.height);
 
       const bandTop = plot.bottom - NEAR_BAND * plot.height;
-      context.fillStyle = "rgba(255,116,73,0.055)";
+      context.fillStyle = "rgba(160,0,0,0.055)";
       context.fillRect(plot.left, bandTop, plot.width, plot.bottom - bandTop);
-      context.strokeStyle = "rgba(255,116,73,0.30)";
+      context.strokeStyle = "rgba(160,0,0,0.30)";
       context.beginPath();
       context.moveTo(plot.left, bandTop + 0.5);
       context.lineTo(plot.right, bandTop + 0.5);
@@ -456,7 +456,7 @@
       context.fillText("CROSSING ORDER · LOGARITHMIC SCALE", (plot.left + plot.right) / 2, state.height - 8);
 
       if (!plot.compact) {
-        context.fillStyle = "rgba(255,116,73,0.70)";
+        context.fillStyle = "rgba(160,0,0,0.70)";
         context.font = visualTheme.labelFont;
         context.textAlign = "left";
         context.textBaseline = "bottom";
@@ -503,7 +503,7 @@
         context.fillRect(point.x - radius, point.y - radius, diameter, diameter);
       }
 
-      context.fillStyle = "rgba(255,116,73,0.82)";
+      context.fillStyle = "rgba(160,0,0,0.82)";
       for (let index = 0; index < count; index += 1) {
         if (model.fractional[index] >= NEAR_BAND) continue;
         const point = screenPoint(model.columns.R[index], model.fractional[index], plot);
@@ -534,7 +534,7 @@
       if (state.width > 520 && state.hoverKind !== "reference") {
         const labelX = Math.min(plot.right - 92, point.x + 18);
         const labelY = Math.max(plot.top + 12, point.y - 24);
-        context.strokeStyle = "rgba(255,116,73,0.58)";
+        context.strokeStyle = "rgba(160,0,0,0.58)";
         context.beginPath();
         context.moveTo(point.x + 7, point.y - 6);
         context.lineTo(labelX - 5, labelY + 5);

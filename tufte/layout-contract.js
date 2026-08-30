@@ -45,12 +45,12 @@
 
   const rounded = (value) => Math.round(value * 10) / 10;
   const marginSelector = "body.tufte-site main .marginnote";
-  const disclosureSelector = "body.tufte-site main details:not(.secondary-controls)";
+  const disclosureSelector = "body.tufte-site main details:not(.secondary-controls):not(.mobile-apparatus-disclosure)";
   const roleSelector = ".paper-copy, .math-statement, .lean-statement, .small-multiples, .figure-band, .reading-figure, .margin-figure-sequence, .data-table";
 
   function runLayoutContract() {
     const errors = [];
-    const narrow = window.matchMedia("(max-width: 1000px)").matches;
+    const narrow = window.matchMedia("(max-width: 1180px)").matches;
     const handset = window.matchMedia("(max-width: 760px)").matches;
     const page = document.documentElement.getBoundingClientRect();
     const rootStyle = getComputedStyle(document.documentElement);

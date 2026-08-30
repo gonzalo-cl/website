@@ -38,6 +38,11 @@ const SCHIFFER_VISUAL_THEME = (() => {
     panel: "rgba(255,255,248,0)",
     tooltip: "rgba(255,255,248,.96)",
     accent: "#a00000",
+    teal: "#075760",
+    positive: "#b45f06",
+    negative: "#075760",
+    reference: "#666158",
+    certificate: "#287b7b",
     ...typography,
   } : {
     paperEdition: false,
@@ -54,7 +59,12 @@ const SCHIFFER_VISUAL_THEME = (() => {
     faint: "rgba(241,238,229,.34)",
     panel: "rgba(12,22,27,.65)",
     tooltip: "rgba(10,19,23,.96)",
-    accent: "#ff7449",
+    accent: "#a00000",
+    teal: "#287b7b",
+    positive: "#b45f06",
+    negative: "#075760",
+    reference: "rgba(241,238,229,.55)",
+    certificate: "#287b7b",
     ...typography,
   };
   window.SCHIFFER_VISUAL_THEME = Object.freeze(theme);
@@ -87,6 +97,34 @@ function setCanvasFormula(wrapSelector, id, source, position = {}) {
 
 function removeCanvasFormula(id) {
   document.getElementById(id)?.remove();
+}
+
+function ensureInteractionStatus(container, id) {
+  if (!container) return null;
+  let status = document.getElementById(id);
+  if (status) return status;
+  status = document.createElement("span");
+  status.id = id;
+  status.setAttribute("aria-live", "polite");
+  status.setAttribute("aria-atomic", "true");
+  Object.assign(status.style, {
+    position: "absolute",
+    width: "1px",
+    height: "1px",
+    padding: "0",
+    margin: "-1px",
+    overflow: "hidden",
+    clip: "rect(0, 0, 0, 0)",
+    whiteSpace: "nowrap",
+    border: "0",
+  });
+  container.appendChild(status);
+  return status;
+}
+
+function rotationDegrees(radians) {
+  const degrees = Math.round(radians * 180 / Math.PI);
+  return ((degrees + 180) % 360 + 360) % 360 - 180;
 }
 
 const state = {
@@ -583,9 +621,30 @@ function renderThreeFrame() {
 }
 
 function installThreeInteraction(canvas) {
+  const wrap = $("#threeWrap");
+  const status = ensureInteractionStatus(wrap, "threeInteractionStatus");
+  wrap?.setAttribute("role", "group");
+  canvas.tabIndex = 0;
+  canvas.style.touchAction = "pan-y pinch-zoom";
+  canvas.setAttribute("role", "img");
+  canvas.setAttribute("aria-roledescription", "interactive three-dimensional surface");
+  canvas.setAttribute("aria-describedby", "threeInteractionStatus");
+  canvas.setAttribute("aria-keyshortcuts", "ArrowLeft ArrowRight ArrowUp ArrowDown + - Home");
+  canvas.setAttribute(
+    "aria-label",
+    "Rotatable three-dimensional cylinder colored by the numerical field. Drag with a pointer or swipe horizontally to rotate. Use the arrow keys to rotate, plus and minus to zoom, and Home to reset the view.",
+  );
+
+  const announceView = () => {
+    if (!status || !threeState.group) return;
+    const zoomPercent = Math.round((THREE_ZOOM_MAX - threeState.zoom) / (THREE_ZOOM_MAX - THREE_ZOOM_MIN) * 100);
+    status.textContent = `Cylinder view: horizontal rotation ${rotationDegrees(threeState.group.rotation.y)} degrees, vertical rotation ${rotationDegrees(threeState.group.rotation.x)} degrees, zoom ${zoomPercent} percent.`;
+  };
+
   canvas.addEventListener("pointerdown", (event) => {
-    threeState.pointer = { id: event.pointerId, x: event.clientX, y: event.clientY };
+    threeState.pointer = { id: event.pointerId, x: event.clientX, y: event.clientY, moved: false };
     canvas.setPointerCapture?.(event.pointerId);
+    if (event.pointerType === "touch") canvas.focus({ preventScroll: true });
   });
   canvas.addEventListener("pointermove", (event) => {
     if (!threeState.pointer || threeState.pointer.id !== event.pointerId || !threeState.group) return;
@@ -595,20 +654,49 @@ function installThreeInteraction(canvas) {
     threeState.group.rotation.x += dy * .006;
     threeState.pointer.x = event.clientX;
     threeState.pointer.y = event.clientY;
+    threeState.pointer.moved = threeState.pointer.moved || Math.abs(dx) + Math.abs(dy) > 1;
     renderThreeFrame();
   });
   const release = (event) => {
-    if (threeState.pointer?.id === event.pointerId) threeState.pointer = null;
+    if (threeState.pointer?.id !== event.pointerId) return;
+    const moved = threeState.pointer.moved;
+    threeState.pointer = null;
+    if (moved) announceView();
   };
   canvas.addEventListener("pointerup", release);
   canvas.addEventListener("pointercancel", release);
   canvas.addEventListener("wheel", (event) => {
+    if (event.ctrlKey) return;
     event.preventDefault();
     const factor = event.deltaY > 0 ? 1.08 : .92;
     threeState.zoom = Math.max(THREE_ZOOM_MIN, Math.min(THREE_ZOOM_MAX, threeState.zoom * factor));
     resizeThreeRenderer();
     renderThreeFrame();
+    announceView();
   }, { passive: false });
+  canvas.addEventListener("keydown", (event) => {
+    if (!threeState.group) return;
+    const rotationStep = Math.PI / 24;
+    let handled = true;
+    if (event.key === "ArrowLeft") threeState.group.rotation.y -= rotationStep;
+    else if (event.key === "ArrowRight") threeState.group.rotation.y += rotationStep;
+    else if (event.key === "ArrowUp") threeState.group.rotation.x -= rotationStep;
+    else if (event.key === "ArrowDown") threeState.group.rotation.x += rotationStep;
+    else if (event.key === "+" || event.key === "=") {
+      threeState.zoom = Math.max(THREE_ZOOM_MIN, threeState.zoom * .92);
+    } else if (event.key === "-" || event.key === "_") {
+      threeState.zoom = Math.min(THREE_ZOOM_MAX, threeState.zoom * 1.08);
+    } else if (event.key === "Home") {
+      threeState.group.rotation.x = -.18;
+      threeState.group.rotation.y = -.16;
+      threeState.zoom = THREE_ZOOM_MIN;
+    } else handled = false;
+    if (!handled) return;
+    event.preventDefault();
+    resizeThreeRenderer();
+    renderThreeFrame();
+    announceView();
+  });
 }
 
 function setupThreeRenderer() {
@@ -824,7 +912,7 @@ function renderHeatmap() {
     if (i === 0) context.moveTo(point[0], point[1]); else context.lineTo(point[0], point[1]);
   }
   context.strokeStyle = SCHIFFER_VISUAL_THEME.ink;
-  context.shadowColor = "rgba(255,116,73,.85)";
+  context.shadowColor = "rgba(160,0,0,.70)";
   context.shadowBlur = 8;
   context.lineWidth = 2.5;
   context.stroke();
@@ -858,9 +946,9 @@ function drawBoundaryDiagram() {
     points.push([centerX + boundary(theta, solvedParameters) * 58, 15 + i / 120 * 158]);
   }
   const criticalData = `M ${criticalPoints.map((point) => point.map((value) => value.toFixed(2)).join(" ")).join(" L ")}`;
-  svgElement("path", { d: criticalData, fill: "none", stroke: "rgba(77,162,163,.58)", "stroke-width": "1.2", "stroke-dasharray": "4 4" }, svg);
+  svgElement("path", { d: criticalData, fill: "none", stroke: "rgba(7,87,96,.58)", "stroke-width": "1.2", "stroke-dasharray": "4 4" }, svg);
   const data = `M ${points.map((point) => point.map((value) => value.toFixed(2)).join(" ")).join(" L ")}`;
-  svgElement("path", { d: data, fill: "none", stroke: "#ff7449", "stroke-width": "3" }, svg);
+  svgElement("path", { d: data, fill: "none", stroke: SCHIFFER_VISUAL_THEME.accent, "stroke-width": "3" }, svg);
   const label = svgElement("text", { x: 24, y: 186, fill: SCHIFFER_VISUAL_THEME.muted, "font-family": "DM Mono, ui-monospace, monospace", "font-size": "8" }, svg);
   const h2 = solvedParameters.wallCoefficients?.[2] || 0;
   const h3 = solvedParameters.wallCoefficients?.[3] || 0;
@@ -1174,7 +1262,7 @@ function renderConeSlice() {
     if (index === 0) context.moveTo(x, y); else context.lineTo(x, y);
   }
   context.strokeStyle = SCHIFFER_VISUAL_THEME.ink;
-  context.shadowColor = "rgba(255,116,73,.9)";
+  context.shadowColor = "rgba(160,0,0,.72)";
   context.shadowBlur = 9;
   context.lineWidth = 2.5;
   context.stroke();
@@ -1211,7 +1299,7 @@ function drawUnfoldedSeamInset(context, width, solution, gap) {
   const centerY = top + boxHeight - 12;
   const magnification = 50;
   const shownGap = Math.min(.72, gap * magnification);
-  context.strokeStyle = gap < 1e-8 ? "#4da2a3" : "#ff7449";
+  context.strokeStyle = gap < 1e-8 ? SCHIFFER_VISUAL_THEME.teal : SCHIFFER_VISUAL_THEME.accent;
   context.lineWidth = 2;
   [-shownGap / 2, shownGap / 2].forEach((angle) => {
     context.beginPath();
@@ -1219,7 +1307,7 @@ function drawUnfoldedSeamInset(context, width, solution, gap) {
     context.lineTo(centerX + 90 * Math.sin(angle), centerY - 90 * Math.cos(angle));
     context.stroke();
   });
-  context.fillStyle = gap < 1e-8 ? "#4da2a3" : SCHIFFER_VISUAL_THEME.ink;
+  context.fillStyle = gap < 1e-8 ? SCHIFFER_VISUAL_THEME.teal : SCHIFFER_VISUAL_THEME.ink;
   context.fillText(gap < 1e-8 ? "SEAM CLOSED" : `×${magnification} · actual gap ${(gap * 180 / Math.PI).toFixed(3)}°`, left + 11, top + 34);
   context.restore();
 }
@@ -1275,7 +1363,7 @@ function renderConeUnfolded() {
     context.lineTo(centerX + diskRadius * Math.cos(angle), centerY - diskRadius * Math.sin(angle));
     context.stroke();
   }
-  context.strokeStyle = gap < 1e-8 ? "#4da2a3" : "#ff7449";
+  context.strokeStyle = gap < 1e-8 ? SCHIFFER_VISUAL_THEME.teal : SCHIFFER_VISUAL_THEME.accent;
   context.lineWidth = 2;
   [gap / 2, TWO_PI - gap / 2].forEach((angle) => {
     context.beginPath();
@@ -1298,7 +1386,7 @@ function renderConeUnfolded() {
     if (index === 0) context.moveTo(x, y); else context.lineTo(x, y);
   }
   context.strokeStyle = SCHIFFER_VISUAL_THEME.ink;
-  context.shadowColor = "rgba(255,116,73,.75)";
+  context.shadowColor = "rgba(160,0,0,.62)";
   context.shadowBlur = 6;
   context.lineWidth = 1.5;
   context.stroke();
@@ -1461,9 +1549,29 @@ function renderConeThreeFrame() {
 }
 
 function installConeThreeInteraction(canvas) {
+  const wrap = $("#coneThreeWrap");
+  const status = ensureInteractionStatus(wrap, "coneThreeInteractionStatus");
+  wrap?.setAttribute("role", "group");
+  canvas.tabIndex = 0;
+  canvas.style.touchAction = "pan-y pinch-zoom";
+  canvas.setAttribute("role", "img");
+  canvas.setAttribute("aria-roledescription", "interactive three-dimensional surface");
+  canvas.setAttribute("aria-describedby", "coneThreeInteractionStatus");
+  canvas.setAttribute("aria-keyshortcuts", "ArrowLeft ArrowRight ArrowUp ArrowDown + - Home");
+  canvas.setAttribute(
+    "aria-label",
+    "Rotatable three-dimensional cone colored by the numerical field. Drag with a pointer or swipe horizontally to rotate. Use the arrow keys to rotate, plus and minus to zoom, and Home to reset the view.",
+  );
+
+  const announceView = () => {
+    if (!status || !coneThreeState.group || !coneThreeState.camera) return;
+    status.textContent = `Cone view: horizontal rotation ${rotationDegrees(coneThreeState.group.rotation.y)} degrees, vertical rotation ${rotationDegrees(coneThreeState.group.rotation.x)} degrees, camera distance ${coneThreeState.camera.position.length().toFixed(1)}.`;
+  };
+
   canvas.addEventListener("pointerdown", (event) => {
-    coneThreeState.pointer = { id: event.pointerId, x: event.clientX, y: event.clientY };
+    coneThreeState.pointer = { id: event.pointerId, x: event.clientX, y: event.clientY, moved: false };
     canvas.setPointerCapture?.(event.pointerId);
+    if (event.pointerType === "touch") canvas.focus({ preventScroll: true });
   });
   canvas.addEventListener("pointermove", (event) => {
     if (!coneThreeState.pointer || coneThreeState.pointer.id !== event.pointerId || !coneThreeState.group) return;
@@ -1473,18 +1581,48 @@ function installConeThreeInteraction(canvas) {
     coneThreeState.group.rotation.x += dy * .006;
     coneThreeState.pointer.x = event.clientX;
     coneThreeState.pointer.y = event.clientY;
+    coneThreeState.pointer.moved = coneThreeState.pointer.moved || Math.abs(dx) + Math.abs(dy) > 1;
     renderConeThreeFrame();
   });
-  const release = (event) => { if (coneThreeState.pointer?.id === event.pointerId) coneThreeState.pointer = null; };
+  const release = (event) => {
+    if (coneThreeState.pointer?.id !== event.pointerId) return;
+    const moved = coneThreeState.pointer.moved;
+    coneThreeState.pointer = null;
+    if (moved) announceView();
+  };
   canvas.addEventListener("pointerup", release);
   canvas.addEventListener("pointercancel", release);
   canvas.addEventListener("wheel", (event) => {
+    if (event.ctrlKey) return;
     event.preventDefault();
     const factor = event.deltaY > 0 ? 1.08 : .92;
     const length = Math.max(4.5, Math.min(55, coneThreeState.camera.position.length() * factor));
     coneThreeState.camera.position.setLength(length);
     renderConeThreeFrame();
+    announceView();
   }, { passive: false });
+  canvas.addEventListener("keydown", (event) => {
+    if (!coneThreeState.group || !coneThreeState.camera) return;
+    const rotationStep = Math.PI / 24;
+    let handled = true;
+    if (event.key === "ArrowLeft") coneThreeState.group.rotation.y -= rotationStep;
+    else if (event.key === "ArrowRight") coneThreeState.group.rotation.y += rotationStep;
+    else if (event.key === "ArrowUp") coneThreeState.group.rotation.x -= rotationStep;
+    else if (event.key === "ArrowDown") coneThreeState.group.rotation.x += rotationStep;
+    else if (event.key === "+" || event.key === "=") {
+      coneThreeState.camera.position.setLength(Math.max(4.5, coneThreeState.camera.position.length() * .92));
+    } else if (event.key === "-" || event.key === "_") {
+      coneThreeState.camera.position.setLength(Math.min(55, coneThreeState.camera.position.length() * 1.08));
+    } else if (event.key === "Home") {
+      coneThreeState.group.rotation.x = -.22;
+      coneThreeState.group.rotation.y = -.12;
+      updateConeCamera(CONE_MESH_DEPTH, true);
+    } else handled = false;
+    if (!handled) return;
+    event.preventDefault();
+    renderConeThreeFrame();
+    announceView();
+  });
 }
 
 function setupConeThreeRenderer() {
@@ -1705,8 +1843,8 @@ const modesState = {
 };
 
 const MODES_COLORS = {
-  cyan: "#4da2a3",
-  orange: "#ff7449",
+  cyan: SCHIFFER_VISUAL_THEME.teal,
+  orange: SCHIFFER_VISUAL_THEME.accent,
   white: SCHIFFER_VISUAL_THEME.ink,
   gray: SCHIFFER_VISUAL_THEME.faint,
   grid: SCHIFFER_VISUAL_THEME.line,
@@ -2050,7 +2188,7 @@ function modesDrawGlobal(context, rect, solution, fieldValue) {
   }
   context.strokeStyle = MODES_COLORS.white;
   context.lineWidth = 1.7;
-  context.shadowColor = "rgba(255,116,73,.45)";
+  context.shadowColor = "rgba(160,0,0,.42)";
   context.shadowBlur = 5;
   context.stroke();
   context.shadowBlur = 0;
@@ -2258,7 +2396,7 @@ function modesDrawPatch(context, rect, solution, fieldValue, options) {
   }
   context.strokeStyle = MODES_COLORS.white;
   context.lineWidth = 1.7;
-  context.shadowColor = "rgba(255,116,73,.62)";
+  context.shadowColor = "rgba(160,0,0,.52)";
   context.shadowBlur = 5;
   context.stroke();
   context.shadowBlur = 0;
@@ -2362,7 +2500,7 @@ function renderModesNestedZoom() {
 
   if (layout.horizontal) {
     context.save();
-    context.strokeStyle = "rgba(77,162,163,.58)";
+    context.strokeStyle = "rgba(7,87,96,.58)";
     context.lineWidth = 1;
     context.setLineDash([4, 5]);
     context.beginPath();
@@ -2534,10 +2672,10 @@ if (debyeData) {
   // places a long half-cylinder beside the disk at the same geometric scale.
   const collarFieldState = { fold: 28, mode: 1 };
   const COLLAR_BACKGROUND = SCHIFFER_VISUAL_THEME.backgroundRgb;
-  const COLLAR_ZOOM_ACCENT = getComputedStyle(document.documentElement).getPropertyValue("--teal").trim() || "#4da2a3";
+  const COLLAR_ZOOM_ACCENT = getComputedStyle(document.documentElement).getPropertyValue("--teal").trim() || SCHIFFER_VISUAL_THEME.teal;
   const COLLAR_ZOOM_FILL = SCHIFFER_VISUAL_THEME.paperEdition
     ? "rgba(40,123,123,.16)"
-    : "rgba(77,162,163,.18)";
+    : "rgba(7,87,96,.18)";
 
   function collarAngularValue(psi) {
     if (collarFieldState.mode === 0) return 1;
@@ -2996,7 +3134,7 @@ if (debyeData) {
     context.restore();
   }
 
-  function debyeDrawCurve(context, points, xMap, yMap, color, width) {
+  function debyeDrawCurve(context, points, xMap, yMap, color, width, dash = []) {
     context.save();
     context.beginPath();
     points.forEach((point, index) => {
@@ -3006,7 +3144,9 @@ if (debyeData) {
     });
     context.strokeStyle = color;
     context.lineWidth = width;
+    context.setLineDash(dash);
     context.stroke();
+    context.setLineDash([]);
     context.restore();
   }
 
@@ -3050,7 +3190,7 @@ if (debyeData) {
     context.rect(plot.left, plot.top, plot.width, plot.height);
     context.clip();
     debyeDrawCurve(context, series.exact, xMap, yMap, MODES_COLORS.cyan, 2.45);
-    debyeDrawCurve(context, series.limiting, xMap, yMap, MODES_COLORS.orange, 1.75);
+    debyeDrawCurve(context, series.limiting, xMap, yMap, MODES_COLORS.orange, 1.75, [7, 5]);
     context.restore();
   }
 

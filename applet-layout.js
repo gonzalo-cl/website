@@ -21,6 +21,8 @@
   let lastSignature = "";
   let frame = 0;
   let settleTimer = 0;
+  const compactApparatus = window.matchMedia("(max-width: 620px)");
+  let syncingDisclosures = false;
 
   /* Every paper control uses the same progress custom property.  Keeping
      this here, beside responsive applet coordination, means an applet author
@@ -38,6 +40,50 @@
 
   const syncRangeControls = () => {
     document.querySelectorAll('input[type="range"]').forEach(syncRangeProgress);
+  };
+
+  const syncMobileDisclosures = () => {
+    syncingDisclosures = true;
+    document.querySelectorAll("details[data-mobile-disclosure]").forEach((details) => {
+      if (compactApparatus.matches) {
+        details.open = details.dataset.mobileOpen === "true";
+      } else {
+        details.open = true;
+      }
+    });
+    requestAnimationFrame(() => { syncingDisclosures = false; });
+  };
+
+  const prepareMobileDisclosures = () => {
+    document.querySelectorAll("details[data-mobile-disclosure]").forEach((details) => {
+      details.addEventListener("toggle", () => {
+        if (!compactApparatus.matches || syncingDisclosures) return;
+        details.dataset.mobileOpen = String(details.open);
+        settle();
+      });
+    });
+    syncMobileDisclosures();
+    compactApparatus.addEventListener?.("change", () => {
+      syncMobileDisclosures();
+      settle();
+    });
+  };
+
+  const preparePanelCarousels = () => {
+    document.querySelectorAll(".collar-field-visual[tabindex]").forEach((carousel) => {
+      carousel.addEventListener("keydown", (event) => {
+        if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+        if (carousel.scrollWidth <= carousel.clientWidth + 1) return;
+        event.preventDefault();
+        const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const left = event.key === "Home"
+          ? 0
+          : event.key === "End"
+            ? carousel.scrollWidth
+            : carousel.scrollLeft + (event.key === "ArrowRight" ? 1 : -1) * carousel.clientWidth * .88;
+        carousel.scrollTo({ left, behavior: reducedMotion ? "auto" : "smooth" });
+      });
+    });
   };
 
   const signature = () => [...document.querySelectorAll(visualSelector)]
@@ -71,6 +117,8 @@
 
   const start = () => {
     syncRangeControls();
+    prepareMobileDisclosures();
+    preparePanelCarousels();
     const targets = [...document.querySelectorAll(visualSelector)];
     if ("ResizeObserver" in window) {
       const observer = new ResizeObserver(() => emitStableLayout());

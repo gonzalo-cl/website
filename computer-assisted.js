@@ -3260,9 +3260,17 @@
     context.arc(fluxMarkerX, fluxY, compact ? 4 : 5, 0, Math.PI * 2);
     context.fillStyle = progress > .96 ? colors.accent : colors.gold;
     context.fill();
-    placeComputerOverviewLabel("overviewSearchStart", fluxLeft, fluxY + 25);
-    placeComputerOverviewLabel("overviewSearchEnd", fluxRight, fluxY + 25);
-    if (progress > .78) placeComputerOverviewLabel("overviewSearchCenter", fluxRight, fluxY + 58);
+    const endpointLabelY = fluxY + (compact ? 16 : 25);
+    placeComputerOverviewLabel("overviewSearchStart", fluxLeft, endpointLabelY);
+    placeComputerOverviewLabel("overviewSearchEnd", fluxRight, endpointLabelY);
+    if (progress > .78) {
+      placeComputerOverviewLabel(
+        "overviewSearchCenter",
+        fluxRight,
+        compact ? area.y + area.height - 1 : fluxY + 58,
+        compact ? { align: "right", baseline: "bottom" } : {},
+      );
+    }
   };
 
   const drawSimpleOverviewDisk = (context, area, motion) => {
@@ -3404,7 +3412,12 @@
     const formulaX = area.x + area.width * .005;
     const formulaAlignment = { align: "left" };
     placeComputerOverviewLabel("overviewFixedBound", formulaX, area.y + area.height * .43, formulaAlignment);
-    placeComputerOverviewLabel("overviewFixedContraction", formulaX, area.y + area.height * .64, formulaAlignment);
+    placeComputerOverviewLabel(
+      "overviewFixedContraction",
+      formulaX,
+      area.y + area.height * (compact ? .70 : .64),
+      formulaAlignment,
+    );
     context.beginPath();
     context.arc(center.x, center.y, radius, 0, Math.PI * 2);
     context.fillStyle = "rgba(160, 0, 0, .035)";
@@ -3481,7 +3494,7 @@
     const progress = computerOverviewEase(clamp(motion, 0, 1));
     const pairCenter = {
       x: area.x + area.width * (compact ? .50 : .20),
-      y: area.y + area.height * (compact ? .17 : .43),
+      y: area.y + area.height * (compact ? .10 : .43),
     };
     const domainCenter = {
       x: area.x + area.width * (compact ? .50 : .72),
@@ -3492,7 +3505,6 @@
       area.height * (compact ? .20 : .30),
     );
     placeComputerOverviewLabel("overviewFinalPair", pairCenter.x, pairCenter.y);
-    placeComputerOverviewLabel("overviewFinalShape", pairCenter.x, pairCenter.y + (compact ? 57 : 67));
 
     context.beginPath();
     context.arc(domainCenter.x, domainCenter.y, domainRadius, 0, Math.PI * 2);
@@ -3506,9 +3518,18 @@
       stroke: colors.teal,
       lineWidth: 2.3,
     });
-    placeComputerOverviewLabel("overviewFinalDomain", domainCenter.x, domainCenter.y - domainRadius - 23);
+    placeComputerOverviewLabel(
+      "overviewFinalDomain",
+      domainCenter.x,
+      domainCenter.y - domainRadius - (compact ? 18 : 23),
+    );
+    placeComputerOverviewLabel(
+      "overviewFinalShape",
+      compact ? domainCenter.x : pairCenter.x,
+      compact ? domainCenter.y - domainRadius + 13 : pairCenter.y + 67,
+    );
 
-    const proofY = area.y + area.height * (compact ? .88 : .84);
+    const proofY = area.y + area.height * .84;
     placeComputerOverviewLabel("overviewFinalCoefficient", area.x + area.width * .50, proofY);
     placeComputerOverviewLabel("overviewFinalDisk", area.x + area.width * .50, proofY + (compact ? 27 : 31));
   };

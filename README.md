@@ -123,8 +123,6 @@ being stretched under another on first load or after a breakpoint transition.
   the browser.
 - [numerics/](numerics/) — scripts that regenerate the numerical data.
 - [assets/](assets/) — paper figures and comparison photographs.
-- [paper/](paper/) — the proof-guided paper edition retained as a secondary
-  route.
 - [tufte/](tufte/) — compatibility redirect plus the Tufte stylesheet and
   contract.
 

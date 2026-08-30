@@ -117,7 +117,9 @@
         className: tocClassByLevel[heading.dataset.toc],
         href: target ? `#${target.id}` : "#",
         level: heading.dataset.toc,
+        links: [],
         number: heading.dataset.number,
+        target,
         title: heading.dataset.title,
       };
     });
@@ -144,8 +146,10 @@
       if (record.className) link.classList.add(record.className);
       link.dataset.headingLink = "";
       link.dataset.tocLevel = record.level;
+      link.dataset.headingTarget = record.target?.id || "";
       link.href = record.href;
       link.append(createLabel(record));
+      record.links.push(link);
       return link;
     };
 
@@ -157,21 +161,29 @@
         groups.at(-1).children.push(record);
       }
     });
+    groups.forEach(({ section, children }) => {
+      section.parentSection = section;
+      children.forEach((child) => { child.parentSection = section; });
+    });
 
     const list = document.createElement("ol");
     list.className = "section-banner-list";
-    groups.forEach(({ section, children }, index) => {
+    groups.forEach((navigationGroup, index) => {
+      const { section, children } = navigationGroup;
       const item = document.createElement("li");
       item.className = "section-banner-item";
       item.dataset.sectionTarget = section.href;
+      navigationGroup.item = item;
 
       if (children.length) {
         const group = document.createElement("details");
         group.className = "section-banner-group";
         group.setAttribute("name", "exposition-sections");
+        navigationGroup.disclosure = group;
 
         const summary = document.createElement("summary");
         summary.append(createLabel(section, true));
+        navigationGroup.summary = summary;
 
         const dropdown = document.createElement("div");
         dropdown.className = "section-banner-dropdown";
@@ -183,6 +195,7 @@
         childList.className = "section-banner-subsections";
         children.forEach((child) => {
           const childItem = document.createElement("li");
+          child.navigationItem = childItem;
           childItem.append(createHeadingLink(child));
           childList.append(childItem);
         });
@@ -200,6 +213,195 @@
     });
     toc.replaceChildren(list);
 
+    const printedSectionTitle = (record) => record.number
+      ? `${record.number} · ${record.title}`
+      : record.title;
+
+    /* The page is deliberately a single continuous document.  Short handoff
+       links at section ends retain that reading flow while sparing readers a
+       trip back to the sticky banner after a long chapter. */
+    groups.forEach(({ section }, index) => {
+      if (!section.target) return;
+      const sectionElement = topSectionFor(section.target) || section.target;
+      if (sectionElement.querySelector(":scope > [data-chapter-navigation]")) return;
+      const previous = groups[index - 1]?.section;
+      const next = groups[index + 1]?.section;
+      if (!previous && !next) return;
+
+      const pagination = document.createElement("nav");
+      pagination.className = "chapter-pagination";
+      pagination.dataset.chapterNavigation = "";
+      pagination.dataset.sectionTarget = section.target.id;
+      pagination.setAttribute("aria-label", `Continue from ${printedSectionTitle(section)}`);
+
+      const createChapterLink = (destination, direction) => {
+        const link = document.createElement("a");
+        const isPrevious = direction === "previous";
+        link.className = `chapter-pagination-link chapter-pagination-${direction}`;
+        link.dataset.chapterDirection = direction;
+        link.href = destination.href;
+        link.rel = isPrevious ? "prev" : "next";
+        link.setAttribute(
+          "aria-label",
+          `${isPrevious ? "Previous" : "Next"} section: ${printedSectionTitle(destination)}`,
+        );
+
+        const directionLabel = document.createElement("span");
+        directionLabel.className = "chapter-pagination-direction";
+        directionLabel.textContent = isPrevious ? "← Previous" : "Next →";
+        const destinationLabel = document.createElement("span");
+        destinationLabel.className = "chapter-pagination-destination";
+        destinationLabel.textContent = printedSectionTitle(destination);
+        link.append(directionLabel, destinationLabel);
+        return link;
+      };
+
+      if (previous) pagination.append(createChapterLink(previous, "previous"));
+      if (next) pagination.append(createChapterLink(next, "next"));
+      sectionElement.append(pagination);
+    });
+
+    const trackedRecords = groups.flatMap(({ section, children }) => [section, ...children])
+      .filter((record) => record.target);
+    const mobileSummaryLabel = sectionNavigation
+      .querySelector(":scope > .section-banner-mobile-summary > span");
+    const defaultMobileSummary = mobileSummaryLabel?.textContent || "Sections";
+    mobileSummaryLabel?.classList.add("section-banner-mobile-current");
+    let currentRecord = null;
+    let compactNavigationRecord = null;
+    let currentFrame = 0;
+    let navigationMetricsDirty = true;
+    let navigationScrollPadding = 0;
+    const navigationScrollMargins = new Map();
+
+    const setCurrentRecord = (nextRecord) => {
+      if (nextRecord === currentRecord) return;
+      currentRecord = nextRecord;
+      const currentSection = nextRecord?.parentSection || null;
+
+      trackedRecords.forEach((record) => {
+        const isCurrentHeading = record === nextRecord;
+        record.links.forEach((link) => {
+          link.classList.toggle("is-current", isCurrentHeading);
+          link.classList.toggle("is-current-heading", isCurrentHeading);
+          if (isCurrentHeading) {
+            link.dataset.currentHeading = "";
+            link.setAttribute("aria-current", "location");
+          } else {
+            delete link.dataset.currentHeading;
+            link.removeAttribute("aria-current");
+          }
+        });
+        record.navigationItem?.classList.toggle("is-current-subsection", isCurrentHeading);
+        if (record.navigationItem) {
+          if (isCurrentHeading) record.navigationItem.dataset.currentSubsection = "";
+          else delete record.navigationItem.dataset.currentSubsection;
+        }
+      });
+
+      groups.forEach((navigationGroup) => {
+        const isCurrentSection = navigationGroup.section === currentSection;
+        [navigationGroup.item, navigationGroup.disclosure, navigationGroup.summary]
+          .filter(Boolean)
+          .forEach((element) => {
+            element.classList.toggle("is-current-section", isCurrentSection);
+            if (isCurrentSection) element.dataset.currentSection = "";
+            else delete element.dataset.currentSection;
+          });
+      });
+
+      if (currentSection) {
+        sectionNavigation.dataset.currentSection = currentSection.target.id;
+        if (nextRecord !== currentSection) {
+          sectionNavigation.dataset.currentSubsection = nextRecord.target.id;
+        } else {
+          delete sectionNavigation.dataset.currentSubsection;
+        }
+      } else {
+        delete sectionNavigation.dataset.currentSection;
+        delete sectionNavigation.dataset.currentSubsection;
+      }
+      if (mobileSummaryLabel) {
+        mobileSummaryLabel.textContent = currentSection
+          ? printedSectionTitle(currentSection)
+          : defaultMobileSummary;
+      }
+
+      document.dispatchEvent(new CustomEvent("schiffer:navigation-current", {
+        detail: {
+          sectionId: currentSection?.target.id || null,
+          subsectionId: nextRecord && nextRecord !== currentSection ? nextRecord.target.id : null,
+        },
+      }));
+    };
+
+    const updateCurrentRecord = () => {
+      currentFrame = 0;
+      /* Expanding the compact navigation changes the sticky banner's height.
+         Preserve the reader's location while the menu is open, then refresh
+         after its toggle event closes it. */
+      if (compactNavigation.matches && sectionNavigation.open) return;
+      if (navigationMetricsDirty) {
+        navigationMetricsDirty = false;
+        navigationScrollPadding = Number.parseFloat(
+          getComputedStyle(document.documentElement).scrollPaddingTop,
+        ) || 0;
+        navigationScrollMargins.clear();
+        trackedRecords.forEach((record) => {
+          navigationScrollMargins.set(
+            record,
+            Number.parseFloat(getComputedStyle(record.target).scrollMarginTop) || 0,
+          );
+        });
+      }
+      let nextRecord = null;
+      trackedRecords.forEach((record) => {
+        if (!record.target.getClientRects().length) return;
+        const readingLine = navigationScrollPadding
+          + (navigationScrollMargins.get(record) || 0) + 1;
+        if (record.target.getBoundingClientRect().top <= readingLine) {
+          nextRecord = record;
+        }
+      });
+      const atDocumentEnd = window.scrollY + window.innerHeight
+        >= document.documentElement.scrollHeight - 2;
+      if (atDocumentEnd && trackedRecords.length) nextRecord = trackedRecords.at(-1);
+
+      /* A small upward movement should not make the banner jump back a
+         subsection while the current heading is still plainly in view.  The
+         hysteresis is especially useful when a sticky control gains focus. */
+      if (currentRecord && nextRecord) {
+        const currentIndex = trackedRecords.indexOf(currentRecord);
+        const nextIndex = trackedRecords.indexOf(nextRecord);
+        const currentReadingLine = navigationScrollPadding
+          + (navigationScrollMargins.get(currentRecord) || 0) + 1;
+        const backwardThreshold = currentReadingLine
+          + Math.min(220, window.innerHeight * 0.28);
+        if (
+          nextIndex < currentIndex
+          && currentRecord.target.getBoundingClientRect().top <= backwardThreshold
+        ) {
+          nextRecord = currentRecord;
+        }
+      }
+      setCurrentRecord(nextRecord);
+    };
+
+    const scheduleCurrentRecordUpdate = () => {
+      if (currentFrame) return;
+      currentFrame = requestAnimationFrame(updateCurrentRecord);
+    };
+    const refreshNavigationMetrics = () => {
+      navigationMetricsDirty = true;
+      scheduleCurrentRecordUpdate();
+    };
+    window.addEventListener("scroll", scheduleCurrentRecordUpdate, { passive: true });
+    window.addEventListener("resize", refreshNavigationMetrics);
+    window.addEventListener("pageshow", refreshNavigationMetrics);
+    window.addEventListener("schiffer:applet-layout", scheduleCurrentRecordUpdate);
+    document.fonts?.ready.then(scheduleCurrentRecordUpdate);
+    scheduleCurrentRecordUpdate();
+
     const groupDetails = Array.from(toc.querySelectorAll("details.section-banner-group"));
     const closeGroups = (except = null) => {
       groupDetails.forEach((group) => {
@@ -212,9 +414,21 @@
       });
     });
 
-    const compactNavigation = window.matchMedia("(max-width: 1000px)");
+    const compactNavigation = window.matchMedia("(max-width: 1180px)");
+    const compactSummary = sectionNavigation.querySelector(":scope > summary");
+    const preserveCompactNavigationRecord = () => {
+      if (compactNavigation.matches && !sectionNavigation.open) {
+        compactNavigationRecord = currentRecord;
+      }
+    };
+    compactSummary?.addEventListener("pointerdown", preserveCompactNavigationRecord);
+    compactSummary?.addEventListener("click", preserveCompactNavigationRecord);
+    compactSummary?.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") preserveCompactNavigationRecord();
+    });
     const syncNavigationMode = () => {
       sectionNavigation.open = !compactNavigation.matches;
+      compactNavigationRecord = null;
       closeGroups();
     };
     syncNavigationMode();
@@ -225,7 +439,13 @@
     }
 
     sectionNavigation.addEventListener("toggle", () => {
-      if (!sectionNavigation.open) closeGroups();
+      if (!sectionNavigation.open) {
+        closeGroups();
+        compactNavigationRecord = null;
+      } else if (compactNavigation.matches && compactNavigationRecord) {
+        setCurrentRecord(compactNavigationRecord);
+      }
+      scheduleCurrentRecordUpdate();
     });
 
     toc.addEventListener("click", (event) => {
@@ -251,6 +471,101 @@
         sectionNavigation.querySelector(":scope > summary")?.focus();
       }
     });
+  }
+
+  /* Native fragment scrolling happens before several canvases and late web
+     fonts have reached their final size.  Keep a new hash aligned during a
+     short settling window, then release it immediately; direct reader input
+     always cancels the correction so the page never fights manual scrolling. */
+  const targetForHash = (hash = window.location.hash) => {
+    if (!hash || hash === "#") return null;
+    try {
+      return document.getElementById(decodeURIComponent(hash.slice(1)));
+    } catch {
+      return null;
+    }
+  };
+
+  let hashAlignment = null;
+  const stopHashAlignment = () => {
+    if (!hashAlignment) return;
+    cancelAnimationFrame(hashAlignment.frame);
+    hashAlignment.timers.forEach(clearTimeout);
+    hashAlignment = null;
+  };
+
+  const alignPendingHash = () => {
+    const state = hashAlignment;
+    if (!state || window.location.hash !== state.hash || !state.target.isConnected) {
+      stopHashAlignment();
+      return;
+    }
+    cancelAnimationFrame(state.frame);
+    state.frame = requestAnimationFrame(() => {
+      state.frame = requestAnimationFrame(() => {
+        if (hashAlignment !== state || !state.target.getClientRects().length) return;
+        const root = document.documentElement;
+        const previousScrollBehavior = root.style.scrollBehavior;
+        root.style.scrollBehavior = "auto";
+        state.target.scrollIntoView({ block: "start" });
+        root.style.scrollBehavior = previousScrollBehavior;
+      });
+    });
+  };
+
+  const beginHashAlignment = (hash = window.location.hash) => {
+    const target = targetForHash(hash);
+    stopHashAlignment();
+    if (!target) return;
+
+    const state = { frame: 0, hash, target, timers: [] };
+    hashAlignment = state;
+    [0, 80, 220, 500, 900, 1500, 2300].forEach((delay) => {
+      state.timers.push(setTimeout(alignPendingHash, delay));
+    });
+    state.timers.push(setTimeout(() => {
+      if (hashAlignment === state) stopHashAlignment();
+    }, 2500));
+    alignPendingHash();
+  };
+
+  document.addEventListener("click", (event) => {
+    if (event.defaultPrevented || event.button !== 0
+        || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey
+        || !(event.target instanceof Element)) return;
+    const link = event.target.closest("a[href]");
+    if (!link) return;
+    const destination = new URL(link.href, window.location.href);
+    if (destination.origin !== window.location.origin
+        || destination.pathname !== window.location.pathname
+        || destination.search !== window.location.search
+        || !destination.hash
+        || !targetForHash(destination.hash)) return;
+    requestAnimationFrame(() => beginHashAlignment(destination.hash));
+  });
+  window.addEventListener("hashchange", () => beginHashAlignment());
+  window.addEventListener("load", alignPendingHash, { once: true });
+  window.addEventListener("schiffer:applet-layout", alignPendingHash);
+  document.fonts?.ready.then(alignPendingHash);
+  if ("ResizeObserver" in window) {
+    const hashLayoutObserver = new ResizeObserver(alignPendingHash);
+    hashLayoutObserver.observe(main);
+  }
+
+  ["pointerdown", "touchstart", "wheel"].forEach((eventName) => {
+    window.addEventListener(eventName, stopHashAlignment, { passive: true });
+  });
+  window.addEventListener("keydown", (event) => {
+    if (["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " "].includes(event.key)) {
+      stopHashAlignment();
+    }
+  });
+  if (window.location.hash) {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", () => beginHashAlignment(), { once: true });
+    } else {
+      beginHashAlignment();
+    }
   }
 
   const statementKinds = new Set(["theorem", "lemma", "proposition", "corollary", "criterion"]);
@@ -333,6 +648,12 @@
     label.className = "figure-label";
     label.textContent = `Figure ${figure.dataset.number}. `;
     caption.prepend(label);
+    if (figure.dataset.evidence) {
+      const evidence = document.createElement("span");
+      evidence.className = "figure-evidence-label";
+      evidence.textContent = figure.dataset.evidence;
+      label.after(evidence);
+    }
   });
 
   numberWithinSection("aside[data-aside]", "data-aside", "aside", "Aside");

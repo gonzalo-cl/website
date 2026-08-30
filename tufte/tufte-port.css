@@ -34,6 +34,17 @@
   --orange: #a00000;
   --red: #a00000;
   --teal: #287b7b;
+  --visual-boundary: #a00000;
+  --visual-positive: #b45f06;
+  --visual-negative: #075760;
+  --visual-reference: #666158;
+  --visual-certificate: #287b7b;
+  --space-1: .35rem;
+  --space-2: .7rem;
+  --space-3: 1.1rem;
+  --space-4: 1.7rem;
+  --space-5: 2.5rem;
+  --space-6: 4rem;
   --serif: "et-book", Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif;
   --sans: "et-book", Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif;
   --mono: "DM Mono", Consolas, "Liberation Mono", Menlo, monospace;
@@ -113,6 +124,23 @@ body.tufte-site::before {
 
 .noise { display: none; }
 
+.skip-link {
+  position: fixed;
+  z-index: 200;
+  top: .65rem;
+  left: .65rem;
+  padding: .6rem .85rem;
+  color: var(--paper) !important;
+  background: var(--ink);
+  border: 2px solid var(--paper);
+  font-family: var(--mono);
+  font-size: var(--type-label);
+  text-decoration: none;
+  transform: translateY(-180%);
+  transition: transform .15s ease;
+}
+.skip-link:focus { transform: translateY(0); }
+
 body.tufte-site a { text-decoration-thickness: .05em; text-underline-offset: .12em; }
 body.tufte-site a:hover { color: var(--orange); }
 
@@ -120,7 +148,7 @@ body.tufte-site a:hover { color: var(--orange); }
 body.tufte-site main .intro-authors {
   width: var(--measure-reading);
   max-width: var(--measure-reading);
-  margin: 0 0 1.1rem;
+  margin: 0 0 .45rem;
   color: var(--muted);
   font-size: var(--type-caption) !important;
   font-style: italic;
@@ -130,6 +158,24 @@ body.tufte-site main .intro-authors a {
   color: inherit;
   text-decoration-color: var(--line);
 }
+body.tufte-site main .intro-sources {
+  width: var(--measure-reading);
+  max-width: var(--measure-reading);
+  margin: 0 0 2.25rem;
+  color: var(--muted);
+  font-size: var(--type-note) !important;
+  line-height: 1.55 !important;
+}
+body.tufte-site main .intro-sources > span {
+  margin-right: .35rem;
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: var(--type-label);
+  font-style: normal;
+  font-variant: small-caps;
+  letter-spacing: .035em;
+}
+body.tufte-site main .intro-sources a { color: inherit; text-decoration-color: var(--line); }
 body.tufte-site main a.xref {
   color: inherit;
   font-style: normal;
@@ -148,6 +194,39 @@ body.tufte-site main a.xref:hover { color: var(--orange); }
   text-decoration: none;
 }
 .figure-label { color: var(--ink); font-style: normal; font-variant: small-caps; }
+.figure-evidence-label {
+  display: inline-block;
+  margin-left: .45rem;
+  margin-right: .45rem;
+  padding-left: .45rem;
+  color: var(--orange);
+  border-left: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: var(--type-label);
+  font-style: normal;
+  font-variant: small-caps;
+  letter-spacing: .03em;
+}
+.figure-caption-summary {
+  display: block;
+  margin-top: .2rem;
+  color: var(--ink);
+  font-style: italic;
+  text-wrap: pretty;
+}
+.figure-caption-note {
+  display: block;
+  margin-top: .35rem;
+  color: var(--muted);
+  font-style: normal;
+  text-wrap: pretty;
+}
+.figure-caption-note strong {
+  color: var(--ink);
+  font-weight: 400;
+  font-variant: small-caps;
+  letter-spacing: .02em;
+}
 .aside-label {
   float: left;
   margin: .12rem .4rem 0 0;
@@ -346,6 +425,17 @@ body.tufte-site main a.xref:hover { color: var(--orange); }
   color: var(--ink);
   background: rgba(160, 0, 0, .045);
 }
+.section-banner-item.is-current-section > :is(.section-banner-group > summary, .section-banner-direct),
+.section-banner-group > summary.is-current-section {
+  color: var(--ink);
+  box-shadow: inset 0 -2px 0 var(--orange);
+}
+.section-banner-link.is-current[aria-current="location"] {
+  color: var(--ink);
+  background: rgba(160, 0, 0, .07);
+  box-shadow: inset 3px 0 0 var(--orange);
+}
+.section-banner-link.is-current[aria-current="location"] b { color: var(--orange); }
 
 main {
   container-type: inline-size;
@@ -391,7 +481,7 @@ body.tufte-site main #experiment > .modes-experiment { padding-bottom: 0; }
 /* Canonical Tufte type scale and text measure. */
 .intro {
   grid-template-columns: minmax(0, 1fr);
-  padding-top: 5rem;
+  padding-top: var(--space-6);
 }
 .intro > * { min-width: 0; }
 .intro-index {
@@ -408,13 +498,54 @@ body.tufte-site main #experiment > .modes-experiment { padding-bottom: 0; }
 .intro h1 {
   width: var(--measure-reading);
   max-width: none;
-  margin: 4rem 0 1.5rem;
+  margin: 0 0 1.35rem;
   font: 400 var(--type-display)/1 var(--serif);
   letter-spacing: -.02em;
 }
 
 .intro-bottom { width: var(--measure-reading); }
 .intro-bottom p { width: 100%; max-width: none; margin: 1.4rem 0; }
+.intro-main-result { margin-top: 2rem !important; margin-bottom: 2rem !important; }
+.intro-route-overview { margin-top: .25rem; }
+
+.chapter-pagination {
+  width: var(--measure-reading);
+  max-width: var(--measure-reading);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin: 4rem 0 0;
+  padding-top: 1.35rem;
+  border-top: 1px solid var(--line);
+}
+.chapter-pagination-link {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .25rem;
+  padding: .55rem 0;
+  color: var(--muted);
+  text-decoration: none;
+}
+.chapter-pagination-next { grid-column: 2; align-items: flex-end; text-align: right; }
+.chapter-pagination-direction {
+  color: var(--orange);
+  font-family: var(--mono);
+  font-size: var(--type-label);
+  font-variant: small-caps;
+  letter-spacing: .035em;
+}
+.chapter-pagination-destination {
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: var(--type-note);
+  line-height: 1.3;
+}
+.chapter-pagination-link:hover .chapter-pagination-destination { color: var(--orange); }
+.chapter-pagination-link:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: .35rem;
+}
 
 body.tufte-site main :where(p:not(.eyebrow)) {
   font-family: var(--serif);
@@ -1617,7 +1748,7 @@ body.tufte-site main .collar-field-controls .control-label > :is(span, output) {
   width: .75rem;
   height: .48rem;
   display: inline-block;
-  border: 1px solid #72c9c6;
+  border: 1px solid var(--teal);
 }
 .collar-zoom-connectors { display: none; }
 
@@ -2325,6 +2456,7 @@ body.tufte-site main :is(
 ) > div > span {
   font-size: var(--type-label) !important;
 }
+body.tufte-site main .apparatus-controls > h3 { text-wrap: balance; }
 body.tufte-site main :is(
   .solver-readout,
   .modes-status,
@@ -2554,6 +2686,7 @@ body.tufte-site main .computer-assisted-canvas-panel #inverseCanvas {
 
 body.tufte-site main .computer-assisted-figure .boundary-legend {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   gap: .35rem 1rem;
   box-sizing: border-box;
@@ -2965,13 +3098,6 @@ body.tufte-site main .berenstein-legend-negative {
   background: #325f7b;
 }
 
-body.tufte-site main .berenstein-legend-zero {
-  height: 0 !important;
-  border: 0 !important;
-  border-top: 2px solid #174d6b !important;
-  border-radius: 0 !important;
-}
-
 body.tufte-site main .berenstein-field-notes {
   gap: .65rem !important;
 }
@@ -3168,7 +3294,7 @@ body > footer {
 
 .tex-display { max-width: 100%; overflow-x: auto; overflow-y: hidden; }
 
-@media (max-width: 1000px) {
+@media (max-width: 1180px) {
   .section-banner {
     position: sticky;
     top: 0;
@@ -3203,11 +3329,18 @@ body > footer {
     font-size: var(--type-label);
   }
   .section-banner nav {
-    max-height: calc(100vh - 9rem);
-    max-height: calc(100dvh - 9rem);
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: 0;
+    width: 100%;
+    max-height: calc(100vh - 3.2rem);
+    max-height: calc(100dvh - 3.2rem);
     overflow-y: auto;
     overscroll-behavior: contain;
+    background: rgba(255, 255, 248, .985);
     border-top: 1px solid var(--line);
+    box-shadow: 0 1rem 2.4rem rgba(17, 17, 17, .14);
   }
   .section-banner-list { display: block; }
   .section-banner-item {
@@ -3267,7 +3400,7 @@ body > footer {
   .collar-field-visual { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
-@media (max-width: 1000px) {
+@media (max-width: 1180px) {
   :root {
     --type-body-current: var(--type-body-mobile);
     --measure-reading: 100%;
@@ -3313,7 +3446,7 @@ body > footer {
 
   .site-acknowledgements { padding-top: 0; }
 
-  .intro-index, .intro h1, .intro-bottom,
+  .intro-index, .intro h1, .intro-authors, .intro-sources, .intro-bottom,
   .section-heading,
   :is(.intro-copy, .intro-copy-wide, .borrow-lead, .geometry-lead, .computer-assisted-lead, .computer-assisted-copy, .proof-strategy-lead, .half-cylinder-introduction, .experiment-story-lead, .cone-lead, .modes-lead, .phase-story-lead, .debye-lead, .abundance-lead, .proof-strategy-subheading),
   .disk-sidequest .intro-copy,
@@ -3323,7 +3456,7 @@ body > footer {
     max-width: 100%;
   }
 
-  .intro h1 { margin-top: 3rem; font-size: clamp(2.35rem, 11.5vw, var(--type-display-mobile)); }
+  .intro h1 { margin-top: 0; font-size: clamp(2.35rem, 8vw, var(--type-display-mobile)); }
   .intro-index { font-size: var(--type-subsection-mobile); }
   body.tufte-site main .math-statement {
     width: 100%;
@@ -3746,6 +3879,7 @@ body.tufte-site main .boundary-aside .computer-assisted-canvas-panel #boundaryCa
 }
 body.tufte-site main .boundary-aside .boundary-legend {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   gap: .35rem 1rem;
   box-sizing: border-box;
@@ -3799,7 +3933,19 @@ body.tufte-site main .shape-variation-figure .variation-original-boundary {
   stroke-dasharray: 4 5;
 }
 
-@media (max-width: 1000px) {
+body.tufte-site main input[type="range"]:focus-visible {
+  outline: 2px solid var(--teal) !important;
+  outline-offset: 4px;
+}
+body.tufte-site main :is(.three-wrap canvas, #phaseFamilyCanvas):focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 3px;
+}
+
+.mobile-apparatus-disclosure > summary { display: none; }
+.mobile-apparatus-disclosure-body { padding-top: .2rem; }
+
+@media (max-width: 1180px) {
   body.tufte-site main .geometry-laboratory.reading-figure {
     --geometry-key-width: 0%;
     display: grid;
@@ -3834,7 +3980,18 @@ body.tufte-site main .shape-variation-figure .variation-original-boundary {
 
 @media print {
   .section-banner,
-  .topbar .method-button { display: none !important; }
+  .topbar .method-button,
+  .skip-link,
+  .chapter-pagination,
+  body.tufte-site main :is(.apparatus-controls, .paper-demo-controls, .play-button, button, input, select) {
+    display: none !important;
+  }
+  body.tufte-site main .interactive-plate {
+    display: block !important;
+    break-inside: avoid;
+  }
+  body.tufte-site main :is(figure, .math-statement, figcaption) { break-inside: avoid; }
+  body.tufte-site main details:not([open]) > :not(summary) { display: block !important; }
 }
 
 
@@ -3843,6 +4000,12 @@ body.tufte-site main .shape-variation-figure .variation-original-boundary {
   width: 100%;
   height: auto;
   overflow: visible;
+}
+.cone-remap-figure > figcaption {
+  float: none;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
 }
 .cone-remap-figure svg path {
   fill: none;
@@ -3962,14 +4125,79 @@ body.tufte-site main .shape-variation-figure .variation-original-boundary {
   .section-banner-link { min-height: 44px; }
 }
 
+@media (max-width: 1180px) {
+  .section-banner-mobile-current {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .section-banner-item.is-current-section > :is(.section-banner-group > summary, .section-banner-direct) {
+    background: rgba(160, 0, 0, .035);
+    box-shadow: inset 3px 0 0 var(--orange);
+  }
+  .chapter-pagination { width: 100%; max-width: 100%; }
+}
+
 @media (max-width: 620px) {
   body.tufte-site main .modes-plot-panel {
     grid-template-rows: clamp(500px, 140vw, 520px);
   }
+
+  .mobile-apparatus-disclosure {
+    margin-top: .7rem;
+    border-top: 1px solid var(--line);
+  }
+  .mobile-apparatus-disclosure > summary {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--ink);
+    cursor: pointer;
+    font-family: var(--serif);
+    font-size: var(--type-note);
+    font-variant: small-caps;
+    list-style: none;
+  }
+  .mobile-apparatus-disclosure > summary::-webkit-details-marker { display: none; }
+  .mobile-apparatus-disclosure > summary::after {
+    content: "open +";
+    color: var(--orange);
+    font-family: var(--mono);
+    font-size: var(--type-label);
+    font-variant: normal;
+  }
+  .mobile-apparatus-disclosure[open] > summary::after { content: "close −"; }
+  .mobile-apparatus-disclosure > summary:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: -2px;
+  }
+  .mobile-apparatus-disclosure-body { padding-top: .45rem; }
+
+  .chapter-pagination { grid-template-columns: minmax(0, 1fr); gap: .7rem; }
+  .chapter-pagination-next { grid-column: 1; align-items: flex-start; text-align: left; }
 }
 
 @media (max-width: 480px) and (orientation: portrait) {
-  .collar-field-visual { grid-template-columns: minmax(0, 1fr); }
+  .collar-field-visual {
+    display: flex;
+    gap: .8rem;
+    padding-bottom: .55rem;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: inline mandatory;
+    scrollbar-color: var(--teal) transparent;
+  }
+  .collar-field-visual:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 3px;
+  }
+  .collar-field-laboratory .collar-field-visual > .collar-field-panel {
+    flex: 0 0 88%;
+    scroll-snap-align: start;
+  }
+  .collar-field-visual > .collar-zoom-connectors { display: none; }
   .collar-field-laboratory .collar-field-visual > .collar-field-panel {
     grid-template-rows: auto clamp(220px, 68vw, 290px);
   }
