@@ -17,11 +17,243 @@
     white: "#fffff8",
   });
 
-  const prepareCanvas = (canvas) => {
+  const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
+  let vectorDefinitionSerial = 0;
+
+  const createSvgNode = (name, attributes = {}) => {
+    const node = document.createElementNS(SVG_NAMESPACE, name);
+    Object.entries(attributes).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") node.setAttribute(key, String(value));
+    });
+    return node;
+  };
+
+  const createVectorContext = (svg) => {
+    const definitions = createSvgNode("defs");
+    svg.appendChild(definitions);
+    let state = {
+      fillStyle: "#000000",
+      strokeStyle: "#000000",
+      lineWidth: 1,
+      lineCap: "butt",
+      lineJoin: "miter",
+      lineDash: [],
+      globalAlpha: 1,
+      font: "10px sans-serif",
+      textAlign: "left",
+      textBaseline: "alphabetic",
+      clipId: null,
+    };
+    const savedStates = [];
+    let pathCommands = [];
+    let pathRevision = 0;
+    let hasCurrentPoint = false;
+    let lastPaint = null;
+
+    const paintValue = (paint) => paint && paint.vectorPaint ? paint.vectorPaint : paint;
+    const applyClipAndOpacity = (node) => {
+      if (state.clipId) node.setAttribute("clip-path", `url(#${state.clipId})`);
+      if (state.globalAlpha < 1) node.setAttribute("opacity", String(state.globalAlpha));
+    };
+    const applyStroke = (node) => {
+      node.setAttribute("stroke", paintValue(state.strokeStyle));
+      node.setAttribute("stroke-width", String(state.lineWidth));
+      node.setAttribute("stroke-linecap", state.lineCap);
+      node.setAttribute("stroke-linejoin", state.lineJoin);
+      if (state.lineDash.length) node.setAttribute("stroke-dasharray", state.lineDash.join(" "));
+    };
+    const applyFill = (node) => node.setAttribute("fill", paintValue(state.fillStyle));
+    const markPathChanged = () => {
+      pathRevision += 1;
+      lastPaint = null;
+    };
+    const currentPath = () => pathCommands.join(" ");
+    const appendPaintedPath = (kind) => {
+      const pathData = currentPath();
+      if (!pathData) return;
+      if (
+        lastPaint
+        && lastPaint.revision === pathRevision
+        && lastPaint.alpha === state.globalAlpha
+        && lastPaint.clipId === state.clipId
+        && lastPaint.kind !== kind
+      ) {
+        if (kind === "fill") applyFill(lastPaint.node);
+        else applyStroke(lastPaint.node);
+        lastPaint.kind = "both";
+        return;
+      }
+      const node = createSvgNode("path", { d: pathData });
+      if (kind === "fill") {
+        applyFill(node);
+        node.setAttribute("stroke", "none");
+      } else {
+        node.setAttribute("fill", "none");
+        applyStroke(node);
+      }
+      applyClipAndOpacity(node);
+      svg.appendChild(node);
+      lastPaint = {
+        node,
+        kind,
+        revision: pathRevision,
+        alpha: state.globalAlpha,
+        clipId: state.clipId,
+      };
+    };
+
+    const context = {
+      canvas: svg,
+      beginPath() {
+        pathCommands = [];
+        hasCurrentPoint = false;
+        markPathChanged();
+      },
+      moveTo(x, y) {
+        pathCommands.push(`M ${x} ${y}`);
+        hasCurrentPoint = true;
+        markPathChanged();
+      },
+      lineTo(x, y) {
+        pathCommands.push(`${hasCurrentPoint ? "L" : "M"} ${x} ${y}`);
+        hasCurrentPoint = true;
+        markPathChanged();
+      },
+      arc(x, y, radius, startAngle, endAngle, anticlockwise = false) {
+        const span = Math.abs(endAngle - startAngle);
+        const startX = x + radius * Math.cos(startAngle);
+        const startY = y + radius * Math.sin(startAngle);
+        if (span >= Math.PI * 2 - 1e-6) {
+          pathCommands.push(`${hasCurrentPoint ? "L" : "M"} ${startX} ${startY}`);
+          pathCommands.push(`A ${radius} ${radius} 0 1 ${anticlockwise ? 0 : 1} ${x - radius * Math.cos(startAngle)} ${y - radius * Math.sin(startAngle)}`);
+          pathCommands.push(`A ${radius} ${radius} 0 1 ${anticlockwise ? 0 : 1} ${startX} ${startY}`);
+        } else {
+          const endX = x + radius * Math.cos(endAngle);
+          const endY = y + radius * Math.sin(endAngle);
+          pathCommands.push(`${hasCurrentPoint ? "L" : "M"} ${startX} ${startY}`);
+          pathCommands.push(`A ${radius} ${radius} 0 ${span > Math.PI ? 1 : 0} ${anticlockwise ? 0 : 1} ${endX} ${endY}`);
+        }
+        hasCurrentPoint = true;
+        markPathChanged();
+      },
+      rect(x, y, width, height) {
+        pathCommands.push(`M ${x} ${y} h ${width} v ${height} h ${-width} Z`);
+        hasCurrentPoint = true;
+        markPathChanged();
+      },
+      closePath() {
+        pathCommands.push("Z");
+        markPathChanged();
+      },
+      fill() { appendPaintedPath("fill"); },
+      stroke() { appendPaintedPath("stroke"); },
+      fillRect(x, y, width, height) {
+        const node = createSvgNode("rect", { x, y, width, height });
+        applyFill(node);
+        node.setAttribute("stroke", "none");
+        applyClipAndOpacity(node);
+        svg.appendChild(node);
+        lastPaint = null;
+      },
+      strokeRect(x, y, width, height) {
+        const node = createSvgNode("rect", { x, y, width, height, fill: "none" });
+        applyStroke(node);
+        applyClipAndOpacity(node);
+        svg.appendChild(node);
+        lastPaint = null;
+      },
+      clearRect() {},
+      fillText(text, x, y) {
+        const anchor = state.textAlign === "center"
+          ? "middle"
+          : state.textAlign === "right" || state.textAlign === "end" ? "end" : "start";
+        const baseline = state.textBaseline === "middle"
+          ? "central"
+          : state.textBaseline === "top" || state.textBaseline === "hanging" ? "hanging"
+            : state.textBaseline === "bottom" ? "text-after-edge" : "alphabetic";
+        const node = createSvgNode("text", {
+          x,
+          y,
+          fill: paintValue(state.fillStyle),
+          "text-anchor": anchor,
+          "dominant-baseline": baseline,
+          style: `font: ${state.font};`,
+        });
+        node.textContent = String(text);
+        applyClipAndOpacity(node);
+        svg.appendChild(node);
+        lastPaint = null;
+      },
+      measureText(text) { return { width: String(text).length * 7 }; },
+      setLineDash(values) { state.lineDash = Array.from(values || []); },
+      save() { savedStates.push({ ...state, lineDash: state.lineDash.slice() }); },
+      restore() {
+        if (savedStates.length) state = savedStates.pop();
+        lastPaint = null;
+      },
+      clip() {
+        const clipId = `computer-vector-clip-${vectorDefinitionSerial += 1}`;
+        const clipPath = createSvgNode("clipPath", { id: clipId, clipPathUnits: "userSpaceOnUse" });
+        clipPath.appendChild(createSvgNode("path", { d: currentPath() }));
+        definitions.appendChild(clipPath);
+        state.clipId = clipId;
+        lastPaint = null;
+      },
+      createRadialGradient(x0, y0, radius0, x1, y1, radius1) {
+        const gradientId = `computer-vector-gradient-${vectorDefinitionSerial += 1}`;
+        const gradient = createSvgNode("radialGradient", {
+          id: gradientId,
+          gradientUnits: "userSpaceOnUse",
+          cx: x1,
+          cy: y1,
+          r: radius1,
+          fx: x0,
+          fy: y0,
+          fr: radius0,
+        });
+        definitions.appendChild(gradient);
+        return {
+          vectorPaint: `url(#${gradientId})`,
+          addColorStop(offset, color) {
+            gradient.appendChild(createSvgNode("stop", {
+              offset: `${clamp(Number(offset), 0, 1) * 100}%`,
+              "stop-color": color,
+            }));
+          },
+        };
+      },
+      setTransform() {},
+    };
+
+    [
+      "fillStyle", "strokeStyle", "lineWidth", "lineCap", "lineJoin",
+      "globalAlpha", "font", "textAlign", "textBaseline",
+    ].forEach((property) => {
+      Object.defineProperty(context, property, {
+        get() { return state[property]; },
+        set(value) { state[property] = value; },
+      });
+    });
+    return context;
+  };
+
+  const prepareCanvas = (canvas, options = {}) => {
     const rectangle = canvas.getBoundingClientRect();
     const width = Math.max(1, Math.round(rectangle.width));
     const height = Math.max(1, Math.round(rectangle.height));
-    const ratio = Math.min(window.devicePixelRatio || 1, 2);
+    if (canvas.namespaceURI === SVG_NAMESPACE || String(canvas.tagName).toLowerCase() === "svg") {
+      canvas.setAttribute("viewBox", `0 0 ${width} ${height}`);
+      canvas.setAttribute("preserveAspectRatio", "xMidYMid meet");
+      canvas.replaceChildren();
+      const context = createVectorContext(canvas);
+      context.lineCap = "round";
+      context.lineJoin = "round";
+      return { context, width, height };
+    }
+    const maximumRatio = typeof options === "object"
+      ? Math.max(1, Number(options.maxPixelRatio) || 2)
+      : 2;
+    const ratio = Math.min(window.devicePixelRatio || 1, maximumRatio);
     const pixelWidth = Math.round(width * ratio);
     const pixelHeight = Math.round(height * ratio);
     if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
@@ -100,6 +332,11 @@
     context.restore();
   };
 
+  const drawCanvasBackdrop = (context, width, height) => {
+    context.fillStyle = colors.white;
+    context.fillRect(0, 0, width, height);
+  };
+
   const conformalCoefficients = Object.freeze([
     3.45993909539293071e-2, 7.08236502050214939e-3, 2.50705956641803957e-3,
     6.93948928139134676e-4, 1.83066145144108530e-4, 4.93110147154087685e-5,
@@ -153,83 +390,16 @@
     return { real, imaginary, magnitude: Math.hypot(real, imaginary) };
   };
 
-  const boundaryDetail = Object.freeze({
-    minimumX: .985,
-    maximumX: 1.055,
-    minimumY: -.11,
-    maximumY: .11,
-  });
-
-  const drawBoundaryDetail = (context, cutoff, box, overviewScale) => {
-    context.fillStyle = colors.white;
-    context.fillRect(box.x, box.y, box.width, box.height);
-    context.strokeStyle = colors.ruleDark;
-    context.lineWidth = 1;
-    context.strokeRect(box.x + .5, box.y + .5, box.width - 1, box.height - 1);
-
-    const plot = {
-      x: box.x + 12,
-      y: box.y + 10,
-      width: box.width - 24,
-      height: box.height - 39,
-    };
-    const detailScale = Math.min(
-      plot.width / (boundaryDetail.maximumY - boundaryDetail.minimumY),
-      plot.height / (boundaryDetail.maximumX - boundaryDetail.minimumX),
-    );
-    const drawnWidth = (boundaryDetail.maximumY - boundaryDetail.minimumY) * detailScale;
-    const drawnHeight = (boundaryDetail.maximumX - boundaryDetail.minimumX) * detailScale;
-    const originX = plot.x + (plot.width - drawnWidth) / 2;
-    const originY = plot.y + (plot.height - drawnHeight) / 2;
-    const project = (point) => ({
-      x: originX + (point.y - boundaryDetail.minimumY) * detailScale,
-      y: originY + (boundaryDetail.maximumX - point.x) * detailScale,
-    });
-    const trace = (pointAt, samples) => {
-      context.beginPath();
-      for (let index = 0; index <= samples; index += 1) {
-        const theta = -.16 + index / samples * .32;
-        const point = project(pointAt(theta));
-        if (index === 0) context.moveTo(point.x, point.y);
-        else context.lineTo(point.x, point.y);
-      }
-    };
-
-    context.save();
+  const traceBoundary = (context, centerX, centerY, scale, cutoff) => {
     context.beginPath();
-    context.rect(plot.x, plot.y, plot.width, plot.height);
-    context.clip();
-    trace((theta) => ({ x: Math.cos(theta), y: Math.sin(theta) }), 320);
-    context.setLineDash([5, 5]);
-    context.strokeStyle = colors.ruleDark;
-    context.lineWidth = 1.3;
-    context.stroke();
-    context.setLineDash([]);
-    trace((theta) => boundaryPoint(theta, cutoff), 640);
-    context.strokeStyle = colors.accent;
-    context.lineWidth = 2.3;
-    context.stroke();
-    context.restore();
-
-    const circleCrest = project({ x: 1, y: 0 });
-    const boundaryCrest = project(boundaryPoint(0, cutoff));
-    context.strokeStyle = colors.accent;
-    context.lineWidth = 1.2;
-    context.beginPath();
-    context.moveTo(circleCrest.x, circleCrest.y);
-    context.lineTo(boundaryCrest.x, boundaryCrest.y);
-    context.moveTo(circleCrest.x - 4, circleCrest.y);
-    context.lineTo(circleCrest.x + 4, circleCrest.y);
-    context.moveTo(boundaryCrest.x - 4, boundaryCrest.y);
-    context.lineTo(boundaryCrest.x + 4, boundaryCrest.y);
-    context.stroke();
-
-    const deformation = boundaryPoint(0, cutoff).radius - 1;
-    drawLabel(context, `r(0) − 1 = ${deformation.toFixed(5)}`, box.x + 10, box.y + box.height - 8, {
-      color: colors.accent,
-      size: 11,
-    });
-    return Math.max(1, Math.round(detailScale / overviewScale));
+    for (let index = 0; index <= 900; index += 1) {
+      const point = boundaryPoint(index / 900 * Math.PI * 2, cutoff);
+      const x = centerX + point.x * scale;
+      const y = centerY - point.y * scale;
+      if (index === 0) context.moveTo(x, y);
+      else context.lineTo(x, y);
+    }
+    context.closePath();
   };
 
   const drawBoundary = () => {
@@ -237,34 +407,26 @@
     const rectangle = boundaryCanvas.getBoundingClientRect();
     if (rectangle.width < 120 || rectangle.height < 160) return;
     const cutoff = Math.max(1, Math.min(30, Number(boundaryModes?.value || 30)));
-    const { context, width, height } = prepareCanvas(boundaryCanvas, 300);
-    context.fillStyle = colors.white;
-    context.fillRect(0, 0, width, height);
+    const { context, width, height } = prepareCanvas(boundaryCanvas, { maxPixelRatio: 4 });
+    drawCanvasBackdrop(context, width, height);
 
-    const sideBySide = width >= 440;
-    const detail = sideBySide
-      ? { x: width * .54, y: 72, width: width * .42, height: 156 }
-      : { x: 20, y: 30, width: width - 40, height: Math.min(145, height * .27) };
-    const overview = sideBySide
-      ? { x: 18, y: 28, width: width * .48, height: height - 60 }
-      : {
-          x: 20,
-          y: detail.y + detail.height + 34,
-          width: width - 40,
-          height: Math.min(width - 40, height - detail.height - 92),
-        };
-    const centerX = overview.x + overview.width / 2;
-    const centerY = overview.y + overview.height / 2;
-    const scale = Math.min(overview.width, overview.height) * .46 / 1.075;
+    const compact = width < 520;
+    const domain = compact
+      ? { x: 22, y: 30, width: width - 44, height: height * .48 }
+      : { x: 14, y: 30, width: width * .50, height: height - 56 };
+    const plot = compact
+      ? { x: 43, y: height * .59, width: width - 68, height: height * .34 }
+      : { x: width * .56, y: 35, width: width * .40, height: height - 68 };
+    const centerX = domain.x + domain.width / 2;
+    const centerY = domain.y + domain.height / 2 + 6;
+    const scale = Math.min(domain.width, domain.height) * .43 / 1.075;
 
-    context.strokeStyle = colors.rule;
-    context.lineWidth = 1;
-    context.beginPath();
-    context.moveTo(overview.x, centerY);
-    context.lineTo(overview.x + overview.width, centerY);
-    context.moveTo(centerX, overview.y);
-    context.lineTo(centerX, overview.y + overview.height);
-    context.stroke();
+    drawLabel(context, `Boundary from ${cutoff} coefficient${cutoff === 1 ? "" : "s"}`, centerX, domain.y - 8, {
+      align: "center",
+      color: colors.heading,
+      size: 14,
+      weight: 700,
+    });
 
     context.beginPath();
     context.arc(centerX, centerY, scale, 0, Math.PI * 2);
@@ -273,78 +435,132 @@
     context.stroke();
     context.setLineDash([]);
 
-    const points = [];
     let minimumRadius = Number.POSITIVE_INFINITY;
     let maximumRadius = 0;
     for (let index = 0; index <= 1200; index += 1) {
       const point = boundaryPoint(index / 1200 * Math.PI * 2, cutoff);
-      points.push(point);
       minimumRadius = Math.min(minimumRadius, point.radius);
       maximumRadius = Math.max(maximumRadius, point.radius);
     }
 
-    context.beginPath();
-    points.forEach((point, index) => {
-      const x = centerX + point.x * scale;
-      const y = centerY - point.y * scale;
-      if (index === 0) context.moveTo(x, y);
-      else context.lineTo(x, y);
-    });
-    context.closePath();
+    traceBoundary(context, centerX, centerY, scale, cutoff);
     context.fillStyle = "rgba(7, 87, 96, .07)";
     context.fill();
     context.strokeStyle = colors.accent;
     context.lineWidth = 2.3;
     context.stroke();
 
-    const focusX = centerX + boundaryDetail.minimumX * scale;
-    const focusY = centerY - boundaryDetail.maximumY * scale;
-    const focusWidth = (boundaryDetail.maximumX - boundaryDetail.minimumX) * scale;
-    const focusHeight = (boundaryDetail.maximumY - boundaryDetail.minimumY) * scale;
-    context.fillStyle = "rgba(7, 87, 96, .08)";
-    context.fillRect(focusX, focusY, focusWidth, focusHeight);
-    context.strokeStyle = colors.accent;
-    context.lineWidth = 1.3;
-    context.strokeRect(focusX, focusY, focusWidth, focusHeight);
-
-    if (sideBySide) {
-      context.strokeStyle = colors.ruleDark;
-      context.lineWidth = 1;
-      context.beginPath();
-      context.moveTo(focusX + focusWidth, focusY + focusHeight / 2);
-      context.lineTo(detail.x, detail.y + detail.height / 2);
-      context.stroke();
-    }
-
-    const zoom = drawBoundaryDetail(context, cutoff, detail, scale);
-    drawLabel(context, `Zoom near θ = 0 · ${zoom}×`, detail.x, detail.y - 11, {
+    drawLabel(context, "Size of each boundary correction", plot.x, plot.y, {
       color: colors.heading,
-      size: 11,
+      size: 14,
       weight: 700,
     });
+    const selectedCoefficient = conformalCoefficients[cutoff - 1];
+    drawLabel(
+      context,
+      `#${cutoff}: ${formatScientific(selectedCoefficient, 2)} · ${10 * cutoff} ripples`,
+      plot.x,
+      plot.y + 18,
+      { color: colors.muted, size: 14 },
+    );
 
-    if (!sideBySide) {
-      context.strokeStyle = colors.ruleDark;
+    const chart = {
+      x: plot.x + 38,
+      y: plot.y + 34,
+      width: plot.width - 46,
+      height: plot.height - 62,
+    };
+    const maximumLog = -1;
+    const minimumLog = -19;
+    const projectCoefficient = (index) => chart.x + index / 29 * chart.width;
+    const projectLog = (value) => chart.y + (maximumLog - value) / (maximumLog - minimumLog) * chart.height;
+    const exponentTicks = [-2, -6, -10, -14, -18];
+    exponentTicks.forEach((exponent) => {
+      const y = projectLog(exponent);
+      context.strokeStyle = colors.rule;
       context.lineWidth = 1;
-      context.setLineDash([3, 4]);
       context.beginPath();
-      context.moveTo(detail.x + detail.width * .22, detail.y + detail.height);
-      context.lineTo(focusX, focusY);
-      context.moveTo(detail.x + detail.width * .78, detail.y + detail.height);
-      context.lineTo(focusX + focusWidth, focusY + focusHeight);
+      context.moveTo(chart.x, y);
+      context.lineTo(chart.x + chart.width, y);
       context.stroke();
-      context.setLineDash([]);
+      drawLabel(context, `10${superscript(exponent)}`, chart.x - 7, y + 4, {
+        align: "right",
+        color: colors.muted,
+        size: 14,
+      });
+    });
+    context.strokeStyle = colors.ruleDark;
+    context.lineWidth = 1;
+    context.beginPath();
+    context.moveTo(chart.x, chart.y);
+    context.lineTo(chart.x, chart.y + chart.height);
+    context.lineTo(chart.x + chart.width, chart.y + chart.height);
+    context.stroke();
+
+    const coefficientLogs = conformalCoefficients.map((coefficient) => Math.log10(coefficient));
+    context.beginPath();
+    coefficientLogs.forEach((value, index) => {
+      const x = projectCoefficient(index);
+      const y = projectLog(value);
+      if (index === 0) context.moveTo(x, y);
+      else context.lineTo(x, y);
+    });
+    context.strokeStyle = colors.ruleDark;
+    context.lineWidth = 1.2;
+    context.stroke();
+
+    if (cutoff > 1) {
+      context.beginPath();
+      coefficientLogs.slice(0, cutoff).forEach((value, index) => {
+        const x = projectCoefficient(index);
+        const y = projectLog(value);
+        if (index === 0) context.moveTo(x, y);
+        else context.lineTo(x, y);
+      });
+      context.strokeStyle = colors.accent;
+      context.lineWidth = 2;
+      context.stroke();
     }
 
+    coefficientLogs.forEach((value, index) => {
+      context.beginPath();
+      context.arc(projectCoefficient(index), projectLog(value), index === cutoff - 1 ? 4 : 1.8, 0, Math.PI * 2);
+      context.fillStyle = index < cutoff ? colors.accent : colors.ruleDark;
+      context.fill();
+    });
+    const selectedX = projectCoefficient(cutoff - 1);
+    const selectedY = projectLog(coefficientLogs[cutoff - 1]);
+    context.beginPath();
+    context.arc(selectedX, selectedY, 4, 0, Math.PI * 2);
+    context.fillStyle = colors.white;
+    context.fill();
+    context.strokeStyle = colors.accent;
+    context.lineWidth = 2;
+    context.stroke();
+
+    [1, 10, 20, 30].forEach((coefficientNumber) => {
+      const x = projectCoefficient(coefficientNumber - 1);
+      drawLabel(context, String(coefficientNumber), x, chart.y + chart.height + 17, {
+        align: "center",
+        color: colors.muted,
+        size: 14,
+      });
+    });
+    drawLabel(context, "coefficient number", chart.x + chart.width / 2, chart.y + chart.height + 34, {
+      align: "center",
+      color: colors.muted,
+      size: 14,
+    });
+
     if (boundaryModesValue) boundaryModesValue.textContent = `${cutoff} of 30`;
-    const deformation = boundaryPoint(0, cutoff).radius - 1;
+    if (boundaryModes) boundaryModes.setAttribute("aria-valuetext", `${cutoff} of 30 printed conformal coefficients`);
     boundaryCanvas.setAttribute(
       "aria-label",
-      `Numerical ten-fold conformal boundary using ${cutoff} of 30 printed coefficients, compared with the dashed unit circle. A ${zoom}-times detail near theta zero shows radial displacement ${deformation.toFixed(6)}. Overall radial range ${minimumRadius.toFixed(6)} to ${maximumRadius.toFixed(6)}.`,
+      `Numerical ten-fold conformal boundary using ${cutoff} of 30 printed coefficients, compared with the dashed unit circle. The newest included coefficient has size ${selectedCoefficient.toExponential(3)} and adds a ${10 * cutoff}-fold correction. The coefficient-size graph decays from about ten to the minus two to ten to the minus eighteen. Overall radial range ${minimumRadius.toFixed(6)} to ${maximumRadius.toFixed(6)}.`,
     );
   };
 
-  if (boundaryModes) boundaryModes.addEventListener("change", drawBoundary);
+  if (boundaryModes) boundaryModes.addEventListener("input", drawBoundary);
   observeCanvas(boundaryCanvas, drawBoundary);
   requestAnimationFrame(drawBoundary);
 
@@ -354,37 +570,39 @@
   const searchStageStatus = document.getElementById("searchStageStatus");
   const searchStages = Object.freeze([
     Object.freeze({
-      label: "disk crossing",
-      title: "ten-fold mode becomes free",
-      status: "At this special frequency, a ten-fold deformation can move away from the disk.",
+      label: "ten-fold direction",
+      title: "The circle can move in a ten-lobed direction",
+      status: "At this disk frequency, the equations allow a ten-lobed first motion.",
       amplitude: 0,
+      flux: .82,
+      showDirection: true,
     }),
     Object.freeze({
-      label: "auxiliary branch",
-      title: "allow c to vary",
-      status: "The numerical search follows noncircular shapes while the constant boundary derivative c is allowed to vary.",
-      amplitude: .34,
+      label: "relaxed solutions",
+      title: "Follow noncircular relaxed solutions",
+      status: "The search changes the field, shape and frequency while keeping the normal derivative equal to one constant c around the boundary.",
+      amplitude: .52,
+      flux: .48,
+      trail: Object.freeze([.26]),
     }),
     Object.freeze({
-      label: "zero-flux endpoint",
-      title: "candidate with c = 0",
-      status: "The search reaches a very accurate candidate for the original problem, where c must equal zero.",
+      label: "zero-flux centre",
+      title: "Stop when the normal change is zero",
+      status: "At c = 0 the relaxed boundary condition becomes the target condition. This endpoint is stored as the computed centre x°.",
       amplitude: 1,
-    }),
-    Object.freeze({
-      label: "proof starts",
-      title: "keep only the centre x°",
-      status: "The coefficients of the final centre are stored exactly. The proof does not rely on the path used to find them.",
-      amplitude: 1,
+      flux: 0,
+      trail: Object.freeze([.50]),
+      endpoint: true,
     }),
   ]);
   let selectedSearchStage = 0;
 
   const traceConformalBoundary = (context, centerX, centerY, scale, amplitude, options = {}) => {
+    const cutoff = options.cutoff ?? 30;
     context.beginPath();
     for (let index = 0; index <= 900; index += 1) {
       const theta = index / 900 * Math.PI * 2;
-      const point = conformalPoint(1, theta, 30, amplitude);
+      const point = conformalPoint(1, theta, cutoff, amplitude);
       const x = centerX + scale * point.x;
       const y = centerY - scale * point.y;
       if (index === 0) context.moveTo(x, y);
@@ -400,47 +618,63 @@
     context.stroke();
   };
 
+  const drawNormalDerivativeMarkers = (context, centerX, centerY, scale, amplitude, flux) => {
+    const epsilon = .002;
+    const arrowLength = 8 + 21 * flux;
+    for (let index = 0; index < 10; index += 1) {
+      const theta = index / 10 * Math.PI * 2;
+      const point = conformalPoint(1, theta, 30, amplitude);
+      const before = conformalPoint(1, theta - epsilon, 30, amplitude);
+      const after = conformalPoint(1, theta + epsilon, 30, amplitude);
+      const tangentX = after.x - before.x;
+      const tangentY = after.y - before.y;
+      const tangentLength = Math.max(1e-12, Math.hypot(tangentX, tangentY));
+      const normalX = tangentY / tangentLength;
+      const normalY = -tangentX / tangentLength;
+      const boundaryX = centerX + point.x * scale;
+      const boundaryY = centerY - point.y * scale;
+      const canvasNormalX = normalX;
+      const canvasNormalY = -normalY;
+      if (flux > 0) {
+        drawArrow(
+          context,
+          boundaryX + canvasNormalX * 3,
+          boundaryY + canvasNormalY * 3,
+          boundaryX + canvasNormalX * arrowLength,
+          boundaryY + canvasNormalY * arrowLength,
+          { color: colors.teal, width: 1.4, head: 5 },
+        );
+      } else {
+        context.beginPath();
+        context.arc(boundaryX, boundaryY, 3.2, 0, Math.PI * 2);
+        context.fillStyle = colors.white;
+        context.fill();
+        context.strokeStyle = colors.teal;
+        context.lineWidth = 1.6;
+        context.stroke();
+      }
+    }
+  };
+
   const drawSearch = () => {
     if (!searchCanvas) return;
     const rectangle = searchCanvas.getBoundingClientRect();
     if (rectangle.width < 120 || rectangle.height < 160) return;
-    const { context, width, height } = prepareCanvas(searchCanvas);
-    context.fillStyle = colors.white;
-    context.fillRect(0, 0, width, height);
+    const { context, width, height } = prepareCanvas(searchCanvas, { maxPixelRatio: 4 });
+    drawCanvasBackdrop(context, width, height);
     const compact = width < 520;
     const stage = searchStages[selectedSearchStage];
-    const railLeft = compact ? 30 : 54;
-    const railRight = width - (compact ? 30 : 54);
-    const railY = 45;
 
-    context.strokeStyle = colors.ruleDark;
-    context.lineWidth = 1.2;
-    context.beginPath();
-    context.moveTo(railLeft, railY);
-    context.lineTo(railRight, railY);
-    context.stroke();
-    searchStages.forEach((item, index) => {
-      const x = mix(railLeft, railRight, index / (searchStages.length - 1));
-      context.beginPath();
-      context.arc(x, railY, index === selectedSearchStage ? 6 : 4, 0, Math.PI * 2);
-      context.fillStyle = index <= selectedSearchStage ? colors.accent : colors.white;
-      context.fill();
-      context.strokeStyle = index <= selectedSearchStage ? colors.accent : colors.ruleDark;
-      context.lineWidth = 1.5;
-      context.stroke();
-      if (!compact || index === selectedSearchStage) {
-        drawLabel(context, item.label, x, railY + 22, {
-          align: "center",
-          color: index === selectedSearchStage ? colors.heading : colors.muted,
-          size: compact ? 9 : 10,
-          weight: index === selectedSearchStage ? 700 : 400,
-        });
-      }
+    const domainCenterX = width / 2;
+    const domainCenterY = compact ? height * .46 : height * .47;
+    const domainRadius = Math.min(compact ? width * .29 : width * .27, compact ? height * .27 : height * .31);
+    drawLabel(context, stage.title, domainCenterX, 30, {
+      align: "center",
+      color: colors.heading,
+      size: 14,
+      weight: 700,
     });
 
-    const domainCenterX = compact ? width / 2 : width * .30;
-    const domainCenterY = compact ? height * .43 : height * .56;
-    const domainRadius = Math.min(compact ? width * .22 : width * .18, compact ? height * .20 : height * .28);
     context.beginPath();
     context.arc(domainCenterX, domainCenterY, domainRadius, 0, Math.PI * 2);
     context.setLineDash([5, 5]);
@@ -448,10 +682,25 @@
     context.lineWidth = 1.1;
     context.stroke();
     context.setLineDash([]);
-    if (selectedSearchStage === 3) {
-      traceConformalBoundary(context, domainCenterX, domainCenterY, domainRadius, stage.amplitude, {
-        stroke: "rgba(160, 0, 0, .18)",
-        lineWidth: 9,
+
+    if (stage.showDirection) {
+      traceConformalBoundary(context, domainCenterX, domainCenterY, domainRadius, 1.1, {
+        stroke: "rgba(160, 0, 0, .30)",
+        lineWidth: 1.5,
+        cutoff: 1,
+      });
+      traceConformalBoundary(context, domainCenterX, domainCenterY, domainRadius, -1.1, {
+        stroke: "rgba(7, 87, 96, .32)",
+        lineWidth: 1.5,
+        cutoff: 1,
+      });
+    }
+    if (stage.trail) {
+      stage.trail.forEach((amplitude, index) => {
+        traceConformalBoundary(context, domainCenterX, domainCenterY, domainRadius, amplitude, {
+          stroke: `rgba(38, 36, 31, ${.10 + index * .035})`,
+          lineWidth: 1.1,
+        });
       });
     }
     traceConformalBoundary(context, domainCenterX, domainCenterY, domainRadius, stage.amplitude, {
@@ -459,80 +708,36 @@
       stroke: colors.accent,
       lineWidth: 2.2,
     });
-    drawLabel(context, stage.title, domainCenterX, domainCenterY + domainRadius + 30, {
+
+    drawNormalDerivativeMarkers(
+      context,
+      domainCenterX,
+      domainCenterY,
+      domainRadius,
+      stage.amplitude,
+      stage.flux,
+    );
+    drawLabel(context, stage.flux > 0 ? "same normal change all around" : "zero normal change all around", domainCenterX, domainCenterY + domainRadius + 48, {
       align: "center",
-      color: colors.heading,
-      size: 12,
+      color: stage.flux > 0 ? colors.teal : colors.accent,
+      size: 14,
       weight: 700,
     });
-    drawLabel(context, selectedSearchStage === 0 ? "μ ≈ 31.2781" : "D₁₀ shape", domainCenterX, domainCenterY + 4, {
+    drawLabel(context, stage.endpoint ? "computed centre" : selectedSearchStage === 0 ? "disk" : "relaxed solution", domainCenterX, domainCenterY + 4, {
       align: "center",
-      color: colors.muted,
-      size: 11,
+      color: stage.endpoint ? colors.accent : colors.muted,
+      size: 14,
+      weight: stage.endpoint ? 700 : 400,
     });
-
-    const plot = compact
-      ? { x: 34, y: height * .73, width: width - 68, height: height * .17 }
-      : { x: width * .56, y: height * .32, width: width * .37, height: height * .46 };
-    const x0 = plot.x;
-    const y0 = plot.y + plot.height;
-    context.strokeStyle = colors.ruleDark;
-    context.lineWidth = 1;
-    context.beginPath();
-    context.moveTo(x0, plot.y);
-    context.lineTo(x0, y0);
-    context.lineTo(x0 + plot.width, y0);
-    context.stroke();
-    context.beginPath();
-    for (let index = 0; index <= 100; index += 1) {
-      const t = index / 100;
-      const x = x0 + t * plot.width;
-      const flux = 1 - t;
-      const y = y0 - flux * plot.height * .80 - Math.sin(t * Math.PI) * plot.height * .08;
-      if (index === 0) context.moveTo(x, y);
-      else context.lineTo(x, y);
-    }
-    context.strokeStyle = colors.accent;
-    context.lineWidth = 2.2;
-    context.stroke();
-    const branchProgress = [0, .34, 1, 1][selectedSearchStage];
-    const markerX = x0 + branchProgress * plot.width;
-    const markerFlux = 1 - branchProgress;
-    const markerY = y0 - markerFlux * plot.height * .80
-      - Math.sin(branchProgress * Math.PI) * plot.height * .08;
-    context.beginPath();
-    context.arc(markerX, markerY, 5, 0, Math.PI * 2);
-    context.fillStyle = selectedSearchStage === 3 ? colors.heading : colors.accent;
-    context.fill();
-    drawLabel(context, "numerical continuation →", x0 + plot.width, y0 + 19, { align: "right", size: 10 });
-    drawLabel(context, "schematic search path", x0, plot.y - 12, { color: colors.heading, size: 11 });
-    context.save();
-    context.translate(x0 - 11, plot.y + plot.height / 2);
-    context.rotate(-Math.PI / 2);
-    drawLabel(context, "flux c", 0, 0, { align: "center", color: colors.muted, size: 9 });
-    context.restore();
-    drawLabel(context, "c = 0", x0 + plot.width, y0 - 8, {
-      align: "right",
-      color: colors.accent,
-      size: 10,
-    });
-    if (selectedSearchStage === 3) {
-      drawArrow(context, markerX - 8, markerY, markerX - 54, markerY, { color: colors.heading });
-      drawLabel(context, "stored centre x°", markerX - 60, markerY - 9, {
-        align: "right",
-        color: colors.heading,
-        size: 10,
-      });
-    }
 
     searchCanvas.setAttribute(
       "aria-label",
-      `Numerical-search stage ${selectedSearchStage + 1} of 4: ${stage.label}. ${stage.status} The branch curve and intermediate shapes are explicitly schematic.`,
+      `Numerical-search stage ${selectedSearchStage + 1} of 3: ${stage.label}. ${stage.status} Equal teal arrows represent the constant normal derivative on the whole boundary; hollow boundary markers in the last stage represent zero normal derivative. The intermediate shapes are schematic.`,
     );
   };
 
   const updateSearch = () => {
-    selectedSearchStage = clamp(Math.round(Number(searchStage?.value || 0)), 0, 3);
+    selectedSearchStage = clamp(Math.round(Number(searchStage?.value || 0)), 0, 2);
     const stage = searchStages[selectedSearchStage];
     if (searchStageValue) searchStageValue.textContent = stage.label;
     if (searchStageStatus) searchStageStatus.textContent = stage.status;
@@ -543,28 +748,21 @@
   requestAnimationFrame(updateSearch);
 
   const pullbackCanvas = document.getElementById("pullbackCanvas");
-  const pullbackStage = document.getElementById("pullbackStage");
-  const pullbackStageValue = document.getElementById("pullbackStageValue");
-  const pullbackStatus = document.getElementById("pullbackStatus");
-  const pullbackStages = Object.freeze([
-    Object.freeze({ label: "moving domain", status: "The equation is posed on an unknown domain Ω." }),
-    Object.freeze({ label: "conformal map", status: "The map φₚ carries the field, the equation, and both boundary conditions to the disk." }),
-    Object.freeze({ label: "fixed disk", status: "The boundary is now fixed; the changing shape is recorded by |p|²." }),
-  ]);
-  let selectedPullbackStage = 0;
 
   const drawMappedGrid = (context, centerX, centerY, radius, options = {}) => {
     const amplitude = options.amplitude ?? 1;
     const alpha = options.alpha ?? 1;
+    const ringCount = options.rings ?? 3;
+    const spokeCount = options.spokes ?? 12;
     context.save();
     context.globalAlpha = alpha;
     context.strokeStyle = colors.ruleDark;
     context.lineWidth = 1;
-    for (let ring = 1; ring <= 4; ring += 1) {
+    for (let ring = 1; ring <= ringCount; ring += 1) {
       context.beginPath();
       for (let index = 0; index <= 360; index += 1) {
         const theta = index / 360 * Math.PI * 2;
-        const point = conformalPoint(ring / 4, theta, 30, amplitude);
+        const point = conformalPoint(ring / ringCount, theta, 30, amplitude);
         const x = centerX + point.x * radius;
         const y = centerY - point.y * radius;
         if (index === 0) context.moveTo(x, y);
@@ -572,8 +770,8 @@
       }
       context.stroke();
     }
-    for (let spoke = 0; spoke < 20; spoke += 1) {
-      const theta = spoke / 20 * Math.PI * 2;
+    for (let spoke = 0; spoke < spokeCount; spoke += 1) {
+      const theta = spoke / spokeCount * Math.PI * 2;
       context.beginPath();
       for (let index = 0; index <= 80; index += 1) {
         const point = conformalPoint(index / 80, theta, 30, amplitude);
@@ -591,124 +789,176 @@
     context.restore();
   };
 
-  const derivativeColor = (value, alpha = 1) => {
-    const centered = clamp((value - .45) / 2.25, 0, 1);
-    const red = Math.round(mix(230, 160, centered));
-    const green = Math.round(mix(236, 0, centered));
-    const blue = Math.round(mix(225, 0, centered));
-    return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+  const transferFieldValue = (radius, theta) => {
+    const boundaryEnvelope = (1 - radius * radius) ** 2;
+    return 1 + .50 * boundaryEnvelope * (
+      .68 * Math.cos(3 * Math.PI * radius)
+      + .42 * radius * radius * Math.cos(10 * theta)
+    );
   };
 
-  const drawWeightedDisk = (context, centerX, centerY, radius, alpha = 1) => {
-    const cells = 34;
-    const cellSize = 2 * radius / cells;
-    context.save();
-    context.globalAlpha = alpha;
-    context.beginPath();
-    context.arc(centerX, centerY, radius, 0, Math.PI * 2);
-    context.clip();
-    for (let row = 0; row < cells; row += 1) {
-      for (let column = 0; column < cells; column += 1) {
-        const x = -1 + (column + .5) * 2 / cells;
-        const y = 1 - (row + .5) * 2 / cells;
-        const r = Math.hypot(x, y);
-        if (r > 1) continue;
-        const theta = Math.atan2(y, x);
-        const normalizedWeight = conformalDerivative(r, theta).magnitude ** 2;
-        context.fillStyle = derivativeColor(normalizedWeight, .72);
-        context.fillRect(centerX - radius + column * cellSize, centerY - radius + row * cellSize, cellSize + 1, cellSize + 1);
+  const transferFieldColor = (value) => {
+    const signed = clamp((value - 1) / .55, -1, 1);
+    const amount = Math.abs(signed) * .82;
+    const neutral = { red: 242, green: 239, blue: 228 };
+    const target = signed >= 0
+      ? { red: 160, green: 0, blue: 0 }
+      : { red: 7, green: 87, blue: 96 };
+    return `rgb(${Math.round(mix(neutral.red, target.red, amount))}, ${Math.round(mix(neutral.green, target.green, amount))}, ${Math.round(mix(neutral.blue, target.blue, amount))})`;
+  };
+
+  const drawTransferField = (context, centerX, centerY, scale, mapped) => {
+    const radialCells = 11;
+    const angularCells = 48;
+    const project = (radius, theta) => {
+      const point = mapped
+        ? conformalPoint(radius, theta, 30, 1)
+        : { x: radius * Math.cos(theta), y: radius * Math.sin(theta) };
+      return { x: centerX + point.x * scale, y: centerY - point.y * scale };
+    };
+    for (let radial = 0; radial < radialCells; radial += 1) {
+      const inner = radial / radialCells;
+      const outer = (radial + 1) / radialCells;
+      for (let angular = 0; angular < angularCells; angular += 1) {
+        const theta0 = angular / angularCells * Math.PI * 2;
+        const theta1 = (angular + 1) / angularCells * Math.PI * 2;
+        const points = [
+          project(inner, theta0),
+          project(outer, theta0),
+          project(outer, theta1),
+          project(inner, theta1),
+        ];
+        const color = transferFieldColor(transferFieldValue(
+          (inner + outer) / 2,
+          (theta0 + theta1) / 2,
+        ));
+        context.beginPath();
+        context.moveTo(points[0].x, points[0].y);
+        points.slice(1).forEach((point) => context.lineTo(point.x, point.y));
+        context.closePath();
+        context.fillStyle = color;
+        context.fill();
+        context.strokeStyle = color;
+        context.lineWidth = .55;
+        context.stroke();
       }
     }
-    context.restore();
+  };
+
+  const drawCorrespondingPoint = (context, x, y, label, options = {}) => {
+    const halo = context.createRadialGradient(x, y, 0, x, y, 17);
+    halo.addColorStop(0, options.halo || "rgba(160, 0, 0, .28)");
+    halo.addColorStop(1, "rgba(160, 0, 0, 0)");
     context.beginPath();
-    context.arc(centerX, centerY, radius, 0, Math.PI * 2);
-    context.strokeStyle = colors.heading;
-    context.lineWidth = 1.8;
+    context.arc(x, y, 17, 0, Math.PI * 2);
+    context.fillStyle = halo;
+    context.fill();
+
+    context.beginPath();
+    context.arc(x, y, 4.5, 0, Math.PI * 2);
+    context.fillStyle = colors.white;
+    context.fill();
+    context.strokeStyle = options.color || colors.accent;
+    context.lineWidth = 2.2;
     context.stroke();
+    drawLabel(context, label, x + (options.labelX || 10), y + (options.labelY || -9), {
+      color: options.color || colors.accent,
+      size: 14,
+      weight: 700,
+    });
   };
 
   const drawPullback = () => {
     if (!pullbackCanvas) return;
     const rectangle = pullbackCanvas.getBoundingClientRect();
     if (rectangle.width < 120 || rectangle.height < 160) return;
-    const { context, width, height } = prepareCanvas(pullbackCanvas);
-    context.fillStyle = colors.white;
-    context.fillRect(0, 0, width, height);
+    const { context, width, height } = prepareCanvas(pullbackCanvas, { maxPixelRatio: 4 });
+    drawCanvasBackdrop(context, width, height);
     const compact = width < 520;
-    const radius = Math.min(compact ? width * .23 : width * .18, compact ? height * .18 : height * .30);
-    const left = compact ? width / 2 : width * .25;
-    const right = compact ? width / 2 : width * .75;
-    const leftY = compact ? height * .27 : height * .49;
-    const rightY = compact ? height * .68 : height * .49;
-    const leftAlpha = selectedPullbackStage === 2 ? .34 : 1;
-    const rightAlpha = selectedPullbackStage === 0 ? .34 : 1;
+    const radius = Math.min(
+      compact ? width * .245 : width * .185,
+      compact ? height * .175 : height * .31,
+    );
+    const diskCenter = compact
+      ? { x: width / 2, y: height * .245 }
+      : { x: width * .76, y: height * .53 };
+    const domainCenter = compact
+      ? { x: width / 2, y: height * .755 }
+      : { x: width * .24, y: height * .53 };
 
-    drawMappedGrid(context, left, leftY, radius, {
+    drawTransferField(context, diskCenter.x, diskCenter.y, radius, false);
+    drawMappedGrid(context, diskCenter.x, diskCenter.y, radius, {
+      amplitude: 0,
+      alpha: .45,
+      stroke: colors.heading,
+    });
+    drawTransferField(context, domainCenter.x, domainCenter.y, radius, true);
+    drawMappedGrid(context, domainCenter.x, domainCenter.y, radius, {
       amplitude: 1,
-      alpha: leftAlpha,
+      alpha: .45,
       stroke: colors.accent,
     });
-    drawWeightedDisk(context, right, rightY, radius, rightAlpha);
-    drawLabel(context, "physical coordinates", left, leftY - radius - 22, {
-      align: "center",
-      color: selectedPullbackStage === 0 ? colors.heading : colors.muted,
-      size: 12,
-      weight: selectedPullbackStage === 0 ? 700 : 400,
-    });
-    drawLabel(context, "Ω = φₚ(𝔻)", left, leftY + radius + 28, { align: "center", color: colors.accent, size: 12 });
-    drawLabel(context, "fixed coordinates", right, rightY - radius - 22, {
-      align: "center",
-      color: selectedPullbackStage === 2 ? colors.heading : colors.muted,
-      size: 12,
-      weight: selectedPullbackStage === 2 ? 700 : 400,
-    });
-    drawLabel(context, "normalized weight |p/k|²", right, rightY + radius + 28, { align: "center", color: colors.accent, size: 12 });
-
     if (compact) {
-      drawArrow(context, width / 2, leftY + radius + 42, width / 2, rightY - radius - 42, {
-        color: selectedPullbackStage === 1 ? colors.accent : colors.ruleDark,
-        width: selectedPullbackStage === 1 ? 2.3 : 1.3,
-      });
-      drawLabel(context, "U = u ∘ φₚ", width / 2 + 12, height / 2, {
-        color: selectedPullbackStage === 1 ? colors.accent : colors.muted,
-        size: 11,
-      });
+      drawLabel(context, "fixed disk 𝔻", diskCenter.x, diskCenter.y - radius - 18, { align: "center", color: colors.heading, size: 14, weight: 700 });
+      drawLabel(context, "physical domain Ω", domainCenter.x, domainCenter.y - radius - 18, { align: "center", color: colors.heading, size: 14, weight: 700 });
     } else {
-      drawArrow(context, left + radius + 36, leftY, right - radius - 36, rightY, {
-        color: selectedPullbackStage === 1 ? colors.accent : colors.ruleDark,
-        width: selectedPullbackStage === 1 ? 2.3 : 1.3,
-      });
-      drawLabel(context, "U = u ∘ φₚ", width / 2, leftY - 18, {
-        align: "center",
-        color: selectedPullbackStage === 1 ? colors.accent : colors.muted,
-        size: 12,
-        weight: selectedPullbackStage === 1 ? 700 : 400,
-      });
-      drawLabel(context, "p = kφₚ′", width / 2, leftY + 25, { align: "center", color: colors.muted, size: 11 });
+      drawLabel(context, "physical domain Ω", domainCenter.x, domainCenter.y - radius - 24, { align: "center", color: colors.heading, size: 14, weight: 700 });
+      drawLabel(context, "fixed disk 𝔻", diskCenter.x, diskCenter.y - radius - 24, { align: "center", color: colors.heading, size: 14, weight: 700 });
     }
 
-    const formulaY = compact ? height - 10 : height - 24;
-    drawLabel(context, "ΔU + |p|²U = 0   ·   U|𝕋 = 1   ·   ∂ᵣU|𝕋 = 0", width / 2, formulaY, {
-      align: "center",
-      color: selectedPullbackStage === 2 ? colors.heading : colors.muted,
-      size: compact ? 10 : 12,
+    const sampleRadius = .62;
+    const sampleTheta = 2.35;
+    const diskPoint = {
+      x: diskCenter.x + sampleRadius * Math.cos(sampleTheta) * radius,
+      y: diskCenter.y - sampleRadius * Math.sin(sampleTheta) * radius,
+    };
+    const mappedPoint = conformalPoint(sampleRadius, sampleTheta, 30, 1);
+    const physicalPoint = {
+      x: domainCenter.x + mappedPoint.x * radius,
+      y: domainCenter.y - mappedPoint.y * radius,
+    };
+
+    if (compact) {
+      const arrowX = width / 2 + radius + 19;
+      const arrowTop = diskCenter.y + radius * .72;
+      const arrowBottom = domainCenter.y - radius * .72;
+      drawArrow(context, arrowX, arrowTop, arrowX, arrowBottom, { color: colors.teal, width: 2.2, head: 8 });
+      drawLabel(context, "φₚ", arrowX + 12, (arrowTop + arrowBottom) / 2 + 4, { color: colors.teal, size: 14, weight: 700 });
+    } else {
+      const arrowStart = diskCenter.x - radius - 32;
+      const arrowEnd = domainCenter.x + radius + 32;
+      drawArrow(context, arrowStart, diskCenter.y, arrowEnd, domainCenter.y, { color: colors.teal, width: 2.2, head: 8 });
+      drawLabel(context, "φₚ", (arrowStart + arrowEnd) / 2, diskCenter.y - 14, { align: "center", color: colors.teal, size: 14, weight: 700 });
+    }
+
+    drawCorrespondingPoint(context, diskPoint.x, diskPoint.y, "z", {
+      color: colors.teal,
+      halo: "rgba(7, 87, 96, .28)",
+      labelX: -27,
+      labelY: -14,
     });
+    drawCorrespondingPoint(context, physicalPoint.x, physicalPoint.y, "x = φₚ(z)", {
+      color: colors.accent,
+      labelX: -53,
+      labelY: -10,
+    });
+
+    drawLabel(
+      context,
+      "the color at z is carried to the color at x",
+      width / 2,
+      height - 16,
+      { align: "center", color: colors.muted, size: 14 },
+    );
+
     pullbackCanvas.setAttribute(
       "aria-label",
-      `${pullbackStages[selectedPullbackStage].label}. A conformal grid on the ten-fold physical domain maps to the fixed unit disk. Color on the disk represents the normalized weight modulus p squared over k squared, equal to modulus phi prime squared. ${pullbackStages[selectedPullbackStage].status}`,
+      "The fixed disk is mapped by phi sub p to the physical domain. A marked disk point z maps to x equals phi sub p of z, and matching colors show that the field value is unchanged: U of z equals u of x.",
     );
   };
 
-  const updatePullback = () => {
-    selectedPullbackStage = clamp(Math.round(Number(pullbackStage?.value || 0)), 0, 2);
-    const stage = pullbackStages[selectedPullbackStage];
-    if (pullbackStageValue) pullbackStageValue.textContent = stage.label;
-    if (pullbackStatus) pullbackStatus.textContent = stage.status;
-    drawPullback();
-  };
-  if (pullbackStage) pullbackStage.addEventListener("change", updatePullback);
   observeCanvas(pullbackCanvas, drawPullback);
-  requestAnimationFrame(updatePullback);
+  requestAnimationFrame(drawPullback);
 
   const inverseCanvas = document.getElementById("inverseCanvas");
   const inverseAngularMode = document.getElementById("inverseAngularMode");
@@ -744,13 +994,6 @@
     return radius ** n
       * jacobiZeroN(radial, n, 2 * radius * radius - 1)
       * Math.cos(10 * ell * theta);
-  };
-
-  const inverseDiskMode = (ell, radial, radius, theta) => {
-    const D = 10 * Math.abs(ell) + 2 * radial;
-    return realDiskMode(ell, radial - 1, radius, theta) / (4 * D * (D + 1))
-      - realDiskMode(ell, radial, radius, theta) / (2 * D * (D + 2))
-      + realDiskMode(ell, radial + 1, radius, theta) / (4 * (D + 1) * (D + 2));
   };
 
   const fieldColor = (value, maximum) => {
@@ -802,96 +1045,288 @@
     return maximum;
   };
 
+  const drawBalanceRow = (context, box, title, contributions) => {
+    const positiveTotal = contributions.reduce((sum, item) => sum + Math.max(0, item.value), 0);
+    const negativeTotal = contributions.reduce((sum, item) => sum + Math.max(0, -item.value), 0);
+    const scaleTotal = Math.max(positiveTotal, negativeTotal, 1e-15);
+    const centerX = box.x + box.width / 2;
+    const halfWidth = box.width * .38;
+    const barY = box.y + 35;
+    const barHeight = 24;
+
+    drawLabel(context, title, box.x, box.y + 10, {
+      color: colors.heading,
+      size: 12,
+      weight: 700,
+    });
+    drawLabel(context, "sum = 0", box.x + box.width, box.y + 10, {
+      align: "right",
+      color: colors.teal,
+      size: 12,
+      weight: 700,
+    });
+
+    let positiveOffset = 0;
+    let negativeOffset = 0;
+    contributions.forEach((item) => {
+      const segmentWidth = Math.abs(item.value) / scaleTotal * halfWidth;
+      const isPositive = item.value >= 0;
+      const x = isPositive
+        ? centerX + positiveOffset
+        : centerX - negativeOffset - segmentWidth;
+      if (segmentWidth > .5) {
+        context.fillStyle = item.color;
+        context.globalAlpha = .78;
+        context.fillRect(x, barY, segmentWidth, barHeight);
+        context.globalAlpha = 1;
+        context.strokeStyle = item.color;
+        context.lineWidth = 1.1;
+        context.strokeRect(x + .5, barY + .5, Math.max(0, segmentWidth - 1), barHeight - 1);
+      } else {
+        context.beginPath();
+        context.arc(centerX, barY + barHeight / 2, 2.5, 0, Math.PI * 2);
+        context.fillStyle = item.color;
+        context.fill();
+      }
+      if (segmentWidth >= 24) {
+        drawLabel(context, item.label, x + segmentWidth / 2, barY + barHeight / 2 + 1, {
+          align: "center",
+          baseline: "middle",
+          color: colors.white,
+          size: 11,
+          weight: 700,
+        });
+      }
+      if (isPositive) positiveOffset += segmentWidth;
+      else negativeOffset += segmentWidth;
+    });
+
+    context.beginPath();
+    context.moveTo(centerX, barY - 6);
+    context.lineTo(centerX, barY + barHeight + 6);
+    context.strokeStyle = colors.heading;
+    context.lineWidth = 1.3;
+    context.stroke();
+    drawLabel(context, "negative", centerX - halfWidth, barY + barHeight + 18, {
+      color: colors.muted,
+      size: 10,
+    });
+    drawLabel(context, "positive", centerX + halfWidth, barY + barHeight + 18, {
+      align: "right",
+      color: colors.muted,
+      size: 10,
+    });
+  };
+
   const drawInverse = () => {
     if (!inverseCanvas) return;
     const rectangle = inverseCanvas.getBoundingClientRect();
     if (rectangle.width < 120 || rectangle.height < 160) return;
-    const { context, width, height } = prepareCanvas(inverseCanvas);
-    context.fillStyle = colors.white;
-    context.fillRect(0, 0, width, height);
+    const { context, width, height } = prepareCanvas(inverseCanvas, { maxPixelRatio: 4 });
+    drawCanvasBackdrop(context, width, height);
     const compact = width < 520;
-    const top = compact ? 42 : 48;
-    const size = Math.min(compact ? width * .37 : width * .28, compact ? height * .30 : height * .52);
-    const sourceBox = compact
-      ? { x: width * .08, y: top, width: size, height: size }
-      : { x: width * .08, y: top, width: size, height: size };
-    const inverseBox = compact
-      ? { x: width - width * .08 - size, y: top, width: size, height: size }
-      : { x: width * .58, y: top, width: size, height: size };
-    const sourceMaximum = drawDiskField(
-      context,
-      sourceBox,
-      (radius, theta) => realDiskMode(selectedInverseAngular, selectedInverseRadial, radius, theta),
-      { maximum: 1 },
-    );
-    const inverseMaximum = drawDiskField(
-      context,
-      inverseBox,
-      (radius, theta) => inverseDiskMode(selectedInverseAngular, selectedInverseRadial, radius, theta),
-    );
-    drawLabel(context, `source Φ${selectedInverseAngular},${selectedInverseRadial}`, sourceBox.x + sourceBox.width / 2, top - 14, {
-      align: "center",
-      color: colors.heading,
-      size: 12,
-      weight: 700,
-    });
-    drawLabel(context, `inverse KΦ${selectedInverseAngular},${selectedInverseRadial}`, inverseBox.x + inverseBox.width / 2, top - 14, {
-      align: "center",
-      color: colors.heading,
-      size: 12,
-      weight: 700,
-    });
-    drawArrow(
-      context,
-      sourceBox.x + sourceBox.width + 12,
-      sourceBox.y + sourceBox.height / 2,
-      inverseBox.x - 12,
-      inverseBox.y + inverseBox.height / 2,
-      { color: colors.accent, width: 2 },
-    );
-    drawLabel(context, "K", (sourceBox.x + sourceBox.width + inverseBox.x) / 2, sourceBox.y + sourceBox.height / 2 - 12, {
-      align: "center",
-      color: colors.accent,
-      size: 14,
-      weight: 700,
-    });
-
-    const D = 10 * selectedInverseAngular + 2 * selectedInverseRadial;
+    const n = 10 * Math.abs(selectedInverseAngular);
+    const D = n + 2 * selectedInverseRadial;
     const weights = [
       1 / (4 * D * (D + 1)),
       -1 / (2 * D * (D + 2)),
       1 / (4 * (D + 1) * (D + 2)),
     ];
-    const stencilY = compact ? top + size + 60 : height - 72;
-    const stencilWidth = Math.min(width * .76, 500);
-    const stencilLeft = (width - stencilWidth) / 2;
-    const boxWidth = stencilWidth / 3 - 8;
-    weights.forEach((weight, index) => {
-      const x = stencilLeft + index * (boxWidth + 12);
-      context.fillStyle = index === 1 ? "rgba(160, 0, 0, .08)" : colors.tealLight;
-      context.fillRect(x, stencilY, boxWidth, 36);
-      context.strokeStyle = index === 1 ? colors.accent : colors.teal;
-      context.lineWidth = 1;
-      context.strokeRect(x + .5, stencilY + .5, boxWidth - 1, 35);
-      drawLabel(context, `s ${index === 0 ? "− 1" : index === 1 ? "" : "+ 1"}`, x + boxWidth / 2, stencilY - 8, {
-        align: "center",
-        size: 10,
-      });
-      drawLabel(context, formatScientific(weight, 2), x + boxWidth / 2, stencilY + 23, {
-        align: "center",
-        color: index === 1 ? colors.accent : colors.teal,
-        size: 10,
-      });
-    });
-    drawLabel(context, "boundary value = 0", stencilLeft, stencilY + 62, { color: colors.heading, size: 11 });
-    drawLabel(context, "radial derivative = 0", stencilLeft + stencilWidth, stencilY + 62, {
-      align: "right",
+    const colorsByMode = [colors.teal, colors.accent, colors.gold];
+    const radialIndices = [
+      selectedInverseRadial - 1,
+      selectedInverseRadial,
+      selectedInverseRadial + 1,
+    ];
+
+    const sourceHeaderX = compact ? width * .21 : width * .235;
+    const responseHeaderX = compact ? width * .80 : width * .765;
+    const headerArrowStart = compact ? width * .37 : width * .38;
+    const headerArrowEnd = compact ? width * .57 : width * .60;
+    drawLabel(context, `source Φ${selectedInverseAngular},${selectedInverseRadial}`, sourceHeaderX, 27, {
+      align: "center",
       color: colors.heading,
-      size: 11,
+      size: compact ? 16 : 18,
+      weight: 700,
     });
+    drawArrow(context, headerArrowStart, 22, headerArrowEnd, 22, {
+      color: colors.accent,
+      width: 3,
+      head: 6,
+    });
+    drawLabel(context, "K", (headerArrowStart + headerArrowEnd) / 2, 15, {
+      align: "center",
+      color: colors.accent,
+      size: compact ? 16 : 18,
+      weight: 700,
+    });
+    drawLabel(context, "response v = KΦ", responseHeaderX, 27, {
+      align: "center",
+      color: colors.heading,
+      size: compact ? 16 : 18,
+      weight: 700,
+    });
+
+    const legendBox = {
+      x: compact ? 32 : width * .25,
+      y: height - 60,
+      width: compact ? width - 64 : width * .50,
+      height: 42,
+    };
+    const axisLabelY = legendBox.y - 10;
+    const plot = {
+      x: compact ? 34 : 46,
+      y: compact ? 67 : 68,
+      width: width - (compact ? 60 : 154),
+      height: axisLabelY - 23 - (compact ? 67 : 68),
+    };
+    const sampleCount = 240;
+    const componentSamples = weights.map((weight, index) => {
+      const values = [];
+      for (let step = 0; step <= sampleCount; step += 1) {
+        const radius = step / sampleCount;
+        values.push(weight * realDiskMode(
+          selectedInverseAngular,
+          radialIndices[index],
+          radius,
+          0,
+        ));
+      }
+      return values;
+    });
+    const sumSamples = [];
+    let minimumValue = 0;
+    let maximumValue = 0;
+    for (let step = 0; step <= sampleCount; step += 1) {
+      const value = componentSamples.reduce((sum, samples) => sum + samples[step], 0);
+      sumSamples.push(step === sampleCount ? 0 : value);
+      componentSamples.forEach((samples) => {
+        minimumValue = Math.min(minimumValue, samples[step]);
+        maximumValue = Math.max(maximumValue, samples[step]);
+      });
+      minimumValue = Math.min(minimumValue, value);
+      maximumValue = Math.max(maximumValue, value);
+    }
+    const valueSpan = Math.max(maximumValue - minimumValue, 1e-15);
+    const verticalPadding = plot.height * .07;
+    const mapX = (radius) => plot.x + radius * plot.width;
+    const mapY = (value) => plot.y + verticalPadding
+      + (maximumValue - value) / valueSpan * (plot.height - 2 * verticalPadding);
+    const zeroY = mapY(0);
+
+    context.beginPath();
+    context.moveTo(plot.x, zeroY);
+    context.lineTo(plot.x + plot.width, zeroY);
+    context.strokeStyle = colors.ruleDark;
+    context.lineWidth = 1.2;
+    context.stroke();
+    context.beginPath();
+    context.moveTo(plot.x + plot.width, plot.y - 8);
+    context.lineTo(plot.x + plot.width, plot.y + plot.height + 8);
+    context.strokeStyle = colors.ruleDark;
+    context.lineWidth = 1.2;
+    context.setLineDash([4, 4]);
+    context.stroke();
+    context.setLineDash([]);
+
+    componentSamples.forEach((samples, index) => {
+      context.beginPath();
+      samples.forEach((value, step) => {
+        const x = mapX(step / sampleCount);
+        const y = mapY(value);
+        if (step === 0) context.moveTo(x, y);
+        else context.lineTo(x, y);
+      });
+      context.strokeStyle = colorsByMode[index];
+      context.globalAlpha = .58;
+      context.lineWidth = 1.5;
+      context.stroke();
+      context.globalAlpha = 1;
+    });
+
+    context.beginPath();
+    sumSamples.forEach((value, step) => {
+      const x = mapX(step / sampleCount);
+      const y = mapY(value);
+      if (step === 0) context.moveTo(x, y);
+      else context.lineTo(x, y);
+    });
+    context.strokeStyle = colors.heading;
+    context.lineWidth = 3;
+    context.stroke();
+
+    const endpointX = plot.x + plot.width;
+    context.beginPath();
+    context.arc(endpointX, zeroY, 4.5, 0, Math.PI * 2);
+    context.fillStyle = colors.white;
+    context.fill();
+    context.strokeStyle = colors.accent;
+    context.lineWidth = 2.1;
+    context.stroke();
+    context.beginPath();
+    context.moveTo(endpointX - 34, zeroY);
+    context.lineTo(Math.min(width - 16, endpointX + 52), zeroY);
+    context.strokeStyle = colors.accent;
+    context.lineWidth = 2;
+    context.stroke();
+
+    drawLabel(context, "centre", plot.x, axisLabelY, {
+      color: colors.muted,
+      size: compact ? 16 : 17,
+    });
+    drawLabel(context, "boundary r = 1", endpointX, axisLabelY, {
+      align: compact ? "right" : "center",
+      color: colors.heading,
+      size: compact ? 16 : 17,
+      weight: 700,
+    });
+    drawLabel(context, "hits zero", Math.min(width - 14, endpointX + 58), zeroY - 22, {
+      align: "right",
+      color: colors.accent,
+      size: compact ? 16 : 17,
+      weight: 700,
+    });
+
+    const legendItems = [
+      { text: "A", color: colorsByMode[0] },
+      { text: "B", color: colorsByMode[1] },
+      { text: "C", color: colorsByMode[2] },
+      { text: "v", color: colors.heading },
+    ];
+    context.fillStyle = colors.accentLight;
+    context.fillRect(legendBox.x, legendBox.y, legendBox.width, legendBox.height);
+    context.strokeStyle = colors.ruleDark;
+    context.lineWidth = 1.2;
+    context.strokeRect(legendBox.x + .5, legendBox.y + .5, legendBox.width - 1, legendBox.height - 1);
+    const legendCellWidth = legendBox.width / legendItems.length;
+    legendItems.forEach((item, index) => {
+      const cellX = legendBox.x + index * legendCellWidth;
+      const swatchX = cellX + (compact ? 12 : 20);
+      const swatchWidth = compact ? 16 : 20;
+      const legendY = legendBox.y + legendBox.height / 2;
+      context.beginPath();
+      context.moveTo(swatchX, legendY);
+      context.lineTo(swatchX + swatchWidth, legendY);
+      context.strokeStyle = item.color;
+      context.lineWidth = index === legendItems.length - 1 ? 3.5 : 2.5;
+      context.stroke();
+      drawLabel(context, item.text, swatchX + swatchWidth + (compact ? 5 : 7), legendY + 1, {
+        baseline: "middle",
+        color: item.color,
+        size: compact ? 16 : 17,
+        weight: index === legendItems.length - 1 ? 700 : 400,
+      });
+    });
+    drawLabel(context, "arrives flat", Math.min(width - 14, endpointX + 58), zeroY + 25, {
+      align: "right",
+      color: colors.accent,
+      size: compact ? 16 : 17,
+      weight: 700,
+    });
+
     inverseCanvas.setAttribute(
       "aria-label",
-      `Disk polynomial mode ell ${selectedInverseAngular}, radial index ${selectedInverseRadial}, beside its compatible inverse. The inverse uses the three radial indices ${selectedInverseRadial - 1}, ${selectedInverseRadial}, and ${selectedInverseRadial + 1}. Its boundary value and radial derivative cancel exactly. Source color scale maximum ${sourceMaximum.toPrecision(3)}; inverse scale maximum ${inverseMaximum.toPrecision(3)}.`,
+      `For source mode ell ${selectedInverseAngular}, radial index ${selectedInverseRadial}, the compatible inverse combines radial indices ${selectedInverseRadial - 1}, ${selectedInverseRadial}, and ${selectedInverseRadial + 1}. The three colored radial profiles sum to the black response, which reaches value zero with slope zero at the boundary.`,
     );
   };
 
@@ -899,10 +1334,9 @@
     selectedInverseAngular = clamp(Math.round(Number(inverseAngularMode?.value || 1)), 0, 3);
     selectedInverseRadial = clamp(Math.round(Number(inverseRadialMode?.value || 1)), 1, 4);
     const D = 10 * selectedInverseAngular + 2 * selectedInverseRadial;
-    const columnNorm = 1 / (D * (D + 2));
     if (inverseAngularModeValue) inverseAngularModeValue.textContent = `ℓ = ${selectedInverseAngular}`;
     if (inverseRadialModeValue) inverseRadialModeValue.textContent = `s = ${selectedInverseRadial}`;
-    if (inverseStatus) inverseStatus.textContent = `Here D = ${D}. The three weights have total size ${columnNorm.toPrecision(4)}, and both boundary conditions cancel exactly.`;
+    if (inverseStatus) inverseStatus.textContent = `Here D = ${D}. The three weighted profiles cancel exactly at r = 1: their response has value 0 and radial derivative 0.`;
     drawInverse();
   };
   if (inverseAngularMode) inverseAngularMode.addEventListener("change", updateInverse);
@@ -915,9 +1349,9 @@
   const tailStageValue = document.getElementById("tailStageValue");
   const tailStatus = document.getElementById("tailStatus");
   const tailStages = Object.freeze([
-    Object.freeze({ label: "finite core", status: "An ordinary 2,471 by 2,471 calculation handles the stored coefficients." }),
-    Object.freeze({ label: "omitted equations", status: "Every equation just outside the finite core that can be reached from the stored centre is listed." }),
-    Object.freeze({ label: "nearby tail", status: "Every nearby coefficient that can interact with the core is bounded explicitly." }),
+    Object.freeze({ label: "finite core", status: "The finite matrix contains 2,440 field coefficients and 31 shape-and-frequency coefficients." }),
+    Object.freeze({ label: "omitted equations", status: "Every equation just outside those finite blocks that can be reached from the stored centre is listed." }),
+    Object.freeze({ label: "nearby tail", status: "Every nearby coefficient that can interact with a finite block is bounded explicitly." }),
     Object.freeze({ label: "remote tail", status: "A decreasing formula covers every larger angular, radial, and shape index." }),
     Object.freeze({ label: "all bounds combined", status: "An exact-fraction checker combines the finite core and both tail regions." }),
   ]);
@@ -927,149 +1361,178 @@
     if (!tailCanvas) return;
     const rectangle = tailCanvas.getBoundingClientRect();
     if (rectangle.width < 120 || rectangle.height < 160) return;
-    const { context, width, height } = prepareCanvas(tailCanvas);
-    context.fillStyle = colors.white;
-    context.fillRect(0, 0, width, height);
+    const { context, width, height } = prepareCanvas(tailCanvas, { maxPixelRatio: 4 });
+    drawCanvasBackdrop(context, width, height);
     const compact = width < 520;
-    const plot = compact
-      ? { x: 48, y: 48, width: width - 96, height: height * .52 }
-      : { x: 70, y: 52, width: width * .58, height: height - 112 };
-    const finite = {
-      x: plot.x,
-      y: plot.y + plot.height * .34,
-      width: plot.width * .57,
-      height: plot.height * .66,
-    };
-    const omittedTop = { x: finite.x, y: plot.y, width: finite.width, height: finite.y - plot.y };
-    const omittedRight = { x: finite.x + finite.width, y: finite.y, width: plot.x + plot.width - finite.x - finite.width, height: finite.height };
-    const remote = { x: finite.x + finite.width, y: plot.y, width: omittedRight.width, height: omittedTop.height };
+    const diagram = compact
+      ? { x: 20, y: 28, width: width - 40, height: height * .65 }
+      : { x: 30, y: 36, width: width * .68, height: height - 72 };
+    const labelWidth = compact ? 54 : 70;
+    const stripX = diagram.x + labelWidth;
+    const stripWidth = diagram.width - labelWidth;
+    const finiteWidth = stripWidth * .47;
+    const omittedWidth = stripWidth * .08;
+    const nearbyWidth = stripWidth * .15;
+    const remoteWidth = stripWidth - finiteWidth - omittedWidth - nearbyWidth;
+    const gTop = diagram.y + 36;
+    const gHeight = diagram.height * .48;
+    const pTop = diagram.y + diagram.height * .72;
+    const pHeight = Math.max(30, diagram.height * .13);
 
-    context.fillStyle = colors.accentLight;
-    context.fillRect(plot.x, plot.y, plot.width, plot.height);
-    context.strokeStyle = colors.ruleDark;
-    context.strokeRect(plot.x + .5, plot.y + .5, plot.width - 1, plot.height - 1);
-
-    context.fillStyle = "rgba(7, 87, 96, .20)";
-    context.fillRect(finite.x, finite.y, finite.width, finite.height);
-    context.strokeStyle = colors.teal;
-    context.lineWidth = 1.8;
-    context.strokeRect(finite.x + .5, finite.y + .5, finite.width - 1, finite.height - 1);
-    const columns = compact ? 10 : 14;
-    const rows = compact ? 7 : 10;
-    context.strokeStyle = "rgba(7, 87, 96, .18)";
-    context.lineWidth = .7;
-    for (let column = 1; column < columns; column += 1) {
-      const x = finite.x + column / columns * finite.width;
-      context.beginPath();
-      context.moveTo(x, finite.y);
-      context.lineTo(x, finite.y + finite.height);
-      context.stroke();
-    }
-    for (let row = 1; row < rows; row += 1) {
-      const y = finite.y + row / rows * finite.height;
-      context.beginPath();
-      context.moveTo(finite.x, y);
-      context.lineTo(finite.x + finite.width, y);
-      context.stroke();
-    }
-    drawLabel(context, "finite g rectangle", finite.x + 10, finite.y + 20, { color: colors.teal, size: 11, weight: 700 });
-    drawLabel(context, "61 × 40", finite.x + 10, finite.y + 38, { color: colors.teal, size: 10 });
-    const shapeStripWidth = Math.max(10, finite.width * .08);
-    context.fillStyle = "rgba(160, 0, 0, .24)";
-    context.fillRect(finite.x + finite.width - shapeStripWidth, finite.y, shapeStripWidth, finite.height);
-    drawLabel(context, "31 shape", finite.x + finite.width - 6, finite.y + finite.height - 9, {
-      align: "right",
-      color: colors.accent,
-      size: 9,
+    drawLabel(context, "g array", diagram.x, gTop + 18, {
+      color: colors.heading,
+      size: 14,
+      weight: 700,
+    });
+    drawLabel(context, "p list", diagram.x, pTop + 19, {
+      color: colors.heading,
+      size: 14,
+      weight: 700,
     });
 
+    const finiteG = { x: stripX, y: gTop, width: finiteWidth, height: gHeight };
+    context.fillStyle = "rgba(7, 87, 96, .17)";
+    context.fillRect(finiteG.x, finiteG.y, finiteG.width, finiteG.height);
+    context.strokeStyle = colors.teal;
+    context.lineWidth = 1.5;
+    context.strokeRect(finiteG.x + .5, finiteG.y + .5, finiteG.width - 1, finiteG.height - 1);
+    context.strokeStyle = "rgba(7, 87, 96, .20)";
+    context.lineWidth = .7;
+    const gridColumns = compact ? 8 : 12;
+    const gridRows = compact ? 5 : 8;
+    for (let column = 1; column < gridColumns; column += 1) {
+      const x = finiteG.x + column / gridColumns * finiteG.width;
+      context.beginPath();
+      context.moveTo(x, finiteG.y);
+      context.lineTo(x, finiteG.y + finiteG.height);
+      context.stroke();
+    }
+    for (let row = 1; row < gridRows; row += 1) {
+      const y = finiteG.y + row / gridRows * finiteG.height;
+      context.beginPath();
+      context.moveTo(finiteG.x, y);
+      context.lineTo(finiteG.x + finiteG.width, y);
+      context.stroke();
+    }
+    drawLabel(context, "61 × 40 stored", finiteG.x + 9, finiteG.y + 19, {
+      color: colors.teal,
+      size: 14,
+      weight: 700,
+    });
+
+    const finiteP = { x: stripX, y: pTop, width: finiteWidth, height: pHeight };
+    context.fillStyle = "rgba(7, 87, 96, .17)";
+    context.fillRect(finiteP.x, finiteP.y, finiteP.width, finiteP.height);
+    context.strokeStyle = colors.teal;
+    context.lineWidth = 1.5;
+    context.strokeRect(finiteP.x + .5, finiteP.y + .5, finiteP.width - 1, finiteP.height - 1);
+    for (let cell = 1; cell < 10; cell += 1) {
+      const x = finiteP.x + cell / 10 * finiteP.width;
+      context.beginPath();
+      context.moveTo(x, finiteP.y);
+      context.lineTo(x, finiteP.y + finiteP.height);
+      context.strokeStyle = "rgba(7, 87, 96, .20)";
+      context.stroke();
+    }
+    drawLabel(context, compact ? "31 stored" : "31 stored · j = 0…30", finiteP.x + 8, finiteP.y + finiteP.height / 2 + 1, {
+      baseline: "middle",
+      color: colors.teal,
+      size: 14,
+      weight: 700,
+    });
+
+    const omittedX = stripX + finiteWidth;
+    const nearbyX = omittedX + omittedWidth;
+    const remoteX = nearbyX + nearbyWidth;
     if (selectedTailStage >= 1) {
-      context.fillStyle = "rgba(160, 0, 0, .10)";
-      context.fillRect(omittedTop.x, omittedTop.y, omittedTop.width, omittedTop.height);
-      context.fillRect(omittedRight.x, omittedRight.y, omittedRight.width, omittedRight.height);
+      context.fillStyle = "rgba(160, 0, 0, .09)";
+      context.fillRect(omittedX, gTop, omittedWidth, gHeight);
+      context.fillRect(omittedX, pTop, omittedWidth, pHeight);
+      context.fillRect(finiteG.x, gTop - 13, finiteG.width + omittedWidth, 13);
       context.strokeStyle = colors.accent;
-      context.setLineDash([5, 4]);
-      context.strokeRect(omittedTop.x + .5, omittedTop.y + .5, omittedTop.width - 1, omittedTop.height - 1);
-      context.strokeRect(omittedRight.x + .5, omittedRight.y + .5, omittedRight.width - 1, omittedRight.height - 1);
+      context.lineWidth = 1.2;
+      context.setLineDash([4, 3]);
+      context.strokeRect(omittedX + .5, gTop + .5, omittedWidth - 1, gHeight - 1);
+      context.strokeRect(omittedX + .5, pTop + .5, omittedWidth - 1, pHeight - 1);
+      context.strokeRect(finiteG.x + .5, gTop - 12.5, finiteG.width + omittedWidth - 1, 12);
       context.setLineDash([]);
-      drawLabel(context, "nearby equations outside the core", omittedTop.x + 8, omittedTop.y + 18, { color: colors.accent, size: 10 });
+      drawLabel(context, "reached equations", finiteG.x, gTop - 19, {
+        color: colors.accent,
+        size: 14,
+        weight: 700,
+      });
     }
     if (selectedTailStage >= 2) {
-      const band = Math.max(10, plot.width * .07);
       context.fillStyle = "rgba(154, 100, 0, .18)";
-      context.fillRect(omittedRight.x, omittedRight.y, band, omittedRight.height);
-      context.fillRect(omittedTop.x, omittedTop.y + omittedTop.height - band, omittedTop.width, band);
+      context.fillRect(nearbyX, gTop, nearbyWidth, gHeight);
+      context.fillRect(nearbyX, pTop, nearbyWidth, pHeight);
       context.strokeStyle = colors.gold;
-      context.lineWidth = 1.4;
-      context.strokeRect(omittedRight.x + .5, omittedRight.y + .5, band - 1, omittedRight.height - 1);
-      drawLabel(context, "adjacent", omittedRight.x + band / 2, omittedRight.y + omittedRight.height / 2, {
+      context.lineWidth = 1.3;
+      context.strokeRect(nearbyX + .5, gTop + .5, nearbyWidth - 1, gHeight - 1);
+      context.strokeRect(nearbyX + .5, pTop + .5, nearbyWidth - 1, pHeight - 1);
+      drawLabel(context, "near", nearbyX + nearbyWidth / 2, gTop + gHeight / 2, {
         align: "center",
         baseline: "middle",
         color: colors.gold,
-        size: 9,
+        size: 14,
+        weight: 700,
       });
     }
     if (selectedTailStage >= 3) {
-      context.fillStyle = "rgba(82, 111, 134, .14)";
-      context.fillRect(remote.x, remote.y, remote.width, remote.height);
+      for (let band = 0; band < 6; band += 1) {
+        const x = remoteX + band / 6 * remoteWidth;
+        const bandWidth = remoteWidth / 6 + 1;
+        context.fillStyle = `rgba(82, 111, 134, ${(.22 - band * .025).toFixed(3)})`;
+        context.fillRect(x, gTop, bandWidth, gHeight);
+        context.fillRect(x, pTop, bandWidth, pHeight);
+      }
       context.strokeStyle = colors.blue;
       context.lineWidth = 1.2;
-      for (let index = 0; index < 5; index += 1) {
-        const offset = index * 9;
-        context.beginPath();
-        context.moveTo(remote.x + offset, remote.y + remote.height);
-        context.lineTo(remote.x + remote.width, remote.y + offset);
-        context.stroke();
-      }
-      drawLabel(context, "decreasing tail bound", remote.x + remote.width / 2, remote.y + remote.height / 2, {
+      context.strokeRect(remoteX + .5, gTop + .5, remoteWidth - 1, gHeight - 1);
+      context.strokeRect(remoteX + .5, pTop + .5, remoteWidth - 1, pHeight - 1);
+      drawLabel(context, "tail", remoteX + remoteWidth / 2, gTop + gHeight / 2, {
         align: "center",
         baseline: "middle",
         color: colors.blue,
-        size: 9,
+        size: 14,
+        weight: 700,
       });
     }
 
-    drawLabel(context, "angular / shape index →", plot.x + plot.width, plot.y + plot.height + 22, { align: "right", size: 10 });
-    context.save();
-    context.translate(plot.x - 30, plot.y);
-    context.rotate(-Math.PI / 2);
-    drawLabel(context, "radial index →", 0, 0, { align: "right", size: 10 });
-    context.restore();
-
     const checker = compact
-      ? { x: width * .12, y: height * .68, width: width * .76, height: height * .27 }
-      : { x: width * .73, y: height * .29, width: width * .22, height: height * .38 };
+      ? { x: width * .15, y: height * .76, width: width * .70, height: height * .20 }
+      : { x: width * .75, y: height * .29, width: width * .21, height: height * .36 };
     if (selectedTailStage >= 4) {
       context.fillStyle = colors.accentLight;
       context.fillRect(checker.x, checker.y, checker.width, checker.height);
       context.strokeStyle = colors.heading;
       context.lineWidth = 1.5;
       context.strokeRect(checker.x + .5, checker.y + .5, checker.width - 1, checker.height - 1);
-      drawLabel(context, "exact-fraction checker", checker.x + checker.width / 2, checker.y + 26, {
+      drawLabel(context, "exact checker", checker.x + checker.width / 2, checker.y + (compact ? 20 : 25), {
         align: "center",
         color: colors.heading,
-        size: compact ? 11 : 12,
+        size: 14,
         weight: 700,
       });
-      drawLabel(context, "which modes interact", checker.x + 14, checker.y + 54, { size: 10 });
-      drawLabel(context, "combine their sizes", checker.x + 14, checker.y + 74, { size: 10 });
-      drawLabel(context, "two ball tests", checker.x + 14, checker.y + 94, { color: colors.accent, size: 10, weight: 700 });
-      if (!compact) drawArrow(context, plot.x + plot.width + 12, plot.y + plot.height / 2, checker.x - 12, checker.y + checker.height / 2, { color: colors.heading });
-    } else {
-      context.strokeStyle = colors.rule;
-      context.setLineDash([5, 5]);
-      context.strokeRect(checker.x + .5, checker.y + .5, checker.width - 1, checker.height - 1);
-      context.setLineDash([]);
-      drawLabel(context, "aggregation", checker.x + checker.width / 2, checker.y + checker.height / 2, {
+      drawLabel(context, "finite + nearby + tail", checker.x + checker.width / 2, checker.y + checker.height * .52, {
         align: "center",
         baseline: "middle",
         color: colors.muted,
-        size: 10,
+        size: 14,
       });
+      drawLabel(context, "Y, Z, C₂, C₃", checker.x + checker.width / 2, checker.y + checker.height * .79, {
+        align: "center",
+        baseline: "middle",
+        color: colors.accent,
+        size: 14,
+        weight: 700,
+      });
+      if (compact) drawArrow(context, width / 2, diagram.y + diagram.height + 2, width / 2, checker.y - 7, { color: colors.heading });
+      else drawArrow(context, diagram.x + diagram.width + 2, diagram.y + diagram.height / 2, checker.x - 8, checker.y + checker.height / 2, { color: colors.heading });
     }
     tailCanvas.setAttribute(
       "aria-label",
-      `Certificate layer ${selectedTailStage + 1} of 5: ${tailStages[selectedTailStage].label}. ${tailStages[selectedTailStage].status}`,
+      `Certificate layer ${selectedTailStage + 1} of 5: ${tailStages[selectedTailStage].label}. The two-dimensional field array g and the one-dimensional shape-and-frequency list p are shown separately. ${tailStages[selectedTailStage].status}`,
     );
   };
 
@@ -1217,7 +1680,7 @@
       {
         align: "center",
         color: data.signs.value ? colors.teal : colors.accent,
-        size: compact ? 9 : 10,
+        size: compact ? 10 : 11,
       },
     );
 
@@ -1247,7 +1710,7 @@
       drawLabel(context, "x°", centerX - 7, centerY + 15, {
         align: "right",
         color: colors.heading,
-        size: 10,
+        size: 11,
         weight: 700,
       });
       context.beginPath();
@@ -1256,7 +1719,7 @@
       context.fill();
       drawLabel(context, "x*", fixedPointX + 6, fixedPointY - 5, {
         color: colors.accent,
-        size: 10,
+        size: 11,
         weight: 700,
       });
 
@@ -1296,7 +1759,7 @@
       const initialPoint = orbitPoint(fixedPointX, fixedPointY, ballRadius, data.q, 0);
       drawLabel(context, "x₀", initialPoint.x + 8, initialPoint.y - 7, {
         color: colors.heading,
-        size: 10,
+        size: 11,
         weight: 700,
       });
       if (points.length > 1) {
@@ -1304,14 +1767,14 @@
         const shownStep = Math.min(certificateMaximumIteration, Math.ceil(progress));
         drawLabel(context, "x" + String(shownStep), current.x + 8, current.y - 7, {
           color: colors.accent,
-          size: 10,
+          size: 11,
           weight: 700,
         });
       }
-      drawLabel(context, "enlarged core: ||x* − x°|| ≤ Y/(1 − q)", centerX, centerY + coreRadius + 13, {
+      drawLabel(context, "certified x* enclosure · enlarged", centerX, centerY + coreRadius + 14, {
         align: "center",
         color: colors.accent,
-        size: compact ? 8 : 9,
+        size: compact ? 10 : 11,
       });
     }
   };
@@ -1342,14 +1805,14 @@
       drawLabel(context, value.toFixed(1), plot.x - 8, y, {
         align: "right",
         baseline: "middle",
-        size: 9,
+        size: 10,
       });
     });
     for (let step = 0; step <= certificateMaximumIteration; step += 2) {
       const x = mapX(step);
       drawLabel(context, String(step), x, plot.y + plot.height + 18, {
         align: "center",
-        size: 9,
+        size: 10,
       });
     }
 
@@ -1378,16 +1841,16 @@
 
     drawLabel(context, "relative error bound qⁿ", plot.x, plot.y - 10, {
       color: colors.heading,
-      size: 10,
+      size: 11,
     });
     drawLabel(context, "iteration n", plot.x + plot.width, plot.y + plot.height + 18, {
       align: "right",
-      size: 9,
+      size: 10,
     });
     drawLabel(context, "q ≤ " + data.q.toFixed(6), plot.x + plot.width, plot.y + 14, {
       align: "right",
       color: data.signs.derivative ? colors.teal : colors.accent,
-      size: 10,
+      size: 11,
       weight: 700,
     });
     const explanation = data.pass
@@ -1396,7 +1859,204 @@
     drawLabel(context, explanation, compact ? area.width / 2 : plot.x + plot.width / 2, area.height - 14, {
       align: "center",
       color: data.pass ? colors.teal : colors.accent,
-      size: compact ? 8 : 10,
+      size: compact ? 10 : 11,
+    });
+  };
+
+  const drawSimpleCertificate = (context, area, data) => {
+    const compact = area.compact;
+    const equationX = compact ? area.width / 2 : area.width * .115;
+    const equationAlign = compact ? "center" : "left";
+    const firstEquationY = compact ? 32 : area.height * .39;
+    const secondEquationY = compact ? 86 : area.height * .57;
+    const selfMapColor = data.signs.value ? colors.teal : colors.accent;
+    const contractionColor = data.signs.derivative ? colors.teal : colors.accent;
+
+    drawLabel(context, data.signs.value ? "T(Bᵣ(x°)) ⊂ Bᵣ(x°)" : "self-map inclusion not certified", equationX, firstEquationY, {
+      align: equationAlign,
+      color: selfMapColor,
+      size: compact ? 17 : 20,
+      weight: 700,
+    });
+    drawLabel(
+      context,
+      data.signs.value ? "the whole ball maps back inside" : "this ball is not mapped inside itself",
+      equationX,
+      firstEquationY + 26,
+      { align: equationAlign, color: data.signs.value ? colors.muted : colors.accent, size: compact ? 16 : 17 },
+    );
+    drawLabel(context, data.signs.derivative ? "‖T(x)−T(y)‖ ≤ 0.622 ‖x−y‖" : "contraction not certified", equationX, secondEquationY, {
+      align: equationAlign,
+      color: contractionColor,
+      size: compact ? 17 : 20,
+      weight: 700,
+    });
+    drawLabel(
+      context,
+      data.signs.derivative ? "each iteration shortens every distance" : "distances are not certified to shrink",
+      equationX,
+      secondEquationY + 26,
+      { align: equationAlign, color: data.signs.derivative ? colors.muted : colors.accent, size: compact ? 16 : 17 },
+    );
+
+    const center = compact
+      ? { x: area.width / 2, y: area.height * .67 }
+      : { x: area.width * .685, y: area.height * .53 };
+    const ballRadius = Math.min(
+      compact ? area.width * .27 : area.width * .18,
+      compact ? area.height * .23 : area.height * .32,
+    );
+    const mappedRatio = data.radius > 0 ? data.mappedRadius / data.radius : Number.POSITIVE_INFINITY;
+    const imageRadius = ballRadius * Math.min(mappedRatio, 1.14);
+
+    context.beginPath();
+    context.arc(center.x, center.y, ballRadius, 0, Math.PI * 2);
+    context.fillStyle = "rgba(160, 0, 0, .035)";
+    context.fill();
+    context.strokeStyle = colors.heading;
+    context.lineWidth = 1.8;
+    context.stroke();
+
+    context.beginPath();
+    context.arc(center.x, center.y, imageRadius, 0, Math.PI * 2);
+    context.fillStyle = data.signs.value ? "rgba(7, 87, 96, .11)" : "rgba(160, 0, 0, .06)";
+    context.fill();
+    context.strokeStyle = selfMapColor;
+    context.lineWidth = 1.8;
+    if (!data.signs.value) context.setLineDash([5, 4]);
+    context.stroke();
+    context.setLineDash([]);
+
+    drawLabel(context, "x = (g, p) coefficient space", center.x, center.y - ballRadius - 27, {
+      align: "center",
+      color: colors.heading,
+      size: 16,
+      weight: 700,
+    });
+    drawLabel(context, "chosen ball Bᵣ(x°)", center.x, center.y - ballRadius - 8, {
+      align: "center",
+      color: colors.muted,
+      size: 16,
+    });
+    drawLabel(
+      context,
+      data.signs.value ? "all possible T(x)" : "bound for all possible T(x)",
+      center.x,
+      center.y + imageRadius + 16,
+      { align: "center", color: selfMapColor, size: 16, weight: 700 },
+    );
+
+    context.beginPath();
+    context.arc(center.x, center.y, 3.2, 0, Math.PI * 2);
+    context.fillStyle = colors.heading;
+    context.fill();
+    drawLabel(context, "x° = x₀", center.x - 8, center.y + 17, {
+      align: "right",
+      color: colors.heading,
+      size: 16,
+      weight: 700,
+    });
+
+    if (data.pass) {
+      const target = {
+        x: center.x + ballRadius * .22,
+        y: center.y - ballRadius * .16,
+      };
+      const pointAt = (step) => {
+        const startDx = center.x - target.x;
+        const startDy = center.y - target.y;
+        const scale = data.q ** step;
+        const angle = step * .58;
+        return {
+          x: target.x + scale * (startDx * Math.cos(angle) - startDy * Math.sin(angle)),
+          y: target.y + scale * (startDx * Math.sin(angle) + startDy * Math.cos(angle)),
+        };
+      };
+      const progress = clamp(certificateIterationProgress, 0, certificateMaximumIteration);
+      const fullSteps = Math.floor(progress);
+      const points = [];
+      for (let step = 0; step <= fullSteps; step += 1) points.push(pointAt(step));
+      if (fullSteps < certificateMaximumIteration && progress > fullSteps) {
+        const from = pointAt(fullSteps);
+        const to = pointAt(fullSteps + 1);
+        const partial = progress - fullSteps;
+        points.push({ x: mix(from.x, to.x, partial), y: mix(from.y, to.y, partial) });
+      }
+      if (points.length > 1) {
+        context.beginPath();
+        points.forEach((point, index) => {
+          if (index === 0) context.moveTo(point.x, point.y);
+          else context.lineTo(point.x, point.y);
+        });
+        context.strokeStyle = colors.accent;
+        context.lineWidth = 2;
+        context.stroke();
+      }
+      points.slice(1).forEach((point, index) => {
+        context.beginPath();
+        context.arc(point.x, point.y, index === points.length - 2 ? 3.8 : 2.6, 0, Math.PI * 2);
+        context.fillStyle = colors.accent;
+        context.fill();
+      });
+      context.beginPath();
+      context.arc(target.x, target.y, 4.2, 0, Math.PI * 2);
+      context.fillStyle = colors.white;
+      context.fill();
+      context.strokeStyle = colors.accent;
+      context.lineWidth = 2.2;
+      context.stroke();
+      drawLabel(context, "x*", target.x + 8, target.y - 8, {
+        color: colors.accent,
+        size: 16,
+        weight: 700,
+      });
+      if (points.length > 1) {
+        const current = points[points.length - 1];
+        drawLabel(context, "xₙ", current.x + 7, current.y + 15, {
+          color: colors.accent,
+          size: 16,
+          weight: 700,
+        });
+      }
+    }
+
+    const iterationY = center.y + ballRadius + (compact ? 25 : 31);
+    const iterationWidth = 159;
+    let iterationX = center.x - iterationWidth / 2;
+    drawLabel(context, "repeat", iterationX, iterationY, {
+      color: colors.accent,
+      size: 16,
+      weight: 700,
+    });
+    iterationX += 54;
+    drawLabel(context, "x", iterationX, iterationY, {
+      color: colors.accent,
+      size: 20,
+      weight: 700,
+    });
+    iterationX += 11;
+    drawLabel(context, "n+1", iterationX, iterationY + 5, {
+      color: colors.accent,
+      size: 15,
+      weight: 700,
+    });
+    iterationX += 30;
+    drawLabel(context, "= T(x", iterationX, iterationY, {
+      color: colors.accent,
+      size: 20,
+      weight: 700,
+    });
+    iterationX += 49;
+    drawLabel(context, "n", iterationX, iterationY + 5, {
+      color: colors.accent,
+      size: 15,
+      weight: 700,
+    });
+    iterationX += 8;
+    drawLabel(context, ")", iterationX, iterationY, {
+      color: colors.accent,
+      size: 20,
+      weight: 700,
     });
   };
 
@@ -1404,18 +2064,19 @@
     if (!certificateCanvas) return;
     const rectangle = certificateCanvas.getBoundingClientRect();
     if (rectangle.width < 120 || rectangle.height < 160) return;
-    const { context, width, height } = prepareCanvas(certificateCanvas);
-    context.fillStyle = colors.white;
-    context.fillRect(0, 0, width, height);
+    const { context, width, height } = prepareCanvas(certificateCanvas, { maxPixelRatio: 4 });
+    drawCanvasBackdrop(context, width, height);
     const data = currentCertificateData();
+    const isProofRadius = data.microThousandths === 1000;
     const area = { width, height, compact: width < 520 };
-    drawIterationBall(context, area, data);
-    drawConvergencePlot(context, area, data);
+    drawSimpleCertificate(context, area, data);
     certificateCanvas.setAttribute(
       "aria-label",
       "Coefficient-space fixed-point diagram at radius "
         + selectedMicroRadius.toFixed(3)
-        + " times ten to the minus six. The image of the ball has radius bound "
+        + " times ten to the minus six. "
+        + (isProofRadius ? "This is the radius used in the proof. " : "This is an exploratory nearby radius. ")
+        + "The image of the ball has radius bound "
         + formatScientific(data.mappedRadius)
         + ". The contraction factor is at most "
         + data.q.toFixed(6)
@@ -1437,19 +2098,22 @@
   const updateIterationReadout = (data) => {
     if (!certificateIteration) return;
     if (!data.pass) {
-      certificateIteration.textContent = "Iteration: choose a ball that passes both tests.";
+      certificateIteration.textContent = "Unavailable until both checks pass.";
       return;
     }
     const step = clamp(certificateIterationProgress, 0, certificateMaximumIteration);
     if (step === 0) {
-      certificateIteration.textContent = "Ready: xₙ₊₁ = T(xₙ).";
+      certificateIteration.textContent = "Ready — repeat xₙ₊₁ = T(xₙ).";
       return;
     }
-    certificateIteration.textContent = "At n = "
-      + String(Math.min(certificateMaximumIteration, Math.floor(step)))
-      + ": distance factor ≤ "
-      + (data.q ** step).toFixed(4)
-      + ".";
+    const shownStep = Math.min(certificateMaximumIteration, Math.max(1, Math.floor(step)));
+    certificateIteration.textContent = "Step "
+      + String(shownStep)
+      + " of "
+      + String(certificateMaximumIteration)
+      + " — remaining distance ≤ "
+      + (data.q ** shownStep).toFixed(4)
+      + " of the start.";
   };
 
   const finishCertificateAnimation = (data) => {
@@ -1505,23 +2169,26 @@
     const microThousandths = Math.round(selectedMicroRadius * 1000);
     selectedMicroRadius = microThousandths / 1000;
     const data = currentCertificateData();
+    const isProofRadius = microThousandths === 1000;
     const selfMapRatio = data.radius > 0 ? data.mappedRadius / data.radius : Number.POSITIVE_INFINITY;
     if (certificateRadiusValue) certificateRadiusValue.textContent = selectedMicroRadius.toFixed(3);
     if (certificateValue) certificateValue.textContent = data.signs.value
-      ? "Stays inside: T(Bᵣ) fits within " + selfMapRatio.toFixed(6) + "r."
-      : "Stays inside: not proved for this radius.";
+      ? "Pass — image radius ≤ " + selfMapRatio.toFixed(6) + "r."
+      : "Fail — the image is not contained in the ball.";
     if (certificateDerivative) certificateDerivative.textContent = data.signs.derivative
-      ? "Shrinks: q ≤ " + data.q.toFixed(6) + " < 1."
-      : "Shrinks: not proved for this radius.";
+      ? "Pass — q ≤ " + data.q.toFixed(6) + " < 1."
+      : "Fail — distances are not certified to shrink.";
     updateIterationReadout(data);
     if (certificateVerdict) certificateVerdict.textContent = data.pass
-      ? "Certified: this ball contains exactly one solution of F(x) = 0."
-      : "This chosen ball does not satisfy both conditions.";
+      ? (isProofRadius
+        ? "Proof radius: exactly one zero of F lies in this ball."
+        : "Both fixed-point conditions hold at this radius.")
+      : "The two fixed-point conditions do not both hold.";
     if (certificatePlayButton) certificatePlayButton.disabled = !data.pass;
     if (certificatePlayIcon) certificatePlayIcon.textContent = "▶";
     if (certificatePlayLabel) certificatePlayLabel.textContent = data.pass
       ? "Run iteration"
-      : "Choose a certified radius";
+      : "Choose a passing radius";
     if (certificateRadius) certificateRadius.setAttribute(
       "aria-valuetext",
       selectedMicroRadius.toFixed(3)
@@ -1551,178 +2218,356 @@
     }),
     Object.freeze({
       label: "shape is not a disk",
-      status: "The first shape coefficient stays away from zero, so the map cannot be linear and its image cannot be a disk.",
+      status: "The normalized first shape coefficient satisfies |q₁*| > 0.03459, so the map is not linear and its image is not a disk.",
     }),
   ]);
   let selectedReconstructionStage = 0;
 
   const drawReconstructionEnclosure = (context, width, height) => {
     const compact = width < 520;
-    const centerX = compact ? width / 2 : width * .30;
-    const centerY = compact ? height * .34 : height * .54;
-    const radius = Math.min(compact ? width * .27 : width * .19, compact ? height * .22 : height * .31);
+    const centerX = compact ? width / 2 : width * .27;
+    const centerY = compact ? height * .27 : height * .54;
+    const radius = Math.min(
+      compact ? width * .24 : width * .18,
+      compact ? height * .18 : height * .30,
+    );
     traceConformalBoundary(context, centerX, centerY, radius, 1, {
       stroke: "rgba(160, 0, 0, .14)",
-      lineWidth: 11,
+      lineWidth: 12,
     });
     traceConformalBoundary(context, centerX, centerY, radius, 1, {
       stroke: colors.accent,
-      lineWidth: 2.4,
+      lineWidth: 2.3,
       fill: colors.tealLight,
     });
-    drawLabel(context, "finite centre + certified tube", centerX, centerY - radius - 22, {
+    drawLabel(context, "computed boundary", centerX, centerY - radius - 20, {
       align: "center",
       color: colors.heading,
-      size: 12,
+      size: 14,
       weight: 700,
     });
-    drawLabel(context, "tube magnified for visibility", centerX, centerY + radius + 25, {
-      align: "center",
-      color: colors.muted,
-      size: 10,
-    });
-
-    const gauge = compact
-      ? { x: width * .15, y: height * .78, width: width * .70 }
-      : { x: width * .59, y: height * .50, width: width * .33 };
-    const exponents = [-13, -12, -11, -10, -9, -8];
-    context.strokeStyle = colors.ruleDark;
-    context.lineWidth = 1.4;
-    context.beginPath();
-    context.moveTo(gauge.x, gauge.y);
-    context.lineTo(gauge.x + gauge.width, gauge.y);
-    context.stroke();
-    exponents.forEach((exponent, index) => {
-      const x = gauge.x + index / (exponents.length - 1) * gauge.width;
-      context.beginPath();
-      context.moveTo(x, gauge.y - 6);
-      context.lineTo(x, gauge.y + 6);
-      context.stroke();
-      drawLabel(context, `10${superscript(exponent)}`, x, gauge.y + 23, { align: "center", size: 9 });
-    });
-    const logValue = Math.log10(7.13e-11);
-    const markerX = gauge.x + (logValue + 13) / 5 * gauge.width;
-    context.beginPath();
-    context.arc(markerX, gauge.y, 5, 0, Math.PI * 2);
-    context.fillStyle = colors.accent;
-    context.fill();
-    drawLabel(context, "7.13 × 10⁻¹¹", markerX, gauge.y - 13, {
+    drawLabel(context, "certified tube · enlarged", centerX, centerY + radius + 23, {
       align: "center",
       color: colors.accent,
-      size: 11,
-      weight: 700,
+      size: 14,
     });
-    drawLabel(context, "uniform boundary error", gauge.x + gauge.width / 2, gauge.y - 42, {
+
+    const highlightTheta = .04;
+    const highlightPoint = conformalPoint(1, highlightTheta, 30, 1);
+    const highlightX = centerX + highlightPoint.x * radius;
+    const highlightY = centerY - highlightPoint.y * radius;
+    context.beginPath();
+    context.arc(highlightX, highlightY, compact ? 12 : 15, 0, Math.PI * 2);
+    context.strokeStyle = colors.accent;
+    context.lineWidth = 1.5;
+    context.stroke();
+
+    const inset = compact
+      ? { x: 22, y: height * .62, width: width - 44, height: height * .25 }
+      : { x: width * .56, y: height * .28, width: width * .38, height: height * .47 };
+    context.fillStyle = "rgba(255, 255, 248, .92)";
+    context.fillRect(inset.x, inset.y, inset.width, inset.height);
+    context.strokeStyle = colors.ruleDark;
+    context.lineWidth = 1.2;
+    context.strokeRect(inset.x + .5, inset.y + .5, inset.width - 1, inset.height - 1);
+    drawLabel(context, "one boundary segment · greatly enlarged", inset.x + inset.width / 2, inset.y + 23, {
       align: "center",
       color: colors.heading,
-      size: 12,
+      size: 14,
+      weight: 700,
     });
-    if (!compact) drawArrow(context, centerX + radius + 18, centerY, gauge.x - 18, gauge.y, { color: colors.ruleDark, dashed: true });
+
+    const lineLeft = inset.x + 22;
+    const lineRight = inset.x + inset.width - 22;
+    const lineCenterY = inset.y + inset.height * .56;
+    const tubeHalfWidth = Math.max(11, inset.height * .12);
+    const wave = (x) => 4 * Math.sin((x - lineLeft) / Math.max(1, lineRight - lineLeft) * Math.PI * 1.25 - .4);
+    context.beginPath();
+    for (let step = 0; step <= 80; step += 1) {
+      const x = mix(lineLeft, lineRight, step / 80);
+      const y = lineCenterY + wave(x) - tubeHalfWidth;
+      if (step === 0) context.moveTo(x, y);
+      else context.lineTo(x, y);
+    }
+    for (let step = 80; step >= 0; step -= 1) {
+      const x = mix(lineLeft, lineRight, step / 80);
+      context.lineTo(x, lineCenterY + wave(x) + tubeHalfWidth);
+    }
+    context.closePath();
+    context.fillStyle = "rgba(160, 0, 0, .10)";
+    context.fill();
+
+    context.beginPath();
+    for (let step = 0; step <= 80; step += 1) {
+      const x = mix(lineLeft, lineRight, step / 80);
+      const y = lineCenterY + wave(x);
+      if (step === 0) context.moveTo(x, y);
+      else context.lineTo(x, y);
+    }
+    context.strokeStyle = colors.accent;
+    context.lineWidth = 2.3;
+    context.stroke();
+
+    context.beginPath();
+    for (let step = 0; step <= 80; step += 1) {
+      const x = mix(lineLeft, lineRight, step / 80);
+      const y = lineCenterY + wave(x) + tubeHalfWidth * .34 * Math.sin(step / 80 * Math.PI * 2 + .7);
+      if (step === 0) context.moveTo(x, y);
+      else context.lineTo(x, y);
+    }
+    context.strokeStyle = colors.teal;
+    context.lineWidth = 1.7;
+    context.setLineDash([5, 4]);
+    context.stroke();
+    context.setLineDash([]);
+
+    drawLabel(context, "computed", lineLeft, lineCenterY - tubeHalfWidth - 8, {
+      color: colors.accent,
+      size: 14,
+      weight: 700,
+    });
+    drawLabel(context, "exact stays inside tube", lineRight, lineCenterY - tubeHalfWidth - 8, {
+      align: "right",
+      color: colors.teal,
+      size: 14,
+      weight: 700,
+    });
+    drawLabel(context, "distance ≤ 7.13 × 10⁻¹¹", inset.x + inset.width / 2, inset.y + inset.height - 14, {
+      align: "center",
+      color: colors.heading,
+      size: 14,
+      weight: 700,
+    });
+
+    if (compact) {
+      drawArrow(context, highlightX, highlightY + 14, inset.x + inset.width * .72, inset.y - 10, {
+        color: colors.ruleDark,
+        dashed: true,
+        head: 6,
+      });
+    } else {
+      drawArrow(context, highlightX + 15, highlightY, inset.x - 14, inset.y + inset.height * .48, {
+        color: colors.ruleDark,
+        dashed: true,
+        head: 6,
+      });
+    }
   };
 
   const drawReconstructionUnivalence = (context, width, height) => {
     const compact = width < 520;
-    const margin = compact
-      ? { left: 52, right: 18, top: 46, bottom: 54 }
-      : { left: 70, right: 32, top: 52, bottom: 62 };
-    const plotWidth = width - margin.left - margin.right;
-    const plotHeight = height - margin.top - margin.bottom;
-    const yMin = .25;
-    const yMax = 1.75;
-    const mapX = (theta) => margin.left + theta / (Math.PI * 2) * plotWidth;
-    const mapY = (value) => margin.top + (yMax - value) / (yMax - yMin) * plotHeight;
-    [.35, .5, 1, 1.5].forEach((value) => {
-      const y = mapY(value);
-      context.strokeStyle = value === .35 ? colors.accent : colors.rule;
-      context.lineWidth = value === .35 ? 1.6 : 1;
-      context.setLineDash(value === .35 ? [5, 4] : []);
-      context.beginPath();
-      context.moveTo(margin.left, y);
-      context.lineTo(width - margin.right, y);
-      context.stroke();
-      context.setLineDash([]);
-      drawLabel(context, value.toFixed(2).replace(/0+$/, "").replace(/\.$/, ""), margin.left - 9, y, {
-        align: "right",
-        baseline: "middle",
-        color: value === .35 ? colors.accent : colors.muted,
-        size: 10,
-      });
-    });
-    [0, .5, 1, 1.5, 2].forEach((multiple) => {
-      drawLabel(context, multiple === 0 ? "0" : multiple === 2 ? "2π" : `${multiple}π`, mapX(multiple * Math.PI), height - margin.bottom + 20, {
-        align: "center",
-        size: 10,
-      });
-    });
+    const radius = Math.min(
+      compact ? width * .23 : width * .17,
+      compact ? height * .16 : height * .29,
+    );
+    const diskCenter = compact
+      ? { x: width / 2, y: height * .25 }
+      : { x: width * .25, y: height * .53 };
+    const domainCenter = compact
+      ? { x: width / 2, y: height * .75 }
+      : { x: width * .75, y: height * .53 };
+
     context.beginPath();
-    let minimum = Number.POSITIVE_INFINITY;
-    for (let index = 0; index <= 600; index += 1) {
-      const theta = index / 600 * Math.PI * 2;
-      const value = conformalDerivative(1, theta).real;
-      minimum = Math.min(minimum, value);
-      const x = mapX(theta);
-      const y = mapY(value);
-      if (index === 0) context.moveTo(x, y);
-      else context.lineTo(x, y);
+    context.arc(diskCenter.x, diskCenter.y, radius, 0, Math.PI * 2);
+    context.fillStyle = "rgba(160, 0, 0, .035)";
+    context.fill();
+    context.strokeStyle = colors.heading;
+    context.lineWidth = 1.8;
+    context.stroke();
+    traceConformalBoundary(context, domainCenter.x, domainCenter.y, radius, 1, {
+      fill: colors.tealLight,
+      stroke: colors.accent,
+      lineWidth: 2.2,
+    });
+
+    drawLabel(context, "unit disk", diskCenter.x, diskCenter.y - radius - 20, {
+      align: "center",
+      color: colors.heading,
+      size: 14,
+      weight: 700,
+    });
+    drawLabel(context, "final domain", domainCenter.x, domainCenter.y - radius - 20, {
+      align: "center",
+      color: colors.heading,
+      size: 14,
+      weight: 700,
+    });
+
+    const sourceStart = { x: -.66, y: -.25 };
+    const sourceEnd = { x: .62, y: .31 };
+    const sourceAt = (amount) => ({
+      x: mix(sourceStart.x, sourceEnd.x, amount),
+      y: mix(sourceStart.y, sourceEnd.y, amount),
+    });
+    const mappedAt = (amount) => {
+      const source = sourceAt(amount);
+      const polarRadius = Math.hypot(source.x, source.y);
+      return conformalPoint(polarRadius, Math.atan2(source.y, source.x), 30, 1);
+    };
+    const diskProject = (point) => ({
+      x: diskCenter.x + point.x * radius,
+      y: diskCenter.y - point.y * radius,
+    });
+    const domainProject = (point) => ({
+      x: domainCenter.x + point.x * radius,
+      y: domainCenter.y - point.y * radius,
+    });
+
+    const diskStart = diskProject(sourceStart);
+    const diskEnd = diskProject(sourceEnd);
+    drawArrow(context, diskStart.x, diskStart.y, diskEnd.x, diskEnd.y, {
+      color: colors.teal,
+      width: 2.3,
+      head: 7,
+    });
+
+    context.beginPath();
+    for (let step = 0; step <= 120; step += 1) {
+      const point = domainProject(mappedAt(step / 120));
+      if (step === 0) context.moveTo(point.x, point.y);
+      else context.lineTo(point.x, point.y);
     }
     context.strokeStyle = colors.teal;
-    context.lineWidth = 2.2;
+    context.lineWidth = 2.5;
     context.stroke();
-    drawLabel(context, "Re φ°′(eⁱᶿ)", margin.left, 22, { color: colors.teal, size: 12, weight: 700 });
-    drawLabel(context, "lower bound for every map in the ball", width - margin.right, mapY(.35) - 10, {
-      align: "right",
-      color: colors.accent,
-      size: 10,
+    [.26, .52, .78].forEach((amount) => {
+      const from = domainProject(mappedAt(amount - .045));
+      const to = domainProject(mappedAt(amount + .045));
+      drawArrow(context, from.x, from.y, to.x, to.y, {
+        color: colors.teal,
+        width: 1.8,
+        head: 6,
+      });
     });
-    drawLabel(context, `finite centre minimum ≈ ${minimum.toFixed(3)}`, width - margin.right, 22, {
-      align: "right",
-      color: colors.muted,
-      size: 10,
+
+    const mappedStart = domainProject(mappedAt(0));
+    const mappedEnd = domainProject(mappedAt(1));
+    [
+      { point: diskStart, label: "z₁" },
+      { point: diskEnd, label: "z₂" },
+      { point: mappedStart, label: "φ(z₁)" },
+      { point: mappedEnd, label: "φ(z₂)" },
+    ].forEach((item) => {
+      context.beginPath();
+      context.arc(item.point.x, item.point.y, 3.8, 0, Math.PI * 2);
+      context.fillStyle = colors.white;
+      context.fill();
+      context.strokeStyle = colors.accent;
+      context.lineWidth = 1.8;
+      context.stroke();
+      drawLabel(context, item.label, item.point.x + 7, item.point.y - 7, {
+        color: colors.accent,
+        size: 14,
+        weight: 700,
+      });
+    });
+
+    if (compact) {
+      const arrowX = width / 2 + radius + 19;
+      const fromY = diskCenter.y + radius * .72;
+      const toY = domainCenter.y - radius * .72;
+      drawArrow(context, arrowX, fromY, arrowX, toY, { color: colors.accent, width: 2, head: 7 });
+      drawLabel(context, "φₚ*", arrowX + 11, (fromY + toY) / 2 + 4, { color: colors.accent, size: 14, weight: 700 });
+    } else {
+      const fromX = diskCenter.x + radius + 24;
+      const toX = domainCenter.x - radius - 24;
+      drawArrow(context, fromX, diskCenter.y, toX, domainCenter.y, { color: colors.accent, width: 2, head: 7 });
+      drawLabel(context, "φₚ*", (fromX + toX) / 2, diskCenter.y - 14, { align: "center", color: colors.accent, size: 14, weight: 700 });
+    }
+
+    drawLabel(context, "Re φ′ > 0.35: each chord moves forward", width / 2, height - 18, {
+      align: "center",
+      color: colors.teal,
+      size: 14,
+      weight: 700,
     });
   };
 
   const drawReconstructionSpectrum = (context, width, height) => {
     const compact = width < 520;
-    const margin = compact
-      ? { left: 54, right: 18, top: 48, bottom: 58 }
-      : { left: 72, right: 34, top: 50, bottom: 62 };
-    const count = 12;
-    const plotWidth = width - margin.left - margin.right;
-    const plotHeight = height - margin.top - margin.bottom;
-    const yMin = -10;
-    const yMax = -1;
-    const mapY = (value) => margin.top + (yMax - value) / (yMax - yMin) * plotHeight;
-    [-10, -8, -6, -4, -2].forEach((exponent) => {
-      const y = mapY(exponent);
-      context.strokeStyle = colors.rule;
-      context.beginPath();
-      context.moveTo(margin.left, y);
-      context.lineTo(width - margin.right, y);
-      context.stroke();
-      drawLabel(context, `10${superscript(exponent)}`, margin.left - 9, y, { align: "right", baseline: "middle", size: 10 });
+    const radius = Math.min(
+      compact ? width * .235 : width * .175,
+      compact ? height * .17 : height * .30,
+    );
+    const circleCenter = compact
+      ? { x: width / 2, y: height * .25 }
+      : { x: width * .25, y: height * .53 };
+    const domainCenter = compact
+      ? { x: width / 2, y: height * .74 }
+      : { x: width * .75, y: height * .53 };
+
+    context.beginPath();
+    context.arc(circleCenter.x, circleCenter.y, radius, 0, Math.PI * 2);
+    context.fillStyle = "rgba(17, 17, 17, .035)";
+    context.fill();
+    context.strokeStyle = colors.heading;
+    context.lineWidth = 2;
+    context.stroke();
+    drawLabel(context, "linear map", circleCenter.x, circleCenter.y - radius - 20, {
+      align: "center",
+      color: colors.heading,
+      size: 14,
+      weight: 700,
     });
-    const slot = plotWidth / count;
-    for (let index = 0; index < count; index += 1) {
-      const value = Math.max(1e-10, Math.abs(conformalCoefficients[index]));
-      const exponent = Math.log10(value);
-      const x = margin.left + index * slot + slot * .18;
-      const y = mapY(exponent);
-      const barHeight = margin.top + plotHeight - y;
-      context.fillStyle = index === 0 ? colors.accent : colors.teal;
-      context.globalAlpha = index === 0 ? 1 : .72;
-      context.fillRect(x, y, slot * .64, barHeight);
-      context.globalAlpha = 1;
-      drawLabel(context, String(index + 1), x + slot * .32, height - margin.bottom + 20, { align: "center", size: 9 });
-    }
-    drawLabel(context, "conformal coefficient magnitude", margin.left, 22, { color: colors.heading, size: 12, weight: 700 });
-    drawLabel(context, "mode j", width - margin.right, height - 15, { align: "right", size: 10 });
-    const firstX = margin.left + slot * .5;
-    const firstY = mapY(Math.log10(conformalCoefficients[0]));
-    drawLabel(context, "first shape mode > 0.03459", firstX + 10, firstY - 10, { color: colors.accent, size: 11, weight: 700 });
-    drawLabel(context, "a centred disk has no nonconstant shape modes", width - margin.right, margin.top + 18, {
-      align: "right",
+    drawLabel(context, "disk", circleCenter.x, circleCenter.y + 5, {
+      align: "center",
       color: colors.muted,
-      size: compact ? 9 : 11,
+      size: 14,
+    });
+
+    context.beginPath();
+    context.arc(domainCenter.x, domainCenter.y, radius, 0, Math.PI * 2);
+    context.setLineDash([5, 5]);
+    context.strokeStyle = "rgba(17, 17, 17, .34)";
+    context.lineWidth = 1.4;
+    context.stroke();
+    context.setLineDash([]);
+    traceConformalBoundary(context, domainCenter.x, domainCenter.y, radius, 1, {
+      fill: colors.tealLight,
+      stroke: colors.accent,
+      lineWidth: 2.5,
+    });
+    drawLabel(context, "final conformal map", domainCenter.x, domainCenter.y - radius - 20, {
+      align: "center",
+      color: colors.heading,
+      size: 14,
+      weight: 700,
+    });
+    drawLabel(context, "ten-lobed boundary", domainCenter.x, domainCenter.y + 5, {
+      align: "center",
+      color: colors.accent,
+      size: 14,
+      weight: 700,
+    });
+
+    if (compact) {
+      const arrowX = width / 2 + radius + 19;
+      const fromY = circleCenter.y + radius * .72;
+      const toY = domainCenter.y - radius * .72;
+      drawArrow(context, arrowX, fromY, arrowX, toY, { color: colors.accent, width: 2, head: 7 });
+      drawLabel(context, "q₁* z¹¹ is present", width / 2, circleCenter.y + radius + 21, {
+        align: "center",
+        color: colors.accent,
+        size: 14,
+        weight: 700,
+      });
+    } else {
+      const fromX = circleCenter.x + radius + 24;
+      const toX = domainCenter.x - radius - 24;
+      drawArrow(context, fromX, circleCenter.y, toX, domainCenter.y, { color: colors.accent, width: 2, head: 7 });
+      drawLabel(context, "q₁* z¹¹ is present", (fromX + toX) / 2, circleCenter.y - 15, {
+        align: "center",
+        color: colors.accent,
+        size: 14,
+        weight: 700,
+      });
+    }
+
+    drawLabel(context, "|q₁*| > 0.03459, so the map is not linear", width / 2, height - 18, {
+      align: "center",
+      color: colors.accent,
+      size: 14,
+      weight: 700,
     });
   };
 
@@ -1730,9 +2575,8 @@
     if (!reconstructionCanvas) return;
     const rectangle = reconstructionCanvas.getBoundingClientRect();
     if (rectangle.width < 120 || rectangle.height < 160) return;
-    const { context, width, height } = prepareCanvas(reconstructionCanvas);
-    context.fillStyle = colors.white;
-    context.fillRect(0, 0, width, height);
+    const { context, width, height } = prepareCanvas(reconstructionCanvas, { maxPixelRatio: 4 });
+    drawCanvasBackdrop(context, width, height);
     if (selectedReconstructionStage === 0) drawReconstructionEnclosure(context, width, height);
     else if (selectedReconstructionStage === 1) drawReconstructionUnivalence(context, width, height);
     else drawReconstructionSpectrum(context, width, height);
@@ -1753,6 +2597,641 @@
   if (reconstructionStage) reconstructionStage.addEventListener("change", updateReconstruction);
   observeCanvas(reconstructionCanvas, drawReconstruction);
   requestAnimationFrame(updateReconstruction);
+
+  const computerOverviewCanvas = document.getElementById("computerOverviewCanvas");
+  const computerOverviewState = document.getElementById("computerOverviewState");
+  const computerOverviewPlayButton = document.getElementById("computerOverviewPlayButton");
+  const computerOverviewPlayIcon = document.getElementById("computerOverviewPlayIcon");
+  const computerOverviewPlayLabel = document.getElementById("computerOverviewPlayLabel");
+  const computerOverviewButtons = Array.from(document.querySelectorAll("[data-computer-overview-stage]"));
+  const computerOverviewLabels = Array.from(document.querySelectorAll("#computerOverviewLabelLayer .computer-overview-label"));
+  const computerOverviewReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches || false;
+
+  const hideComputerOverviewLabels = () => {
+    computerOverviewLabels.forEach((label) => label.classList.remove("is-visible"));
+  };
+
+  const placeComputerOverviewLabel = (id, x, y, options = {}) => {
+    const label = document.getElementById(id);
+    if (!label) return;
+    const horizontal = options.align === "left" ? "0" : options.align === "right" ? "-100%" : "-50%";
+    const vertical = options.baseline === "top" ? "0" : options.baseline === "bottom" ? "-100%" : "-50%";
+    label.style.left = `${x}px`;
+    label.style.top = `${y}px`;
+    label.style.transform = `translate(${horizontal}, ${vertical})`;
+    label.classList.add("is-visible");
+  };
+
+  const computerOverviewStages = Object.freeze([
+    Object.freeze({
+      title: "Follow c to zero",
+      note: "Start from a disk solving the relaxed condition ∂νu = c. Numerical continuation changes the domain and c; stop when c reaches zero, and store that endpoint as x°.",
+      animation: 3000,
+      hold: 3400,
+    }),
+    Object.freeze({
+      title: "Move every candidate to one disk",
+      note: "The conformal map φₚ carries the unit disk to the candidate domain. Looking back through that map gives U = u ∘ φₚ, the same Helmholtz field in fixed disk coordinates. The geometry is stored in p = kφₚ′.",
+      animation: 2400,
+      hold: 3000,
+    }),
+    Object.freeze({
+      title: "One point means two functions",
+      note: "The unknown lives in a Banach space X of function pairs. One point x = (g,p) contains a function g describing the transformed Helmholtz field and a function p describing the conformal shape. The two displayed directions are only a schematic slice through X: moving in the g direction changes the interior field, while moving in the p direction changes the boundary. The exact solution will be one special point x*.",
+      animation: 3200,
+      hold: 3800,
+    }),
+    Object.freeze({
+      title: "Prove convergence",
+      note: "We choose r = 10⁻⁶ and certify the bound ‖T(x) − x°‖ ≤ Y + Zr + C₂r² + C₃r³ < 0.622r for every x in the ball. Here Y bounds the error at the centre, Z the linear change, and C₂,C₃ the nonlinear change. Thus every Newton step stays inside the ball. A second estimate says that T shrinks distances there by a factor less than 0.622, so its iterates converge to one exact zero x*.",
+      animation: 2800,
+      hold: 4000,
+    }),
+    Object.freeze({
+      title: "Final non-disk domain",
+      note: "The exact solution is the pair x* = (g*,p*). Its second component p* contains the conformal shape coefficients, so it directly determines the domain Ω*. With the normalization used here, a disk has no nonconstant conformal coefficients. The certificate proves that the first one satisfies |q₁*| > 0.03459, hence Ω* is not a disk. A separate derivative bound proves that the conformal map is one-to-one.",
+      animation: 2200,
+      hold: 2800,
+    }),
+  ]);
+  let computerOverviewStage = 0;
+  let computerOverviewStageStarted = performance.now();
+  let computerOverviewNextAuto = computerOverviewStageStarted + computerOverviewStages[0].hold;
+  let computerOverviewPlaying = false;
+  let computerOverviewFrame = 0;
+
+  const computerOverviewEase = (amount) => {
+    const value = clamp(amount, 0, 1);
+    return value * value * (3 - 2 * value);
+  };
+
+  const computerOverviewArea = (width, height) => {
+    const laboratory = computerOverviewCanvas?.closest(".computer-overview-laboratory");
+    const token = laboratory
+      ? parseFloat(getComputedStyle(laboratory).getPropertyValue("--geometry-key-width")) / 100
+      : 0;
+    const keyFraction = Number.isFinite(token) ? clamp(token, 0, .42) : 0;
+    const left = width * (keyFraction + (keyFraction > 0 ? .052 : .06));
+    const right = width * .048;
+    const top = height * .06;
+    const bottom = height * .06;
+    return {
+      x: left,
+      y: top,
+      width: Math.max(80, width - left - right),
+      height: Math.max(80, height - top - bottom),
+    };
+  };
+
+  const drawOverviewDomain = (context, centerX, centerY, radius, amplitude, options = {}) => {
+    context.beginPath();
+    for (let index = 0; index <= 360; index += 1) {
+      const theta = index / 360 * Math.PI * 2;
+      const point = conformalPoint(1, theta, 30, amplitude);
+      const x = centerX + point.x * radius;
+      const y = centerY - point.y * radius;
+      if (index === 0) context.moveTo(x, y);
+      else context.lineTo(x, y);
+    }
+    context.closePath();
+    context.fillStyle = options.fill || "rgba(7, 87, 96, .08)";
+    context.fill();
+    context.strokeStyle = options.stroke || colors.accent;
+    context.lineWidth = options.lineWidth || 2;
+    context.stroke();
+  };
+
+  // A schematic field measured relative to its boundary value.  The squared
+  // envelope makes both the value and its radial derivative vanish at r = 1.
+  const overviewCompatibleFieldValue = (radius, theta) => {
+    const envelope = (1 - radius * radius) ** 2;
+    return envelope * (
+      .68 * Math.cos(3 * Math.PI * radius)
+      + .42 * radius * radius * Math.cos(10 * theta)
+    );
+  };
+
+  const overviewFieldColor = (value) => {
+    const paper = [255, 255, 248];
+    const target = value >= 0 ? [160, 0, 0] : [7, 87, 96];
+    const strength = .86 * Math.sqrt(clamp(Math.abs(value) / .72, 0, 1));
+    const channels = paper.map((channel, index) => Math.round(mix(channel, target[index], strength)));
+    return `rgb(${channels[0]}, ${channels[1]}, ${channels[2]})`;
+  };
+
+  const drawOverviewMappedField = (context, centerX, centerY, radius, amplitude, options = {}) => {
+    const rings = options.rings || 12;
+    const sectors = options.sectors || 48;
+    const alpha = options.alpha ?? 1;
+    const cutoff = options.cutoff || 5;
+    const valueAt = options.valueAt || overviewCompatibleFieldValue;
+    const thetaOverlap = Math.PI / sectors * .035;
+    const radiusOverlap = 1 / rings * .025;
+
+    context.save();
+    context.globalAlpha *= alpha;
+    for (let ring = 0; ring < rings; ring += 1) {
+      const inner = Math.max(0, ring / rings - radiusOverlap);
+      const outer = Math.min(1, (ring + 1) / rings + radiusOverlap);
+      const sampleRadius = (ring + .5) / rings;
+      for (let sector = 0; sector < sectors; sector += 1) {
+        const thetaStart = sector / sectors * Math.PI * 2 - thetaOverlap;
+        const thetaEnd = (sector + 1) / sectors * Math.PI * 2 + thetaOverlap;
+        const sampleTheta = (sector + .5) / sectors * Math.PI * 2;
+        const points = [
+          conformalPoint(inner, thetaStart, cutoff, amplitude),
+          conformalPoint(outer, thetaStart, cutoff, amplitude),
+          conformalPoint(outer, thetaEnd, cutoff, amplitude),
+          conformalPoint(inner, thetaEnd, cutoff, amplitude),
+        ];
+        context.beginPath();
+        points.forEach((point, index) => {
+          const x = centerX + point.x * radius;
+          const y = centerY - point.y * radius;
+          if (index === 0) context.moveTo(x, y);
+          else context.lineTo(x, y);
+        });
+        context.closePath();
+        context.fillStyle = overviewFieldColor(valueAt(sampleRadius, sampleTheta));
+        context.fill();
+      }
+    }
+    drawOverviewDomain(context, centerX, centerY, radius, amplitude, {
+      fill: "rgba(255, 255, 248, 0)",
+      stroke: options.stroke || colors.heading,
+      lineWidth: options.lineWidth || 1.8,
+    });
+    context.restore();
+  };
+
+  const drawSimpleOverviewSearch = (context, area, motion) => {
+    const compact = area.width < 420;
+    const progress = computerOverviewEase(clamp(motion, 0, 1));
+    const center = compact
+      ? { x: area.x + area.width * .50, y: area.y + area.height * .31 }
+      : { x: area.x + area.width * .22, y: area.y + area.height * .43 };
+    const radius = Math.min(
+      area.width * (compact ? .20 : .15),
+      area.height * (compact ? .20 : .27),
+    );
+
+    context.beginPath();
+    context.arc(center.x, center.y, radius, 0, Math.PI * 2);
+    context.setLineDash([4, 5]);
+    context.strokeStyle = "rgba(17, 17, 17, .25)";
+    context.lineWidth = 1;
+    context.stroke();
+    context.setLineDash([]);
+    drawOverviewDomain(context, center.x, center.y, radius, progress, {
+      fill: "rgba(7, 87, 96, .07)",
+      stroke: colors.accent,
+      lineWidth: 2.2,
+    });
+
+    const arrowLength = (compact ? 13 : 18) * (1 - progress);
+    if (arrowLength > 1.2) {
+      const arrowCount = 6;
+      for (let index = 0; index < arrowCount; index += 1) {
+        const theta = (index + .5) / arrowCount * Math.PI * 2;
+        const point = conformalPoint(1, theta, 30, progress);
+        const before = conformalPoint(1, theta - .002, 30, progress);
+        const after = conformalPoint(1, theta + .002, 30, progress);
+        const boundaryX = center.x + point.x * radius;
+        const boundaryY = center.y - point.y * radius;
+        const tangentX = (after.x - before.x) * radius;
+        const tangentY = -(after.y - before.y) * radius;
+        let normalX = tangentY;
+        let normalY = -tangentX;
+        const normalLength = Math.hypot(normalX, normalY) || 1;
+        normalX /= normalLength;
+        normalY /= normalLength;
+        const radialX = boundaryX - center.x;
+        const radialY = boundaryY - center.y;
+        if (normalX * radialX + normalY * radialY < 0) {
+          normalX *= -1;
+          normalY *= -1;
+        }
+        drawArrow(
+          context,
+          boundaryX + normalX * 2,
+          boundaryY + normalY * 2,
+          boundaryX + normalX * arrowLength,
+          boundaryY + normalY * arrowLength,
+          { color: colors.gold, width: 1.4, head: Math.min(4, arrowLength * .32) },
+        );
+      }
+    }
+
+    placeComputerOverviewLabel(
+      progress < .92 ? "overviewSearchFlux" : "overviewSearchFluxZero",
+      center.x,
+      center.y + radius + 28,
+    );
+
+    const fluxLeft = area.x + area.width * (compact ? .16 : .53);
+    const fluxRight = area.x + area.width * (compact ? .84 : .91);
+    const fluxY = area.y + area.height * (compact ? .76 : .45);
+    drawArrow(context, fluxLeft, fluxY, fluxRight, fluxY, { color: colors.ruleDark, width: 1.2, head: 5 });
+    const fluxMarkerX = mix(fluxLeft, fluxRight, progress);
+    context.beginPath();
+    context.arc(fluxMarkerX, fluxY, compact ? 4 : 5, 0, Math.PI * 2);
+    context.fillStyle = progress > .96 ? colors.accent : colors.gold;
+    context.fill();
+    placeComputerOverviewLabel("overviewSearchStart", fluxLeft, fluxY + 25);
+    placeComputerOverviewLabel("overviewSearchEnd", fluxRight, fluxY + 25);
+    if (progress > .78) placeComputerOverviewLabel("overviewSearchCenter", fluxRight, fluxY + 58);
+  };
+
+  const drawSimpleOverviewDisk = (context, area, motion) => {
+    const progress = computerOverviewEase(clamp(motion, 0, 1));
+    const start = { x: area.x + area.width * .22, y: area.y + area.height * .43 };
+    const end = { x: area.x + area.width * .72, y: area.y + area.height * .43 };
+    const radius = Math.min(area.width * .15, area.height * .27);
+
+    drawOverviewDomain(context, start.x, start.y, radius, 1, {
+      fill: "rgba(160, 0, 0, .045)",
+      stroke: colors.accent,
+      lineWidth: 2,
+    });
+    context.beginPath();
+    context.arc(end.x, end.y, radius, 0, Math.PI * 2);
+    context.fillStyle = "rgba(7, 87, 96, .045)";
+    context.fill();
+    context.strokeStyle = colors.teal;
+    context.lineWidth = 2;
+    context.stroke();
+    placeComputerOverviewLabel("overviewDiskDomain", start.x, start.y + radius + 25);
+    placeComputerOverviewLabel("overviewDiskUnit", end.x, end.y + radius + 25);
+
+    const leftEdge = start.x + radius + area.width * .025;
+    const rightEdge = end.x - radius - area.width * .025;
+    const middleX = (leftEdge + rightEdge) / 2;
+    const mapReveal = computerOverviewEase(clamp(progress / .48, 0, 1));
+    const fieldReveal = computerOverviewEase(clamp((progress - .32) / .68, 0, 1));
+    placeComputerOverviewLabel("overviewDiskMap", middleX, start.y - 28);
+    placeComputerOverviewLabel("overviewDiskField", middleX, start.y + 30);
+
+    if (mapReveal > .001) {
+      const currentX = mix(rightEdge, leftEdge, mapReveal);
+      if (rightEdge - currentX > 2) {
+        drawArrow(context, rightEdge, start.y - 10, currentX, start.y - 10, { color: colors.teal, width: 1.7, head: 5 });
+      }
+    }
+
+    if (fieldReveal > .001) {
+      const currentX = mix(leftEdge, rightEdge, fieldReveal);
+      if (currentX - leftEdge > 2) {
+        drawArrow(context, leftEdge, start.y + 10, currentX, start.y + 10, { color: colors.accent, width: 1.7, head: 5 });
+      }
+    }
+  };
+
+  const drawSimpleOverviewInverse = (context, area, motion) => {
+    const compact = area.width < 420;
+    const progress = computerOverviewEase(clamp(motion, 0, 1));
+    const centerY = area.y + area.height * .54;
+    const spaceCenter = { x: area.x + area.width * .25, y: centerY };
+    const domainCenter = { x: area.x + area.width * .75, y: centerY };
+    const spaceRadius = Math.min(area.width * .18, area.height * .27);
+    const domainRadius = Math.min(area.width * .17, area.height * .25);
+    const pCoordinate = mix(-.66, .68, progress);
+    const gCoordinate = .58 * Math.sin(progress * Math.PI * 1.35 - .55);
+    const point = {
+      x: spaceCenter.x + pCoordinate * spaceRadius,
+      y: spaceCenter.y - gCoordinate * spaceRadius,
+    };
+    const shapeAmplitude = 1.05 + 1.15 * pCoordinate;
+    const varyingField = (radius, theta) => {
+      const envelope = (1 - radius * radius) ** 2;
+      return envelope * (
+        .68 * Math.cos((3 + .24 * gCoordinate) * Math.PI * radius + .45 * gCoordinate)
+        + (.42 + .10 * gCoordinate) * radius * radius * Math.cos(10 * theta + .70 * gCoordinate)
+      );
+    };
+
+    placeComputerOverviewLabel("overviewSpacePair", area.x + area.width * .50, area.y + area.height * .10);
+    context.beginPath();
+    context.arc(spaceCenter.x, spaceCenter.y, spaceRadius, 0, Math.PI * 2);
+    context.strokeStyle = colors.rule;
+    context.lineWidth = 1.2;
+    context.stroke();
+    drawArrow(context, spaceCenter.x - spaceRadius * .72, spaceCenter.y, spaceCenter.x + spaceRadius * .78, spaceCenter.y, {
+      color: colors.teal,
+      width: 1.3,
+      head: 4,
+    });
+    drawArrow(context, spaceCenter.x, spaceCenter.y + spaceRadius * .72, spaceCenter.x, spaceCenter.y - spaceRadius * .78, {
+      color: colors.accent,
+      width: 1.3,
+      head: 4,
+    });
+    placeComputerOverviewLabel("overviewSpaceShape", spaceCenter.x + spaceRadius * .76, spaceCenter.y + 20, { align: "right" });
+    placeComputerOverviewLabel("overviewSpaceField", spaceCenter.x + 8, spaceCenter.y - spaceRadius * .76, { align: "left" });
+
+    context.beginPath();
+    const pathSamples = 60;
+    for (let index = 0; index <= pathSamples; index += 1) {
+      const amount = index / pathSamples;
+      const pathP = mix(-.66, .68, amount);
+      const pathG = .58 * Math.sin(amount * Math.PI * 1.35 - .55);
+      const x = spaceCenter.x + pathP * spaceRadius;
+      const y = spaceCenter.y - pathG * spaceRadius;
+      if (index === 0) context.moveTo(x, y);
+      else context.lineTo(x, y);
+    }
+    context.setLineDash([3, 4]);
+    context.strokeStyle = colors.ruleDark;
+    context.lineWidth = 1;
+    context.stroke();
+    context.setLineDash([]);
+    context.beginPath();
+    context.arc(point.x, point.y, compact ? 4.5 : 5.5, 0, Math.PI * 2);
+    context.fillStyle = colors.heading;
+    context.fill();
+    placeComputerOverviewLabel("overviewSpacePoint", point.x + 9, point.y - 8, { align: "left" });
+
+    drawArrow(context, spaceCenter.x + spaceRadius + area.width * .025, centerY, domainCenter.x - domainRadius - area.width * .025, centerY, {
+      color: colors.ruleDark,
+      width: 1.2,
+      head: 5,
+    });
+    drawOverviewMappedField(context, domainCenter.x, domainCenter.y, domainRadius, shapeAmplitude, {
+      rings: compact ? 8 : 9,
+      sectors: compact ? 32 : 36,
+      stroke: colors.teal,
+      lineWidth: 2,
+      valueAt: varyingField,
+    });
+  };
+
+  const drawSimpleOverviewFixedPoint = (context, area, motion) => {
+    const compact = area.width < 420;
+    const progress = computerOverviewEase(clamp(motion, 0, 1));
+    const center = {
+      x: area.x + area.width * .79,
+      y: area.y + area.height * .52,
+    };
+    const radius = Math.min(
+      area.width * .20,
+      area.height * .35,
+    );
+    const imageRadius = radius * .622;
+    const target = { x: center.x + radius * .12, y: center.y - radius * .09 };
+
+    const formulaX = area.x + area.width * .005;
+    const formulaAlignment = { align: "left" };
+    placeComputerOverviewLabel("overviewFixedBound", formulaX, area.y + area.height * .43, formulaAlignment);
+    placeComputerOverviewLabel("overviewFixedContraction", formulaX, area.y + area.height * .64, formulaAlignment);
+    context.beginPath();
+    context.arc(center.x, center.y, radius, 0, Math.PI * 2);
+    context.fillStyle = "rgba(160, 0, 0, .035)";
+    context.fill();
+    context.strokeStyle = colors.heading;
+    context.lineWidth = 1.7;
+    context.stroke();
+    drawArrow(context, center.x - radius * .72, center.y, center.x + radius * .78, center.y, {
+      color: "rgba(7, 87, 96, .48)",
+      width: 1.2,
+      head: 4,
+    });
+    drawArrow(context, center.x, center.y + radius * .72, center.x, center.y - radius * .78, {
+      color: "rgba(160, 0, 0, .48)",
+      width: 1.2,
+      head: 4,
+    });
+    context.beginPath();
+    context.arc(center.x, center.y, imageRadius, 0, Math.PI * 2);
+    context.fillStyle = "rgba(7, 87, 96, .09)";
+    context.fill();
+    context.strokeStyle = colors.teal;
+    context.lineWidth = 1.8;
+    context.stroke();
+    placeComputerOverviewLabel("overviewFixedBall", center.x, center.y - radius - 17);
+    placeComputerOverviewLabel("overviewFixedImage", center.x, center.y + imageRadius + 14);
+
+    context.beginPath();
+    context.arc(center.x, center.y, compact ? 2.5 : 3, 0, Math.PI * 2);
+    context.fillStyle = colors.heading;
+    context.fill();
+    placeComputerOverviewLabel("overviewFixedCenter", center.x - 7, center.y + 15, { align: "right" });
+
+    const q = .621244;
+    const orbit = [];
+    for (let step = 0; step <= 6; step += 1) {
+      const distance = radius * .72 * q ** step;
+      const angle = -.12 + step * .72;
+      orbit.push({ x: target.x + distance * Math.cos(angle), y: target.y - distance * Math.sin(angle) });
+    }
+    const orbitPosition = progress * (orbit.length - 1);
+    const fullStep = Math.floor(orbitPosition);
+    context.beginPath();
+    orbit.forEach((point, index) => {
+      if (index > fullStep) return;
+      if (index === 0) context.moveTo(point.x, point.y);
+      else context.lineTo(point.x, point.y);
+    });
+    if (fullStep < orbit.length - 1) {
+      const partial = orbitPosition - fullStep;
+      const from = orbit[fullStep];
+      const to = orbit[fullStep + 1];
+      context.lineTo(mix(from.x, to.x, partial), mix(from.y, to.y, partial));
+    }
+    context.strokeStyle = colors.accent;
+    context.lineWidth = 1.8;
+    context.stroke();
+    orbit.forEach((point, index) => {
+      if (index > fullStep) return;
+      context.beginPath();
+      context.arc(point.x, point.y, index === fullStep ? (compact ? 3.2 : 4) : (compact ? 2 : 2.5), 0, Math.PI * 2);
+      context.fillStyle = index === 0 ? colors.heading : colors.accent;
+      context.fill();
+    });
+    context.beginPath();
+    context.arc(target.x, target.y, compact ? 2.8 : 3.5, 0, Math.PI * 2);
+    context.fillStyle = colors.accent;
+    context.fill();
+    placeComputerOverviewLabel("overviewFixedTarget", target.x + 8, target.y - 8, { align: "left" });
+  };
+
+  const drawSimpleOverviewFinalDomain = (context, area, motion) => {
+    const compact = area.width < 420;
+    const progress = computerOverviewEase(clamp(motion, 0, 1));
+    const pairCenter = {
+      x: area.x + area.width * (compact ? .50 : .20),
+      y: area.y + area.height * (compact ? .17 : .43),
+    };
+    const domainCenter = {
+      x: area.x + area.width * (compact ? .50 : .72),
+      y: area.y + area.height * (compact ? .60 : .43),
+    };
+    const domainRadius = Math.min(
+      area.width * (compact ? .23 : .20),
+      area.height * (compact ? .20 : .30),
+    );
+    placeComputerOverviewLabel("overviewFinalPair", pairCenter.x, pairCenter.y);
+    placeComputerOverviewLabel("overviewFinalShape", pairCenter.x, pairCenter.y + (compact ? 57 : 67));
+
+    context.beginPath();
+    context.arc(domainCenter.x, domainCenter.y, domainRadius, 0, Math.PI * 2);
+    context.setLineDash([4, 5]);
+    context.strokeStyle = "rgba(17, 17, 17, .24)";
+    context.lineWidth = 1;
+    context.stroke();
+    context.setLineDash([]);
+    drawOverviewDomain(context, domainCenter.x, domainCenter.y, domainRadius, progress, {
+      fill: "rgba(7, 87, 96, .08)",
+      stroke: colors.teal,
+      lineWidth: 2.3,
+    });
+    placeComputerOverviewLabel("overviewFinalDomain", domainCenter.x, domainCenter.y - domainRadius - 23);
+
+    const proofY = area.y + area.height * (compact ? .88 : .84);
+    placeComputerOverviewLabel("overviewFinalCoefficient", area.x + area.width * .50, proofY);
+    placeComputerOverviewLabel("overviewFinalDisk", area.x + area.width * .50, proofY + (compact ? 27 : 31));
+  };
+
+  const computerOverviewDrawers = Object.freeze([
+    drawSimpleOverviewSearch,
+    drawSimpleOverviewDisk,
+    drawSimpleOverviewInverse,
+    drawSimpleOverviewFixedPoint,
+    drawSimpleOverviewFinalDomain,
+  ]);
+
+  const drawComputerOverviewBackdrop = (context, width, height) => {
+    context.fillStyle = colors.white;
+    context.fillRect(0, 0, width, height);
+  };
+
+  const drawComputerOverviewContent = (context, width, height, stageIndex, now, stageStarted) => {
+    hideComputerOverviewLabels();
+    const stage = computerOverviewStages[stageIndex];
+    const elapsed = Math.max(0, now - stageStarted);
+    const motion = computerOverviewReducedMotion ? 1 : clamp(elapsed / stage.animation, 0, 1);
+    const area = computerOverviewArea(width, height);
+    computerOverviewDrawers[stageIndex](context, area, motion);
+  };
+
+  const updateComputerOverviewInterface = (active) => {
+    const stage = computerOverviewStages[active];
+    if (computerOverviewState && computerOverviewState.textContent !== stage.note) computerOverviewState.textContent = stage.note;
+    computerOverviewButtons.forEach((button, index) => {
+      button.classList.toggle("active", index === active);
+      button.setAttribute("aria-pressed", String(index === active));
+    });
+    if (computerOverviewCanvas) {
+      computerOverviewCanvas.setAttribute(
+        "aria-label",
+        `Computer-assisted construction stage ${active + 1} of ${computerOverviewStages.length}: ${stage.title}. ${stage.note}`,
+      );
+    }
+  };
+
+  const updateComputerOverviewPlayButton = () => {
+    if (computerOverviewPlayIcon) computerOverviewPlayIcon.textContent = computerOverviewPlaying ? "Ⅱ" : "▶";
+    if (computerOverviewPlayLabel) {
+      computerOverviewPlayLabel.textContent = computerOverviewPlaying
+        ? "Pause"
+        : computerOverviewStage === computerOverviewStages.length - 1
+          ? "Repeat"
+          : "Animate";
+    }
+    if (computerOverviewPlayButton) computerOverviewPlayButton.setAttribute("aria-pressed", String(computerOverviewPlaying));
+  };
+
+  const renderComputerOverview = (timestamp = performance.now()) => {
+    if (!computerOverviewCanvas) return false;
+    const rectangle = computerOverviewCanvas.getBoundingClientRect();
+    if (rectangle.width < 120 || rectangle.height < 120) {
+      hideComputerOverviewLabels();
+      return false;
+    }
+    const { context, width, height } = prepareCanvas(computerOverviewCanvas, { maxPixelRatio: 4 });
+    drawComputerOverviewBackdrop(context, width, height);
+    drawComputerOverviewContent(context, width, height, computerOverviewStage, timestamp, computerOverviewStageStarted);
+    updateComputerOverviewInterface(computerOverviewStage);
+    updateComputerOverviewPlayButton();
+    return true;
+  };
+
+  const computerOverviewNeedsFrame = (now) => {
+    if (computerOverviewPlaying) return true;
+    return !computerOverviewReducedMotion
+      && now - computerOverviewStageStarted < computerOverviewStages[computerOverviewStage].animation;
+  };
+
+  const scheduleComputerOverview = () => {
+    if (!computerOverviewFrame) computerOverviewFrame = requestAnimationFrame(tickComputerOverview);
+  };
+
+  const showComputerOverviewStage = (target, now = performance.now()) => {
+    const requested = clamp(Math.round(target), 0, computerOverviewStages.length - 1);
+    computerOverviewStage = requested;
+    computerOverviewStageStarted = now;
+    computerOverviewNextAuto = now + computerOverviewStages[requested].hold;
+    renderComputerOverview(now);
+    scheduleComputerOverview();
+  };
+
+  const pauseComputerOverview = () => {
+    computerOverviewPlaying = false;
+    updateComputerOverviewPlayButton();
+  };
+
+  function tickComputerOverview(now) {
+    computerOverviewFrame = 0;
+    if (computerOverviewPlaying && now >= computerOverviewNextAuto) {
+      if (computerOverviewStage >= computerOverviewStages.length - 1) {
+        computerOverviewPlaying = false;
+      } else {
+        computerOverviewStage += 1;
+        computerOverviewStageStarted = now;
+        computerOverviewNextAuto = now + computerOverviewStages[computerOverviewStage].hold;
+      }
+    }
+    renderComputerOverview(now);
+    if (computerOverviewNeedsFrame(now)) scheduleComputerOverview();
+  }
+
+  const playComputerOverview = () => {
+    const now = performance.now();
+    if (computerOverviewPlaying) {
+      pauseComputerOverview();
+      return;
+    }
+    if (computerOverviewReducedMotion) {
+      computerOverviewStage = computerOverviewStages.length - 1;
+      computerOverviewStageStarted = now;
+      renderComputerOverview(now);
+      updateComputerOverviewPlayButton();
+      return;
+    }
+    computerOverviewPlaying = true;
+    if (computerOverviewStage === computerOverviewStages.length - 1) computerOverviewStage = 0;
+    computerOverviewStageStarted = now;
+    computerOverviewNextAuto = now + computerOverviewStages[computerOverviewStage].hold;
+    renderComputerOverview(now);
+    scheduleComputerOverview();
+  };
+
+  computerOverviewButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const now = performance.now();
+      pauseComputerOverview();
+      showComputerOverviewStage(Number(button.dataset.computerOverviewStage), now);
+    });
+  });
+  if (computerOverviewPlayButton) computerOverviewPlayButton.addEventListener("click", playComputerOverview);
+  observeCanvas(computerOverviewCanvas, () => {
+    renderComputerOverview(performance.now());
+    scheduleComputerOverview();
+  });
+  window.addEventListener("resize", () => {
+    renderComputerOverview(performance.now());
+    scheduleComputerOverview();
+  }, { passive: true });
+  updateComputerOverviewPlayButton();
+  scheduleComputerOverview();
 
   const quotientCanvas = document.getElementById("quotientCanvas");
   const quotientStatus = document.getElementById("quotientStatus");

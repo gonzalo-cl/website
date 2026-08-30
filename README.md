@@ -35,8 +35,8 @@ The mathematical narrative is now:
 
 1. Pompeiu's measurement problem and Schiffer's spectral formulation;
 2. linear rigidity of the disk and bifurcation in other geometries;
-3. two ways to find a bifurcation when the planar disk has none:
-   numerical continuation and the cone/half-cylinder limit;
+3. two routes to a counterexample: numerical continuation followed by
+   computer-assisted validation, and the cone/half-cylinder bifurcation;
 4. the computer-assisted validation of the numerical centre;
 5. the cylinder-to-cone bifurcation proof and planar lift.
 

@@ -2278,6 +2278,25 @@ body.tufte-site main :is(
   height: auto;
 }
 
+body.tufte-site main .berenstein-companion {
+  box-sizing: border-box;
+  margin-top: 2.75rem;
+  margin-bottom: 2.75rem;
+  padding: .25rem 0 .25rem .95rem;
+  border-left: 2px solid var(--orange);
+}
+
+body.tufte-site main .berenstein-companion .eyebrow {
+  color: var(--orange);
+}
+
+body.tufte-site main .berenstein-companion h3 {
+  margin-bottom: .7rem;
+  font-size: var(--type-subsection);
+  font-style: italic;
+  font-weight: 400;
+}
+
 body.tufte-site main .computer-assisted-theorem {
   margin-top: 2.25rem;
 }
@@ -2319,19 +2338,30 @@ body.tufte-site main .computer-assisted-canvas-panel {
   background: var(--paper) !important;
 }
 
-body.tufte-site main .computer-assisted-canvas-panel canvas {
+body.tufte-site main .computer-assisted-canvas-panel :is(canvas, svg.computer-assisted-vector) {
   display: block;
   width: 100%;
   height: clamp(270px, 29vw, 410px);
   background: var(--paper);
 }
 
+body.tufte-site main .computer-assisted-canvas-panel svg.computer-assisted-vector {
+  overflow: hidden;
+  shape-rendering: geometricPrecision;
+  text-rendering: geometricPrecision;
+}
+
 body.tufte-site main .computer-assisted-canvas-panel #searchCanvas,
 body.tufte-site main .computer-assisted-canvas-panel #pullbackCanvas,
 body.tufte-site main .computer-assisted-canvas-panel #inverseCanvas,
 body.tufte-site main .computer-assisted-canvas-panel #tailCanvas,
+body.tufte-site main .computer-assisted-canvas-panel #certificateCanvas,
 body.tufte-site main .computer-assisted-canvas-panel #reconstructionCanvas {
   height: clamp(330px, 34vw, 470px);
+}
+
+body.tufte-site main .computer-assisted-canvas-panel #inverseCanvas {
+  height: clamp(330px, 30vw, 410px);
 }
 
 body.tufte-site main .computer-assisted-figure .boundary-legend {
@@ -2398,6 +2428,17 @@ body.tufte-site main .computer-assisted-status {
   white-space: normal;
 }
 
+body.tufte-site main .conformal-transfer-key .eyebrow {
+  margin: 0;
+  color: var(--orange);
+}
+
+body.tufte-site main .conformal-transfer-key .computer-assisted-status + .computer-assisted-status {
+  margin-top: .15rem;
+  padding-top: .8rem;
+  border-top: 1px solid var(--line);
+}
+
 body.tufte-site main .computer-assisted-control {
   margin-top: .45rem;
 }
@@ -2428,6 +2469,16 @@ body.tufte-site main .computer-assisted-control input[type="range"] {
   margin: 0;
 }
 
+body.tufte-site main .computer-assisted-range-scale {
+  display: flex;
+  justify-content: space-between;
+  margin-top: .5rem;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: var(--type-note);
+  line-height: 1;
+}
+
 body.tufte-site main .computer-assisted-control select {
   box-sizing: border-box;
   width: 100%;
@@ -2455,22 +2506,48 @@ body.tufte-site main .certificate-play-button:disabled {
 }
 
 body.tufte-site main .certificate-readout {
-  margin-top: .25rem;
+  display: grid;
+  gap: 0;
+  margin-top: .45rem;
+  border-top: 1px solid var(--line);
 }
 
-body.tufte-site main .certificate-readout > div {
-  margin: .25rem 0;
-  color: var(--muted) !important;
+body.tufte-site main .certificate-readout-row {
+  display: grid;
+  gap: .12rem;
+  margin: 0;
+  padding: .55rem 0 .6rem;
+  border-bottom: 1px solid var(--line);
+}
+
+body.tufte-site main .certificate-readout-label {
+  display: block;
+  color: var(--orange);
+  font-family: var(--mono);
+  font-size: var(--type-code);
+  font-variant: small-caps;
+  font-weight: 400;
+  letter-spacing: .025em;
+  line-height: 1.2;
+}
+
+body.tufte-site main .certificate-readout-row strong,
+body.tufte-site main .certificate-readout-verdict strong {
+  display: block;
+  color: var(--ink);
   font-family: var(--serif) !important;
   font-size: var(--type-note) !important;
   font-style: normal;
   font-weight: 400;
-  line-height: 1.35 !important;
+  line-height: 1.4 !important;
 }
 
-body.tufte-site main .certificate-readout strong {
-  color: var(--ink);
-  font-weight: 400;
+body.tufte-site main .certificate-readout-verdict {
+  display: grid;
+  gap: .15rem;
+  margin-top: .75rem;
+  padding: .1rem 0 .1rem .75rem;
+  border-left: 2px solid var(--orange);
 }
 
 body.tufte-site main .computer-assisted-details {
@@ -2751,7 +2828,7 @@ body > footer {
   }
 
   .interactive-plate > aside { border-top: 0; border-left: 0; }
-  body.tufte-site main .computer-assisted-canvas-panel canvas {
+  body.tufte-site main .computer-assisted-canvas-panel :is(canvas, svg.computer-assisted-vector) {
     height: clamp(260px, 78vw, 390px);
   }
   body.tufte-site main .computer-assisted-canvas-panel #boundaryCanvas {
@@ -2761,8 +2838,12 @@ body > footer {
   body.tufte-site main .computer-assisted-canvas-panel #pullbackCanvas,
   body.tufte-site main .computer-assisted-canvas-panel #inverseCanvas,
   body.tufte-site main .computer-assisted-canvas-panel #tailCanvas,
+  body.tufte-site main .computer-assisted-canvas-panel #certificateCanvas,
   body.tufte-site main .computer-assisted-canvas-panel #reconstructionCanvas {
     height: clamp(350px, 112vw, 480px);
+  }
+  body.tufte-site main .computer-assisted-canvas-panel #inverseCanvas {
+    height: clamp(330px, 98vw, 390px);
   }
   body.tufte-site main .computer-assisted-controls {
     padding-top: 1.15rem;
@@ -2949,6 +3030,44 @@ body.tufte-site main .geometry-laboratory > figcaption {
   max-width: 100%;
   padding-top: .7rem;
 }
+
+body.tufte-site main .computer-overview-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+body.tufte-site main .computer-overview-label-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  pointer-events: none;
+}
+body.tufte-site main .computer-overview-label {
+  position: absolute;
+  display: none;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: clamp(12px, 1.2vw, 15px);
+  font-weight: 400;
+  line-height: 1;
+  white-space: nowrap;
+}
+body.tufte-site main .computer-overview-label.is-visible { display: block; }
+body.tufte-site main .computer-overview-label .katex { font-size: 1em !important; }
+body.tufte-site main .computer-overview-label.label-large {
+  font-size: clamp(14px, 1.45vw, 18px);
+}
+body.tufte-site main .computer-overview-label.label-display {
+  font-size: clamp(18px, 2vw, 24px);
+}
+body.tufte-site main .computer-overview-label.label-equation {
+  font-size: clamp(11.5px, 1.1vw, 14px);
+}
+body.tufte-site main .computer-overview-label.tone-muted { color: var(--muted); }
+body.tufte-site main .computer-overview-label.tone-accent { color: var(--orange); }
+body.tufte-site main .computer-overview-label.tone-teal { color: #075760; }
+body.tufte-site main .computer-overview-label.tone-gold { color: #9a6400; }
 
 /* True side applets use the exact same marginal measure as prose notes. */
 body.tufte-site main .boundary-aside.computer-assisted-figure {

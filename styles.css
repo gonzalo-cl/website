@@ -197,6 +197,11 @@ a { color: inherit; }
 .world-sketch .sphere-boundary-back { stroke: #a84e42; stroke-width: 1.8; stroke-dasharray: 5 5; opacity: .78; }
 .world-sketch .annulus-outer-reference, .world-sketch .annulus-inner-reference { fill: none; stroke: var(--teal); stroke-width: 1.5; stroke-dasharray: 6 5; stroke-opacity: .9; }
 .world-sketch .annulus-boundary-outer, .world-sketch .annulus-boundary-inner { stroke: #a84e42; stroke-width: 2; }
+.world-sketch .wheeler-reference { fill: none; stroke: var(--teal); stroke-width: 1.5; stroke-dasharray: 6 5; stroke-opacity: .72; }
+.world-sketch .wheeler-domain-fill { fill: url(#wheelerDomain); }
+.world-sketch .wheeler-boundary { fill: none; stroke: #a84e42; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.world-sketch .wheeler-flux-arrows { fill: none; stroke: var(--teal); stroke-width: 1.6; stroke-linecap: round; }
+.world-sketch .wheeler-flux-arrowhead { fill: var(--teal); }
 .branch-diagram { display: block; width: 100%; height: auto; margin-top: 12px; cursor: ew-resize; touch-action: none; }
 .branch-diagram:focus-visible { outline: 1px solid var(--orange); outline-offset: 2px; }
 .branch-diagram .branch-axis, .branch-diagram .branch-axis-tick { stroke: rgba(19,33,38,.22); stroke-width: 1; }
@@ -213,6 +218,11 @@ a { color: inherit; }
 .world-branch-control input[type="range"]::-moz-range-thumb { background: var(--paper-2); }
 .world-branch-control .range-scale { margin-top: 7px; color: rgba(19,33,38,.42); }
 .world-branch-control .katex { font-size: .92em; }
+.wheeler-branch-control > div:first-child { font-size: 14px; text-transform: none; letter-spacing: 0; }
+.wheeler-branch-control .range-scale { font-size: 14px; }
+.wheeler-branch-control .katex { font-size: 1em; }
+.wheeler-flux-condition { margin-top: 10px; color: var(--muted); font: 14px/1.45 var(--mono); letter-spacing: .01em; }
+.wheeler-flux-condition .katex { color: var(--ink); }
 .literature-link { align-self: end; width: fit-content; margin-top: 18px; font: 11px var(--mono); text-transform: uppercase; letter-spacing: .06em; }
 .borrow-conclusion { display: grid; grid-template-columns: .45fr 1.55fr; gap: 40px; margin-left: 70px; padding: 30px; border: 1px solid var(--line); border-top: 0; }
 .borrow-conclusion > span { color: var(--orange); font: 11px var(--mono); text-transform: uppercase; letter-spacing: .08em; }

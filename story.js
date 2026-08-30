@@ -106,6 +106,11 @@
   const annulusBranchRange = select("#annulusBranchRange");
   const annulusBranchValue = select("#annulusBranchValue");
   const annulusBranchDiagram = select("#annulusBranchDiagram");
+  const wheelerDomainFill = select(".wheeler-domain-fill");
+  const wheelerBoundary = select(".wheeler-boundary");
+  const wheelerFluxArrows = select("#wheelerFluxArrows");
+  const wheelerBranchRange = select("#wheelerBranchRange");
+  const wheelerBranchValue = select("#wheelerBranchValue");
 
   function worldPath(points, close = false) {
     const path = points.map((point, index) => `${index ? "L" : "M"}${point.x.toFixed(2)} ${point.y.toFixed(2)}`).join("");
@@ -280,6 +285,49 @@
     }
   }
 
+  function renderWheelerBifurcation(branchAmount) {
+    if (!wheelerDomainFill || !wheelerBoundary || !wheelerFluxArrows) return;
+    const centreX = 260;
+    const centreY = 143;
+    const radius = 96;
+    const mode = 10;
+    // Wheeler proves phi_epsilon(z) = z + epsilon z^(m+1) + O(epsilon^2).
+    // The displayed coefficient is enlarged so the leading m-fold motion can
+    // be seen; it is not a numerical sample from the exact local branch.
+    const displayedEpsilon = .07 * branchAmount;
+    const boundaryPoint = (theta) => ({
+      x: centreX + radius * (Math.cos(theta) + displayedEpsilon * Math.cos((mode + 1) * theta)),
+      y: centreY + radius * (Math.sin(theta) + displayedEpsilon * Math.sin((mode + 1) * theta)),
+    });
+    const points = [];
+    for (let index = 0; index <= 240; index += 1) {
+      points.push(boundaryPoint(TAU * index / 240));
+    }
+    const path = worldPath(points, true);
+    wheelerDomainFill.setAttribute("d", path);
+    wheelerBoundary.setAttribute("d", path);
+
+    wheelerFluxArrows.textContent = "";
+    for (let index = 0; index < 12; index += 1) {
+      const theta = TAU * (index + .25) / 12;
+      const point = boundaryPoint(theta);
+      const tangentX = radius * (-Math.sin(theta)
+        - displayedEpsilon * (mode + 1) * Math.sin((mode + 1) * theta));
+      const tangentY = radius * (Math.cos(theta)
+        + displayedEpsilon * (mode + 1) * Math.cos((mode + 1) * theta));
+      const tangentLength = Math.hypot(tangentX, tangentY) || 1;
+      const normalX = tangentY / tangentLength;
+      const normalY = -tangentX / tangentLength;
+      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      line.setAttribute("x1", (point.x + 3 * normalX).toFixed(2));
+      line.setAttribute("y1", (point.y + 3 * normalY).toFixed(2));
+      line.setAttribute("x2", (point.x + 18 * normalX).toFixed(2));
+      line.setAttribute("y2", (point.y + 18 * normalY).toFixed(2));
+      line.setAttribute("marker-end", "url(#wheelerFluxArrow)");
+      wheelerFluxArrows.appendChild(line);
+    }
+  }
+
   function renderBranchValue(output, amount) {
     if (!output) return;
     const source = Math.abs(amount) < .005
@@ -310,6 +358,7 @@
       renderBranchDiagram(sphereBranchDiagram, amount);
     });
     bindWorldBranch(annulusBranchRange, annulusBranchValue, renderAnnulusBifurcation);
+    bindWorldBranch(wheelerBranchRange, wheelerBranchValue, renderWheelerBifurcation);
     bindBranchDiagram(cylinderBranchDiagram, cylinderBranchRange);
     bindBranchDiagram(sphereBranchDiagram, sphereBranchRange);
     bindBranchDiagram(annulusBranchDiagram, annulusBranchRange);

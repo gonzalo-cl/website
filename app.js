@@ -860,12 +860,12 @@ function drawBoundaryDiagram() {
   svgElement("path", { d: criticalData, fill: "none", stroke: "rgba(77,162,163,.58)", "stroke-width": "1.2", "stroke-dasharray": "4 4" }, svg);
   const data = `M ${points.map((point) => point.map((value) => value.toFixed(2)).join(" ")).join(" L ")}`;
   svgElement("path", { d: data, fill: "none", stroke: "#ff7449", "stroke-width": "3" }, svg);
-  const label = svgElement("text", { x: 24, y: 186, fill: SCHIFFER_VISUAL_THEME.muted, "font-family": "DM Mono", "font-size": "8" }, svg);
+  const label = svgElement("text", { x: 24, y: 186, fill: SCHIFFER_VISUAL_THEME.muted, "font-family": "DM Mono, ui-monospace, monospace", "font-size": "8" }, svg);
   const h2 = solvedParameters.wallCoefficients?.[2] || 0;
   const h3 = solvedParameters.wallCoefficients?.[3] || 0;
-  setMath(label, state.s === 0
-    ? "\\Gamma_0\\quad\\text{flat boundary}"
-    : `\\Gamma_s\\qquad h_2=${h2.toFixed(3)}\\qquad h_3=${h3.toFixed(3)}`);
+  label.textContent = state.s === 0
+    ? "Γ₀   flat boundary"
+    : `Γₛ   h₂ = ${h2.toFixed(3)}   h₃ = ${h3.toFixed(3)}`;
   svg.setAttribute("aria-label", state.s === 0
     ? "Flat cylinder boundary"
     : `Computed boundary with first mode ${state.s.toFixed(3)}, second mode ${h2.toFixed(4)}, and third mode ${h3.toFixed(4)}. The dashed curve is the first-mode approximation.`);
