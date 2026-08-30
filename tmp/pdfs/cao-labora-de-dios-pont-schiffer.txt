@@ -1,0 +1,2358 @@
+                                                                COUNTEREXAMPLES TO SCHIFFER’S CONJECTURE
+
+                                                                         GONZALO CAO-LABORA AND JAUME DE DIOS PONT
+
+
+                                                  A BSTRACT. The Schiffer conjecture states that if a smooth domain Ω ⊂ Rn admits a Neumann eigen-
+                                                  function of the Laplacian which is constant at the boundary, then the domain is a ball. It is intimately
+                                                  related to Pompeiu’s problem, stating that if a nonzero function integrates zero over any rigid motion of Ω,
+                                                  then Ω is the ball.
+                                                      We disprove both conjectures in R2 , constructing infinitely many planar domains Ω which are not balls
+                                                  and satisfy the conditions above. Our domains are N -fold symmetric, with N sufficiently large. Our
+                                                  approach is based on a novel strategy of considering a relaxed problem where N can be any real number
+                                                  (which corresponds to Schiffer only if N is natural). Then, we apply bifurcation theory to such relaxed
+                                                  problem, showing that the size of the local bifurcation branch can be taken independent of N . This result
+                                                  allows us to conclude that branches that start with N sufficiently close to an integer reach integer values of
+                                                  N.
+arXiv:2608.05114v1 [math.AP] 5 Aug 2026
+
+
+
+
+                                                                                            1. I NTRODUCTION
+                                            Let Ω ⊂ Rn be a bounded domain with smooth boundary. The Schiffer conjecture asserts that if
+                                                                            
+                                                                            ∆u + λu = 0 in Ω,
+                                                                            
+                                                                              u          = 1, on ∂Ω                                     (1.1)
+                                                                            
+                                                                              ∂ν u       = 0 on ∂Ω
+                                                                            
+
+                                          admits a solution for some λ > 0, then Ω is a ball of Rn . Trivial solutions on the ball exist since one can
+                                          simply take u to be a radially symmetric Neumann eigenfunction of ∆. In the case n = 2, this is one of
+                                          the problems in geometry from S. T. Yau’s list [41, Problem 80].
+                                             The first version of this problem is due to Pompeiu, in 1929, with a different formulation. In [32],
+                                                                                                       n                                   n
+                                          PompeiuR asked the following question: suppose that f : R → R is continuous and Ω ⊂ R . Is it true
+                                          that if R(Ω) f (x)dx = 0 for any rigid motion R, then f (x) must be identically zero? Such a question
+                                          also has applications in image recovery and tomography [34].
+                                             It was pointed out by Chakalov [8] that the answer is negative if Ω is a ball. In 1976, Williams [38]
+                                          proved that, under the extra assumption that Ω is simply connected, the Pompeiu and Schiffer properties
+                                          are equivalent. Williams’ proof builds on previous work of Brown, Schreiber and Taylor [5].
+                                             Our main theorem is that we construct infinitely many Ω ⊂ R2 , which are not balls, and admit a
+                                          solution to (1.1).
+                                          Theorem 1.1. There are infinitely many integers N ≥ 2 for which there exist λ > 0, Ω ⊂ R2 , different
+                                          from a a ball, and u(x) solving (1.1), with Ω being N -fold symmetric.
+                                             Moreover, these domains are simply connected, bounded, star-shaped domains with ∂Ω ∈ C ∞ , and
+                                          u ∈ C ∞ (Ω̄).
+                                            The main content of this paper is to prove Theorem 1.1. A Lean certification of this main result, and
+                                          Corollary 1.2 following the proof strategy outlined in this work can be found at https://github.
+                                          com/jaumededios/Schiffer.
+                                                                                                                                                                   √
+                                          Corollary 1.2. Take the domain Ω ⊂ R2 from Theorem 1.1 and f : R2 → C given by f (x) = ei λ x1 .
+                                          Then, those give negative answers to Pompeiu’s question. That is, for any rigid motion R : R2 → R2 ,
+                                          we have that                            Z
+                                                                                         f (x) dx = 0
+                                                                                              R(Ω)
+
+                                             A positive answer to the Schiffer conjecture is known to hold in several more restrictive scenarios. For
+                                          instance, if there is an infinite sequence of orthogonal Neumann eigenfunctions that are constant on the
+                                                                                                        1
+2                              GONZALO CAO-LABORA AND JAUME DE DIOS PONT
+
+connected boundary [3, 4], or if the third, fourth, or fifth interior normal derivative of u is constant on the
+connected boundary [28, 24], then Ω must be a Euclidean ball. More recent rigidity results include the
+case in which the spectral parameter equals the second Dirichlet eigenvalue [12], and certain classes of
+centrally symmetric analytic planar domains [29]; see also the recent preprint [13] for a large-eigenvalue
+result under central-symmetry and convexity assumptions.
+   In the case n = 2, the Schiffer conjecture is also known to hold, for simply connected Ω, if λ is
+among the seven lowest Neumann eigenvalues [2, 14], or if a solution u of (1.1) has no saddle points
+[40].
+   Regularity results are also available: importantly, Kinderlehrer and Nirenberg showed, under the hy-
+potheses of their free-boundary regularity theorem [26], that both u and ∂Ω are real analytic (in particu-
+lar, C ∞ ). In the planar Pompeiu setting, Williams [39] proved that a bounded Lipschitz counterexample
+with connected boundary must have real-analytic boundary.
+   In the direction of constructing counterexamples, bifurcating techniques were used by Wheeler [37],
+in the case of a similar overdetermined Helmholtz problem. In the specific case of Schiffer, the foun-
+dational work of Fall, Minlend and Weth [20] introduced the use of anisotropic spaces, which paved
+the way towards constructing examples by bifurcation. Concretely, [20] disproved an analogue of the
+Schiffer conjecture on the cylinder, as well as non-contractible counterexamples on the sphere (refuting
+Souam’s conjecture [35]). After that, Enciso, Fernández, Ruiz and Sicbaldi [17] used a similar func-
+tional setting to construct examples of non-contractible Ω in R2 with Neumann eigenfunctions that are
+locally constant at the boundary (that is, ∂Ω has two connected components and u achieves different
+constant values on each of them). The first author with Fernández [7] also uses a similar functional
+setting to construct contractible Schiffer counterexamples on S2 .
+   For broader accounts of Schiffer-type problems and of the classical literature on the Pompeiu problem,
+we refer respectively to the surveys of Enciso [18] and Zalcman [42].
+   We also remark that Schiffer-type and related overdetermined constructions have important conse-
+quences for stationary Euler flows (see the note by Kelliher [25] and [21, 10, 15, 17, 23]).
+   We point out that on August 3rd, Colbrook and Stepaniants posted on arXiv an independent con-
+struction of a Schiffer counterexample [9]. The two proofs take different approaches. In [9], a concrete
+counterexample is constructed with 10-fold symmetry. The strategy is to use a computer-assisted proof
+that validates the existence of an exact counterexample close to a numerical one. In contrast, the ex-
+amples presented here provide an infinite sequence of N -fold symmetric counterexamples, and do not
+require computer assistance. The strategy is to use bifurcation theory for a relaxed problem that allows
+N to take non-integer values.
+
+1.1. Strategy of the proof. Recent works on Schiffer-type problems have employed bifurcation tech-
+niques in order to construct counterexamples [20, 17, 7]. The idea is to construct a continuous family
+of solutions, such as balls of radius R with (λ, u) being the corresponding Neumann eigenpair. Then, at
+the linear level, one sees that a bifurcation of this problem can occur if and only if λ is also a Dirichlet
+eigenvalue of the initial bifurcating domain.
+   The direct application of that idea does not work for R2 , because distinct integer-order Bessel func-
+tions have no common nontrivial zeros [33]. We will circumvent the issue by instead considering Bessel
+functions of non-integer order. We would like to construct N −fold symmetric counterexamples on a
+ball of radius N (see Figure 1). If those counterexamples exist, they will descend to a counterexample
+on a cone of length N and diameter 2π. Using polar coordinates in the cone, these examples will be
+solutions to the PDE
+                                                            N2
+                                                                    
+                                                    ∂r
+                              (∆ + λ)u = ∂r2 + u + 2 ∂ψ2 + λ u = 0
+                                                     r      r
+in the domain (r, ψ) ∈ [0, N ] × S1 , together with the appropriate regularity conditions at r = 0. The
+case when N is an integer corresponds to Laplace eigenfunctions with N −fold symmetry, which give
+rise to integer-order Bessel functions. Instead, we will consider the problem above when N (henceforth
+called R) is a large real number.
+   As R goes to infinity, this long cone converges, formally, to a half-cylinder, where Schiffer counterex-
+amples are known to exist. When making the argument rigorous, it is convenient to avoid working with
+an infinite domain, and to avoid the singularity at the origin of the cone.
+                               COUNTEREXAMPLES TO SCHIFFER’S CONJECTURE                                     3
+
+   To do so, we focus on a collared neighborhood of the boundary of the cylinder, and abstract the interior
+of the ball with a Dirichlet-to-Neumann map, which encodes the interior behavior of the cylinder (most
+importantly, the boundedness at the origin).
+   With such an approach we will write a formal problem G(R, v) = 0 that can be lifted to the original
+problem when R = N , but is an artificial problem if R ∈        / N (while it could be lifted to a problem
+in the cone, we will not make much use of the geometry of the cone). We will follow the anisotropic
+space approach introduced by Fall, Minlend and Weth [20], and encode both the boundary ∂Ω and the
+eigenfunction u in the data v using anisotropic spaces that avoid a loss of derivative when trying to
+perform bifurcation analysis of the problem G.
+   In order to find solutions of G(R, v) = 0 with R ∈ N, we first understand the linearization of G(R, 0).
+This is analogous to the approach performed in [20, 17, 7]. This allows us to construct a local bifurcation
+branch G(R(s), v(s)) = 0 with R(0) = R⋆ .
+   The crucial difference is that a local perturbation is not enough for our purposes, since we will perturb
+from R⋆ ∈  / N. Instead, we prove a uniform perturbation version of the Crandall–Rabinowitz theorem,
+that allows us to construct the branch G(R(s), v(s)) = 0 with s ∈ [−s̄, s̄], with s̄ independent of the
+bifurcation point.
+   That requires us to prove several uniform analogues of the standard bifurcation hypotheses (such as
+uniform bounds on the operator G, on its linearization, or the transversality of the bifurcation points).
+We then show that R′ (0) = 0 (the branch is of pitchfork type), R′′ (0) is bounded above by a negative
+constant, and |R′′′ (s)| is uniformly bounded along the branch.
+   An equidistribution argument on Bessel zeros then shows that the bifurcation point R∗ can be taken as
+close as we want (from above) to an integer. This will allow us to conclude the existence of bifurcation
+branches that, starting close enough to an integer (at distance smaller than − 12 R′′ (0)s2 ), can reach that
+integer value through the bifurcation. One numerical example of the method described above is plotted
+in Figure 1.
+   This extension of the problem to non-integer R is needed to overcome the known perturbative rigid-
+ity results near the disk. Agranovsky [1] treats real-analytic solution-carrying families with an analytic
+branch of Pompeiu spectral parameters; Kobayashi [27] assumes, in particular, uniformly bounded spec-
+tral parameters along a family issuing from the disk; and Canuto [6] proves rigidity near a fixed radial
+Neumann eigenvalue in an eigenvalue-dependent perturbation class. These results do not cover the
+regime considered here. Indeed, after rescaling our radius-N domains to unit size, the corresponding
+eigenvalue is of order N 2 , and the noninteger part of our relaxed branch is not a family of planar do-
+mains.
+
+1.2. Reduction of the Pompeiu Problem.
+
+Proof. The proof is classical, due to Williams [38]. We reproduce it here for completeness. Take
+u : Ω → R given by Theorem 1.1. Take any rigid motion R and denote its pullback by uR := u ◦ R−1 .
+We have that (∆ + λ)uR = 0 and (∆ + λ)f = 0, hence, using Green’s identity:
+                    Z                                  Z
+               0=        uR (∆ + λ)f − f (∆ + λ)uR =           (uR ∂ν f − f ∂ν uR )
+                      RΩ                                 ∂R(Ω)
+                    Z             Z             Z
+                 =         ∂ν f =     ∆f = −λ        f
+                       ∂RΩ            RΩ              RΩ
+
+In the equality in the second line we used the boundary conditions u|∂Ω = 1 and ∇u|∂Ω = 0, which
+imply that uR = 1 and ∂ν uR = 0 at ∂RΩ. Since λ > 0, the equality above concludes the statement. □
+
+1.3. Organization of the paper. Section 2 formulates the problem (1.1) under R-fold symmetry as the
+zero of a certain functional G(R, v), defining the appropriate functional spaces. Theorem 2.7 allows us
+to recover (1.1) when both G(R, v) = 0 and R ∈ N. Thus, the rest of the paper consists of finding such
+solutions.
+   Section 3 then studies the bifurcation theory along the trivial solutions G(R, 0) = 0, and we observe
+that bifurcations exist at certain R⋆ , λ⋆ which we call crossings. We also prove that the linearized
+operator is Fredholm of index 0, and characterize its kernel and rank.
+4                              GONZALO CAO-LABORA AND JAUME DE DIOS PONT
+
+
+
+
+        F IGURE 1. Plot of a Schiffer counterexample of N -fold symmetry with N = 28, ob-
+        tained by perturbing from N∗ = 28.026 . . ., from ρ⋆ = j1,16 = 51.0435 . . . The color
+        scale is truncated to [−2, 2] for visualization purposes, although ∥u∥L∞ (Ω) ≈ 8.014.
+                                                      .
+
+   Section 4 concludes our Theorem 1.1 by assuming the hypothesis of our uniform bifurcation theorem
+and the existence of crossings arbitrarily close to an integer.
+   Finally, Section 5 proves these hypothesis. Section 6 proves the deferred Proposition 6.4, and techni-
+cal Lemmas regarding Bessel functions are deferred to 7.
+
+                         2. T HE COLLAR REFORMULATION OF THE PROBLEM
+   We denote by JR (ρ) the standard R-fold symmetric Bessel function, with the generalization JR (ρ) =
+P∞        (−1)j     ρ 2j+R
+  j=0 j! Γ(j+R+1) 2         when R is not a natural number. We will extensively refer to the Digital
+Library of Mathematical Functions (see [30, §10.2]) for more information and properties of Bessel
+functions of non-integer type. We start by defining the points from which we will start our perturbation
+analysis.
+Definition 2.1. A crossing is a triple (ρ⋆ , R⋆ , λ⋆ ) with ρ⋆ , R⋆ > 0 and λ⋆ := ρ2⋆ /R⋆2 such that
+                              J1 (ρ⋆ ) = 0,     JR⋆ (ρ⋆ ) = 0,      λ⋆ ∈ [2, 3]
+We write m ∈ N for the index with ρ⋆ = jR⋆ ,m . For R0 > 0 let C(R0 ) be the set of crossings with
+R⋆ ≥ R0 .
+   Throughout the proof we fix the Hölder exponent α ∈ (0, 1), and we will consider perturbations of the
+domain of amplitude bounded by a parameter L < 1/2. We will always consider R0 to be sufficiently
+large, in particular, R0 ≥ 100L. To overcome the dilation symmetry of the problem, we will consider
+perturbations that fix ρ⋆ to be a zero of J1 (ρ) and our perturbation will change in (R, λ) along the family
+λ(R) = ρ2⋆ /R2 .
+                               COUNTEREXAMPLES TO SCHIFFER’S CONJECTURE                                         5
+
+  In this section we focus on reformulating the Schiffer problem as finding a zero of a certain functional
+G(R, v). That is the functional to which we will apply bifurcation techniques to show nontrivial solutions
+(when R ∈ N). Our functional should be understood as corresponding to R-fold symmetric Schiffer.
+2.1. Problem on the collar and functional spaces. We will work on domains Ω given in polar coordi-
+nates by r < R − h(Rφ), and we restrict to
+                                    n                          Lo
+                              B := h ∈ Ce2,α (T) : ∥h∥L∞ (T) <     ,                         (2.1)
+                                                               10
+the set of admissible boundary graphs. We then define
+                         C = [0, L] × T,        and     Ωext = Ω \ B(0, R − L),
+We will express our Schiffer problem on Ωext , and use a Dirichlet-to-Neumann operator to maintain
+compatibility at the interior boundary. We will then map the problem to the collar C. We fix once and
+for all a cut-off χ ∈ C ∞ ([0, L]) with χ ≡ 1 on [0, L/3], χ ≡ 0 on [2L/3, L] and ∥χ′ ∥L∞ ≤ 6/L, and,
+for R ∈ N, we consider the mapping
+               ΦhR (y, φ) = R − y − χ(y)h(Rφ) cos φ, sin φ ,
+                                                              
+                                                                      (y, φ) ∈ [0, L] × T,       (2.2)
+                                                                                               
+which in polar coordinates, with ψ = Rφ, reads (y, ψ) 7→ (r, φ) = R − y − χ(y)h(ψ), ψ/R . For
+our h ∈ B the radius y 7→ R − y − χ(y)h(ψ) is strictly decreasing, so whenever R ∈ N ΦhR is a
+diffeomorphism from C to Ωext The operator LhR is defined, for every real R, by the expression
+                          LhR w = ayy ∂y2 w + ay ∂y w + aψψ ∂ψ2 w + ayψ ∂y ∂ψ w,                            (2.3)
+where, abbreviating χ = χ(y) and h = h(ψ), the coefficients are the following functions of (y, ψ):
+                     1                R2 χ2 h′2                              2R2 χh′
+         ayy =                 1 +                     ,    a yψ = −                             ,
+                 (1 + χ′ h)2        (R − y − χh)2                      (R − y − χh)2 (1 + χ′ h)
+                       R2
+         aψψ =                    ,
+                 (R − y − χh)2
+                                                                                                   (2.4)
+                                1                     χ′′ h
+          ay = −                              −
+                   (R − y − χh)(1 + χ′ h) (1 + χ′ h)3
+                             R2          χ2 χ′′ h h′2 − 2χχ′ (1 + χ′ h) h′2 + χ(1 + χ′ h)2 h′′
+                   −                   ·                                                       .
+                     (R − y − χh)2                            (1 + χ′ h)3
+This definition is motivated by the fact that when R ∈ N (and therefore ΦhR : C → Ωext is a diffeomor-
+phism), if u ΦhR (y, φ) = w(y, Rφ), then (∆u) ΦhR (y, φ) = LhR w (y, Rφ). In the case h = 0 we
+                                                          
+
+recover the standard Laplacian in (y, ψ) coordinates:
+                                                 1         R2
+                                  L0R = ∂y2 −       ∂y +         ∂2 .                                       (2.5)
+                                                R−y      (R − y)2 ψ
+We define the spaces
+          X k,α := v ∈ Cek,α (C) : ∂y v ∈ Cek,α (C) ,
+                   
+                                                           ∥v∥X k,α := ∥v∥C k,α + ∥∂y v∥C k,α ,
+                 k,α
+and let XDk,α , XDN  be the subspaces defined by v|y=0 = 0, respectively v|y=0 = ∂y v|y=0 = 0; let
+                                 0,α
+                                     := f ∈ X 0,α : f |y=0 = f |y=L = 0 .
+                                        
+                               XDD
+The bifurcation construction will be based on the following domain and co-domain
+ X := v ∈ XD2,α : v(L, ·) ∈ Ce3,α (T) ,        Y := Y1 × Ce2,α (T),                        0,α
+                                                                        Y1 := Ce1,α (C) + XDD
+       
+                                                                                               , (2.6)
+with
+       ∥v∥X := ∥v∥X 2,α + ∥v(L, ·)∥C 3,α (T)     and    ∥f ∥Y1 =     inf       ∥f1 ∥Ce1,α (C) + ∥f2 ∥X 0,α .
+                                                                   f1 +f2 =f                           DD
+
+The choice of the anisotropic X is heavily inspired by the work of Fall–Minlend–Weth [20], and was
+then adopted by [17] and [7]. The new part of our space design corresponds to the fact that we will
+have a Dirichlet-to-Neumann matching problem, encoded in the second component of Y; because of
+6                              GONZALO CAO-LABORA AND JAUME DE DIOS PONT
+
+that, we need to include also the term ∥v(L, ·)∥C 3,α (T) . We shall use Y1 through the following concrete
+description, which removes the infimum norm from every estimate.
+Remark 2.2. Y1 = f ∈ X 0,α (C) : f (0, ·), f (L, ·) ∈ Ce1,α (T) , and on it the infimal-sum norm is
+                      
+equivalent to
+                             ∥f ∥X 0,α + ∥f (0, ·)∥C 1,α (T) + ∥f (L, ·)∥C 1,α (T) .
+Indeed, if f = f1 + f2 with f1 ∈ Ce1,α (C) and f2 ∈ XDD      0,α
+                                                                 , then f ∈ X 0,α and f (0, ·) = f1 (0, ·),
+f (L, ·) = f1 (L, ·), so the displayed quantity is at most a constant times ∥f1 ∥C 1,α + ∥f2 ∥X 0,α ; taking
+the infimum gives one inequality. Conversely, given f in the set above, the interpolation Ef (y, ψ) :=
+(1 − Ly )f (0, ψ) + Ly f (L, ψ) lies in Ce1,α (C) and f − Ef ∈ XDD   0,α
+                                                                         , because ∂y (f − Ef ) = ∂y f +
+ 1
+                            0,α
+L f (0, ·) − f (L, ·) ∈ Ce       and f − Ef vanishes on both circles; both norms are controlled by the
+displayed quantity.
+2.2. Interior Dirichlet-to-Neumann operator. We define our Dirichlet-to-Neumann mapping DR for
+every real R by an explicit expression. When R is an integer, this expression can be unfolded into the
+usual Dirichlet-to-Neumann operator on R-fold symmetric functions on the boundary of√a circle, giving
+it the expected geometric meaning. For a fixed ρ, we set λ = λ(R) := ρ2 /R2 , so that λ R = ρ, and
+we let DR be the Fourier multiplier
+                                                                √
+                                                       √ JkR′
+                                                                             
+                                                                 λ (R − L)
+           DR cos kψ = τk (R) cos kψ,        τk (R) = λ         √            ,     k ∈ N0 ,     (2.7)
+                                                           JkR λ (R − L)
+which is well defined due to (2.10) below. When R ∈ N, DR is the interior Dirichlet-to-Neumann map
+of ∆ + λ at the circle B(0, R − L), for even and R-fold symmetric functions. We also set
+                                                                 
+                                 NR (u) := ∂y u(L, ·) + DR u(L, ·) ,                          (2.8)
+so that NR (u) = 0 says exactly that u continues across {r = R − L} to a solution regular at the
+origin, and that the solution is C 1 along the interface r = R − L. Let us stress that ρ is fixed and
+λ = λ(R) = ρ2 /R2 , therefore both DR and NR depend on R also via λ. Dropping λ gives the
+harmonic map DR  0 , whose regular core mode is r kR , so
+
+
+                                             0       R
+                                            DR =       |Dψ |                                            (2.9)
+                                                  R−L
+exactly, |Dψ | being the multiplier with symbol |k|.
+Remark 2.3. We notice that DR 0 = R |D | ⪰ 0, and D 0 is bounded C s+1,α (T) → C s,α (T), with
+                                   R−L    ψ              R              e             e
+bounded inverse modulo constants. This follows from the observation that |Dψ | = H∂ψ , with H the
+Hilbert transform, which is bounded on C k,α (T) by Privalov’s theorem. Since L ≪ R, the factor
+ R
+R−L ∈ [1, 2] is irrelevant.
+
+  The operators DR and DR  0 are closely related. In fact, it will often be useful to study their differences.
+
+With this in mind, we define the coefficients mk and their derivatives. We define
+                           (n)          n
+                                                      R       
+                         mk (R) := ∂R       τk (r) −          k ,       k, n ∈ N0 .
+                                                     R−L
+Proposition 2.4. There are L < 21 , R0 > 0, δ ∈ (0, L) and C > 0 with the following properties. For all
+R ≥ R0 and ρ > 0 satisfying J1 (ρ) = JR (ρ) = 0 and ρ2 /R2 ∈ [2, 3], writing λ(r) := ρ2 /r2 , we have
+   (a) For every r ∈ [R − δ, R + δ] the two non-resonance conditions
+                                     p              
+                              Jkr      λ(r) (r − L) ̸= 0       for every k ∈ N0 ,                (2.10)
+                           p        
+                      Jkr    λ(r) r = Jkr (ρ) ̸= 0       for every k ∈ N0 \ {1}                  (2.11)
+        hold, at the inner and the outer circle respectively, and moreover Jr (ρ) ̸= 0 for every r ∈
+        [R − δ, R + δ] \ {R}.
+                                                                       (n)
+    (b) For n ≤ 4 and 0 ≤ s ≤ 3, the multiplier with symbol mk (r) is bounded Ces,α (T) →
+        Ces+1,α (T), uniformly r ∈ [R − δ, R + δ] and over the family described above;
+                                COUNTEREXAMPLES TO SCHIFFER’S CONJECTURE                                       7
+
+
+    (c) The map r 7→ Dr ∈ L Ce3,α (T), Ce2,α (T) is of class C 4 on [R − δ, R + δ], with ∥∂rn Dr ∥ ≤ C
+                                                
+        for n ≤ 4.
+   Section 6 is devoted to the proof of Proposition 2.4. Taking n = 0 and r = R recovers two of the
+              (0)                                0 . Part (b) states that the Helmholtz correction gains one
+base cases: mk (R) is the symbol of DR − DR
+angular derivative. Part (c) is the form in which the R-dependence of the trace row is used, in Lemma 2.6
+and in Section 4.
+                                                                       √
+2.3. The map. Take ρ to be a zero of J0′ and write w0 (y) := J0 ( λ(R − y))/J0 (ρ), so that
+                           w0 (0) = 1,       ∂y w0 (0) = 0,       ∂y2 w0 (0) = −λ.                       (2.12)
+A fundamental idea in [20] linked to the anisotropic functional spaces is to encode both the boundary
+perturbation and the eigenfunction on the same single unknown v as follows. For v ∈ X set
+                                                                        2,α
+ hv := λ−1 ∂y v(0, ·) ∈ Ce2,α (T),       w1v := v +χ(y) ∂y w0 (y) hv ∈ XDN  ,         wv := w0 +w1v . (2.13)
+Since χ(0) = 1 and χ′ (0) = 0, (2.12) gives w1v (0, ·) = 0 and ∂y w1v (0, ·) = ∂y v(0, ·) − λhv = 0; and
+w1v = v near {y = L}, so wv (L, ·) = w0 (L) + v(L, ·) ∈ Ce3,α (T). On
+                                         OR := {v ∈ X : hv ∈ B}
+define
+                                            G(R, v) := LhRv wv + λ wv , NR (wv ) .
+                                                                                
+                   G(R, ·) : OR → Y,                                                         (2.14)
+                                                                v
+We prove that G(R, ·) maps into Y in Lemma 2.6. Note that hv , w1 and wv depend on R through λ, and
+hence so does OR . With these definitions we clearly have
+                                      G(R, 0) = 0       for every R ∈ I.                                 (2.15)
+Indeed h0 = 0, hence w10 = 0 and wv                                    L0R + λ w0 = 0, because w0 (y) =
+                                                                                
+                                         = w0 for v = 0; and
+                          √
+uR (R − y) with uR (r) = J0 ( λr)/J0 (ρ) solving (∆ + λ)uR = 0. Moreover NR (w0 ) = 0 is trivial to
+check applying the Fourier symbol definition to w0
+Remark 2.5 (Half-turn equivariance). Let ς act by ςv(y, ψ) = v(y, ψ + π), and likewise on functions
+of ψ alone; it is an isometric involution of X and of Y, acting on the cosine mode k by (−1)k . Then
+                  hςv = ςhv ,        ς OR = OR ,       G(R, ·) ◦ ς = ς ◦ G(R, ·)     on OR .
+The first identity is immediate from (2.13) and the second follows from it; for the third, the coefficients in
+(2.3) are rational expressions in χ, χ′ , χ′′ and in h, h′ , h′′ evaluated at the same ψ, so the first component
+of (2.14) commutes with a rotation of ψ, and the second does because DR is a Fourier multiplier. The
+identities above are algebraic and hold for every real R. At integer radius we can interpret them as ς
+replacing h with h(· + π), hence, h and ςh describe the same domain, just rotated by π/R. This will be
+the reason why our bifurcation is of pitchfork type.
+  For a fixed crossing (R∗ , ρ∗ , λ∗ ) ∈ C(R0 ), we define the set
+                         
+                   O := (R, v) ∈ I × X : v ∈ OR ,               I := (R⋆ − δ, R⋆ + δ),                   (2.16)
+where δ is given in Proposition 2.4. By Proposition 2.4(a) every R ∈ I satisfies the non-resonance
+condition (2.10), and I is therefore a set of radii on which G2 is well-defined.
+Lemma 2.6. O is open in R × X and G(R, OR ) ⊂ Y for every R ∈ I. The second component of G is
+given exactly by                                               
+                             G2 (R, v) = ∂y v(L, ·) + DR v(L, ·) ,                    (2.17)
+the first component G1 : O → Y1 is of class C ∞ , and G : O → Y is of class C 4 . In particular
+G(R, ·) : OR → Y is of class C ∞ for each fixed R.
+Proof. O is open since B is open in Ce2,α (T) and O is the preimage of B under the continuous map
+(R, v) 7→ hv = λ(R)−1 ∂y v(0, ·). The formula for the component G2 follows also trivially from the fact
+that χ = 0 on [2L/3, L] (and NR (w0 ) = 0 from (2.15)), and hence we have that NR (wv ) = NR (v), as
+the operator NR (v) depends only on v|y=L and ∂y v|y=L . Now, let us argue that G(R, OR ) ⊂ Y. The
+second component G2 (R, v) is evidently in Ce2,α (T) since ∂y v ∈ Ce2,α and v(L, ·) ∈ Ce3,α (T), together
+8                              GONZALO CAO-LABORA AND JAUME DE DIOS PONT
+
+with Proposition 2.4(c). The fact that G2 is of class C 4 is also a direct consequence of Proposition 2.4
+once that formula is proved. And the fact that G2 (R, ·) is of class C ∞ is trivial since G2 (R, ·) is linear
+once R is fixed. Therefore, it remains to prove that G1 (R, OR ) ⊂ Y1 and that it is of class C ∞ . We
+compute it via (2.3). On O, we have that hv ∈ B, so the two denominators in its coefficients are
+bounded away from zero. Note that h′′v enters only through the last term of ay , and that ∂y applied to
+any coefficient produces derivatives of the fixed smooth χ but no new ψ-derivatives of hv ; consequently
+ayy , ayψ ∈ C 1,α , ay ∈ C 0,α , aψψ ∈ C 2,α , and ∂y ayy , ∂y ay , ∂y aψψ , ∂y ayψ ∈ C 0,α . Each term of (2.3)
+is a product of C 0,α functions, so G1 (R, v) ∈ Ce0,α . Moreover ∂y G1 (R, v) ∈ Ce0,α : differentiating (2.3)
+term by term,
+   ∂y G1 (R, v) = ∂y ayy ∂y2 wv + ayy ∂y3 wv + ∂y ay ∂y wv + ay ∂y2 wv
+                                                                           
+
+                    + ∂y aψψ ∂ψ2 wv + aψψ ∂ψ2 (∂y wv ) + ∂y ayψ ∂y ∂ψ wv + ayψ ∂ψ (∂y2 wv ) + λ ∂y wv ,
+                                                                                              
+                                                                                                          (2.18)
+and every derivative of wv occurring here is C 0,α by the anisotropic structure: wv ∈ X 2,α gives ∂y wv ∈
+C 2,α , hence ∂y3 wv = ∂y2 (∂y wv ) ∈ C 0,α and ∂ψ2 (∂y wv ) ∈ C 0,α , while ∂y2 wv ∈ C 1,α gives ∂ψ (∂y2 wv ) ∈
+C 0,α . Therefore, G1 (R, OR ) ⊂ X 0,α . As was the case for G2 , near {y = L} one has χ ≡ 0, so there
+G1 (R, v) = (L0R + λ)wv and
+                                                                      2
+    fL := G1 (R, v)(L, ·) = ∂y2 wv (L, ·) − R−L
+                                             1                   R
+                                                ∂y wv (L, ·) + (R−L)    2
+                                                                     2 ∂ψ wv (L, ·) + λwv (L, ·).        (2.19)
+Here ∂y2 wv (L, ·) ∈ C 1,α and ∂y wv (L, ·) ∈ C 2,α come from wv ∈ X 2,α , while the third term is the
+one that consumes the strengthened inner trace of (2.6): wv (L, ·) = w0 (L) + v(L, ·) ∈ Ce3,α (T), so
+∂ψ2 wv (L, ·) = ∂ψ2 v(L, ·) ∈ C 1,α . Hence fL ∈ Ce1,α (T); this is the only place where the extra angular
+derivative in the definition of X is used. At the outer circle, wv (0, ·) ≡ 1 and ∂y wv (0, ·) ≡ 0, so the
+terms of (2.3) carrying ∂y wv , ∂y ∂ψ wv and ∂ψ2 wv all vanish at y = 0, leaving
+                                                              R2 h′v (ψ)2  2
+ f0 := G1 (R, v)(0, ·) = ayy (0, ·) ∂y2 wv (0, ·) + λ = 1 +                   ∂ wv (0, ·) + λ ∈ Ce1,α (T),
+                                                             (R − hv (ψ))2 y
+                                                                                                      (2.20)
+        ′      1,α        2              1,α                                  0,α                 1,α
+since hv ∈ C        and ∂y wv (0, ·) ∈ C . By Remark 2.2, G1 (R, v) ∈ X           with f0 , fL ∈ Ce (T) is
+exactly the statement that G1 (R, v) ∈ Y1 , with
+                                                                                       
+                   ∥G1 (R, v)∥Y1 ≤ C ∥G1 (R, v)∥X 0,α + ∥f0 ∥C 1,α (T) + ∥fL ∥C 1,α (T) .             (2.21)
+From (2.3) it is clear that G1 (R, v) is even for even v. It remains to discuss the smoothness in (R, v).
+By (2.13) the maps (R, v) 7→ hv and (R, v) 7→ wv are affine and bounded in v and depend on R
+only through λ(R) and the profile w0 (R, ·), hence they are C ∞ on O with values in Ce2,α (T) and X 2,α
+respectively. The coefficients of (2.3) and their y-derivatives are finite sums of products and reciprocals
+                    (j)
+of R, of χ(j) , of hv and of the two functions R − y − χhv and 1 + χ′ hv , the latter two bounded away
+from zero on O; since C k,α (C) is a Banach algebra on which inversion is C ∞ at elements bounded away
+from zero, each of them is a C ∞ function of (R, v) ∈ O with values in the Hölder space listed above.
+The right-hand sides of (2.3), (2.18), (2.19) and (2.20) are finite sums of bounded       bilinear pairings
+of such data with bounded linear images of v, so (R, v) 7→ G1 (R, v), f0 , fL is C ∞ from O into
+                                                                                     
+
+X 0,α × Ce1,α (T)2 , and (2.21) gives that G1 : O → Y1 is C ∞ .                                          □
+2.4. Integer zeros are solutions. The functional G(R, v) was designed so that, when N is an integer,
+a solution hv , wv can be unfolded to an N -fold counterexample: The Laplacian becomes the usual
+Laplacian after unfolding, and the Dirichlet-to-Neumann condition is precisely the condition that allows
+us to extend the solution in a collar to a solution in the whole space.
+Theorem 2.7. Fix ρ to be a zero of J1 (ρ), and take R > 0 and λ = ρ2 /R2 such that R ∈ N. Assume
+also that we have v ∈ OR such that G(R, v) = 0. Then, we have a solution to the Schiffer problem with
+                                                     u ΦhRv (y, φ) = wv (y, Rφ) on Ωext ,
+                                                                 
+          Ω := (r, φ) : 0 ≤ r < R − hv (Rφ) ,
+and where u : Ω → R is defined inside BR−L (0) as the unique R-fold symmetric, even solution of
+(∆ + λ)u = 0 with the boundary values just obtained. Moreover, Ω is a bounded, star-shaped, simply
+                              COUNTEREXAMPLES TO SCHIFFER’S CONJECTURE                                     9
+
+connected domain with C ∞ boundary, invariant under the rotation by 2π/R; u ∈ C ∞ (Ω); and
+                          ∆u + λu = 0 in Ω,          u = 1,    ∂ν u = 0 on ∂Ω.
+Proof. Since R ∈ N, the map φ 7→ Rφ is well defined on T, so the function ΦhR of (2.2) is a C 2,α
+diffeomorphism of C onto Ωext , the region of Ω with r ∈ (R − L, R − h(Rφ)). As hv ∈ C 2,α (T)
+and ∥hv ∥L∞ < L/10 < R, this graph is a C 2,α curve with r > 0, so Ω is bounded, star-shaped about
+0 and simply connected with C 2,α boundary. It is also invariant under φ 7→ φ +          2π/R because h
+is 2π-periodic. Since ΦhR simply sends (y, φ) 7→ (R − y) cos φ, (R − y) sin φ if y ≥ 2L/3, we
+just need to solve the Dirichlet problem (∆ + λ)u = 0 on BR−L (0) with boundary data wv (L, Rφ),
+parametrized by the angle φ. Since such Dirichlet data is R-fold symmetric and even, and the Laplacian
+respects both symmetries, we reduce to solving the Dirichlet problem in the closed invariant subspace of
+R-fold symmetric, even functions. Both uniqueness and existence there follow from standard theory of
+∆ + λ on balls, once one knows that λ is not one of the R-fold symmetric, even Dirichlet eigenvalues,
+due to (2.10). We notice that u ∈ C 0 (Ω) by construction. We will check that u ∈ C 1 (Ω), which is
+trivial from the construction, except, possibly, for ∂r u at ∂BR−L (0). From the definition of the Dirichlet
+to Neumann operator, we know that the limit of ∂r u from inside BR−L (0) towards its boundary is
+given by DR (wv (L, Rφ)). On the other hand, the limit from the outside is −∂y wv (L, Rφ). Those
+two functions agree thanks to the second component of G(R, v) = 0, and therefore we see that u ∈
+C 1 (Ω). Now, looking at the first component of G(R, ·), we have that (LhRv + λ)wv = 0, and applying
+the diffeomorphism ΦhRv , this yields that (∆ + λ)u = 0 inside Ω \ BR−L (0). Hence, we have that
+u ∈ C 1 (Ω) and solves (∆ + λ)u = 0 classically in Ω \ ∂BR−L (0). Such regularity is enough to
+integrate by parts and argue that u is a weak solution of (∆ + λ)u = 0 on Ω, and therefore we have that
+u ∈ C ∞ (Ω). Combining that with the regularity wv ∈ C 2,α ([0, L] × T), we also have that u ∈ C 2,α (Ω̄).
+Lastly, we study the boundary conditions. On {y = 0}, wv (0, ·) = w0 (0) + w1v (0, ·) = 1 + 0 = 1
+by (2.12); hence u = 1 on ∂Ω. Regarding the normal derivative we notice that ΦhR is simply given
+by (y, φ) 7→ (R − y − h(Rφ)) cos φ, (R − y − h(Rφ)) sin φ if y ≤ L/3, since there χ ≡ 1.
+Being a diffeomorphism, it reduces ∇u = 0 on ∂Ω to the vanishing on {y = 0} of the differential of
+(y, φ) 7→ wv (y, Rφ), and both coefficients of ∂y wv (0, ·) dy + R ∂ψ wv (0, ·) dφ vanish: the first since
+∂y wv (0, ·) = ∂y w0 (0) + ∂y w1v (0, ·) = 0, the second since wv (0, ·) ≡ 1 is constant. Hence ∇u = 0 on
+∂Ω, and in particular ∂ν u = 0 on ∂Ω. Lastly, using the regularity theory of Kinderlehrer – Nirenberg
+[26], we can deduce that actually ∂Ω is smooth (actually, real-analytic) and therefore u ∈ C ∞ (Ω̄) as
+well.                                                                                                     □
+
+  The trivial zeros G(R, 0) = 0 give us, through this theorem, the classic ball examples, with u = w0
+and Ω = BR (0). Therefore, our task reduces to find non-trivial zeros of G(R, ·) where R is an integer.
+
+
+                                    3. T HE BIFURCATION SETTING
+   With Theorem 2.7 in place, we will focus on proving the existence of a non-trivial zero of G(R, v) for
+R ∈ N. In this section, we focus on establishing the linear theory for G, computing Dv G(R, 0), showing
+that it is Fredholm of index 0 (by comparing it with the harmonic version of it), and characterizing its
+one-dimensional kernel and codimension-one range at the crossings. At the end of the section, we also
+prove a uniform analogue of the Crandall–Rabinowitz theorem, which follows in a fairly similar manner
+to the original theorem, as a consequence of a Lyapunov–Schmidt type reduction.
+
+3.1. The linearization. We first compute the linearization of G. The linearization of G1 is quite similar
+to computations from [20, 17, 7], and the linearization of G2 is trivial since that term is already linear.
+Lemma 3.1. Dv G(R, 0) = LR := L0R + λ, (∂y + DR )|y=L : X → Y.
+                                                               
+
+Proof. Let us recall that hv and w1v are linear in v, so wv = w0 + w1v is affine in v, and that w1v = v
+near {y = L} due to χ = 0 on [2L/3, L]. NR is linear in w and NR (w0 ) = 0, so D[NR (wv )]|0 [v] =
+NR (w1v ) = ∂y w1v (L, ·) + DR [w1v (L, ·)] = (∂y + DR )v|y=L .
+10                            GONZALO CAO-LABORA AND JAUME DE DIOS PONT
+
+   Now, we prove our formula for the first component of Dv G(R, 0). Since the maps v 7→ hv and
+v 7→ w1v are linear, we have hsv = s hv and w1sv = s w1v , and so
+                                           d  shv                                   
+                                               LR w0 + s w1v + λ w0 + s w1v
+                                                                       
+                       Dv G1 (R, 0)v =
+                                          ds                                              s=0
+                                                                                                           (3.1)
+                                            0 v         v     d    shv
+                                                                               
+                                       = LR w1 + λ w1 + LR                   w0 .
+                                                             ds        s=0
+                                                                                             √
+Now, to compute the last term on the second line, let us point out that uR (r) := J0 ( λr)/J0 (ρ) satisfies
+(∆ + λ)uR = 0 on the physical collar. Thus, defining
+                                    w0h (y, ψ) := uR R − y − χ(y)h(ψ) ,
+                                                                              
+
+and using that for radial u the coefficients of (2.3) contract to LhR u(R−y−χh) = u′′ + 1s u′ (s) s=R−y−χh ,
+                                                                                                  
+
+we have that
+                              LhR w0h + λ w0h = 0 in C,           for every h ∈ B.                         (3.2)
+In particular it follows that
+                                        Lsh v
+                                          R w0
+                                               shv
+                                                   + λ w0shv = 0 in C,
+and so that
+           d  shv shv                         d shv                     hd               i    d
+               LR w0 + λ w0shv                                w0 + L0R          w0shv        + λ w0shv
+                                                              
+     0=                                      =     LR                                                      .
+          ds                            s=0     ds       s=0                ds         s=0      ds     s=0
+A direct computation shows that
+                d shv
+                   w          = −χ(y) hv (ψ) u′R (R − y) = χ(y) ∂y w0 (y) hv (ψ) = w1v − v,
+                ds 0 s=0
+the last equality by (2.13). Hence it follows that
+                             d shv
+                                            w0 + L0R w1v − v + λ w1v − v = 0.
+                                                                            
+                               LR                                                                          (3.3)
+                            ds        s=0
+The result follows from (3.1) and (3.3) using the fact that L0R is a linear operator.                         □
+   Following the argument in [17, 20] one can also argue that the linearization is Fredholm of index 0.
+One treats the λ term as a compact perturbation, and to prove that the resulting operator is an isomor-
+phism (hence, its compact perturbations are also Fredholm of index 0). For the first component of G, the
+compactness of the perturbation is clear, and analogous to the previous literature [17, 7]. In our case, we
+also need to justify it for the second component of G. Dropping λ in both the bulk and the trace gives
+            L0R := L0R , (∂y + DR   0
+                                                            LR − L0R = λ · id, DR − DR      0
+                                                                                             
+                                      )|y=L : X → Y,                                            .
+Lemma 3.2. There are R0 > 0 and C0 > 0 such that, for every R ≥ R0 , the operator
+                                              L0R : X → Y
+is a topological isomorphism and
+                               ∥v∥X ≤ C0 ∥L0R v∥Y         for every v ∈ X.                            (3.4)
+Proof. The boundedness of L0R : X −→ Y follows exactly as in Lemma 2.6, using Remark 2.2 for
+the first component and Remark 2.3 for the trace component. All the corresponding operator norms are
+bounded uniformly for R ≥ R0 .
+   Now, we show that L0R is injective. Suppose that v ∈ X satisfies L0R v = 0 and (∂y + DR0 )v(L, ·) = 0.
+
+Using
+                                                                    R2
+                                                                              
+                                   0
+                                                        
+                        (R − y)LR v = ∂y (R − y)∂y v + ∂ψ                 ∂ψ v ,
+                                                                  R−y
+multiplying by v, and integrating by parts over C, we obtain
+                                       R2
+              Z                                    
+                                2                 2                 0
+                   (R − y)|∂y v| +          |∂ψ v| + (R − L) DR       v(L, ·), v(L, ·) = 0.
+               C                     R  − y
+Here the boundary term at y = 0 vanishes because v(0, ·) = 0, while the one at y = L was simplified
+                                          0 =    R
+using the boundary condition. Since DR          R−L |Dψ | ⪰ 0, all three terms are nonnegative. Hence
+∂y v = ∂ψ v = 0, so v is constant; the condition v(0, ·) = 0 then gives v ≡ 0.
+                               COUNTEREXAMPLES TO SCHIFFER’S CONJECTURE                                    11
+
+   Now, it remains to argue that L0R is surjective and satisfies the bound (3.4). In order to do that, we
+solve L0R v = (f, g) as v = v1 + v2 , with v1 solving the Dirichlet equation with source f and v2 solving
+an equation with no source. We divide the remaining proof in three steps, the C 2,α bounds for v1 , the
+C 2,α bounds for θ = ∂y v1 and the bounds for v2 .
+   Step 1: The Dirichlet part v1 . Let v1 be the solution of
+                                  (
+                                    L0R v1 = f in C,
+                                                                                                     (3.5)
+                                    v1 = 0        on {y = 0} ∪ {y = L}.
+The global Dirichlet theory [22, Theorem 6.14] gives a unique solution v1 ∈ C 2,α (C). Since the equation
+and the boundary conditions are invariant under ψ 7→ −ψ, uniqueness also implies that v1 is even.
+  By the global Schauder estimate [22, Theorem 6.6],
+                                                                            
+                              ∥v1 ∥C 2,α (C) ≤ C ∥v1 ∥C 0 (C) + ∥f ∥C 0,α (C) .                     (3.6)
+The C 0 term is controlled uniformly by the maximum principle. Moreover, the constant C is inde-
+pendent of R since the operators L0R given in (2.3) are uniformly elliptic, with uniformly bounded
+coefficients norms, and the cylinder C is fixed. Consequently,
+                                 ∥v1 ∥C 2,α (C) ≤ C∥f ∥C 0,α (C) ≤ C∥f ∥Y1 .                           (3.7)
+with C independent of R ≥ R0 .
+Step 2. Here, we set θ := ∂y v1 ∈ Ce1,α (C). Differentiating (3.5) distributionally in y gives
+                                                              1           2R2
+                  L0R θ = F,       with      F := ∂y f +             θ−         ∂ 2 v1 .               (3.8)
+                                                           (R − y) 2    (R − y)3 ψ
+By the definition of Y1 and (3.7),
+                                 F ∈ Ce0,α (C),       ∥F ∥C 0,α ≤ C∥f ∥Y1 .
+Since v1 vanishes identically on both boundary circles, its tangential derivatives vanish there. Restricting
+L0R v1 = f to the boundary therefore gives the local Robin conditions
+                            1                                        1
+                ∂y θ(0, ·) − θ(0, ·) = f (0, ·),    ∂y θ(L, ·) −          θ(L, ·) = f (L, ·).          (3.9)
+                            R                                     R−L
+By Remark 2.2, the two boundary data in (3.9) belong to Ce1,α (T), and therefore ∂y θ(0, ·) and ∂y θ(L, ·)
+are both C 1,α (T). In order to obtain C 2,α regularity also in the ψ direction, we consider ηε to be an even
+periodic mollifier in the ψ variable and put
+                                                Z
+                                  θε (y, ψ) :=     θ(y, ψ ′ )ηε (ψ − ψ ′ )dψ ′ .
+                                                  T
+Since all the coefficients of L0R and of the two boundary operators depend only on y, convolution com-
+mutes with (3.8) and (3.9). Thus
+                                                                        
+         0                        1                                    1
+       LR θε = Fε ,         ∂y −      θε (0, ·) = fε (0, ·),   ∂y −          θε (L, ·) = fε (L, ·).
+                                  R                                  R−L
+For each fixed ε > 0, the function θε is smooth in ψ, so simply isolating ∂y2 θε on the equation L0R θε = Fε
+yields ∂y2 θε in C 0,α . Hence θε ∈ Ce2,α (C).
+   That allows us to apply global Schauder estimate for regular Robin derivative conditions [22, Theo-
+rem 6.30] on the fixed cylinder:
+                                                                                          
+                 ∥θε ∥C 2,α ≤ C ∥θε ∥C 0 + ∥Fε ∥C 0,α + ∥fε (0, ·)∥C 1,α + ∥fε (L, ·)∥C 1,α .
+As in step 1, the constant is independent of ε and R ≥ R0 : the ellipticity constants and coefficient norms
+of L0R are uniform, the cylinder C is fixed, and the Robin condition vector is uniform. Since convolution
+does not increase the relevant Hölder norms, ∥θε ∥C 2,α ≤ C∥f ∥Y1 .
+                                                                    ′
+   Thus, θε admits a converging subsequence as ε → 0 in C 2,α (C) norm, for α′ < α. The limit must
+                                                             ¯ bound, so we obtain
+satisfy (3.8)–(3.9) (hence, it is θ), and satisfy the C 2,α (C)
+                           θ = ∂y v1 ∈ Ce2,α (C),       ∥∂y v1 ∥C 2,α ≤ C∥f ∥Y1 .                     (3.10)
+12                             GONZALO CAO-LABORA AND JAUME DE DIOS PONT
+
+with C independent of R ≥ R0 .
+   Together with (3.7) and v1 (L, ·) = 0, this proves estimate ∥v1 ∥X ≤ C∥L0R v∥Y . Thus, it remains to
+prove the analogous estimate for v2 .
+     Step 3: the homogeneous correction v2 . We look for v2 solving
+                         
+                             0
+                         LR v2 = 0 in C,
+                         
+                           v2 (0, ·) = 0,                   q := g − ∂y v1 (L, ·).                      (3.11)
+                                     0
+                         
+                           (∂y + DR )v2 (L, ·) = q,
+                         
+
+By (3.10), we have
+                     q ∈ Ce2,α (T),
+                                                                   
+                                     ∥q∥C 2,α ≤ C ∥g∥C 2,α + ∥f ∥Y1 ≤ ∥(f, g)∥Y
+                                               P
+The problem diagonalizes in Fourier. Write q = k≥0 qk cos(kψ), and define
+                                                                    !
+                                                             R − L 2Rk
+                                        XR−L             
+                             R
+       ω := (R − L) log              q0 +             1−                 qk cos(kψ).                    (3.12)
+                           R−L                 2Rk             R
+                                              k≥1
+
+The definition of ω is such that it corresponds to the Dirichlet trace of (3.11).
+  Now, since the multipliers (1 − (1 − L/R)2Rk ) are in (0, 1), the k1 gain of derivative, yields:
+                                  ∥ω∥C 3,α (T) ≤ C∥q∥C 2,α (T) ≤ ∥(f, g)∥Y                              (3.13)
+with C independent of R ≥ R0 .
+  Now, we let v̄2 solve the ordinary Dirichlet problem
+                              L0R v̄2 = 0,        v̄2 (0, ·) = 0,    v̄2 (L, ·) = ω.                    (3.14)
+
+Since ω ∈ Ce3,α (T), higher-order Dirichlet Schauder theory gives
+                               v̄2 ∈ Ce3,α (C),        ∥v̄2 ∥C 3,α ≤ C∥(f, g)∥Y .
+   Now, we decompose in Fourier modes in order to check that v̄2 solves the last condition (3.11). That
+would prove that v̄2 = v2 , since the other conditions of (3.11) are trivially true.
+   In order to perform that check, we notice that the normalized k-th frequency homogeneous solution
+of L0R v = 0 which vanishes at y = 0 and equals cos(kψ) at y = L is
+                                     Rk                   Rk
+                                  R−L          R−L Rk R−y
+                                  R−y      −    R           R
+                                                      2Rk
+                                                                    cos(kψ)
+                                         1 − R−L
+                                                    
+                                                R
+                       
+                     R
+                log R−y
+if k ≥ 1, and log R if k = 0. Therefore,
+                  ( R−L )
+                                                Rk                             Rk
+                               R                                    R−L Rk R−y
+                                         X R−L
+                                                                        
+                          log R−y              R−y     −             R        R
+            v̄2 (y, ψ) =          ω0 +                                  2Rk
+                                                                                          ωk cos(kψ),
+                               R                                    R−L
+                                                                        
+                          log R−L        k≥1         1−              R
+
+                                                                                    0 ) to modes k ≥ 1
+where ωk are the Fourier coefficients of ω from (3.12). Applying the operator (∂y +DR
+and k = 0 respectively, we obtain
+                        h
+                                   0
+                                             i      2Rk        ωk
+                          (∂y + DR   )v̄2 y=L =                          = qk ,
+                                              k    R − L 1 − R−L 2Rk
+                                                                R
+                         h
+                                   0
+                                             i             ω0
+                           (∂y + DR )v̄2 y=L =                       = q0 .
+                                               0                  R
+                                                   (R − L) log R−L
+
+Thus v̄2 solves (3.11); we set v2 := v̄2 , which satisfies the estimate (3.14). Together with Steps 1 and 2,
+this concludes the proof.
+                                                                                                          □
+                                   COUNTEREXAMPLES TO SCHIFFER’S CONJECTURE                                 13
+
+3.2. The kernel of LR at the crossings.
+
+Lemma 3.3. Let (ρ⋆ , R⋆ , λ⋆ ) be a crossing in C(R0 ). Then, for every R ∈ I, LR : X → Y is Fredholm
+of index zero; it is an isomorphism for R ̸= R⋆ in some neighbourhood of R⋆ ; and
+                                                              √
+                                                                λ⋆         p
+                 ker LR⋆ = R Φ⋆ (y) cos ψ,      Φ⋆ (y) = − ′          JR⋆ ( λ⋆ (R⋆ − y)).
+                                                            JR⋆ (ρ⋆ )
+
+Proof. By construction LR − L0R = (λ · id, DR − DR     0 ) is compact: the first entry factors through
+
+the compact embedding C    2,α ,→ C 1,α ⊂ Y1 , and by Proposition 2.4(b) the second maps v(L, ·) ∈
+C 3,α boundedly into C 4,α (T) ,→ C 2,α (T). With Lemma 3.2, LR is a compact perturbation of an
+isomorphism, hence Fredholm of index zero. In order to study LR we notice that it diagonalizes in
+Fourier modes. Projecting LR v = (0, 0) onto cos kψ, we obtain the second-order ODE on [0, L]:
+
+               1          k 2 R2
+     vk′′ −       vk′ −          vk + λ vk = 0,            with     vk′ (L) + τk (R) vk (L) = 0.       (3.15)
+              R−y       (R − y)2
+                                                                                      √
+The ODE is regular, and it is Bessel’s equation of order kR √(under the change x =√ λ(R − y)), with the
+two-dimensional space of solutions being spanned by JkR ( λ(R − y)) and YkR ( λ(R − y)). Since the
+J-solution trivially satisfies the boundary condition from the definition of τk (R), and the vectors (J, J ′ )
+and (Y, Y ′ ) must be independent, the boundary
+                                          √      condition simply kills the Y -solution, enforcing that any
+solution of (3.15) is a multiple of JkR ( λ(R − y)). Hence, since the condition at the outer circle is
+vk (0) = 0, we conclude that ker(LR ) is simply
+                                     √
+                         span{JkR ( λ(R − y)) cos kψ : JkR (ρ) = 0, k ∈ N0 }.
+
+Finally, from Proposition 2.4(a) we have JkR (ρ) ̸= 0 for k ≥ 2 and J0 (ρ) ̸= 0 for R ∈ I. We also have,
+by Proposition 2.4(a), that JR (ρ) ̸= 0 for√every R ∈ I \ {R⋆ }, and JR⋆ (ρ) = 0. Therefore, the kernel
+is one dimensional and spanned by JR⋆ ( λ⋆ (R⋆ − y)) cos ψ if R = R⋆ and is trivial otherwise. In the
+latter case, being Fredholm of index 0 implies LR is an isomorphism.                                  □
+
+   Since LR⋆ is Fredholm of index 0 and has kernel of dimension 1, it must have a range of codimension
+1. We study this range in the following lemma.
+
+Lemma 3.4. Let (f, g) ∈ Y and let f1 , g1 denote first cosine coefficients. We define ℓ⋆ ∈ Y∗ by
+                            RL
+                               (1 − y/R⋆ )Φ⋆ (y)f1 (y) dy − (1 − L/R⋆ )Φ⋆ (L)g1
+                ℓ⋆ (f, g) := 0             RL                                         .          (3.16)
+                                                                  2
+                                            0 (1 − y/R⋆ )Φ⋆ (y) dy
+
+Then ran LR⋆ = ker ℓ⋆ . Moreover ℓ⋆ (Φ⋆ cos ψ, 0) = 1.
+
+Proof. By Lemma 3.3 the range is a closed hyperplane, so it suffices to prove that ℓ⋆ annihilates it. Let
+v ∈ X with LR⋆ v = (f, g) and project onto cos ψ:
+
+                         1             R⋆2
+              v1′′ −          v1′ −           v1 + λ⋆ v1 = f1 ,    v1′ (L) + τ1 (R⋆ ) v1 (L) = g1 .
+                       R⋆ − y       (R⋆ − y)2
+Multiplying by 1 − y/R⋆ puts the ODE in divergence form:
+                  ′ 
+                                        R⋆2
+                                                                        
+              y     ′            y                       y                 y
+         1−        v1 − 1 −                    v1 + 1 −       λ ⋆ v1 = 1 −      f1 .                   (3.17)
+             R⋆                 R⋆ (R⋆ − y)2             R⋆                R⋆
+We also recall that Φ⋆ solves the homogeneous equation (that is, with (f1 , g1 ) = 0). We multiply (3.17)
+by Φ⋆ and the analogous equation for Φ⋆ (with 0 RHS) by v1 , and we subtract. The zeroth order terms
+cancel, and we obtain:
+                                      h        i′         h         i′
+                        1 − Ry⋆ f1 Φ⋆ = 1 − Ry⋆ v1′ Φ⋆ − 1 − Ry⋆ Φ′⋆ v1 .
+14                             GONZALO CAO-LABORA AND JAUME DE DIOS PONT
+
+                                                              RL
+Plugging this into the formula for ℓ⋆ (f, g) and writing D := 0 1 − Ry⋆ Φ2⋆ dy for its denominator, we
+                                                                       
+
+obtain
+                     Z L nh            i′                  i′ o                           
+                   1                  y    ′
+                                                    h
+                                                           y     ′
+                                                                           
+                                                                                 L
+                                                                                    
+      ℓ⋆ (f, g) =               1 − R⋆ v1 Φ⋆ − 1 − R⋆ Φ⋆ v1 dy − 1 − R⋆ Φ⋆ (L) g1
+                  D      0
+                     h                                                  
+                   1           y
+                                  
+                                     ′           ′
+                                                   iL        L
+                                                                   
+                =          1 − R⋆ v1 Φ ⋆ − v 1 Φ ⋆     − 1 − R⋆ Φ⋆ (L) g1
+                  D                                  0
+                   1                                                           
+                        1 − RL⋆ Φ⋆ (L) v1′ (L) + τ1 (R⋆ )v1 (L) − 1 − RL⋆ Φ⋆ (L) g1
+                                        
+                =
+                  D
+                = 0,
+where the endpoint y = 0 contributes nothing because v1 (0) = Φ⋆ (0) = 0, the endpoint y = L was
+simplified using Φ′⋆ (L) = −τ1 (R⋆ )Φ⋆ (L), and the last equality is the boundary condition v1′ (L) +
+τ1 (R⋆ )v1 (L) = g1 . Finally, it is evident that ℓ⋆ (Φ⋆ cos ψ, 0) = 1, so in particular ℓ⋆ ∈ Y∗ is non-zero,
+so its kernel is a hyperplane. The space ran LR⋆ is also a hyperplane (from Lemma 3.3, it is Fredholm
+of index 0 and its kernel is one-dimensional). Hence, since ker ℓ⋆ and ran LR⋆ are both hyperplanes and
+the second is contained in the first, they must be equal.                                                  □
+     Now, we have split the space Y:
+                  Y = ker ℓ⋆ ⊕ span((Φ⋆ cos ψ, 0)) = ran LR⋆ ⊕ span((Φ⋆ cos ψ, 0)).
+In order to obtain the same type of splitting for X, we define the following functional a⋆ ∈ X∗ . For any
+v ∈ X, take v1 (y) to be its first Fourier mode, and define:
+                                            RL
+                                               (1 − y/R⋆ ) Φ⋆ (y) v1 (y) dy
+                                  a⋆ (v) := 0 R L                           .                      (3.18)
+                                                  (1 − y/R   ) Φ  (y)2 dy
+                                                0          ⋆    ⋆
+
+We notice that a⋆ (v) = ℓ⋆ (v, 0), and therefore a⋆ (Φ⋆ cos ψ) = 1. This means that the hyperplane ker a⋆
+is a complement to span(Φ⋆ cos ψ) in X. Hence, we can obtain the splitting
+                            X = span(Φ⋆ cos ψ) ⊕ ker a⋆ = ker LR⋆ ⊕ ker a⋆ .
+
+3.3. Bifurcation theorem. The lemmas above, showing that LR⋆ is Fredholm of index zero with a
+one-dimensional kernel, combined with a standard transversality condition, would already allow us to
+establish a bifurcation branch G(R, v) = 0 with v ̸= 0 by means of a standard bifurcation theorem,
+such as Crandall–Rabinowitz [11]. However, that would not be enough for our purposes, since that local
+branch only generates solutions for R in a close enough neighbourhood of R⋆ , and we would not know a
+priori if such a neighbourhood contains any integer. Hence, our strategy is to use a uniform perturbation,
+combined with the existence of crossings R⋆ arbitrarily close to integers. For that reason, we state and
+prove our uniform version of the Crandall–Rabinowitz theorem. The strategy is similar to the original
+theorem proved in [11] (namely, a Lyapunov–Schmidt reduction) with the main novelty being that we
+specifically track the parameters in the statement that can influence the size of the local branch around
+R⋆ .
+Proposition 3.5 (Quantitative bifurcation). Let X, Y be Banach spaces, let G : (R⋆ − c1 , R⋆ + c1 ) ×
+BX (0, c2 ) → Y be of class C 4 . Assume that
+   (1) G(R, 0) = 0 for all R ∈ (R⋆ − c1 , R⋆ + c1 );
+   (2) ∥Dj G∥ ≤ C1 for j ≤ 4;
+   (3) There are ξ⋆ ∈ X, a⋆ ∈ X∗ and ℓ⋆ ∈ Y∗ with a⋆ (ξ⋆ ) = 1 such that
+ker Dv G(R⋆ , 0) = R ξ⋆ ,      ran Dv G(R⋆ , 0) = ker ℓ⋆ ,       Dv G(R⋆ , 0)|ker a⋆ : ker a⋆ → ker ℓ⋆ is an isomorphism;
+         and ∥(Dv G(R⋆ , 0)|ker a⋆ )−1 ∥ + ∥ξ⋆ ∥ + ∥ℓ⋆ ∥ + ∥a⋆ ∥ ≤ C2 ;
+    (4) |ℓ⋆ (∂R Dv G(R⋆ , 0) ξ⋆ )| ≥ c3 .
+Then there are constants C3 , C4 , ε0 > 0, depending only on C1 , C2 , c1 , c2 , c3 , and maps s 7→ (R(s), v(s))
+of class C 3 on (−ε0 , ε0 ) with
+                                                                
+                    R(0) = R⋆ , v(0) = 0, G R(s), v(s) = 0, a⋆ (v(s)) = s,
+                                 COUNTEREXAMPLES TO SCHIFFER’S CONJECTURE                                  15
+
+              ∥v(s)∥X ≤ C3 |s|,          ∥v(s) − s ξ⋆ ∥X ≤ C3 s2 ,         sup |R′′′ (s)| ≤ C4 ,
+                                                                         |s|≤ε0 /2
+where |R(s) − R⋆ | < c1 and ∥v(s)∥X < c2 for all s ∈ (−ε0 , ε0 ) (ensuring that the branch lies in the
+domain of G).
+Proof. For any w ∈ ker a⋆ , with ∥w∥X < 1, R ∈ (R⋆ − c1 , R⋆ + c1 ), we define
+                                      Z 1
+                                                              
+                        Ψ(s, R, w) :=     Dv G R, ts(ξ⋆ + w) [ξ⋆ + w] dt.
+                                               0
+                                         c2
+This is well defined provided |s| < C2 +1 (so that ∥ts(ξ⋆ +w)∥ < c2 ). We also notice by the fundamental
+theorem of calculus that zeros of Ψ(s, R, w) correspond to (R, w) such that G(R, sw + sξ⋆ ) = 0. Since
+G is C 4 , Ψ is C 3 , and by the chain rule, there is a constant C5 , depending only on C1 and C2 , such that
+                                        ∥Dj Ψ∥ ≤ C5 ,       0 ≤ j ≤ 3.                                (3.19)
+We also notice from the definition that
+                                      Ψ(0, R⋆ , 0) = Dv G(R⋆ , 0)ξ⋆ = 0.
+The derivative of Ψ with respect to (R, w) at (0, R⋆ , 0) is the operator A : R × ker a⋆ → Y given by
+                               A(Ṙ, ẇ) = Ṙ ∂R Dv G(R⋆ , 0)ξ⋆ + Dv G(R⋆ , 0)ẇ.
+We claim that A is an isomorphism. Indeed, if A(Ṙ, ẇ) = y, applying ℓ⋆ and using ran Dv G(R⋆ , 0) =
+ker ℓ⋆ gives
+                                     ℓ⋆ (y)                        C
+                         Ṙ =                       ⇒ |Ṙ| ≤ 2 ∥y∥Y .
+                              ℓ⋆ ∂R Dv G(R⋆ , 0)ξ⋆                  c3
+With this value of Ṙ, we have y − Ṙ ∂R Dv G(R⋆ , 0)ξ⋆ ∈ ker(ℓ⋆ ), so we can compute ẇ applying
+(Dv G(R⋆ , 0)|ker(a⋆ ) )−1 . We obtain
+                                                                                                
+                    C2                                   −1        C2
+  |Ṙ| + ∥ẇ∥X ≤         ∥y∥Y + ∥(Dv G(R⋆ , 0)|ker(a⋆ ) ) ∥ ∥y∥Y +    ∥y∥Y ∥∂R Dv G(R⋆ , 0)∥∥ξ⋆ ∥
+                    c3                                             c3
+                                        C1 C23
+                                              
+                              C2
+                ≤ ∥y∥Y           + C2 +
+                              c3         c3
+so that ∥A−1 ∥ is bounded in terms of ci and Ci . Now, we take the map
+                                                              (R, w) 7−→ (R, w) − A−1 Ψ(s, R, w).
+                                                      
+   Ξ : BR×ker a⋆ (R⋆ , 0), c4 → BR×ker a⋆ (R⋆ , 0), c4 ,
+We will see that for c4 and s small enough (in terms of the other constants ci , Ci ) the map is well-
+defined (the range lies in its codomain) and moreover, it is a contraction. Recall A−1 is linear with
+norm bounded in terms of the ci , Ci and Ψ is of class C 3 with derivatives bounded by C5 . For any
+(R, w), (R′ , w′ ) ∈ BR×ker a⋆ (R⋆ , 0), c4 write (Rt , wt ) := (R′ , w′ ) + t (R − R′ , w − w′ ), which lies
+in the same ball for every t ∈ [0, 1] by convexity. The fundamental theorem of calculus gives
+                                               Z 1
+                 Ψ(s, R, w) − Ψ(s, R′ , w′ ) =     DR,w Ψ(s, Rt , wt )[R − R′ , w − w′ ] dt,
+                                                  0
+
+so that, using A−1 D   R,w Ψ(0, R⋆ , 0) = Id,
+
+         ∥(R − R′ , w − w′ ) − A−1 (Ψ(s, R, w) − Ψ(s, R′ , w′ ))∥
+                       Z 1
+                    −1
+                             DR,w Ψ(0, R⋆ , 0) − DR,w Ψ(s, Rt , wt ) [R − R′ , w − w′ ] dt
+                                                                    
+              = A
+                           0
+               ≤ ∥A−1 ∥ sup ∥DR,w Ψ(0, R⋆ , 0) − DR,w Ψ(s, Rt , wt )∥ · ∥(R − R′ , w − w′ )∥.
+                           t∈[0,1]
+
+Since Ψ is of class C 3 with ∥D2 Ψ∥ ≤ C5 , the supremum is at most C5 (|s|+c4 ), so taking c4 and s small
+enough (independently of each other) we conclude that ∥Ξ(R, w) − Ξ(R′ , w′ )∥ ≤ 21 ∥(R − R′ , w − w′ )∥.
+Moreover, since ∥Ψ(s, R⋆ , 0)∥ ≲ |s|, we further require |s| to be sufficiently small in terms of c4 so that
+∥A−1 Ψ(s, R⋆ , 0)∥ ≤ c4 /2. This shows that Ξ is well defined and a contraction. Hence there is a unique
+16                            GONZALO CAO-LABORA AND JAUME DE DIOS PONT
+
+pair (R(s), w(s)) in the ball such that Ψ(s, R(s), w(s)) = 0, and we can do this for any |s| ≤ ε0 , with
+ε0 small enough in terms of the previous Ci , ci . Moreover
+                    |R(s) − R⋆ | + ∥w(s)∥X ≲ |s|,            R(0) = R⋆ ,     w(0) = 0.                (3.20)
+                                                                               
+Taking v(s) = sξ⋆ + sw(s), this constructs our branch solving G R(s), v(s) = 0. Moreover, we notice
+that a⋆ (v(s)) = sa⋆ (ξ⋆ + w(s)) = sa⋆ (ξ⋆ ) = s, and that ∥v(s)∥X ≤ |s| (∥ξ⋆ ∥X + ∥w(s)∥X ) ≲ |s|,
+while ∥v(s) − sξ⋆ ∥X = |s| ∥w(s)∥X ≲ s2 by (3.20). Hence, we have proved the full statement of
+the Proposition except for the existence of a uniform C4 > 0 such that sup|s|≤ε0 /2 |R′′′ (s)| ≤ C4 . We
+dedicate the rest of the proof to that claim. We recall we are taking |s| and c4 sufficiently small so that
+                                             1                                              1
+         ∥A − D(R,w) Ψ(s, R, w)∥ ≤                  =⇒        ∥Id − A−1 D(R,w) Ψ(s, R, w)∥ ≤ .
+                                          2∥A−1 ∥                                           2
+Consequently A−1 D(R,w) Ψ(s, R, w) is invertible there, with inverse of norm at most 2, so that ∥D(R,w) Ψ(s, R, w)−1 ∥ ≤
+2∥A−1 ∥. The implicit function theorem and uniqueness of the fixed point show that s 7→ (R(s), w(s))
+is of class C 3 . Successively differentiating Ψ(s, R(s), w(s)) = 0 up to order three, and using (3.19) and
+the uniform inverse bound above, gives
+                                      sup |R′′′ (s)| + ∥w′′′ (s)∥X ≤ C4
+                                                                  
+                                  |s|≤ε0 /2
+
+for a constant C4 depending only on the previous ci , Ci .                                               □
+
+                                         4. P ROOF OF T HEOREM 1.1
+   This section assembles the proof Theorem 1.1 by using Proposition 3.5, based on several Propositions
+that are deferred to further sections.
+   Propositions 4.1, 4.2 and 4.3 below correspond to hypotheses 2, 3, and 4 in 3.5. They show that we
+can take the constants ci , Ci independently of the crossing we pick on C(R0 ).
+   With these propositions at hand one can already show that one can uniformly perturb any crossing.
+In order to show that these uniform perturbations can reach an integer, two more facts are needed.
+   First, one needs to show that we can start arbitrarily with R close to an integer. This is the content
+of Proposition 4.5, a density result for crossings, which ensures that C(R0 ) has crossings with R⋆ ∈
+(N, N + ε) for some N ∈ N and ε > 0 as small as desired.
+   The last required ingredient is the explicit computation of R′′ (0) in our bifurcation which ensures
+that the branch of uniform size ε0 from 3.5 can actually move R enough to reach an integer. This is the
+content of Proposition 4.6.
+
+4.1. Uniform hypotheses. We start stating results on our setting that will give us the hypotheses 2, 3
+and 4 of Proposition 3.5.
+Proposition 4.1. There are c1 , c2 , C, R0 > 0 such that the following holds for every (ρ⋆ , R⋆ , λ⋆ ) ∈
+C(R0 ). Writing U := (R⋆ − c1 , R⋆ + c1 ) × BX (0, c2 ), one has v ∈ OR for every (R, v) ∈ U, and the
+interior row G1 : U → Y1 is well-defined and of class C 4 , with
+                                   sup∥Dj G1 ∥ ≤ C           (0 ≤ j ≤ 4),
+                                     U
+
+the constant C being independent of the crossing (ρ⋆ , R⋆ , λ⋆ ).
+Proposition 4.2. There is R0 such that the following holds for every (ρ⋆ , R⋆ , λ⋆ ) ∈ C(R0 ):
+                                  ∥v∥X ≤ C ∥LR⋆ v∥Y             ∀v ∈ ker a⋆ ,                         (4.1)
+                               ∥ξ⋆ ∥X + ∥η⋆ ∥Y + ∥ℓ⋆ ∥Y∗ + ∥a⋆ ∥X∗ ≤ C                                (4.2)
+where the constant C is independent of the crossing (ρ⋆ , R⋆ , λ⋆ ).
+                                                                                           
+Proposition 4.3. Fix R0 > 0. There is a uniform c3 > 0 such that |ℓ⋆ ∂R LR |R=R⋆ [Φ⋆ cos ψ] | ≥ c3
+for every crossing in C(R0 ).
+                               COUNTEREXAMPLES TO SCHIFFER’S CONJECTURE                                    17
+
+Corollary 4.4. Fix R0 . There exists C0 , ε0 > 0 such that for every (ρ⋆ , R⋆ , λ⋆ ) ∈ C(R0 ), there exists a
+non-trivial branch s 7→ (R(s), v(s)) ∈ R × X defined for s ∈ (−ε0 , ε0 ) satisfying
+         R(0) = R⋆ , v(0) = 0, v ′ (0) = Φ⋆ cos ψ, G R(s), v(s) = 0, a⋆ (v(s)) = s,
+                                                                         
+
+            sup |R′′′ (s)| ≤ C0 ,       ∥v(s) − s Φ⋆ cos ψ∥X ≤ C0 s2 ,         ∥v(s)∥X ≤ L/10.
+          |s|<ε0 /2
+
+  We stress again that the fundamental point of this Corollary is that C0 and ε0 can be taken indepen-
+dently of the crossing in C(R0 ). The proof is an immediate application of Proposition 3.5
+Proof. We apply Proposition 3.5 to our map G(R, v) defined in (2.14). Hypothesis 1 is immediate from
+the definition of G, see (2.15), and hypothesis 4 is exactly Proposition 4.3.
+   Hypothesis 2 is obtained one row at a time, after shrinking c1 to min{c1 , δ} so that Proposition 2.4 ap-
+plies on the whole radius window. The interior row is Proposition 4.1. For the exterior row, (2.17) gives
+G2 (R, v) = ∂y v(L, ·) + DR [v(L, ·)] identically in v; the trace maps v 7→ ∂y v(L, ·) ∈ Ce2,α (T) and v 7→
+v(L, ·) ∈ Ce3,α (T) are linear, bounded and independent of R, while r 7→ Dr ∈ L Ce3,α (T), Ce2,α (T)
+                                                                                                           
+
+is of class C 4 with ∥∂rn Dr ∥ ≤ C for n ≤ 4 by Proposition 2.4(c). Hence G2 is of class C 4 on U with
+∥Dj G2 ∥ ≤ C for j ≤ 4, uniformly over C(R0 ), and together with Proposition 4.1 this gives G : U → Y
+of class C 4 with ∥Dj G∥ ≤ C1 for j ≤ 4.
+   Regarding hypothesis 3, we recall that Dv G(R⋆ , 0) = LR⋆ from Lemma 3.1, which is Fredholm of
+index 0 from Lemma 3.3, with kernel and range computed in Lemmas 3.3 and 3.4, respectively. In
+particular, taking ℓ⋆ , a⋆ as in (3.16) and (3.18), and taking ξ⋆ = Φ⋆ cos ψ, η⋆ = (Φ⋆ cos ψ, 0), all the
+hypothesis are satisfied, with the norm bound of hypothesis 3 being ensured by Proposition 4.2.
+   Thus, we apply Proposition 3.5 and we obtain the desired branch. Finally, since that Proposition gives
+∥v(s)∥X ≤ C3 |s|, we shrink ε0 so that C3 ε0 ≤ L/10; the branch then satisfies ∥v(s)∥X ≤ L/10, and
+in particular ∥hv(s) ∥L∞ ≤ λ−1 ∥v(s)∥X < L/10, so that v(s) ∈ OR(s) throughout.                           □
+4.2. Density of crossings and uniform bending. Corollary 4.4 guarantees the existence of a branch of
+size independent of the crossing in C(R0 ). However, in order to guarantee that our bifurcation branch
+G(R, v) = 0 reaches R ∈ N, we need two extra ingredients: to guarantee that we can pick the starting
+point R⋆ as close as we want from an integer, and to guarantee that the branch bends uniformly irre-
+spective of the crossing. We will see that, due to a certain symmetry of the problem, R′ (0) = 0, hence
+the second property is ensured by computing R′′ (0) and observing that it is uniformly lower bounded
+independently of the crossing of C(R0 ).
+Proposition 4.5. Fix any R0 , ε > 0. There exist crossings (ρ⋆ , R⋆ , λ⋆ ) ∈ C(R0 ) such that R⋆ − ⌊R⋆ ⌋ ∈
+(0, ε).
+Proposition 4.6. Let s 7→ (R(s), v(s)) be the branch of Corollary 4.4. Then, we have that
+                                                           √                ′
+                                                                           J2R   (ρ)
+                                                                                    
+                   ′                         ′′              λ⋆                ⋆
+                 R (0) = 0,       and       R (0) = −                 2+ρ              ,          (4.3)
+                                                        4R⋆ ∂ν jν,m        J2R⋆ (ρ)
+Moreover, for any ε1 > 0 there exists R0 sufficiently large such that if the branch of Corollary 4.4 is
+taken from a crossing in C(R0 ), we have:
+                                             p
+                                                 (λ − 1)(4 − λ)
+                                   R′′ (0) +                      < ε1 .                          (4.4)
+                                                4 arccos λ−1/2
+4.3. Proof of the main theorem. Take R0 and ε0 as in Corollary 4.4, enlarging R0 if needed √    so that
+(4.4) holds√with ε1 = 1/100. Thus, since λ ∈ [2, 3], we have (λ − 1)(4 − λ) > 1 and arccos(1/ λ) ≤
+arccos(1/ 3) < 1. Therefore, R′′ (0) < −1/4 + 1/100 < −1/5 for any crossing in C(R0 ). Applying
+Taylor’s theorem combined with the R′′′ (s) bound from Corollary 4.4, we have:
+                              1
+                R(s) < R⋆ − s2 + C|s|3 ,          ∀s ∈ (−ε0 /2, ε0 /2),      C := C0 /6.
+                             10
+                                     1                             1 2
+Now, we take 0 < s̄ < min{ε0 /2, 20C    }, so that R(s̄) < R⋆ − 20   s̄ . From Proposition 4.5, we can
+                                                1 2
+find a crossing of C(R0 ) such R⋆ − ⌊R⋆ ⌋ < 20 s̄ , so selecting such crossing, we have that R(s̄) <
+⌊R⋆ ⌋ < R⋆ = R(0). Hence, by continuity, there exists s0 ∈ (0, s̄) such that R(s0 ) = N := ⌊R⋆ ⌋ ∈ N.
+18                             GONZALO CAO-LABORA AND JAUME DE DIOS PONT
+
+Thus, writing h := hv(s0 ) , Theorem 2.7 gives a Schiffer domain parametrized as Ω = {(r, φ) : r <
+N − h(N φ)}, with eigenfunction u : Ω → R.
+   Also, a⋆ (v(s0 )) = s0 ̸= 0. Since Φ′⋆ (0) = λ⋆ by the formula in Lemma 3.3, Corollary 4.4 gives
+                                                                                      λ⋆
+∂y v(s0 )(0, ·) = s0 λ⋆ cos ψ + O(s20 ), so the first cosine coefficient of h equals λ(N           2
+                                                                                         ) s0 + O(s0 ) ̸= 0 for
+ε0 small enough; in particular h is not constant. Since Ω is invariant under the rotation by 2π/N , a ball
+would have to be centred at the origin and would therefore have constant h. Hence Ω is not a ball.
+   Finally, R0 was arbitrary and the integer produced above satisfies N = ⌊R⋆ ⌋ ≥ R0 − 1, so letting
+R0 → ∞ yields infinitely many integers N for which the construction applies. This proves Theorem 1.1.
+
+                               5. P ROOF OF THE UNIFORM HYPOTHESES
+5.1. Proof of Proposition 4.1. We first obtain uniform bounds for the profile w0 , independently of the
+crossing in C(R0 ). Write µ := R−1 . The function w0 is the solution of the initial-value problem
+                              µ
+                  ∂y2 w0 −        ∂y w0 + λw0 = 0,       w0 (0) = 1, ∂y w0 (0) = 0.               (5.1)
+                           1 − µy
+which is the normalized Bessel equation with J1 (ρ⋆ ) = 0. On the compact parameter set
+                                                 1
+                                       0≤µ≤ ,            1 ≤ λ ≤ 4,
+                                                 2
+the coefficients of (5.1), together with all their derivatives, are uniformly bounded. Standard smooth
+dependence for ordinary differential equations therefore gives us an absolute constant C such that
+                                   sup             sup           ∂µi ∂λj ∂yk w0 ≤ C.                     (5.2)
+                                0≤i,j,k≤10       y∈[0,L]
+                                             λ∈[1,4] µ∈[0,1/2]
+
+Since R 7→ R−1 and R 7→ λ(R) have uniformly bounded derivatives up to order four on the interval
+under consideration, (5.2) implies
+                                                         a q
+                                sup      sup        sup ∂R ∂y w0 (R, y) ≤ C.                             (5.3)
+                               0≤a≤4 |R−R⋆ |<c1 y∈[0,L]
+                               0≤q≤5
+
+   The trace map v 7−→ ∂y v(0, ·) is bounded from X to Ce2,α (T). Hence, by (2.13), hv = λ(R)−1 ∂y v(0, ·)
+depends C 4 -smoothly on (R, v), with uniformly bounded derivatives on |R − R⋆ | < c1 , ∥v∥X < c2 . In
+particular,
+                                         ∥hv ∥C 2,α (T) ≤ C∥v∥X ,
+and we choose c2 > 0, independently of the crossing, sufficiently small that hv ∈ B and hence v ∈ OR
+throughout U. Together with (5.3), the formula
+                                         wv = w0 + v + χ ∂y w0 hv
+then shows that all the derivatives of wv occurring in (2.3), (2.18), (2.20) and (2.19), as well as the trace
+wv (L, ·) ∈ Ce3,α (T), depend C 4 -smoothly on (R, v) with uniformly bounded derivatives in the Hölder
+spaces used in the proof of Lemma 2.6. It remains to check that the coefficients of LhRv enjoy the same
+uniformity. Write h := hv . The coefficients (2.3) are universal rational expressions in χ, χ′ , χ′′ , in
+hv , h′v , h′′v and in the two combinations
+                  R2                       −2                         1              µ
+                          2
+                            = 1 − µ(y + χh) ,                                 =               ,          (5.4)
+             (R − y − χh)                                          R − y − χh   1 − µ(y + χh)
+which are the only places where R enters; in the variables (µ, λ, v) the expressions themselves do not
+depend on the crossing. Their denominators are powers of 1 + χ′ h and 1 − µ(y + χh), both uniformly
+bounded away from zero: 1+χ′ h ≥ 52 as in the proof of Lemma 2.6, and 1−µ(y+χh) ≥ 1−µ L+ 10       L
+                                                                                                    
+                                                                                                      ≥
+ 7               1          1
+10 because  µ ≤  2 and L <  2 . Since the Hölder spaces are Banach algebras and inversion is smooth  on
+sets uniformly separated from zero, the proof of Lemma 2.6 applies verbatim and shows that
+                           ayy , ayψ ∈ C 1,α ,         ay ∈ C 0,α ,        aψψ ∈ C 2,α ,
+and their y-derivatives in C 0,α , depend C 4 -smoothly on (R, v) ∈ U, with all derivatives of order at
+most four bounded uniformly over the crossing family. Lemma 2.6 already proves that G1 is a smooth
+                                COUNTEREXAMPLES TO SCHIFFER’S CONJECTURE                                           19
+
+Y1 -valued map. To obtain the uniform estimates, use the equivalent norm of Remark 2.2. The bulk
+terms and their y-derivatives are given by (2.3) and (2.18), while the two traces are given by (2.20) and
+(2.19). Every term in these formulas is a product of one of the coefficient factors controlled above with
+one of the controlled derivatives of wv . The Hölder product estimates and the Leibniz rule consequently
+give
+                              sup∥Dj G1 ∥Lj (R×X,Y1 ) ≤ C,        0 ≤ j ≤ 4,
+                                   U
+with C independent of the crossing.
+5.2. Proof of Proposition 4.2. LetPPk be the projection onto the k-th cosine mode, so that Pk v =
+vk (y) cos kψ, and let P>K := id − k≤K Pk . Each Pk is bounded on Cem,α uniformly in k; acting in ψ
+only, so it is bounded on X m,α , X and on Y uniformly in k. Since the coefficients of L0R⋆ depend on y
+alone and DR⋆ is a Fourier multiplier, Pk commutes with LR⋆ ; and a⋆ reads off first cosine coefficients,
+so a⋆ (v) = a⋆ (P1 v). On the k-th mode, LR⋆ v = (f, g) reads:
+           vk′    k 2 R⋆2
+vk′′ −         −          vk + λ⋆ vk = fk on [0, L],                  vk (0) = 0,     vk′ (L) + τk (R⋆ )vk (L) = gk .
+         R⋆ − y (R⋆ − y)2
+                                                                                                (5.5)
+As we saw in the proof of Lemma 3.3, the homogeneous equation
+                                                       √       above (with (fk , gk ) = 0) turns into
+Bessel’s equation of order ν = kR⋆ under the change x = λ⋆ (R⋆ − y). We consider the homogeneous
+solution Φk , with boundary conditions:
+                                            Φk (0) = 0,          Φ′k (0) = λ⋆ ,
+so that Φ1 = Φ⋆ by Lemma 3.3. Decomposing vk as a particular solution plus a homogeneous solution:
+                 vk′ (0)                      zk′    k 2 R⋆2
+    vk = zk +            Φk ,      zk′′ −         −          zk + λ⋆ zk = fk ,             zk (0) = zk′ (0) = 0.
+                   λ⋆                       R⋆ − y (R⋆ − y)2
+Now, zk and Φk solve initial value problems. Since R⋆ /(R⋆ − y) ∈ [1, 2] on [0, L], the coefficients of
+(5.5) and their first two derivatives are uniformly bounded, with bounds only depending on k.
+    Writing the equation as a first-order system and applying Grönwall on [0, L] ⊂ [0, 1] therefore bounds
+the C 3,α [0, L] norm of any solution by its data at y = 0 together with the C 1,α norm of its source, so
+that
+             ∥zk ∥C 3,α [0,L] ≤ C∥fk ∥C 1,α [0,L] , ∥Φk ∥C 3,α [0,L] ≤ Cλ⋆ ≤ C       for k ≤ k0 ,      (5.6)
+with C depending on k0 .
+    The mode is thus reduced to the single number vk′ (0), and that number is fixed by the condition at
+y = L. Inserting the decomposition into vk′ (L) + τk (R⋆ )vk (L) = gk , and using (5.6) together with the
+boundedness of τk for k ≤ k0 granted by Proposition 2.4(b),
+                |vk′ (0)| |∆k | ≤ C ∥fk ∥C 1,α + |gk | ,     ∆k := Φ′k (L) + τk (R⋆ ) Φk (L).
+                                                      
+                                                                                                       (5.7)
+                                                                               √              
+    Now, we compute ∆k . We take the auxiliary function bk (y) := JkR⋆ λ⋆ (R⋆ − y) which solves
+the same homogeneous equation as Φk but with boundary condition b′k (L) + τk (R⋆ )bk (L) = 0, with
+bk (L) ̸= 0 by the non-resonance (2.10). Multiplying the homogeneous equation by           1 − y/R⋆ puts  it
+                                                                                      y    ′          ′
+in the divergence form used in Lemma 3.4, so the weighted Wronskian 1 − R⋆ Φk bk − Φk bk is
+constant on [0, L]. At y = 0 it equals λ⋆ bk (0) = λ⋆ JkR⋆ (ρ⋆ ) because Φk (0) = 0, and at y = L it equals
+ 1 − RL⋆ bk (L) ∆k because b′k (L) = −τk (R⋆ )bk (L). Hence
+                                                 R⋆        JkR⋆ (ρ⋆ )
+                                    ∆k = λ⋆                √            .                                     (5.8)
+                                                R⋆ − L JkR⋆ λ⋆ (R⋆ − L)
+  It remains to record how the mode quantities relate to the norms of X and Y. Both summands of an
+admissible decomposition of f ∈ Y1 are C 1,α in y, so
+    ∥fk ∥C 1,α [0,L] ≤ C∥f ∥Y1 ,       |gk | ≤ C∥g∥C 2,α (T) ,     ∥Pk v∥X ≤ C(1 + k)3+α ∥vk ∥C 3,α [0,L] .    (5.9)
+Consequently, whenever |∆k | is bounded below, (5.7) controls vk′ (0), the decomposition of vk together
+with (5.6) controls ∥vk ∥C 3,α [0,L] , and (5.9) yields
+                                              ∥Pk v∥X ≤ C ∥LR⋆ v∥Y .                                          (5.10)
+20                            GONZALO CAO-LABORA AND JAUME DE DIOS PONT
+
+Now, we tackle the proof of Proposition 4.2 as follows. Step 1 proves (4.2). Steps 2–5 prove (4.1) for
+k = 0, for k = 1, for 2 ≤ k ≤ k0 , and for the block P>k0 , respectively.
+   Step 1: the splitting data. By Lemma 3.3, Φ⋆ (0) = 0 and Φ′⋆ (0) = λ⋆ , so (5.6) gives ∥Φ⋆ ∥C 3,α [0,L] ≤
+C. Moreover R⋆2 /(R⋆ − y)2 ∈ [1, λ⋆ ] on [0, L], since R⋆ ≥ 100L, so the mode-one equation gives
+                ′|
+|Φ′′⋆ | ≤ R|Φ
+            ⋆ −L
+                ⋆
+                    + (λ⋆ − 1)|Φ⋆ |; inserting |Φ′⋆ | ≤ λ⋆ + M y and |Φ⋆ | ≤ λ⋆ y + 21 M y 2 , with M :=
+sup[0,L] |Φ′′⋆ |, and using L < 12 yields 12 M L ≤ λ⋆ − 1. Taylor’s formula then gives Φ⋆ (y) ≥ λ⋆ −
+1
+        
+2 M L y ≥ y on [0, L], whence the common denominator of a⋆ and ℓ⋆ in (3.16) and (3.18) obeys
+                                         Z L
+                                                      y  2      L3
+                                               1−        Φ⋆ dy ≥    .                                 (5.11)
+                                          0          R⋆           6
+Since ξ⋆ = Φ⋆ cos ψ and η⋆ = (Φ⋆ cos ψ, 0), (5.9) and Remark 2.2 bound ∥ξ⋆ ∥X +∥η⋆ ∥Y by C∥Φ⋆ ∥C 3,α [0,L] ≤
+C, while (5.11) together with (3.16) and (3.18) give
+                           Z L
+              6                                        C                                             C
+|ℓ⋆ (f, g)| ≤ 3 ∥Φ⋆ ∥L∞         |f1 | dy+|Φ⋆ (L)||g1 | ≤ 3 ∥(f, g)∥Y ,        |a⋆ (v)| = |ℓ⋆ (v, 0)| ≤ 3 ∥v∥X .
+             L               0                          L                                             L
+As L is a fixed constant, this is (4.2).
+   Step 2: the mode k = 0. The background profile w0 of (2.12) solves the homogeneous mode-
+0 equation with w0 (0) = 1 and ∂y w0 (0) = 0, the latter because J1 (ρ⋆ ) = 0; so the Grönwall
+bound√ preceding (5.6), applied with data (1, 0) and zero source, gives |w0 (L)| ≤ C. Since w0 (L) =
+J0 λ⋆ (R⋆ − L) /J0 (ρ⋆ ), identity (5.8) reads ∆0 = λ⋆ RR           1
+                                                              ⋆
+                                                             ⋆ −L w0 (L)
+                                                                         , whence |∆0 | ≥ 2/C and (5.10)
+holds for k = 0.
+   Step 3: the mode k = 1. By Definition 2.1 we have JR⋆ (ρ⋆ ) = 0, so ∆1 = 0 by (5.8) and (5.7) is
+empty: this mode is the degenerate one, and v1′ (0) is fixed instead by the constraint a⋆ (v) = 0. Since
+Φ1 = Φ⋆ and a⋆ (Φ⋆ cos ψ) = 1 by (3.18), applying a⋆ to the decomposition of v1 gives
+                                       v1′ (0)
+      0 = a⋆ (P1 v) = a⋆ (z1 cos ψ) +          ,   so      |v1′ (0)| ≤ 3|a⋆ (z1 cos ψ)| ≤ C∥f1 ∥C 1,α ,
+                                         λ⋆
+by (5.11), (5.6) and (5.9).We therefore obtain (5.10) for k√= 1.                     √
+   Step 4: the modes 2 ≤ k ≤ k0 . Since λ⋆ < 4 we have λ⋆ (R⋆ − L) < ρ⋆ = λ⋆ R⋆ < 2R⋆ ≤ kR⋆
+for k ≥ 2, so both arguments of the quotient in (5.8) lie below the order ν := kR⋆ . There Jν is positive
+and increasing: it is positive and increasing near 0, and (xJν′ )′ = (ν 2 /x − x)Jν is positive on (0, ν)
+wherever Jν is, so neither can vanish first. Hence the quotient in (5.8) exceeds 1 and ∆k ≥ λ⋆ ≥ 2, and
+(5.10) follows.
+   Step 5: the modes k > k0 . We treat the high modes simultaneously, by regarding LR⋆ as a perturbation
+of the harmonic operator L0R⋆ .
+   We use the following Littlewood-Paley estimates If K ≥ 1 and P>K w = w, then
+                              C                                          C
+               ∥w∥C 1,α (C) ≤ ∥w∥C 2,α (C) ,      ∥w(L, ·)∥C 1,α (T) ≤ 2 ∥w(L, ·)∥C 3,α (T) .          (5.12)
+                              K                                          K
+Such estimates are immediate in Besov spaces, so they follow immediately from the identification
+C k,α ∼    k+α (see [36, (2.2.2/18) and Theorem 2.5.7(ii)]).
+      = B∞,∞
+   Now let w ∈ P>K X. Since
+                               LR⋆ − L0R⋆ = λ⋆ id, (DR⋆ − DR       0
+                                                                           
+                                                                      )|
+                                                                     ⋆ y=L
+                                                                             ,
+the definition of the sum norm in Y1 , the boundedness of λ⋆ , and (5.12) give
+                                                               C
+                                ∥λ⋆ w∥Y1 ≤ C∥w∥C 1,α (C) ≤ ∥w∥X .
+                                                               K
+Moreover, Proposition 2.4(b), with n = 0 and s = 1, gives
+                           0
+                  ∥(DR⋆ − DR ⋆
+                               )w(L, ·)∥C 2,α (T) ≤ C∥w(L, ·)∥C 1,α (T)
+                                                     C                     C
+                                                  ≤ 2 ∥w(L, ·)∥C 3,α (T) ≤ 2 ∥w∥X .
+                                                    K                     K
+Consequently,
+                                                    C
+                           ∥(LR⋆ − L0R⋆ )w∥Y ≤        ∥w∥X ,       w ∈ P>K X,                         (5.13)
+                                                    K
+                               COUNTEREXAMPLES TO SCHIFFER’S CONJECTURE                                         21
+
+where C is independent of the crossing.
+  Apply the uniform harmonic estimate (3.4) to w = P>K v. Using (5.13), we obtain
+                           ∥P>K v∥X ≤ C0 ∥L0R⋆ P>K v∥Y
+                                                             C0 C
+                                      ≤ C0 ∥LR⋆ P>K v∥Y +         ∥P>K v∥X .
+                                                              K
+Taking k0 ≥ 2C0 C, we can absorb the last term in the left-hand side and conclude that
+                                    ∥P>k0 v∥X ≤ 2C0 ∥LR⋆ P>k0 v∥Y .
+Since P>k0 commutes with LR⋆ and is bounded on Y with a constant depending only on the now fixed
+k0 , it follows that
+                                   ∥P>k0 v∥X ≤ C∥LR⋆ v∥Y .                                (5.14)
+This proves the required estimate for the high-frequency block.
+  Conclusion Finally, let v ∈ ker a⋆ , so that a⋆ (P1 v) = 0. Since each Pk commutes with LR⋆ and is
+bounded on Y uniformly in k, Steps 2–5 give
+                                                k0
+                                                X
+                 ∥v∥X ≤ ∥P0 v∥X + ∥P1 v∥X +           ∥Pk v∥X + ∥P>k0 v∥X ≤ C∥LR⋆ v∥Y ,
+                                                k=2
+
+which is (4.1)
+
+5.3. Proof of Proposition 4.3. In order to prove Proposition 4.3 we first compute the corresponding
+term ℓ⋆ ∂R LR |R=R⋆ [Φ⋆ cos ψ] in terms of Bessel function quantities and then provide bounds on those
+quantities.
+Proposition 5.1. For every crossing (ρ⋆ , R⋆ , λ⋆ ) ∈ C(R0 ),
+                                                                  3/2
+                                                        λ⋆ ∂ν jν,m ν=R⋆
+                        ℓ⋆ ∂R LR |R=R⋆ [Φ⋆ cos ψ] = − R L     y 
+                                                                              .                            (5.15)
+                                                          1 −     Φ   (y)2 dy
+                                                       0      R ⋆
+                                                                    ⋆
+
+Proof. We define
+                                               √
+                                                   λ⋆        p            
+                               Φ(y, R) := −             JR    λ(R) (R − y) ,
+                                              JR′ ⋆ (ρ)
+so that Φ(·, R⋆ ) = Φ⋆ by Lemma 3.3. We also note JR′ ⋆ (ρ) ̸= 0 since ρ is zero of JR⋆ (and zeros of
+Bessel functions are simple).
+   The family Φ is smooth on [0, L] × I. Φ solves the Bessel equation:
+           1          R2
+ ∂y2 Φ−       ∂y Φ−          Φ+λ(R) Φ = 0 on [0, L],                    ∂y Φ(L, R)+τ1 (R) Φ(L, R) = 0, (5.16)
+          R−y       (R − y)2
+In contrast, LR [Φ⋆ cos ψ] = (f1 cos ψ, g1 cos ψ) with f1 , g1 given by
+             1            R2
+ ∂y2 Φ⋆ −       ∂y Φ⋆ −          Φ⋆ + λ(R) Φ⋆ = f1                ∂y Φ⋆ (L, R) + τ1 (R) Φ⋆ (L, R) = g1 , (5.17)
+            R−y         (R − y)2
+Taking derivatives on (5.16) with respect to R, denoting ∂R Φ = Φ̇, and evaluating at R = R⋆ , we obtain
+            1             R⋆2
+ Φ̇′′ −          Φ̇′ −           Φ̇ + λ⋆ Φ̇ = −f˙1 on [0, L],             Φ̇′ (L) + τ1 (R⋆ ) Φ̇(L) = −ġ1 . (5.18)
+          R⋆ − y       (R⋆ − y)2
+By the definition (3.16) of ℓ⋆ , our desired quantity is given in terms of f1 , g1 as:
+                                              Z L
+                                                    1 − Ry⋆ Φ⋆ f˙1 dy − 1 − RL⋆ Φ⋆ (L) ġ1
+                                                                                   
+
+             ℓ⋆ ∂R LR |R=R⋆ [Φ⋆ cos ψ] = 0
+                                          
+                                                            Z L                            ,               (5.19)
+                                                                  1 − Ry⋆ Φ2⋆ dy
+                                                                         
+                                                              0
+22                              GONZALO CAO-LABORA AND JAUME DE DIOS PONT
+
+    We compute the numerator of (5.19) by Wronskian                       Lemma3.4.
+                                                       computationas in         ′ Multiplying the
+first equation of (5.18) by 1 − y/R⋆ , using 1 − Ry⋆ u′′ − R⋆1−y u′ = 1 − Ry⋆ u′ , and subtracting
+Φ̇ times the equation for Φ⋆ , the zeroth-order terms cancel and
+                      h          i′       h         i′      h                     i′
+  − 1 − Ry⋆ Φ⋆ f˙1 = 1 − Ry⋆ Φ̇′ Φ⋆ − 1 − Ry⋆ Φ′⋆ Φ̇ = 1 − Ry⋆ Φ̇′ Φ⋆ − Φ̇ Φ′⋆ . (5.20)
+
+At y = L the boundary conditions of (5.16) and (5.18) give
+             Φ̇′ Φ⋆ − Φ̇ Φ′⋆ = Φ̇′ + τ1 (R⋆ )Φ̇ Φ⋆ − Φ̇ Φ′⋆ + τ1 (R⋆ )Φ⋆ = −ġ1 Φ⋆ (L),
+                                                                       
+
+while at y = 0, using Φ⋆ (0) = 0 and Φ′⋆ (0) = λ⋆ , we have Φ̇′ Φ⋆ − Φ̇ Φ′⋆ = 0.
+  Integrating (5.20) over (0, L) therefore yields
+                      Z L                               
+                            1 − Ry⋆ Φ⋆ f˙1 dy = 1 − RL⋆ Φ⋆ (L) ġ1 − λ⋆ Φ̇(0),
+                         0
+Substituting in (5.19), the ġ1 terms cancel, and we obtain
+                                                            −λ⋆ Φ̇(0)
+                             ℓ⋆ ∂R LR |R=R⋆ [Φ⋆ cos ψ] = Z L              ,                         (5.21)
+                                                                  y  2
+                                                             1 − R⋆ Φ⋆ dy
+                                                              0
+
+   It remains to identify Φ̇(0). As Jν (x) is entire in ν and JR′ ⋆ (ρ) ̸= 0, the implicit function theo-
+rem provides a smooth branch ν 7→ jν,m of zeros near ν = R⋆ with jR⋆ ,m = ρ, and differentiating
+Jν (jν,m ) = 0 at ν = R⋆ gives ∂ν Jν (ρ) = −JR′ ⋆ (ρ) ∂ν jν,m . Taking a ∂R derivative on the definition of
+Φ(0, R):
+                                    √
+                                       λ⋆                      p
+                         Φ̇(0) = − ′       ∂ν Jν (ρ) ν=R⋆ = λ⋆ ∂ν jν,m ν=R⋆ ,
+                                   JR⋆ (ρ)
+and combined with (5.21), the statement follows.                                                        □
+
+   Now the proof of Proposition 4.3 is immediate from (5.15). λ⋆ ∈ [2, 3] by assumption of crossing,
+∂ν jν,m |ν=R⋆ is uniformly bounded from below due to Lemma 7.1. Regarding the denominator of (5.15),
+we notice that (5.6) yields a lower bound independent of R ≥ R0 .
+
+5.4. Existence of near-integer crossings (Proposition 4.5). The key estimate to show Proposition 4.5
+is an asymptotic estimate for JR (ρ) which follows from a routine substitution in the Debye asymptotics
+for Bessel functions. The proof of Lemma 5.2 is deferred to Section 7, which is devoted to Debye
+asymptotics.
+Lemma 5.2. Fix λ0 ∈ [2, 3], and define
+                                                       q
+                                  −1/2                           −1/2         −1/2 
+                  θ0 := arccos λ0          ,   ω0 :=    1 − λ−1
+                                                             0 − λ0    arccos λ0      .
+Then, uniformly for t in compact subsets of R as ρ → ∞,
+                   q             1/2
+                    π         −1
+                                                                         π
+                      ρ 1 − λ0         Jλ−1/2 ρ+t (ρ) = cos ω0 ρ − θ0 t −    + o(1).                (5.22)
+                    2                     0                               4
+     Proposition 4.5 follows readily from Lemma 5.2.
+
+Proof of Proposition 4.5. Assume without loss of generality that 0 < ε < 1/2, and fix λ0 ∈ (2, 3) such
+that
+                                            π              π
+                                               =              −1/2
+                                            θ0    arccos(λ0 )
+is irrational. By irrationality, we can choose T ∈ N such that
+                                                                
+                                                 π            π
+                                               0, , . . . , T
+                                                 θ0           θ0
+                                 COUNTEREXAMPLES TO SCHIFFER’S CONJECTURE                                     23
+
+is ε/6-dense modulo 1. Let ρ⋆ be anysufficiently large positive zero of J1 . Let t1 , . . . , tT be the first T
+positive zeros of cos ω0 ρ⋆ − θ0 t − π4 . By the choice of T , there exists k ∈ {0, . . . , T } such that
+                                      n              o  ε 2ε 
+                                         −1/2
+                                        λ0 ρ⋆ + t̄k ∈          ,     .
+                                                            3 3
+   All the numbers t̄k lie in a fixed compact interval independent of ρ⋆ . Since the zeros of the cosine are
+simple, Lemma 5.2 implies that for ρ⋆ sufficiently large there exists t⋆ such that
+                                             ε
+                                |t⋆ − t̄k | < , and Jλ−1/2 ρ +t (ρ⋆ ) = 0.
+                                             6            0    ⋆ ⋆
+
+   Set
+                                    −1/2                     ρ2
+                          R⋆ := λ0 ρ⋆ + t⋆ ,         λ⋆ := ⋆2 = λ0 + O(ρ−1 ).
+                                                            R⋆
+Then, for ρ large enough, the four conditions hold
+             J1 (ρ⋆ ) = 0,       JR⋆ (ρ⋆ ) = 0,         λ⋆ ∈ [2, 3],     and   0 < R⋆ − ⌊R⋆ ⌋ < ε.
+                                                                                                              □
+Remark 5.3. The argument shows that these crossings are not rare: one exists for every sufficiently
+large positive zero of J1 , and hence for every radial Neumann mode of sufficiently large index.
+5.5. Proof of the R′′ (0) formula.
+                                    
+Proof of (4.3). Since G R(s), v(s) = 0 for every s, and G(·, 0) vanishes identically by (2.15), we may
+differentiate this equality and evaluate at s = 0. First differentiation yields LR⋆ v ′ (0) = 0, which we
+know since v ′ (0) = ξ⋆ ∈ ker LR⋆ . Second differentiation yields:
+                             LR⋆ v ′′ (0) + Dv2 G(R⋆ , 0)[ξ⋆ , ξ⋆ ] + 2R′ (0) L̇ξ⋆ = 0.                  (5.23)
+By the half-turn equivariance of Remark 2.5, Dv2 G(R⋆ , 0)[ξ⋆ , ξ⋆ ] is fixed by the half-turn and hence
+contains only even Fourier modes. It is annihilated by ℓ⋆ , since ℓ⋆ only depends on the first Fourier
+mode. We also recall ker ℓ⋆ = ran LR⋆ . Thus, taking ℓ⋆ on (5.23) gives
+                                  2R′ (0) ℓ⋆ (L̇ξ⋆ ) = 0         =⇒    R′ (0) = 0,                       (5.24)
+where we used the transversality of Proposition 4.3 to ensure ℓ⋆ (L̇ξ⋆ ) ̸= 0.
+  As a consequence, (5.23) yields:
+                        LR⋆ v ′′ (0) + Dv2 G(R⋆ , 0)[ξ⋆ , ξ⋆ ] = 0,        a⋆ (v ′′ (0)) = 0,            (5.25)
+where the second condition comes just from differentiating a⋆ (v(s)) = s. These two conditions de-
+termine v ′′ (0) uniquely, since LR⋆ maps ker a⋆ isomorphically onto ker ℓ⋆ = ran LR⋆ by Lemmas 3.3
+and 3.4.
+   Differentiating the branch equation a third time, using (5.24), and then applying ℓ⋆ , we obtain
+                                                                                                     
+                3R′′ (0) ℓ⋆ (L̇ξ⋆ ) = −ℓ⋆ Dv3 G(R⋆ , 0)[ξ⋆ , ξ⋆ , ξ⋆ ] + 3Dv2 G(R⋆ , 0)[v ′′ (0), ξ⋆ ] . (5.26)
+
+   The left-hand side ℓ⋆ (L̇ξ⋆ ) is computed in Proposition 5.1, so we focus on the right-hand side, which
+will be the main computation of this proof.
+   To compute the right-hand side of (5.26) we define a second-order approximation of the Schiffer
+solution in physical space and we show that the right-hand side is the same, meaning that only second
+order terms of v will matter to compute it.
+   Concretely, take
+                   √                           √                                        √
+               J0 ( λ⋆ r)                         λ⋆       p                      J2R⋆ ( λ⋆ r)
+     u0 (r) :=             ,       u1 (r) := − ′       JR ( λ⋆ r),       e(r) :=               .     (5.27)
+                 J0 (ρ⋆ )                     JR⋆ (ρ⋆ ) ⋆                           J2R⋆ (ρ⋆ )
+and define
+                                                               e′ (R⋆ )
+                                                                              
+                                             2        1  1
+                      bs := s cos(ψ) + s                 +   +            cos(2ψ) ,                      (5.28)
+                                                     4R⋆4R⋆        4
+                                                          λ⋆
+                    Us (r, ψ) := u0 (r) + su1 (r) cos ψ − s2 u0 (r) + e(r) cos 2ψ .
+                                                                                    
+                                                                                                         (5.29)
+                                                           4
+24                               GONZALO CAO-LABORA AND JAUME DE DIOS PONT
+
+The motivation for Us and bs comes from doing a second-order approximation of the Schiffer problem
+(with Us being the eigenfunction and bs defining the domain). One can readily see that this is the case
+up to first order since the boundary is being perturbed linearly by cos ψ and the Neumann eigenfunction
+u0 (r) is being perturbed by the Driichlet one u1 (r) cos ψ. We will see below how the second order terms
+generate an extra level of cancellation.
+   The denominators of (5.27) are non-zero due to (2.11) (and for JR′ ⋆ (ρ⋆ ) ̸= 0, because the positive
+zeros of JR⋆ are simple). Notice also w0 (y) = u0 (R⋆ − y) and Φ⋆ (y) = u1 (R⋆ − y). Their radial
+equations and normalizations give
+                                                                                  λ⋆
+                            u′0 (R⋆ ) = 0,     u′′0 (R⋆ ) = −λ⋆ ,    u′′′
+                                                                      0 (R⋆ ) =      ,
+                                                                                  R⋆
+                                                                                  λ⋆
+                            u1 (R⋆ ) = 0,     u′1 (R⋆ ) = −λ⋆ ,      u′′1 (R⋆ ) =    ,                     (5.30)
+                                                                                  R⋆
+                                                                    J ′ (ρ⋆ )
+                                  e(R⋆ ) = 1,       R⋆ e′ (R⋆ ) = ρ⋆ 2R⋆        .
+                                                                    J2R⋆ (ρ⋆ )
+     We then define Ws from Us and bs motivated by our by our mapping v → (wv , hv ) as
+                                                                     
+                              Ws (y, ψ) := Us R⋆ − y − χ(y)bs (ψ), ψ .                                     (5.31)
+The function Us is a finite sum of the modes 0, 1, 2 solving
+                                                 R2
+                                                            
+                                         1
+                                    ∂r2 + ∂r + 2⋆ ∂ψ2 + λ⋆ Us = 0,
+                                         r       r
+A direct substitution in (2.3) therefore gives
+                                     bs
+                                   (LR ⋆
+                                         + λ⋆ )Ws = 0,         NR⋆ (Ws ) = 0,                              (5.32)
+with the second equation following from χ = 0 in a neighbourhood of y = L and each mode of Us
+being a regular J-Bessel function appearing in the definition of DR⋆ .
+   This is however not an exact solution of Schiffer since it does not satisfy the appropriate boundary
+conditions Ws (0, ·) = 1 and ∂y Ws (0, ·) = 0. We define
+      Es := Ws (0, ·) − 1 = Us (R⋆ − bs , ·) − 1,         Fs := ∂y Ws (0, ·) = −∂r Us (R⋆ − bs , ·).       (5.33)
+and compute them by expanding Us at r = R⋆ :
+             3                                                       2
+             X (−bs )j                                               X (−bs )j
+      Es =               ∂rj Us (R⋆ , ·) − 1 + O(s4 ),      Fs = −                ∂rj+1 Us (R⋆ , ·) + O(s3 ),
+                   j!                                                      j!
+             j=0                                                     j=0
+
+By (5.29) and (5.30),
+                         λ⋆ 2                                                     λ⋆ e′ (R⋆ ) 2
+        Us (R⋆ , ·) = 1 −    s 1 + cos 2ψ ,      ∂r Us (R⋆ , ·) = −λ⋆ s cos ψ −               s cos 2ψ,
+                          4                                                             4
+                                      λ⋆                                           λ⋆
+             ∂r2 Us (R⋆ , ·) = −λ⋆ +     s cos ψ + O(s2 ),       ∂r3 Us (R⋆ , ·) =     + O(s).
+                                     R⋆                                            R⋆
+Using 2 cos2 ψ = 1 + cos 2ψ and the choice of the second-order coefficient in (5.28), this becomes
+                              ′
+                                                               
+                     3 λ⋆ e (R⋆ )                  λ⋆
+            Es = s                cos ψ cos 2ψ +            3
+                                                        cos ψ + O(s4 ),            Fs = O(s3 ).        (5.34)
+                               4                  3R⋆
+In particular, both defects vanish through second order. This motivates the second order terms we chose
+in (5.28)–(5.29).
+   Now that we have a solution of our problem with order three erors at the boundary, we now correct it
+into a true element of X that satisfies G(R⋆ , Vs ) = O(s3 ).
+   We set
+                                 Qs (y, ψ) := χ(y)Es (ψ) + yχ(y)Fs (ψ),                          (5.35)
+and, motivated by (2.13), we define
+                                       Vs = Ws − Qs − w0 − χ∂y w0 bs .                                     (5.36)
+                               COUNTEREXAMPLES TO SCHIFFER’S CONJECTURE                                    25
+
+  By (5.34), ∥Qs ∥X 2,α = O(s3 ), while Qs (0, ·) = Es , ∂y Qs (0, ·) = Fs and Qs vanishes near y = L.
+As a consequence, we have that
+                              Vs ∈ X,           hVs = bs ,       wVs = Ws − Qs .                      (5.37)
+  Therefore,
+                                                                             
+                 bs                                             bs
+ G(R⋆ , Vs ) = (LR ⋆
+                     + λ ⋆ )(W s − Q s ), NR⋆ (Ws − Q s ) =  −(LR⋆ + λ ⋆ )Qs , 0  = OY (s3 ). (5.38)
+
+where we used (5.32) and NR⋆ (Qs ) = 0 since χ (and therefore Qs ) is zero in a neighbourhood of y = L.
+   Now, we argue that Vs and v(s) agree up to second order. It is obvious that V0′ = ξ⋆ = v ′ (0). In order
+to show the equality at second order, recall that v ′′ (0) was determined in (5.25) by differentiating twice
+the equation G(R(s), v(s)) = 0. If we differentiate twice G(R⋆ , Vs ) = OY (s3 ) and evaluate at s = 0,
+we obtain the same equation:
+                                  LR⋆ V0′′ + Dv2 G(R⋆ , 0)[ξ⋆ , ξ⋆ ] = 0.
+In order to conclude v ′′ (0) = V0′′ we just need to argue a⋆ (V0′′ ) = 0 and this follows immediately from
+the symmetry of Remark 2.5. Indeed, notice that ςVs = V−s , forcing V0′′ to have only even Fourier
+modes. Since a⋆ depends only on the first Fourier mode, a⋆ (V0′′ ) = 0 and we conclude that v ′ (0) = V0′
+and v ′′ (0) = V0′′ .
+   Now, we observe that the third derivative of G(R⋆ , Vs ) yields the right hand side of (5.26) (indeed, all
+the terms are analogous as with the third derivative of G(R(s), Vs ) except for the one involving R′′ (0)).
+Therefore, we conclude from (5.26):
+                                 3                           3                            
+            ′′                      d                            d           bs
+        3R (0) ℓ⋆ (L̇ξ⋆ ) = −ℓ⋆            G(R⋆ , Vs ) = ℓ⋆               ((LR⋆ + λ⋆ )Qs , 0) ,       (5.39)
+                                   ds3 s=0                      ds3 s=0
+where the last equality is (5.38).
+   Since ∥Qs ∥X 2,α = O(s3 ), the right hand side of (5.39) is only non-zero when the three derivatives
+fall on Qs , that is
+         d3
+                 ((LbRs⋆ + λ⋆ )Qs , 0) = ((LbR0⋆ + λ⋆ )(χ(y)∂s3 |s=s0 E + yχ(y)∂s3 |s=0 F, 0)         (5.40)
+         ds3 s=0
+Now, regarding the F part, we notice that yχ(y)∂s3 |s=0 F ∈ X , when we apply ℓ⋆ , that part contributes
+ℓ⋆ (LR⋆ (yχ(y)∂s3 |s=0 F)) = 0 given that ker ℓ⋆ = ran LR⋆ . In contrast χ(y)E does not lie in X (while it
+is in X 2,α , it is not zero at y = 0).
+    Thus, from (5.40) and (5.34), we obtain
+                                                  λ⋆ e′ (R⋆ )
+                                                                                     
+    1 ′′                           b0                                         λ⋆    3
+      R (0) ℓ⋆ (L̇ξ⋆ ) = ℓ⋆ (LR⋆ + λ⋆ ) χ(y)                  cos ψ cos 2ψ +     cos ψ , 0         (5.41)
+    2                                                  4                     3R⋆
+  Now, we recall that ℓ⋆ depends just on the first Fourier mode, and that (L0R⋆ + λ⋆ ) diagonalizes in
+                                                                   2
+Fourier, with first mode operator L̃ = ∂y2 − R⋆1−y ∂y − (R⋆R−y)
+                                                            ⋆
+                                                               2 + λ⋆ . Since cos ψ cos(2ψ) has a mode
+
+of amplitude 12 on frequencies cos ψ and cos3 ψ of amplitude 43 , we conclude that
+                                                       λ⋆ e′ (R⋆ )
+                                                                                
+                    1 ′′                                              λ⋆
+                      R (0) ℓ⋆ (L̇ξ⋆ ) = ℓ⋆ L̃[χ(y)]               +       cos ψ, 0 .                 (5.42)
+                    2                                       8        4R⋆
+  By the definition of ℓ⋆ ,
+                                                                              
+                                                                R L 1 − y Φ (y)L̃χ(y) dy
+                                           λ⋆ e′ (R⋆ )
+                                       
+                1 ′′                                        λ⋆    0         R⋆    ⋆
+                  R (0) ℓ⋆ (L̇ξ⋆ ) =                     +                                          (5.43)
+                2                              8           4R⋆      R L
+                                                                          1 − Ry⋆ Φ⋆ (y)2 dy
+                                                                     0
+
+Since L̃Φ⋆ = 0 integration by parts gives
+                                                                    L
+                  Z L                                          
+                             y                     y     ′       ′
+                        1−        Φ⋆ L̃χ dy =   1−      χ Φ⋆ − χΦ⋆      = λ⋆ ,
+                   0         R⋆                    R⋆                 0
+26                               GONZALO CAO-LABORA AND JAUME DE DIOS PONT
+
+where the contribution at y = L vanishes because of χ and the contribution at y = 0 yields λ⋆ since
+Φ⋆ (0) = 0 and Φ′⋆ (0) = λ⋆ . Plugging this into (5.43) and using (5.30), we obtain
+                                               ′
+                                    λ⋆ ρ⋆ /R⋆ J2R    (ρ⋆ )
+                                                                 
+             1 ′′                                 ⋆
+                                                              λ⋆              λ⋆
+               R (0) ℓ⋆ (L̇ξ⋆ ) =                          +                                (5.44)
+             2                           8J2R⋆ (ρ⋆ )         4R⋆   R L
+                                                                         1 − y
+                                                                                  Φ   (y)2 dy
+                                                                    0        R⋆     ⋆
+
+     We substitute ℓ⋆ (L̇ξ⋆ ) by its formula from Proposition 5.1, obtaining
+                                                                           ′
+                                                            λ2⋆          J2R   (ρ⋆ )
+                                                                                    
+                             1 ′′       3/2                                  ⋆
+                          − R (0)λ⋆ ∂ν jν,m |ν=R⋆ =               2 + ρ⋆               .
+                             2                             8R⋆           J2R⋆ (ρ⋆ )
+     Together with (5.24), this proves (4.3).
+     The asymptotic formula is proved in Proposition 7.2.                                               □
+
+                      6. L INEAR SYMBOL ESTIMATES : P ROOF OF P ROPOSITION 2.4
+   This section shows 2.4. Each of the Propositions 6.1, 6.3 and 6.4 corresponds to parts (a) (b) and (c)
+of Proposition 2.4 respectively. The steps that are consequence of analyzing the Debye asymptotics for
+Bessel functions are deferred to Section 7.
+
+  Through this section, 0 < δ < L < 21 , are taken to be small enough constants and R0 > 0 is a large
+enough constant. Throughout, let R ≥ R0 and ρ > 0 satisfy the crossing conditions
+                                                                ρ2
+                                    J1 (ρ) = JR (ρ) = 0,           ∈ [2, 3],
+                                                                R2
+and set
+                                                                           ρ2
+                                    IR := [R − δ, R + δ],        λ(r) :=      .
+                                                                           r2
+Proposition 6.1 (Uniform non-resonance). For every r ∈ IR ,
+                     p             
+                 Jkr   λ(r) (r − L) ̸= 0                    for every k ∈ N0 ,                       (6.1)
+                                    Jkr (ρ) ̸= 0                   for every k ∈ N0 \ {1}.           (6.2)
+Moreover, Jr (ρ) = 0 ⇐⇒ r = R for r ∈ IR .
+   The proof of Proposition 6.1 is deferred to Section 7, and is based on careful Debye asymptotics. At
+an informal level, the three ranges k = 0, k = 1, and k ≥ 2 have rather different behavior and have
+to be separated. For k ≥ 2, both at the inner and outer circles, the ratio of the argument of the Bessel
+function to its order satisfies
+                                  p                  p           √
+                                     λ(r) (r − L)       λ(r)       3
+                                                   <          ≤      < 1.
+                                         kr              k        2
+In particular, the modes lie uniformly below the turning point, and the Bessel functions behave as expo-
+nentials. In particular, they do not vanish. For κ = 0, 1 we are instead well above the turning point, and
+Jkr behaves like a sinusoidal wave. The bifurcation boundary conditions then determine the phase, and
+thus explain the precise vanishing for k = 0 at (6.2).
+
+     By Proposition 6.1, for r ∈ IR and k ∈ N0 we may define
+                                    ′
+                                       p             
+                           p      Jkr    λ(r) (r − L)                           r
+                 τk (r) := λ(r)        p             ,    mk (r) := τk (r) −       k.
+                                  Jkr    λ(r) (r − L)                         r − L
+Proposition 6.2 (Uniform symbol estimates). For k = 0, 1 we have the estimates
+                                     |∂rn mk (r)| ≤ Cn ,      n = 0, 1, . . .
+For real κ ≥ 2, the generalization of mκ (r) to
+                                              ′
+                                                 p            
+                                       p     Jκr  λ(r) (r − L)    r
+                             m(κ, r) := λ(r)     p            −     κ
+                                             Jκr  λ(r) (r − L)   r−L
+                                 COUNTEREXAMPLES TO SCHIFFER’S CONJECTURE                                27
+
+is well defined and smooth for κ ≥ 2 and r ∈ IR , and
+                                                           Cn
+                                    |∂rn ∂κq m(κ, r)| ≤        ,     0 ≤ n, q.                        (6.3)
+                                                          κ1+q
+   The derivatives with respect to k are not needed per se in the proof (since only mk (r) for integer k is
+used) instead, symbol estimates require discrete differences in k, which will be computed by integrating
+these derivatives in k.x
+   The proof of Proposition 6.2 is deferred again to Section 7. However, the Proposition can be again
+understood by similar arguments
+                            √       to Proposition 6.1. For k ≥ 2, again below the turning point, one
+expects the function Jκr ( λ(r − L)) to behave like an exponential of parameter proportional to k,
+                                                                    ′
+and therefore the logarithmic derivative to be roughly constant JJ and poportional to κ. The functions
+mκ quantify precisely how far is τκ from being the constant κ, uniformly in R. The case k = 0, 1 is
+dealt with explicitly, with a simpler proof since no gain in k is required. Proposition 6.2 has two direct
+applications:
+Proposition 6.3 (Smoothing of the Helmholtz correction). For 0 ≤ n ≤ 4 and r ∈ IR , let Mn,r be the
+even Fourier multiplier with symbol ∂rn mk (r), namely
+                               "∞               #     ∞
+                                X                    X
+                         Mn,r      ak cos(kψ) :=        ∂rn mk (r) ak cos(kψ).
+                                    k=0                     k=0
+
+Then, for every s ∈ {0, 1, 2, 3},
+                         sup ∥Mn,r ∥L(Ces,α (T),Ces+1,α (T)) ≤ C,            0 ≤ n ≤ 4,               (6.4)
+                         r∈IR
+
+where C is independent of the crossing (R, ρ).
+Proof. Proposition 6.2 shows that mk is a Fourier multiplier of order κ−1 . One can compute, for k ≥ 2,
+the q−th discrete difference by integration
+                                    Z
+                        q (n)
+                      ∆k mk (r) =          ∂κq ∂rn m(k + t1 + · · · + tq , r) dt1 · · · dtq ,
+                                          [0,1]q
+
+and consequently, from the estimates in Proposition 6.2 we obtain
+                                       (n)             C
+                                |∆qk mk (r)| ≤                ,          q = 0, 1, 2.                 (6.5)
+                                                   (1 + k)1+q
+The k = 0, 1 terms are finitely many and uniformly bounded. In particular, the diference bounds hold
+for k = 0, 1 as well. This implies that the multiplier mk is a bounded multiplier
+                                             C s,α (T) −→ C s+1,α (T).
+                                      s and therefore it follows for our case due to the norm equivalence
+That fact is evident in Besov spaces Bp,q
+   ′
+B∞,∞ ∼
+ s           s,α      ′
+       = C for s = s + α (see [36, (2.2.2/18) and Theorem 2.5.7(ii)]).                                 □
+Proposition 6.4 (Smooth dependence of the Dirichlet-to-Neumann map). For r ∈ IR , let Dr be the even
+Fourier multiplier defined by
+                            Dr [cos(kψ)] = τk (r) cos(kψ),                  k ∈ N0 .
+                                                      
+Then r 7→ Dr belongs to C 4 IR ; L Ce3,α (T), Ce2,α (T) , and
+
+                          sup ∥∂rn Dr ∥L(Ce3,α (T),Ce2,α (T)) ≤ C,           0 ≤ n ≤ 4.               (6.6)
+                          r∈IR
+
+Proof. Set I := [R − δ, R + δ] and introduce the weighted symbol space
+                                                                      
+                                                       X |ak |        
+                         S := a = (ak )k≥0 : ∥a∥S :=               <∞ .
+                                                           1+k        
+                                                                   k≥0
+28                              GONZALO CAO-LABORA AND JAUME DE DIOS PONT
+
+For a ∈ S, let Op(a) denote the corresponding cosine multiplier:
+                                                
+                                   X                  X
+                          Op(a)       fk cos(kψ) :=      ak fk cos(kψ).
+                                           k≥0                k≥0
+
+The map Op : S −→ L Ce3,α (T), Ce2,α (T) is bounded. Indeed, the standard Fourier estimates
+                                        
+
+                                       |fk | ≤ C(1 + k)−3−α ∥f ∥C 3,α (T)
+and                            X                          X
+                              ∥  gk cos(kψ)∥C 2,α (T) ≤ C  (1 + k)2+α |gk |
+                               k≥0                            k≥0
+give
+                                  ∥Op(a)f ∥C 2,α (T) ≤ C∥a∥S ∥f ∥C 3,α (T) .
+     For 0 ≤ n ≤ 4, Proposition 6.2 yields
+                              (n)
+                                                   X
+                                                      (1 + k)−2 ≤ C,
+                                    
+                         ∥ mk (r) k≥0 ∥S ≤ C                                 r ∈ I,
+                                                    k≥0
+
+uniformly over the crossing family.
+                                                                                    (n)
+   For each fixed k, Proposition 6.2 implies that r 7→ τk (r), and hence r 7→ mk (r), is smooth on I.
+                                                                   four derivatives converge strongly. By
+In particular, the truncated multipliers are smooth, and their first
+uniform convergence, the operator family Mr := Op m(0) (r) belongs to
+                                      C 4 I; L Ce3,α (T), Ce2,α (T) ,
+                                                                   
+
+with
+                        ∂rn Mr = Op m(n) (r) ,            ∥∂rn Mr ∥ ≤ C,
+                                            
+                                                                            0 ≤ n ≤ 4.
+                                     (0)     r
+   Finally, by the definition of mk , Dr = r−L  |Dψ | + Mr . The operator |Dψ | : Ce3,α (T) → Ce2,α (T)
+is bounded, while r 7→ r/(r − L) is smooth on I, with uniformly bounded derivatives up to order four.
+                            3,α      2,α                4
+Therefore r 7→ Dr ∈ L Ce (T), Ce (T) is of class C , and
+                                        
+                                      r
+                     ∂rn Dr = ∂rn          |Dψ | + Op m(n) (r) ,
+                                                               
+                                                                      0 ≤ n ≤ 4.
+                                    r−L
+Therefore, ∥∂rn Dr ∥L(Ce3,α (T),Ce2,α (T)) ≤ C,    0 ≤ n ≤ 4, uniformly.                                □
+
+                                            7. B ESSEL ASYMPTOTICS
+  This section contains all of the asymptotic estimates for Bessel functions. Most of the asymptotics
+used are a direct application of the Debye-type asymptotics in DMLF 10.19 [30] which we recall here.
+
+     If α ranges in a compact subset of (0, ∞), then
+                                                      
+                                   exp ν(tanh α − α)
+                                                        1 + O(ν −1 ) ,
+                                                                    
+                   Jν (ν sech α) =     √                                                             (7.1)
+                                         2πν tanh α
+                                     sinh(2α) 1/2
+                                             
+                    ′
+                                                   exp ν(tanh α − α) 1 + O(ν −1 ) .
+                                                                                
+                   Jν (ν sech α) =                                                                   (7.2)
+                                        4πν
+If β ranges in a compact subset of (0, π/2), and ξν (β) := ν(tan β − β) − π4 , then
+                                                 1/2
+                                             2
+                                                         cos ξν (β) + O(ν −1 ) ,
+                                                                              
+                       Jν (ν sec β) =                                                                (7.3)
+                                         πν tan β
+                                           sin(2β) 1/2
+                                                   
+                         ′
+                                                          sin ξν (β) + O(ν −1 ) .
+                                                                               
+                       Jν (ν sec β) = −                                                              (7.4)
+                                              πν
+The error estimates in all those cases are uniform on compact sets. We will also need asymptotics on the
+locations of zeros of Bessel functions:
+                                COUNTEREXAMPLES TO SCHIFFER’S CONJECTURE                                 29
+
+Lemma 7.1 (Derivative of oscillatory Bessel zeros). Let ν → ∞, and suppose that jν,m = ν sec β,
+where β ranges in a fixed compact subset of (0, π/2). Then
+                                                  β
+                                     ∂ν jν,m =        + O(ν −1 ),                         (7.5)
+                                                sin β
+uniformly over such pairs (ν, m).
+Proof. We compute derivatives of jν,m by implicitly differentiating
+                                               Jν (jν,m ) = 0
+with respect to ν. This gives
+                                                     ∂µ Jµ (jν,m )|µ=ν
+                                       ∂ν jν,m = −                     .
+                                                        Jν′ (jν,m )
+   We set ξν (β) := ν(tan β − β) − π4 . as in (7.3)–(7.4). With this same notation, the uniform large-order
+asymptotics for derivatives with respect to the order obtained in [16, §§4–5] give
+                                                       1/2
+                                                   2
+                                                                β sin ξν (β) + O(ν −1 ) ,
+                                                                                       
+                    ∂µ Jµ (ν sec β)|µ=ν =                                                             (7.6)
+                                               πν tan β
+where the error estimates are uniform for β in the fixed compact subset of (0, π/2).
+    Since ν sec β = jν,m , we have Jν (ν sec β) = 0, and therefore cos ξν (β) = O(ν −1 ). Therefore
+| sin ξν (β)| is uniformly bounded away from zero, and we can estimate. Substituting the preceding
+asymptotics, we obtain
+                                      β sin ξν (β) + O(ν −1 )     β
+                        ∂ν jν,m =                         −1
+                                                              =       + O(ν −1 ),
+                                    sin β sin ξν (β) + O(ν )    sin β
+uniformly as claimed.                                                                                   □
+  We will now show Propositions 6.1 and 6.2.
+Proof of Proposition 6.1. Set
+                               p         ρ
+                     ω(r) :=     λ(r) = ,        xr := ω(r)(r − L) = ρ − ω(r)L.
+                                         r
+If R0 is large enough, we have, uniformly for |r − R| ≤ 21 , 1 < ω− ≤ ω(r) ≤ ω+ < 2 for constants a±
+independent of the crossing.
+   We treat separately the modes k ≥ 2, k = 0, and k = 1. While the proofs are very similar in nature,
+they correspond to different regimes of Bessel functions: k > 2 corresponds to the evanescent range, i.e.
+the regime where Bessel functions are well-approximated by exponentials, while k = 0, 1 corresponds
+to the oscillatory regime where they are well-approximated by waves.
+The modes k ≥ 2. Let ν := kr. For either z = ρ or z = xr , we have
+                                            z    ω(r)     ω+
+                                       0< ≤             ≤     < 1.
+                                            ν      k       2
+Thus 0 < z < ν. We have that Jν (x) > 0 for every ν > 0 and 0 < x < ν. By power-series expansion
+at the origin shows that Jν (x) > 0 and Jν′ (x) > 0 for small enough x > 0. Moreover, by Bessel’s
+equation,                                          2       
+                                         ′
+                                              ′     ν
+                                      xJν (x) =          − x Jν (x).
+                                                      x
+and, by continuity, the derivative cannot vanish until x > ν, making Jν increasing.
+The mode k = 0. Since J1 (ρ) = 0 and J0′ = −J1 , we have J0′ (ρ) = 0. The fixed-order large-argument
+asymptotics give
+                                       1/2 
+                                        2                    π           
+                        J0 (ρ − t) =           cos ρ − t −       + O(ρ−1 )
+                                       πρ                     4
+uniformly for t in bounded intervals, while
+                                       1/2                           
+                                         2               3π
+                        0 = J1 (ρ) =            cos ρ −         + O(ρ−1 ) .
+                                        πρ                4
+30                            GONZALO CAO-LABORA AND JAUME DE DIOS PONT
+
+It follows that                             π
+                                   cos ρ −        = 1 + O(ρ−1 ).
+                                             4
+We may therefore choose L > 0 sufficiently small, independently of the crossing, so that
+                                    J0 (ρ − t) ̸= 0         for 0 ≤ t ≤ ω+ L
+when R0 is large. Since ρ − xr = a(r)L ≤ a+ L, this gives
+                                          J0 (ρ) ̸= 0,       J0 (xr ) ̸= 0.
+
+The mode k = 1. Let m be such that ρ = jR,m , and set
+                                 ρ
+                       ω(r) := ,        xr := ω(r)(r − L) = ρ − ω(r)L.
+                                 r
+By Lemma 7.1, uniformly for |r − R| ≤ δ,
+                                           0 < c ≤ ∂ν jν,m ν=r ≤ C.
+Hence r 7→ jr,m is strictly increasing and
+                                            |jr,m − ρ| ≤ C|r − R|.                                       (7.7)
+In particular, jr,m = ρ if and only if r = R.
+   The oscillatory Debye asymptotics also imply that consecutive zeros in this regime are separated by
+a uniform constant c0 > 0. Choose L sufficiently small and then δ ≪ L so that
+                                                 
+                                          c0 ω− L
+                            Cδ < min        ,       ,   ω− := inf ω(r) > 0.
+                                          4   2                IR
+
+By (7.7), ρ lies within c0 /4 of jr,m , and therefore cannot coincide with any other zero of Jr . Thus
+                                    Jr (ρ) ̸= 0          for 0 < |r − R| ≤ δ.
+     At the inner circle,
+                                         jr,m − xr = jr,m − ρ + ω(r)L,
+so the choices of L and δ give
+                                          cL ≤ jr,m − xr ≤ CL < c0 .                                     (7.8)
+Consequently xr lies strictly between jr,m−1 and jr,m , and hence Jr (xr ) ̸= 0.
+  Moreover, by the oscillatory Debye asymptotics, after decreasing L if necessary, Jr′ has constant sign
+and
+                                          |Jr′ (x)| ≥ cR−1/2
+for x between xr and jr,m . Therefore,
+                                Z jr,m
+                                       Jr′ (x) dx ≥ cR−1/2 jr,m − xr ≥ cR−1/2 .
+                                                                    
+                   |Jr (xr )| =
+                                    xr
+Here the last constant may depend on the fixed choice of L, but is uniform over the crossing family.       □
+Proof of Proposition 6.2. We split into the same cases in k, and begin with the modes k ≥ 2.
+The k ≥ 2 modes. Standard references of special functions do not exactly match our statements. For
+completeness, we will prove our own uniform symbol estimates adopting standard techniques.
+  Fix real parameters κ ≥ 2 and r ∈ [R − δ, R + δ], and write
+                                 ν := κr,         T := r − L,         ω := ω(r).
+For κ ≥ 2, and below the turning point, the the Bessel function u(t) := Jν (ωt), scales in t proportionally
+tν (we absorb the ω ν into the uncontrolled prefactor to tν ). In particular, we expect the logarithmic
+derivative of u to be similar to that of tν . The coefficients m(κ, r) precisely quantify this deffect. Let
+                                              u′ (t) ν  J ′ (ωt) ν
+                                   q(t) :=          − =ω ν      − .
+                                              u(t)   t  Jν (ωt)  t
+                              COUNTEREXAMPLES TO SCHIFFER’S CONJECTURE                                    31
+
+When evaluated at T , this is precisely the quantity m(κ, r)
+                                              ′ (x )
+                                             Jκr         κr
+                                                   r
+                                 q(T ) = ω            −      = m(κ, r).                                (7.9)
+                                             Jκr (xr ) r − L
+  A direct substitution into Bessel’s equation gives us the Ricatti type equation for q, of the form
+                                     2ν + 1
+                         q ′ (t) +          q(t) + q(t)2 + a2 = 0,     q(0) = 0.
+                                        t
+This can be integrated against a t2ν−1 integrating factor, to obtain
+                                                Z t
+                                         −2ν−1
+                                                    s2ν+1 a2 + q(s)2 ds.
+                                                                     
+                              q(t) = −t
+                                                    0
+
+and hence, after a change of variables one obtains the Volterra type equation
+                                            Z 1
+                                                z 2ν+1 a2 + q(tz)2 dz.
+                                                                   
+                                 q(t) = −t                                                          (7.10)
+                                                0
+
+   We will use this equation as a fixed point equation. After rescaling Q(s) := q((r − L)s) (so that our
+estimates are on a space independent of r), this becomes the fixed-point equation Q = Tκ,r (Q) where
+Tκ,r (Q) is given by
+                                         Z 1          2              
+                                                2κr+1 ρ             2
+               (Tκ,r Q)(s) = −(r − L)s        z           + Q(sz)       dz,    0 ≤ s ≤ 1.         (7.11)
+                                           0           r2
+   Note at this point that the integral of z 2κr+1 is of the order of (2κr)−1 , in particular, the operator
+Tκ,r is of size (2κ)−1 . By contraction mapping theorem this suggests that this fixed point will extend
+holomorphically to a uniform complex neighbourhood of every real pair (κ0 , r0 ) with κ0 ≥ 2 and
+|r0 − R| ≤ δ, which satisfies
+                                                              C
+                                          ∥Qκ,r ∥L∞ ([0,1]) ≤    .                                   (7.12)
+                                                              κ0
+This can be made precise: there are fixed c, η > 0 such that Tκ,r is a contraction mapping in a neigh-
+borhood of Q whenever |κ − κ0 | < cκ0 , and |r − r0 | < η.
+   To prove the claim, choose M < 4 but large enough so that
+                                                2
+                                              ω+    M2
+                                                  +    < M.
+                                               2    8
+                            ω2                      2
+Note that ω+ < 2, and thus 2+ < 2. Since 4 − 48 = 2, such M exists. One could have originally chosen
+                                  √
+ω+ to be any explicit number in ( 3, 2) which would give rise to an explicit M . Since the inequalities
+are strict in the above complex polydisc we can extract an ε of room, and pick
+                                 ρ                       κ0 |r − L|  1
+                                   ≤ω
+                                    e+ < 2,                         ≤ + ε,
+                                 r                      2Re(κr) + 2  2
+where ε > 0 and ω̃+ are such that
+                                       M2
+                                                           
+                         1          2                      1      M
+                           +ε     e+ +
+                                  ω          < M,            +ε      < 1.                           (7.13)
+                         2               4                 2      2
+                                       n                             o
+  The operator Tκ,r maps the set Bκ0 := Q ∈ C([0, 1]; C) : ∥Q∥∞ ≤ κM0 , into itself:
+
+                                                               M2
+                                                                 
+                                              |r − L|      2
+                           ∥Tκ,r Q∥∞ ≤                   ωe+ + 2
+                                            2Re(κr) + 2        κ0
+                                                               M2
+                                                               
+                                             1 1           2          M
+                                          ≤       +ε     ω
+                                                         e+  +      <    .
+                                            κ0 2               4      κ0
+32                              GONZALO CAO-LABORA AND JAUME DE DIOS PONT
+
+Likewise, for Q1 , Q2 ∈ Bκ0 ,
+                                                              |r − L| 2M
+                        ∥Tκ,r Q1 − Tκ,r Q2 ∥∞ ≤                              ∥Q1 − Q2 ∥∞
+                                                           2Re(κr) + 2 κ0
+                                                                  
+                                                             1       2M
+                                                         ≤     +ε         ∥Q1 − Q2 ∥∞
+                                                             2        κ20
+                                                                  
+                                                             1       M
+                                                         ≤     +ε        ∥Q1 − Q2 ∥∞ .
+                                                             2        2
+Therefore Tκ,r is a uniform contraction of Bκ0 , and its fixed point satisfies (7.12). Moreover, the Picard
+iterates starting from 0 are holomorphic in (κ, r) and converge uniformly; hence the fixed point is
+holomorphic as well.
+   Unfolding the definition of the fixed point, for all real κ, r, the fixed point solution qκ,r (t) :=
+Qκ,r (t/T ) solves (7.10). In particular, by unfolding the logarithmic derivatives, the function
+                                                       Z t         
+                                                 ν
+                                       U (t) := t exp        q(s) ds
+                                                      0
+                                                ν
+solves Bessel’s equation and satisfies U (t) ∼ t at the origin.                  It is therefore a nonzero multiple of
+Jν (ωt). In particular, by using the identity (7.9),
+                                         Qκ,r (1) = qκ,r (T ) = m(κ, r).
+   The function Qκ,r (1) is holomorphic on a polydisc of radius ∼ κ. Then we can use Cauchy’s deriva-
+tive bounds to obtain
+                                                          Cn,q       Cn,q
+                                |∂rn ∂κq m(κ0 , r0 )| ≤           q
+                                                                    = 1+q .
+                                                        κ0 (cκ0 )    κ0
+  The main difficulty in the proof for k ≥ 2 lies in the decay of the modes. The remaining case, for
+k = 0, 1 can be shown in a much more straightforward manner by inspecting the Bessel ODE.
+
+The mode k = 0. Define
+                                          J0 (ρ − t)
+                                    Zρ (t) :=        ,     0 ≤ t ≤ ω+ L.
+                                            J0 (ρ)
+Since J0′ (ρ) = −J1 (ρ) = 0, the function Zρ (t) solves the shifted Bessel ODE
+                           1
+                       Zρ′′ −Z ′ + Zρ = 0,                         Zρ (0) = 1,        Zρ′ (0) = 0.
+                         ρ−t ρ
+Uniform ODE estimates give
+                                    Zρ (t) = 1 + O(t2 ),              |∂tj Zρ (t)| ≤ Cj .
+Assuming L is small enough,
+                                                         1
+                                        |Zρ (t)| ≥                (0 ≤ t ≤ ω+ L).
+                                                         2
+Since xr = ρ − a(r)L,
+                                                    Zρ′ (a(r)L)
+                                           τ0 (r) = −ω(r)       .
+                                                    Zρ (a(r)L)
+Each derivative of ω(r) is uniformly bounded, and hence
+                                                 (n)
+                                          |m0 (r)| = |∂rn τ0 (r)| ≤ Cn
+
+The mode k = 1. Set
+                                        
+                                 L
+                     xr := ρ 1 −             ,          F (r) := Jr (xr ),        G(r) := Jr′ (xr ).
+                                 r
+Then
+                                                                  ρ G(r)
+                                                       τ1 (r) =           .
+                                                                  r F (r)
+                               COUNTEREXAMPLES TO SCHIFFER’S CONJECTURE                                  33
+
+   By (7), |F (r)| ≥ cR−1/2 on IR . On the other hand, the complex-uniform oscillatory Debye expan-
+sions [31], followed by Cauchy’s estimate in a fixed complex neighbourhood of IR , give
+                                      |∂rn F (r)| + |∂rn G(r)| ≤ Cn R−1/2                         (7.14)
+Here ∂r denotes the total derivative, accounting for both the order r and the argument xr .
+  The lower bound for F , together with (7.14), shows by repeated differentiation of the quotient that
+                                                       G(r)
+                                                 ∂rn         ≤ Cn
+                                                       F (r)
+Since ρ/r and its first four derivatives are uniformly bounded, we obtain
+                                                |∂rn τ1 (r)| ≤ Cn
+Finally,
+                                                                   r
+                                            m1 (r) = τ1 (r) −         ,
+                                                                  r−L
+and therefore
+                                                |∂rn m1 (r)| ≤ Cn
+                                                                                                         □
+  The next application of Debye asymptotics is Lemma 5.2.
+                                     −1/2
+Proof of Lemma 5.2. Set ν := λ0 ρ + t, and β := arccos (ν/ρ) , so that ρ = ν sec β. Uniformly for
+                                            −1/2
+t in compact subsets of R, we have ν ∼ λ0 ρ, and β = θ0 + O(ρ−1 ). In particular, β remains in a
+compact subset of (0, π/2), so (7.3) applies. For the prefactor, we have
+                                        p               q
+                             ν tan β = ρ − ν = ρ 1 − λ−1
+                                            2     2
+                                                                 0 + O(1),
+
+and therefore
+                                           1/2                 1/2
+                             π                             2
+                                   q
+                                         −1
+                               ρ    1 − λ0                  = 1 + O(ρ−1 ).                (7.15)
+                             2                         πν tan β
+                                       p                    
+  Define ϕρ,λ0 (t) := ν(tan β − β) = ρ2 − ν 2 − ν arccos νρ . We can then explicitly compute
+                                                        
+                                                −1/2   t
+                       ∂t ϕρ,λ0 (t) = − arccos λ0    +     = −θ0 + O(ρ−1 ),
+                                                       ρ
+uniformly for t in compact sets. Since its value at t = 0 is
+                             q                                    
+                                        −1      −1/2          −1/2
+                           ρ      1 − λ 0 − λ0        arccos(λ0 ) = ω0 ρ,
+
+we obtain
+                                    ν(tan β − β) = ω0 ρ − θ0 t + O(ρ−1 ).                         (7.16)
+  Substituting estimates (7.15) and (7.16) into asymptotic (7.3) gives
+                 q             1/2
+                  π                                                         π
+                    ρ 1 − λ−10       J  −1/2
+                                       λ0    ρ+t
+                                                 (ρ) = cos   ω 0 ρ − θ 0 t −    + O(ρ−1 ),
+                  2                                                          4
+uniformly for t in compact subsets of R. This proves (5.22).                                             □
+  As a last application, we compute the asymptotics of R′′ (0) at a bifurcation point.
+Proposition 7.2. Let (R⋆ , ρ⋆ , λ⋆ ) ∈ CR0 . Then,
+                       √                      ′
+                                                           p
+                                             J2R  (ρ)
+                                                     
+                           λ⋆                   ⋆
+                                                             (λ − 1)(4 − λ)
+                  −                   2+ρ               =−                  + o(1),
+                     4R⋆ ∂ν jν,m             J2R⋆ (ρ)      4 arccos(λ−1/2 )
+as R0 → ∞, uniformly in (R⋆ , ρ⋆ , λ⋆ ) ∈ CR0 .
+34                          GONZALO CAO-LABORA AND JAUME DE DIOS PONT
+
+Proof. The result follows by combining the following three asymptotic estimates:
+                                  √
+                                    λ⋆             −1/2 
+              ∂ν jν,m |ν=R⋆ = √           arccos λ⋆       + O(R⋆−1 ),                           (7.17)
+                                  λ⋆ − 1
+                                exp (2R⋆ (tanh α⋆ − α⋆ )))
+                                                            1 + O(R⋆−1 ) ,
+                                                                        
+                  J2R⋆ (ρ⋆ ) =       p       √                                                  (7.18)
+                                       2πR⋆ 4 − λ⋆
+                                √         1/2
+                    ′              4 − λ⋆
+                                                exp (2R⋆ (tanh α⋆ − α⋆ ))) 1 + O(R⋆−1 ) .
+                                                                                       
+                  J2R⋆ (ρ⋆ ) =                                                                  (7.19)
+                                  2πR⋆ λ⋆
+                             
+where α⋆ := arcosh √2λ . All the error estimates are uniform over the crossings in C(R0 ). These
+                            ⋆
+three estimates immediately imply the result by direct substitution. The remainder of the proof shows
+these three asympotics. Lemma 7.1 gives rise to (7.17), and the proofs of (7.18) and (7.19) are direct
+application of Debye Asymptotics.
+
+Proof of Equation (7.17). Since
+                                                                  −1/2
+                             ρ⋆ = R⋆ sec β⋆ ,     β⋆ := arccos(λ⋆        ),
+and β⋆ ranges in a fixed compact subset of (0, π/2), Lemma 7.1 yields
+                                                        √
+                                   β⋆          −1         λ⋆             −1/2
+               ∂ν jν,m |ν=R⋆ =         + O(R⋆ ) = √             arccos(λ⋆ ) + O(R⋆−1 ).
+                                sin β⋆                  λ⋆ − 1
+                                                                        √
+Proof of Equation (7.18). By the definition of α⋆ , we have ρ⋆ = R⋆ λ⋆ = 2R⋆ sech α⋆ . Moreover,
+since λ⋆ ∈ [2, 3], the parameter α⋆ ranges in the fixed compact interval
+                                                          √
+                                                           
+                                            2
+                                 arcosh    √     , arcosh( 2) ⋐ (0, ∞).
+                                             3
+Consequently, the Debye expansion (DLMF 10.19.3), applied uniformly on this compact interval with
+ν = 2R⋆ , gives
+                                           exp (2R⋆ (tanh α⋆ − α⋆ ))
+                                                                       1 + O(R⋆−1 ) .
+                                                                                   
+                    J2R⋆ (2R⋆ sech α⋆ ) =       √
+                                                   4πR⋆ tanh α⋆
+Since                                                    r            √
+                                                                λ⋆      4 − λ⋆
+                                      q
+                                                  2
+                          tanh α⋆ = 1 − sech α⋆ = 1 −              =           ,
+                                                                4         2
+we have                                                q
+                                  p                           p
+                                     4πR⋆ tanh α⋆ = 2πR⋆ 4 − λ⋆ .
+Recalling that ρ⋆ = 2R⋆ sech α⋆ , we obtain
+                                      exp (2R⋆ (tanh α⋆ − α⋆ ))
+                                                                  1 + O(R⋆−1 ) ,
+                                                                              
+                         J2R⋆ (ρ⋆ ) =     p         √
+                                             2πR⋆ 4 − λ⋆
+which proves (7.18).
+Proof of Equation (7.19). With the same notation, the derivative Debye expansion (DLMF 10.19.4)
+gives
+                                 sinh(2α⋆ ) 1/2
+                                          
+           ′
+                                                exp (2R⋆ (tanh α⋆ − α⋆ )) 1 + O(R⋆−1 ) ,
+                                                                                      
+         J2R⋆ (2R⋆ sech α⋆ ) =
+                                   8πR⋆
+uniformly for α⋆ in the compact interval above. Now
+                                                      2
+                                           cosh α⋆ = √
+                                                       λ⋆
+and                                                      √
+                                                           4 − λ⋆
+                                           q
+                                                2
+                                  sinh α⋆ = cosh α⋆ − 1 = √       .
+                                                             λ⋆
+                                    COUNTEREXAMPLES TO SCHIFFER’S CONJECTURE                                                35
+
+It follows that                                                      √
+                                                                    4 4 − λ⋆
+                                   sinh(2α⋆ ) = 2 sinh α⋆ cosh α⋆ =          .
+                                                                       λ⋆
+Hence
+                                                   √         1/2
+                                 sinh(2α⋆ ) 1/2
+                                          
+                                                       4 − λ⋆
+                                                 =                 .
+                                   8πR⋆               2πR⋆ λ⋆
+Using again ρ⋆ = 2R⋆ sech α⋆ , we conclude that
+                            √        1/2
+                ′              4 − λ⋆
+                                           exp (2R⋆ (tanh α⋆ − α⋆ )) 1 + O(R⋆−1 ) ,
+                                                                                 
+               J2R⋆ (ρ⋆ ) =
+                             2πR⋆ λ⋆
+which proves (7.19).
+                                                                                                                            □
+Acknowledgements: G. Cao-Labora was supported by the Swiss State Secretariat for Education, Re-
+search and Innovation (SERI) under contract number MB22.00034 through the project TENSE, and also
+acknowledges partial support from the MICINN research grant number PID2021–125021NA–I00.
+AI Usage: LLMs, in the form of GPT 5.5 and 5.6, Claude Opus 4.8 and Claude Fable 5, with their
+respective coding harnesses were used in multiple parts of the research process. In particular, they were
+used to numerically verify the asymptotic estimates provided through the text, to provide first drafts of
+the proofs of the Bessel Function estimates, and to help with the exposition of the work.
+   The Lean4 verification of the proof was written by GPT 5.6 using an early draft of this work. The Lean
+statement of the Pompeiu Problem was contributed to by Himanshu Gupta and Moritz Firsching to the
+Google Deepmind Formal Conjecture Repository [19], and the Lean statement of Schiffer’s conjecture
+was written by the authors.
+
+                                                      R EFERENCES
+ [1] M. L. Agranovsky, On the stability of the spectrum in the Pompeiu problem, J. Math. Anal. Appl. 178 (1993), no. 1,
+     269–279.
+ [2] P. Aviles, Symmetry theorems related to Pompeiu’s problem, Amer. J. Math. 108 (1986), no. 5, 1023–1036.
+ [3] C. A. Berenstein, An inverse spectral theorem and its relation to the Pompeiu problem, J. Anal. Math. 37 (1980), 128–144.
+ [4] C. A. Berenstein and P. C. Yang, An inverse Neumann problem, J. Reine Angew. Math. 382 (1987), 1–21.
+ [5] L. Brown, B. M. Schreiber, and B. A. Taylor, Spectral synthesis and the Pompeiu problem, Ann. Inst. Fourier (Grenoble)
+     23 (1973), no. 3, 125–154.
+ [6] B. Canuto, Stability results for the N -dimensional Schiffer conjecture via a perturbation method, Calc. Var. Partial Dif-
+     ferential Equations 50 (2014), no. 1–2, 305–334.
+ [7] G. Cao-Labora and A. J. Fernández, A contractible Schiffer counterexample on the half-sphere, arXiv preprint
+     arXiv:2510.05732 (2025).
+ [8] L. Chakalov, Sur un problème de D. Pompeiu, Annuaire Univ. Sofia, Fac. Phys.-Math., Livre 1, 40 (1944), 1–14.
+ [9] M. J. Colbrook and G. Stepaniants, A computer-assisted counterexample to the planar Pompeiu and Schiffer conjectures,
+     arXiv preprint arXiv:2608.01579 (2026).
+[10] P. Constantin, J. La, and V. Vicol, Remarks on a paper by Gavrilov: Grad–Shafranov equations, steady solutions of the
+     three dimensional incompressible Euler equations with compactly supported velocities, and applications, Geom. Funct.
+     Anal. 29 (2019), 1773–1793.
+[11] M. G. Crandall and P. H. Rabinowitz, Bifurcation from simple eigenvalues, J. Funct. Anal. 8 (1971), 321–340.
+[12] G. Dai, Q. Liu, and Y. Sun, High dimension Weinstein conjecture and its application to Schiffer conjecture, Z. Angew.
+     Math. Phys. 77 (2026), Article 139.
+[13] G. Dai, Y. Sun, J. Wei, and Y. Zhang, On the Schiffer and Berenstein conjectures for centrally symmetric convex domains
+     in the plane, arXiv preprint arXiv:2511.19819 (2025).
+[14] J. Deng, Some results on the Schiffer conjecture in R2 , J. Differential Equations 253 (2012), no. 8, 2515–2526.
+[15] M. Domı́nguez-Vázquez, A. Enciso, and D. Peralta-Salas, Piecewise smooth stationary Euler flows with compact support
+     via overdetermined boundary problems, Arch. Ration. Mech. Anal. 239 (2021), 1327–1347.
+[16] T. M. Dunster, On the Order Derivatives of Bessel Functions, Constructive Approximation 46 (2017), 47–68.
+[17] A. Enciso, A. J. Fernández, D. Ruiz, and P. Sicbaldi, A Schiffer-type problem for annuli with applications to stationary
+     planar Euler flows, Duke Math. J. 174 (2025), no. 6, 1151–1208.
+[18] A. Enciso, Schiffer-type problems and nonradial stationary Euler flows with compact support, Journées Équations aux
+     dérivées partielles (2024), 1–10.
+[19] The Formal Conjectures Authors, The Formal Conjectures Repository, 2025, https://github.com/
+     google-deepmind/formal-conjectures.
+36                                  GONZALO CAO-LABORA AND JAUME DE DIOS PONT
+
+[20] M. M. Fall, I. A. Minlend, and T. Weth, The Schiffer problem on the cylinder and on the 2-sphere, J. Eur. Math. Soc.
+     (2025).
+[21] A. V. Gavrilov, A steady Euler flow with compact support, Geom. Funct. Anal. 29 (2019), 190–197.
+[22] D. Gilbarg and N. S. Trudinger, Elliptic Partial Differential Equations of Second Order, 2nd ed., Grundlehren Math.
+     Wiss., vol. 224, Springer-Verlag, Berlin, 1983.
+[23] J. Gómez-Serrano, J. Park, and J. Shi, Existence of non-trivial non-concentrated compactly supported stationary solutions
+     of the 2D Euler equation with finite energy, Mem. Amer. Math. Soc. 311 (2025), no. 1577.
+[24] B. Kawohl and M. Lucia, Some results related to Schiffer’s problem, J. Anal. Math. 142 (2020), no. 2, 667–696.
+[25] J. P. Kelliher, Connections between a conjecture of Schiffer’s and incompressible fluid mechanics, unpublished note,
+     2008, revised 2011, https://math.ucr.edu/˜kelliher/DeskDrawer/SchifferAndFluids.pdf.
+[26] D. Kinderlehrer and L. Nirenberg, Regularity in free boundary problems, Ann. Scuola Norm. Sup. Pisa Cl. Sci. (4) 4
+     (1977), no. 2, 373–391.
+[27] T. Kobayashi, Perturbation of domains in the Pompeiu problem, Comm. Anal. Geom. 1 (1993), no. 4, 515–541.
+[28] G. Liu, Symmetry results for overdetermined boundary value problems of nonlinear elliptic equations, Nonlinear Anal.
+     72 (2010), 3943–3952.
+[29] S. Mondal, A short note on Schiffer’s conjecture for a class of centrally symmetric convex domains in R2 , J. Anal. Math.
+     158 (2026), no. 2, 401–412.
+[30] National Institute of Standards and Technology, NIST Digital Library of Mathematical Functions, Version 1.2.7, release
+     date June 15, 2026, https://dlmf.nist.gov/.
+[31] F. W. J. Olver, The asymptotic expansion of Bessel functions of large order, Philos. Trans. Roy. Soc. London Ser. A 247
+     (1954), no. 930, 328–368.
+[32] D. Pompeiu, Sur certains systèmes d’équations linéaires et sur une propriété intégrale des fonctions de plusieurs vari-
+     ables, C. R. Acad. Sci. Paris 188 (1929), 1138–1139.
+[33] C. L. Siegel, Über einige Anwendungen diophantischer Approximationen, Abh. Preuss. Akad. Wiss., Phys.-Math. Kl.,
+     Jahrgang 1929, no. 1, 1–70.
+[34] K. T. Smith, D. C. Solmon, and S. L. Wagner, Practical and mathematical aspects of the problem of reconstructing
+     objects from radiographs, Bull. Amer. Math. Soc. 83 (1977), 1227–1270.
+[35] R. Souam, Schiffer’s problem and an isoperimetric inequality for the first buckling eigenvalue of domains on S 2 , Ann.
+     Global Anal. Geom. 27 (2005), 341–354.
+[36] H. Triebel, Theory of Function Spaces, Modern Birkhäuser Classics, Birkhäuser/Springer Basel AG, Basel, 2010.
+[37] M. H. Wheeler, Non-symmetric solutions to an overdetermined problem for the Helmholtz equation in the plane, arXiv
+     preprint arXiv:2509.00455 (2025).
+[38] S. A. Williams, A partial solution of the Pompeiu problem, Math. Ann. 223 (1976), no. 2, 183–190.
+[39] S. A. Williams, Analyticity of the boundary for Lipschitz domains without the Pompeiu property, Indiana Univ. Math. J.
+     30 (1981), no. 3, 357–369.
+[40] N. B. Willms and G. M. L. Gladwell, Saddle points and overdetermined problems for the Helmholtz equation, Z. Angew.
+     Math. Phys. 45 (1994), 1–26.
+[41] S.-T. Yau, Problem section, in Seminar on Differential Geometry, Ann. of Math. Stud., vol. 102, Princeton Univ. Press,
+     Princeton, NJ, 1982, 669–706.
+[42] L. Zalcman, A bibliographic survey of the Pompeiu problem, in B. Fuglede, M. Goldstein, W. Haussmann, W. K. Hayman,
+     and L. Rogge (eds.), Approximation by Solutions of Partial Differential Equations, NATO ASI Ser. C Math. Phys. Sci.,
+     vol. 365, Kluwer Academic Publishers, Dordrecht, 1992, 185–194.
+
+     I NSTITUTE OF M ATHEMATICS , EPFL, S TATION 8, L AUSANNE , VD 1015, S WITZERLAND
+     Email address: gonzalo.caolabora@epfl.ch
+
+     NYU C ENTER FOR DATA S CIENCE , 60 5 TH AVE , N EW YORK , NY 10011, USA
+     Email address: jdedios@nyu.edu
+
