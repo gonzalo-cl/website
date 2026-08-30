@@ -9,10 +9,13 @@
   let scheduleMathFit = () => {};
 
   // At subscript size the italic nu of the normal direction is hard to tell
-  // apart from a latin v. Setting it in the bold face keeps the shape legible
-  // wherever it appears; nothing else on the page is bold mathematics.
-  // The braces matter: a bare \boldsymbol is rejected as a subscript.
-  const emphasizeNu = (source) => source.replace(/\\nu(?![a-zA-Z])/g, "{\\boldsymbol{\\nu}}");
+  // apart from a latin v. Emphasize only geometrical normal vectors: the same
+  // letter is also used later as the scalar order of a Bessel function.
+  const emphasizeNormals = (source) => source
+    .replace(/\\partial_\\nu(?!\s*j(?:_|\b))/g, "\\partial_{\\boldsymbol{\\nu}}")
+    .replace(/\\cdot\\nu(?![a-zA-Z])/g, "\\cdot{\\boldsymbol{\\nu}}")
+    .replace(/\\,\\nu(?![a-zA-Z])/g, "\\,{\\boldsymbol{\\nu}}")
+    .replace(/f\\nu(?![a-zA-Z])/g, "f{\\boldsymbol{\\nu}}");
 
   // Interactive figures update their readouts after the initial auto-render
   // pass.  Give every script the same KaTeX entry point so a mathematical
@@ -28,8 +31,8 @@
     }
     const serif = options.serif ?? (serifEdition || Boolean(options.displayMode));
     const preparedSource = serif
-      ? emphasizeNu(source)
-      : `\\mathsf{${emphasizeNu(source)}}`;
+      ? emphasizeNormals(source)
+      : `\\mathsf{${emphasizeNormals(source)}}`;
     window.katex.render(preparedSource, element, {
       ...sharedOptions,
       displayMode: Boolean(options.displayMode),
@@ -40,7 +43,32 @@
     scheduleMathFit();
   };
 
-  window.SchifferMath = Object.freeze({ render, fitDisplays: () => scheduleMathFit() });
+  const renderInlineContent = (elementOrSelector, content, options = {}) => {
+    const element = typeof elementOrSelector === "string"
+      ? document.querySelector(elementOrSelector)
+      : elementOrSelector;
+    if (!element) return;
+    element.textContent = content;
+    if (typeof window.renderMathInElement !== "function") return;
+    const serif = options.serif ?? serifEdition;
+    window.renderMathInElement(element, {
+      ...sharedOptions,
+      delimiters: [{ left: "\\(", right: "\\)", display: false }],
+      preProcess: serif
+        ? emphasizeNormals
+        : (source) => "\\mathsf{" + emphasizeNormals(source) + "}",
+    });
+    element.querySelectorAll(".katex").forEach((node) => {
+      node.classList.add(serif ? "katex-inline-serif" : "katex-inline-sans");
+    });
+    scheduleMathFit();
+  };
+
+  window.SchifferMath = Object.freeze({
+    render,
+    renderInlineContent,
+    fitDisplays: () => scheduleMathFit(),
+  });
 
   if (typeof window.renderMathInElement !== "function") return;
 
@@ -50,7 +78,7 @@
     window.renderMathInElement(container, {
       ...sharedOptions,
       delimiters: [{ left: "\\(", right: "\\)", display: false }],
-      preProcess: emphasizeNu,
+      preProcess: emphasizeNormals,
     });
   });
   document.querySelectorAll("h1 .katex, h2 .katex, h3 .katex, .serif-math .katex").forEach((node) => {
@@ -63,8 +91,8 @@
     ...sharedOptions,
     delimiters: [{ left: "\\(", right: "\\)", display: false }],
     preProcess: serifEdition
-      ? emphasizeNu
-      : (source) => "\\mathsf{" + emphasizeNu(source) + "}",
+      ? emphasizeNormals
+      : (source) => "\\mathsf{" + emphasizeNormals(source) + "}",
   });
   document.querySelectorAll(".katex").forEach((node) => {
     if (node.classList.contains("katex-inline-serif")) return;
@@ -76,7 +104,7 @@
   window.renderMathInElement(document.body, {
     ...sharedOptions,
     delimiters: [{ left: "\\[", right: "\\]", display: true }],
-    preProcess: emphasizeNu,
+    preProcess: emphasizeNormals,
   });
 
   /* Tufte display mathematics belongs to the measure that contains it.  KaTeX

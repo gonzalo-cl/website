@@ -2391,7 +2391,7 @@ function updateModesReadouts() {
   const cropDegrees = modesState.crop * 360;
   const comparison = modesRadialComparison(solution);
   const phasePercent = comparison.phaseFraction * 100;
-  $("#modesTransferValue").textContent = `R = ${solution.R.toFixed(3)}`;
+  setMath("#modesTransferValue", `R=${solution.R.toFixed(3)}`);
   $("#modesOrderValue").textContent = solution.R.toFixed(6);
   $("#modesAmplitudeValue").textContent = solution.s.toFixed(4);
   $("#modesCropValue").textContent = modesState.crop < .012 ? "centered on seam" : `${cropDegrees.toFixed(0)}° from seam`;

@@ -1400,11 +1400,11 @@ body.tufte-site main .control-heading-reset {
 /* The continuation was historically hidden, so its legacy dark-theme ink
    never passed through the paper normalization. Treat its explanatory
    pieces as the same prose, apparatus and caption roles used elsewhere. */
-body.tufte-site main .cone-lead > p span { color: inherit; font: inherit; }
+body.tufte-site main .cone-lead > p > .formula { color: inherit; font: inherit; }
 body.tufte-site main .candidate-stamp { border-color: var(--line); }
 body.tufte-site main .candidate-stamp small,
 body.tufte-site main .candidate-stamp a,
-body.tufte-site main .crossing-card span { color: var(--muted); }
+body.tufte-site main .crossing-card > div > span { color: var(--muted); }
 body.tufte-site main .candidate-stamp strong,
 body.tufte-site main .crossing-card strong { color: var(--ink); }
 body.tufte-site main .crossing-card p {
@@ -1541,11 +1541,12 @@ body.tufte-site main .collar-field-laboratory {
 }
 .collar-field-controls .control-heading { align-self: stretch; padding: 0 0 1rem; }
 .collar-field-control-block { align-self: stretch; }
-body.tufte-site main .collar-field-controls :is(label, span, strong, button) { color: var(--ink); }
+body.tufte-site main .collar-field-controls :is(label, button),
+body.tufte-site main .collar-field-controls .control-label > :is(span, output) { color: var(--ink); }
 .collar-field-controls input[type="range"] { background: linear-gradient(90deg, var(--orange), rgba(17,17,17,.14)); }
 .collar-field-readout { margin-top: 0; padding-top: 1rem; }
 .collar-field-readout div { padding: .3rem 0; border-color: var(--line); }
-.collar-field-readout span { color: var(--muted); }
+.collar-field-readout > div > span { color: var(--muted); }
 .collar-field-readout strong { color: var(--ink); }
 .collar-field-visual {
   display: grid;
@@ -2321,7 +2322,7 @@ body.tufte-site main :is(
   .phase-story-readout,
   .collar-field-readout,
   .debye-status
-) span {
+) > div > span {
   font-size: var(--type-label) !important;
 }
 body.tufte-site main :is(
@@ -2346,7 +2347,7 @@ body.tufte-site main .interactive-plate :is(
   .modes-legend,
   .debye-legend,
   .geometry-stages
-) :is(span, strong, small, a, button),
+) > :is(span, strong, small, a, button),
 body.tufte-site main :is(.world-card > span, .world-card .literature-link) {
   font-size: var(--type-label) !important;
 }
@@ -2358,17 +2359,17 @@ body.tufte-site main :is(
   .cylinder-needed-later,
   .cylinder-proof-scope,
   .phase-agreement
-) :is(span, strong, small),
+) > :is(span, strong, small),
 body.tufte-site main :is(.phase-family, .world-cards) :is(footer span, article > span, .literature-link),
 body.tufte-site main .site-references li > span,
 body.tufte-site main .play-button > span {
   font-size: var(--type-label) !important;
 }
-body.tufte-site main .parameter-pair span { font-size: var(--type-label) !important; }
+body.tufte-site main .parameter-pair > div > span { font-size: var(--type-label) !important; }
 body.tufte-site main .parameter-pair strong { font-size: var(--type-control-value) !important; }
 body.tufte-site main .proof-strategy-lead p strong { font-size: inherit !important; }
 body.tufte-site main :is(.debye-plot-toolbar, .modes-plot-toolbar) strong,
-body.tufte-site main .fixed-zoom-pair span {
+body.tufte-site main .fixed-zoom-pair > div > span {
   font-size: var(--type-label) !important;
 }
 body.tufte-site main .fixed-zoom-pair strong { font-size: var(--type-control-value) !important; }
@@ -3708,6 +3709,16 @@ body.tufte-site main .computer-overview-label.label-display {
 }
 body.tufte-site main .computer-overview-label.label-equation {
   font-size: clamp(11.5px, 1.1vw, 14px);
+}
+body.tufte-site main .computer-overview-label.overview-equation-stack.is-visible {
+  display: grid;
+  gap: .28em;
+  white-space: normal;
+}
+body.tufte-site main .overview-equation-stack > span {
+  display: block;
+  width: max-content;
+  max-width: 100%;
 }
 body.tufte-site main .computer-overview-label.tone-muted { color: var(--muted); }
 body.tufte-site main .computer-overview-label.tone-accent { color: var(--orange); }

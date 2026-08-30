@@ -17,10 +17,10 @@
     <script defer src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.12.0/highlight.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/highlightjs-lean@1.2.0/dist/lean.min.js"></script>
     <script defer src="lean-statements.js?v=20260828.5"></script>
-    <script defer src="math.js?v=20260828.2"></script>
+    <script defer src="math.js?v=20260830.1"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tufte-css@1.9.0/tufte.min.css">
-    <link rel="stylesheet" href="styles.css?v=20260830.1">
-    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260830.8">
+    <link rel="stylesheet" href="styles.css?v=20260830.2">
+    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260830.9">
   </head>
   <body class="tufte-site">
     <div class="noise" aria-hidden="true"></div>
@@ -795,7 +795,7 @@
         </header>
 
         <div class="geometry-lead counterexample-routes-lead">
-          <p>The two constructions take different routes around the disk's linear rigidity, but geometry and bifurcation belong to both. In the conformal fixed-disc route, bifurcation and continuation construct the numerical centre and validated computation closes the exact existence argument. In the real-order route, the quotient and collar geometry lead to a bifurcation problem whose uniform analytic estimates carry the branch to an integer.</p>
+          <p>Each construction develops a geometric bifurcation mechanism into an exact counterexample. In the conformal fixed-disc route, bifurcation and continuation construct the numerical centre and validated computation closes the exact existence argument. In the real-order route, the quotient and collar geometry lead to a bifurcation problem whose uniform analytic estimates carry the branch to an integer.</p>
         </div>
 
         <section class="route-comparison data-table" aria-labelledby="routeComparisonTitle">
@@ -884,8 +884,8 @@
                 <span id="overviewFixedImage" class="computer-overview-label tone-teal">\(T(B_r)\)</span>
                 <span id="overviewFixedCenter" class="computer-overview-label">\(x^\circ\)</span>
                 <span id="overviewFixedTarget" class="computer-overview-label tone-accent">\(x^*\)</span>
-                <span id="overviewFixedBound" class="computer-overview-label label-equation">\(\begin{aligned}\lVert T(x)-x^\circ\rVert&amp;\le Y+Zr+C_2r^2+C_3r^3\\&amp;&lt;0.622r&lt;r\end{aligned}\)</span>
-                <span id="overviewFixedContraction" class="computer-overview-label label-equation tone-accent">\(\lVert T(x)-T(y)\rVert&lt;0.622\lVert x-y\rVert\)</span>
+                <span id="overviewFixedBound" class="computer-overview-label label-equation overview-equation-stack"><span>\(\lVert T(x)-x^\circ\rVert\le Y+Zr+C_2r^2+C_3r^3\)</span><span>\(&lt;0.622r&lt;r\)</span></span>
+                <span id="overviewFixedContraction" class="computer-overview-label label-equation tone-accent overview-equation-stack"><span>\(\lVert T(x)-T(y)\rVert\)</span><span>\(&lt;0.622\lVert x-y\rVert\)</span></span>
 
                 <span id="overviewFinalPair" class="computer-overview-label label-display">\(x^*=\begin{pmatrix}g^*\\ \color{#075760}{p^*}\end{pmatrix}\)</span>
                 <span id="overviewFinalShape" class="computer-overview-label tone-teal">\(p^*\) encodes shape</span>
@@ -1315,7 +1315,7 @@
             \[
             \|x^*-x^\circ\|_X
             \le\frac{Y}{1-q(r)}
-            <4.20\times10^{-10}.
+            &lt;4.20\times10^{-10}.
             \]
           </div>
           <p>The chosen radius-\(10^{-6}\) ball is therefore a certified safe region; the actual solution is forced into a much smaller neighbourhood of its centre. The two-dimensional animation below is a schematic view of this infinite-dimensional coefficient space, but its displayed distance bounds are the certified ones.</p>
@@ -1369,7 +1369,7 @@
           <div class="tex-display">
             \[
             \sup_{|z|\le1}|\phi_{p^*}(z)-\phi_{p^\circ}(z)|
-            <7.13\times10^{-11}.
+            &lt;7.13\times10^{-11}.
             \]
           </div>
           <p>The contribution from all shape coefficients beyond those stored by the computer is less than \(3.47\times10^{-13}\).</p>
@@ -1578,7 +1578,7 @@
         <details class="proof-details computer-assisted-details berenstein-certificate-details">
           <summary><span>Certificate bounds, source, and independent replay</span><i>expand +</i></summary>
           <div class="computer-assisted-details-body">
-            <p>Directed interval arithmetic proves \(Y<3.63\times10^{-9}\), \(Z<0.474\), and strict contraction on the radius-\(10^{-6}\) coefficient ball. The trace \(N\) annihilates every disk-polynomial mode with radial index \(s\ge1\); exact support identities handle the nearby source and shape coefficients, while monotone estimates cover the remaining tail.</p>
+            <p>Directed interval arithmetic proves \(Y&lt;3.63\times10^{-9}\), \(Z&lt;0.474\), and strict contraction on the radius-\(10^{-6}\) coefficient ball. The trace \(N\) annihilates every disk-polynomial mode with radial index \(s\ge1\); exact support identities handle the nearby source and shape coefficients, while monotone estimates cover the remaining tail.</p>
             <p>The exact coefficient bounds also prove injectivity of the conformal map, real-analyticity, noncircularity, and the positive trace used in the sign gate. The full argument and replay materials are available in the <a href="https://arxiv.org/abs/2608.08953" target="_blank" rel="noreferrer">companion paper</a>, the <a href="https://github.com/sgstepaniants/Berenstein" target="_blank" rel="noreferrer">source repository</a>, and the <a href="https://doi.org/10.5281/zenodo.21865020" target="_blank" rel="noreferrer">archived certificate</a>.</p>
           </div>
         </details>
@@ -1653,7 +1653,7 @@
           <h3>Expressing the problem on a fixed domain</h3>
         </header>
         <div class="intro-copy intro-copy-wide">
-        <p>Bifurcation arguments need a fixed Banach space, but the unknown here is partly the domain itself. The standard remedy is to pull everything back to one space that never moves. We take the fixed cylinder \(\mathcal{C}=[0,L]\times\mathbb{T}\) and describe the domain by a boundary profile \(h\), writing it in polar coordinates as \(r<R-h(R\varphi)\). Fix once and for all a cut-off \(\chi\) with \(\chi\equiv1\) near \(y=0\) and \(\chi\equiv0\) near \(y=L\), and set</p>
+        <p>Bifurcation arguments need a fixed Banach space, but the unknown here is partly the domain itself. The standard remedy is to pull everything back to one space that never moves. We take the fixed cylinder \(\mathcal{C}=[0,L]\times\mathbb{T}\) and describe the domain by a boundary profile \(h\), writing it in polar coordinates as \(r&lt;R-h(R\varphi)\). Fix once and for all a cut-off \(\chi\) with \(\chi\equiv1\) near \(y=0\) and \(\chi\equiv0\) near \(y=L\), and set</p>
         <div class="tex-display">
           \[ \Phi^h_R(y,\psi)=\big(R-y-\chi(y)h(\psi)\big)\,\big(\cos(\psi/R),\ \sin(\psi/R)\big). \]
         </div>
@@ -2402,9 +2402,9 @@
             <div class="tex-display">
               \[
               \begin{aligned}
-              j_{1,n}&=\pi\left(n+\frac14\right)+o(1),\\
+              j_{1,n}&amp;=\pi\left(n+\frac14\right)+o(1),\\
               N\Phi\!\left(\frac{j_{N,m}}N\right)
-              &=\pi\left(m-\frac14\right)+o(1).
+              &amp;=\pi\left(m-\frac14\right)+o(1).
               \end{aligned}
               \]
             </div>
@@ -2688,12 +2688,12 @@
     <script defer src="cone-data.js"></script>
     <script defer src="debye-data.js?v=20260828.1"></script>
     <script defer src="abundance-data.js"></script>
-    <script defer src="app.js?v=20260830.2"></script>
+    <script defer src="app.js?v=20260830.3"></script>
     <script defer src="story.js?v=20260830.1"></script>
     <script defer src="abundance.js?v=20260828.2"></script>
     <script defer src="pompeiu.js?v=20260828.4"></script>
-    <script defer src="computer-assisted.js?v=20260830.1"></script>
+    <script defer src="computer-assisted.js?v=20260830.2"></script>
     <script defer src="applet-layout.js?v=20260829.1"></script>
-    <script defer src="tufte/layout-contract.js?v=20260830.6"></script>
+    <script defer src="tufte/layout-contract.js?v=20260830.7"></script>
   </body>
 </html>

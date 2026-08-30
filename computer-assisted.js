@@ -19,6 +19,10 @@
 
   const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
   let vectorDefinitionSerial = 0;
+  const setMath = (elementOrSelector, source, options) => window.SchifferMath?.render(elementOrSelector, source, options);
+  const setInlineMathContent = (elementOrSelector, content, options) => (
+    window.SchifferMath?.renderInlineContent(elementOrSelector, content, options)
+  );
 
   const createSvgNode = (name, attributes = {}) => {
     const node = document.createElementNS(SVG_NAMESPACE, name);
@@ -1334,8 +1338,8 @@
     selectedInverseAngular = clamp(Math.round(Number(inverseAngularMode?.value || 1)), 0, 3);
     selectedInverseRadial = clamp(Math.round(Number(inverseRadialMode?.value || 1)), 1, 4);
     const D = 10 * selectedInverseAngular + 2 * selectedInverseRadial;
-    if (inverseAngularModeValue) inverseAngularModeValue.textContent = `ℓ = ${selectedInverseAngular}`;
-    if (inverseRadialModeValue) inverseRadialModeValue.textContent = `s = ${selectedInverseRadial}`;
+    setMath(inverseAngularModeValue, `\\ell=${selectedInverseAngular}`);
+    setMath(inverseRadialModeValue, `s=${selectedInverseRadial}`);
     if (inverseStatus) inverseStatus.textContent = `Here D = ${D}. The three weighted profiles cancel exactly at r = 1: their response has value 0 and radial derivative 0.`;
     drawInverse();
   };
@@ -2211,14 +2215,17 @@
     Object.freeze({
       label: "exact boundary is nearby",
       status: "The exact boundary is uniformly within 7.13 × 10⁻¹¹ of the printed centre.",
+      statusMath: "The exact boundary is uniformly within \\(7.13\\times10^{-11}\\) of the printed centre.",
     }),
     Object.freeze({
       label: "map does not fold",
       status: "The whole coefficient ball satisfies Re φ′ > 0.35, so the conformal map is one-to-one.",
+      statusMath: "The whole coefficient ball satisfies \\(\\operatorname{Re}\\phi'>0.35\\), so the conformal map is one-to-one.",
     }),
     Object.freeze({
       label: "shape is not a disk",
       status: "The normalized first shape coefficient satisfies |q₁*| > 0.03459, so the map is not linear and its image is not a disk.",
+      statusMath: "The normalized first shape coefficient satisfies \\(|q_1^*|>0.03459\\), so the map is not linear and its image is not a disk.",
     }),
   ]);
   let selectedReconstructionStage = 0;
@@ -2591,7 +2598,7 @@
     selectedReconstructionStage = clamp(Math.round(Number(reconstructionStage?.value || 0)), 0, 2);
     const stage = reconstructionStages[selectedReconstructionStage];
     if (reconstructionStageValue) reconstructionStageValue.textContent = stage.label;
-    if (reconstructionStatus) reconstructionStatus.textContent = stage.status;
+    setInlineMathContent(reconstructionStatus, stage.statusMath);
     drawReconstruction();
   };
   if (reconstructionStage) reconstructionStage.addEventListener("change", updateReconstruction);
@@ -2881,18 +2888,22 @@
     field: Object.freeze({
       label: "signed field",
       status: "Orange and blue are opposite signs of u; every dark curve between them is a zero level set.",
+      statusMath: "Orange and blue are opposite signs of \\(u\\); every dark curve between them is a zero level set.",
     }),
     nodal: Object.freeze({
       label: "interior zero curves",
       status: "Eight interior nodal curves separate alternating sign bands before the field reaches the outer boundary.",
+      statusMath: "Eight interior nodal curves separate alternating sign bands before the field reaches the outer boundary.",
     }),
     boundary: Object.freeze({
       label: "outer nodal boundary",
       status: "The heavy outer curve is both the physical boundary and a regular zero curve: u = 0 there and the outward slope is one.",
+      statusMath: "The heavy outer curve is both the physical boundary and a regular zero curve: \\(u=0\\) there and the outward slope is one.",
     }),
     symmetry: Object.freeze({
       label: "thirteenfold symmetry",
       status: "Thirteen equivalent sectors repeat around the domain. The certificate separately rules out central symmetry.",
+      statusMath: "Thirteen equivalent sectors repeat around the domain. The certificate separately rules out central symmetry.",
     }),
   });
 
@@ -2998,7 +3009,7 @@
     const stage = berensteinFieldStages[selected];
     if (berensteinFieldNotes) berensteinFieldNotes.dataset.stage = selected;
     if (berensteinFieldStageValue) berensteinFieldStageValue.textContent = stage.label;
-    if (berensteinFieldStatus) berensteinFieldStatus.textContent = stage.status;
+    setInlineMathContent(berensteinFieldStatus, stage.statusMath);
     if (berensteinFieldGuide) berensteinFieldGuide.setAttribute("aria-label", stage.label + ". " + stage.status);
   };
 
@@ -3033,30 +3044,35 @@
     Object.freeze({
       title: "Follow c to zero",
       note: "Start from a disk solving the relaxed condition ∂νu = c. Numerical continuation changes the domain and c; stop when c reaches zero, and store that endpoint as x°.",
+      noteMath: "Start from a disk solving the relaxed condition \\(\\partial_\\nu u=c\\). Numerical continuation changes the domain and \\(c\\); stop when \\(c\\) reaches zero, and store that endpoint as \\(x^\\circ\\).",
       animation: 3000,
       hold: 3400,
     }),
     Object.freeze({
       title: "Move every candidate to one disk",
       note: "The conformal map φₚ carries the unit disk to the candidate domain. Looking back through that map gives U = u ∘ φₚ, the same Helmholtz field in fixed disk coordinates. The geometry is stored in p = kφₚ′.",
+      noteMath: "The conformal map \\(\\phi_p\\) carries the unit disk to the candidate domain. Looking back through that map gives \\(U=u\\circ\\phi_p\\), the same Helmholtz field in fixed disk coordinates. The geometry is stored in \\(p=k\\phi_p'\\).",
       animation: 2400,
       hold: 3000,
     }),
     Object.freeze({
       title: "One point means two functions",
       note: "The unknown lives in a Banach space X of function pairs. One point x = (g,p) contains a function g describing the transformed Helmholtz field and a function p describing the conformal shape. The two displayed directions are only a schematic slice through X: moving in the g direction changes the interior field, while moving in the p direction changes the boundary. The exact solution will be one special point x*.",
+      noteMath: "The unknown lives in a Banach space \\(X\\) of function pairs. One point \\(x=(g,p)\\) contains a function \\(g\\) describing the transformed Helmholtz field and a function \\(p\\) describing the conformal shape. The two displayed directions are only a schematic slice through \\(X\\): moving in the \\(g\\) direction changes the interior field, while moving in the \\(p\\) direction changes the boundary. The exact solution will be one special point \\(x^*\\).",
       animation: 3200,
       hold: 3800,
     }),
     Object.freeze({
       title: "Prove convergence",
       note: "We choose r = 10⁻⁶ and certify the bound ‖T(x) − x°‖ ≤ Y + Zr + C₂r² + C₃r³ < 0.622r for every x in the ball. Here Y bounds the error at the centre, Z the linear change, and C₂,C₃ the nonlinear change. Thus every Newton step stays inside the ball. A second estimate says that T shrinks distances there by a factor less than 0.622, so its iterates converge to one exact zero x*.",
+      noteMath: "We choose \\(r=10^{-6}\\) and certify \\(\\lVert T(x)-x^\\circ\\rVert\\le Y+Zr+C_2r^2+C_3r^3<0.622r\\) for every \\(x\\) in the ball. Here \\(Y\\) bounds the error at the centre, \\(Z\\) the linear change, and \\(C_2,C_3\\) the nonlinear change. Thus every Newton step stays inside the ball. A second estimate says that \\(T\\) shrinks distances there by a factor less than \\(0.622\\), so its iterates converge to one exact zero \\(x^*\\).",
       animation: 2800,
       hold: 4000,
     }),
     Object.freeze({
       title: "Final non-disk domain",
       note: "The exact solution is the pair x* = (g*,p*). Its second component p* contains the conformal shape coefficients, so it directly determines the domain Ω*. With the normalization used here, a disk has no nonconstant conformal coefficients. The certificate proves that the first one satisfies |q₁*| > 0.03459, hence Ω* is not a disk. A separate derivative bound proves that the conformal map is one-to-one.",
+      noteMath: "The exact solution is the pair \\(x^*=(g^*,p^*)\\). Its second component \\(p^*\\) contains the conformal shape coefficients, so it directly determines the domain \\(\\Omega^*\\). With the normalization used here, a disk has no nonconstant conformal coefficients. The certificate proves that the first one satisfies \\(|q_1^*|>0.03459\\), hence \\(\\Omega^*\\) is not a disk. A separate derivative bound proves that the conformal map is one-to-one.",
       animation: 2200,
       hold: 2800,
     }),
@@ -3521,7 +3537,7 @@
 
   const updateComputerOverviewInterface = (active) => {
     const stage = computerOverviewStages[active];
-    if (computerOverviewState && computerOverviewState.textContent !== stage.note) computerOverviewState.textContent = stage.note;
+    setInlineMathContent(computerOverviewState, stage.noteMath);
     computerOverviewButtons.forEach((button, index) => {
       button.classList.toggle("active", index === active);
       button.setAttribute("aria-pressed", String(index === active));

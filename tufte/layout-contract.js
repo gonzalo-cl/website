@@ -799,6 +799,29 @@
       }
     });
 
+    document.querySelectorAll(".katex-error").forEach((formula, index) => {
+      errors.push(`KaTeX formula ${index + 1} did not parse: ${normalizeText(formula.textContent)}`);
+    });
+    document.querySelectorAll(".katex").forEach((formula, index) => {
+      if (!getComputedStyle(formula).fontFamily.includes("KaTeX")) {
+        errors.push(`KaTeX formula ${index + 1} lost its mathematical font`);
+      }
+    });
+    const rawMathWalker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+      acceptNode: (node) => {
+        const parent = node.parentElement;
+        if (!parent || parent.closest("script, style, pre, code, .katex")) return NodeFilter.FILTER_REJECT;
+        return /\\\(|\\\)|\\\[|\\\]/.test(node.textContent || "")
+          ? NodeFilter.FILTER_ACCEPT
+          : NodeFilter.FILTER_REJECT;
+      },
+    });
+    const rawMathFragments = [];
+    while (rawMathWalker.nextNode()) rawMathFragments.push(normalizeText(rawMathWalker.currentNode.textContent));
+    rawMathFragments.forEach((fragment, index) => {
+      errors.push(`inline math fragment ${index + 1} was not typeset: ${fragment.slice(0, 90)}`);
+    });
+
     document.querySelectorAll(`body.tufte-site main :is(${roleSelector})`).forEach((element, index) => {
       const roles = ["paper-copy", "math-statement", "lean-statement", "small-multiples", "figure-band", "reading-figure", "margin-figure-sequence", "data-table"]
         .filter((role) => element.classList.contains(role));
@@ -810,7 +833,7 @@
     checkType("body.tufte-site main :is(figcaption, .formula-note, .phase-family-note, .collar-field-caption)", typeCaption, "caption");
     checkType("body.tufte-site main :is(.control-heading, .control-label, .play-button, .axis-footer)", typeLabel, "apparatus label");
     checkType("body.tufte-site main :is(.small-multiples article > span, .cylinder-proof-grid article > span)", typeLabel, "editorial label");
-    checkType("body.tufte-site main :is(.solver-readout, .modes-status, .phase-story-readout, .collar-field-readout, .debye-status, .abundance-readout) span", typeLabel, "readout label");
+    checkType("body.tufte-site main :is(.solver-readout, .modes-status, .phase-story-readout, .collar-field-readout, .debye-status, .abundance-readout) > div > span", typeLabel, "readout label");
     checkType("body.tufte-site main :is(.solver-readout, .modes-status, .phase-story-readout, .collar-field-readout, .debye-status, .abundance-readout) strong, body.tufte-site main .measurement-value-line strong", typeControlValue, "readout value");
     checkType("body.tufte-site main .lean-statement > summary small", typeLabel, "Lean disclosure label");
     checkType("body.tufte-site main .lean-statement :is(summary code, pre code)", typeCode, "Lean source");
