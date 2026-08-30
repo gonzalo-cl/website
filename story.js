@@ -782,56 +782,36 @@
     drawGeometrySheet(context, sheet, { opacity: materialOpacity });
   }
 
-  /* Subsection 4.1 uses the same material sheet and the same boundary profile
-     as the section 2 construction, but only its first movement: select one
-     sector of the R-fold domain, glue its two straight edges to each other,
-     and read off the cone.  Dragging backwards unfolds the cone into the
-     sector again, which is the point being made: these are one object, not two
-     related by a map.  The wave is on throughout, so the boundary ripple is
-     carried through the fold and arrives on the cone as a single period. */
+  /* Subsection 4.1 reuses the section 2 unfolding verbatim, run backwards, so
+     that the fold is the same movement as the lift-to-the-plane stage rather
+     than a second drawing of it.  At progress 0 the twenty-eight copies are
+     fanned out into the perturbed planar domain; at progress 1 they are folded
+     back into the single perturbed cone.  drawUnfolding carries wave: 1
+     throughout, so the boundary ripple is one material profile all the way and
+     the cone is perturbed exactly where the domain is. */
   const coneFoldState = { progress: 0, playing: false, frame: null };
   const coneFoldCaptions = [
-    "The domain and its R-fold symmetry.",
-    "One sector is a fundamental domain.",
-    "Its two straight edges are identified.",
-    "The cone; the R lobes have become one period.",
+    "The perturbed domain, with its R-fold symmetry.",
+    "The copies close up around one sector.",
+    "The two straight edges meet.",
+    "The perturbed cone.",
   ];
 
-  function drawConeFold(context, width, height, progress) {
-    const t = Math.max(0, Math.min(1, progress));
-    const selection = ease(t / .26);
-    const discard = ease((t - .3) / .22);
-    const zoom = ease((t - .28) / .3);
-    const fold = ease((t - .5) / .5);
-    const materialOpacity = ease((t - .16) / .2);
-    const fullDiskRadius = Math.min(width * .26, height * .33);
-    const diskCx = lerp(geometryVisualCenter(width), width * GEOMETRY_TRAJECTORY.coneTip, zoom);
-    const diskRadius = lerp(fullDiskRadius, width * .66, zoom);
-    const targetHalf = Math.min(112, height * .23);
-
-    if (discard < .999) {
-      drawNfoldDisk(context, width, height, {
-        cx: diskCx,
-        cy: height * .54,
-        radius: diskRadius,
-        selection,
-        divisions: 1,
-        wiggle: 1,
-        opacity: 1 - discard,
-        showCaption: false,
-      });
-    }
-
-    const sheet = geometrySheetState(width, height, {
-      tip: diskCx,
-      right: diskCx + diskRadius,
-      half: lerp(diskRadius * Math.sin(Math.PI / 28), targetHalf, fold),
-      flatOpening: Math.PI / 28,
-      fold,
-      wave: 1,
-      order: 28,
+  function renderConeFold() {
+    if (!select("#coneFoldCanvasWrap")) return;
+    const { canvas, context, width, height } = canvasMetrics("#coneFoldCanvas", "#coneFoldCanvasWrap", 420);
+    context.clearRect(0, 0, width, height);
+    context.fillStyle = colors.ink; context.fillRect(0, 0, width, height);
+    // Reversed: the section 2 stage unfolds a cone into the plane, and 4.1
+    // wants the fold, which is the same one-parameter family read the other way.
+    drawUnfolding(context, width, height, 1 - Math.max(0, Math.min(1, coneFoldState.progress)));
+    const active = coneFoldStage();
+    const value = select("#coneFoldValue");
+    if (value) value.textContent = `stage ${active + 1}`;
+    document.querySelectorAll("[data-conefold-stage]").forEach((button, index) => {
+      button.classList.toggle("active", index === active);
     });
-    drawGeometrySheet(context, sheet, { opacity: materialOpacity });
+    canvas.setAttribute("aria-label", `Folding stage ${active + 1} of 4: ${coneFoldCaptions[active]}`);
   }
 
   function coneFoldStage() {
@@ -843,31 +823,16 @@
     return local < .01 ? segment : Math.min(3, segment + 1);
   }
 
-  function renderConeFold() {
-    if (!select("#coneFoldCanvasWrap")) return;
-    const { canvas, context, width, height } = canvasMetrics("#coneFoldCanvas", "#coneFoldCanvasWrap", 420);
-    context.clearRect(0, 0, width, height);
-    context.fillStyle = colors.ink; context.fillRect(0, 0, width, height);
-    drawConeFold(context, width, height, coneFoldState.progress);
-    const active = coneFoldStage();
-    const value = select("#coneFoldValue");
-    if (value) value.textContent = `stage ${active + 1}`;
-    document.querySelectorAll("[data-conefold-stage]").forEach((button, index) => {
-      button.classList.toggle("active", index === active);
-    });
-    canvas.setAttribute("aria-label", `Folding stage ${active + 1} of 4: ${coneFoldCaptions[active]}`);
-  }
-
   function stopConeFold() {
     coneFoldState.playing = false;
     if (coneFoldState.frame) cancelAnimationFrame(coneFoldState.frame);
     coneFoldState.frame = null;
     const icon = select("#coneFoldPlayIcon"); const label = select("#coneFoldPlayLabel");
     if (icon) icon.textContent = "\u25B6";
-    if (label) label.textContent = coneFoldState.progress > .999 ? "Repeat" : "Fold";
+    if (label) label.textContent = coneFoldState.progress > .999 ? "Unfold" : "Fold";
   }
 
-  function animateConeFoldTo(target, speed = 5200) {
+  function animateConeFoldTo(target, speed = 6000) {
     const destination = Math.max(0, Math.min(1, target));
     stopConeFold();
     const range = select("#coneFoldRange");
@@ -904,7 +869,6 @@
 
   function playConeFold() {
     if (coneFoldState.playing) { stopConeFold(); return; }
-    /* The control folds and unfolds: at the cone it runs back to the sector. */
     animateConeFoldTo(coneFoldState.progress > .999 ? 0 : 1);
   }
 
