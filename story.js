@@ -886,14 +886,96 @@
     "The perturbed cone.",
   ];
 
+  /* The 4.1 figure: a cone opens into the flat sector it is isometric to, and
+     nothing else.  The rim carries a mode-one perturbation, so the cone is a
+     tilted one -- the axis no longer meets the base circle at its centre --
+     which is what section 2 does when it returns from the cylinder.  The
+     unfolded picture is a circular sector of the same slant length; the mode
+     one shows there as a rim that is not a circular arc. */
+  function drawConeUnfold(context, width, height, amount) {
+    const t = Math.max(0, Math.min(1, amount));
+    const open = ease(t);
+    const cx = width * .5;
+    const cy = height * .52;
+    // Fill the canvas: the unfolded sector is the wide state, so size the slant
+    // from the width, and only fall back to the height when it is the binder.
+    const slant = Math.min(width * .62, height * .92);
+    const order = 28;
+    /* The true sector for R = 28 has opening pi/28, about four degrees: drawn
+       to scale the unfolded state is a sliver a few pixels tall and the figure
+       reads as broken.  The displayed opening is enlarged so the unfolding is
+       legible; the order is stated in the caption, and the picture claims only
+       that a cone is isometric to a flat sector, not that this is its angle. */
+    const halfSector = 0.62;
+    // Mode one: the rim radius varies as cos(psi), a rigid tilt of the base,
+    // so the axis no longer meets the base circle at its centre.
+    const tiltAmplitude = .15;
+    const rimDepth = Math.max(11, slant * .085);
+    const coneHalf = slant * .42;
+
+    // Material coordinates: radial in [0,1] along the generator, angular in
+    // [-1,1] around the sector.  Folded, the sector closes into the cone.
+    const point = (radial, angular) => {
+      const theta = Math.PI * angular;
+      const tilt = 1 + tiltAmplitude * Math.cos(theta);
+      const flatAngle = halfSector * angular;
+      const flatX = cx - slant * .52 + radial * tilt * slant * Math.cos(flatAngle);
+      const flatY = cy + radial * tilt * slant * Math.sin(flatAngle);
+      const coneX = cx - slant * .56 + radial * tilt * (slant + rimDepth * Math.cos(theta));
+      const coneY = cy + radial * tilt * coneHalf * Math.sin(theta);
+      return { x: lerp(flatX, coneX, 1 - open), y: lerp(flatY, coneY, 1 - open) };
+    };
+
+    const steps = 96;
+    // Surface, shaded by depth so the folded state reads as a solid.
+    for (let band = 0; band < steps; band++) {
+      const a0 = -1 + 2 * band / steps;
+      const a1 = -1 + 2 * (band + 1) / steps;
+      const depth = (Math.cos(Math.PI * (a0 + a1) / 2) + 1) / 2;
+      const shade = .30 + .55 * (1 - open) * depth + .30 * open * depth;
+      context.beginPath();
+      const p00 = point(0, a0), p10 = point(1, a0), p11 = point(1, a1), p01 = point(0, a1);
+      context.moveTo(p00.x, p00.y);
+      context.lineTo(p10.x, p10.y);
+      context.lineTo(p11.x, p11.y);
+      context.lineTo(p01.x, p01.y);
+      context.closePath();
+      context.fillStyle = `rgba(226, 138, 95, ${(.30 + .52 * shade).toFixed(3)})`;
+      context.fill();
+    }
+
+    // Rim.
+    context.beginPath();
+    for (let i = 0; i <= steps; i++) {
+      const p = point(1, -1 + 2 * i / steps);
+      if (i === 0) context.moveTo(p.x, p.y); else context.lineTo(p.x, p.y);
+    }
+    context.strokeStyle = "rgba(247, 232, 214, .92)";
+    context.lineWidth = 2;
+    context.stroke();
+
+    // The two generators that become the seam when the sector closes up.
+    [-1, 1].forEach((angular) => {
+      const a = point(0, angular), b = point(1, angular);
+      context.beginPath();
+      context.moveTo(a.x, a.y);
+      context.lineTo(b.x, b.y);
+      context.strokeStyle = `rgba(247, 232, 214, ${(.32 + .5 * open).toFixed(3)})`;
+      context.lineWidth = 1.3;
+      context.stroke();
+    });
+  }
+
   function renderConeFold() {
     if (!select("#coneFoldCanvasWrap")) return;
     const { canvas, context, width, height } = canvasMetrics("#coneFoldCanvas", "#coneFoldCanvasWrap", 420);
     context.clearRect(0, 0, width, height);
     context.fillStyle = colors.ink; context.fillRect(0, 0, width, height);
-    // Reversed: the section 2 stage unfolds a cone into the plane, and 4.1
-    // wants the fold, which is the same one-parameter family read the other way.
-    drawUnfolding(context, width, height, 1 - Math.max(0, Math.min(1, coneFoldState.progress)));
+    /* Section 2's stage is scaled for its own canvas: its centre is offset by
+       the --geometry-key-width token and its radius is clamped against that
+       canvas's height, so borrowing it here showed only a fraction of the
+       figure.  This draws the same unfolding, sized to this canvas. */
+    drawConeUnfold(context, width, height, 1 - Math.max(0, Math.min(1, coneFoldState.progress)));
     const active = coneFoldStage();
     const value = select("#coneFoldValue");
     const stageLabel = `stage ${active + 1}`;
