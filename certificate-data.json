@@ -1,0 +1,56 @@
+{
+  "schema": "pompeiu-schiffer-radii-envelope/v1",
+  "title": "Exact rational envelope for the fixed-disc Banach check",
+  "source": {
+    "archive": "https://doi.org/10.5281/zenodo.21765287",
+    "repository": "https://github.com/MColbrook/Pompeiu_Schiffer",
+    "scope": "These outward rational bounds are distilled from the released certificate. The browser checks their exact Banach-space implications; it does not regenerate the interval enclosures that establish the bounds."
+  },
+  "radius": {
+    "numerator": "1",
+    "denominator": "1000000",
+    "decimal": "0.000001",
+    "role": "Chosen validation radius in coefficient space.",
+    "origin": "Certificate parameter selected for the strict self-map and contraction check.",
+    "aggregation": "r = 10⁻⁶. It is an input radius, not a computed physical displacement."
+  },
+  "bounds": {
+    "Y": {
+      "numerator": "159",
+      "denominator": "1000000000000",
+      "decimal": "0.000000000159",
+      "role": "Outward bound for the first Newton step, assembled from the finite residual and omitted-residual witness.",
+      "origin": "Released audit: finite residual plus omitted-residual witness.",
+      "aggregation": "Y = Y_finite + Y_omitted, rounded outward to 159 × 10⁻¹²."
+    },
+    "Z": {
+      "numerator": "621",
+      "denominator": "1000",
+      "decimal": "0.621",
+      "role": "Outward linear inverse-defect bound; the released component budget is dominated by its shape-tail contribution.",
+      "origin": "Released audit: finite, finite-to-tail, g-tail, and p-tail inverse-defect contributions.",
+      "aggregation": "Z is the maximum of the four outward contributions; the p-tail bound 0.621 dominates."
+    },
+    "C2": {
+      "numerator": "122",
+      "denominator": "1",
+      "decimal": "122",
+      "role": "Outward bilinear bound for the quadratic part of the fixed-disc equation.",
+      "origin": "Released coefficient and inverse-norm bounds entering the quadratic estimate.",
+      "aggregation": "C₂ = α max(‖p‖/(16b), ‖U‖/(4b²)), rounded outward to 122."
+    },
+    "C3": {
+      "numerator": "3",
+      "denominator": "250",
+      "decimal": "0.012",
+      "role": "Outward trilinear bound for the cubic part of the fixed-disc equation.",
+      "origin": "Released inverse-norm and coefficient-radius bounds entering the cubic estimate.",
+      "aggregation": "C₃ = α/(96b²), rounded outward to 0.012."
+    }
+  },
+  "claims": {
+    "selfMapRatioUpper": "0.621281000000012",
+    "contractionUpper": "0.621244000000036",
+    "fixedPointDistanceUpper": "0.000000000420"
+  }
+}

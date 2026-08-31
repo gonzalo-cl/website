@@ -6,6 +6,9 @@
   const crossingData = window.SCHIFFER_ABUNDANCE_DATA;
   const select = (selector) => document.querySelector(selector);
   const last = (items) => items[items.length - 1];
+  const prefersReducedMotion = () => (
+    window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches || false
+  );
   const setMath = (elementOrSelector, source, options) => window.SchifferMath?.render(elementOrSelector, source, options);
   const setFormula = (element, source, options) => {
     if (!element || element.dataset.tex === source) return;
@@ -242,6 +245,20 @@
     });
     diagram.addEventListener("pointerup", (event) => diagram.releasePointerCapture(event.pointerId));
     diagram.addEventListener("keydown", (event) => {
+      if (onTrivial && event.shiftKey && (event.key === "ArrowLeft" || event.key === "ArrowRight")) {
+        event.preventDefault();
+        state.trivial = Math.max(
+          -1,
+          Math.min(1, state.trivial + (event.key === "ArrowRight" ? .05 : -.05)),
+        );
+        if (Number(range.value) !== 0) {
+          range.value = "0";
+          range.dispatchEvent(new Event("input", { bubbles: true }));
+        }
+        onTrivial(state.trivial);
+        renderBranchDiagram(diagram, 0, state.trivial);
+        return;
+      }
       const step = event.key === "ArrowUp" || event.key === "ArrowRight" ? .05
         : event.key === "ArrowDown" || event.key === "ArrowLeft" ? -.05 : 0;
       if (!step) return;
@@ -1103,7 +1120,7 @@
     const range = select("#coneFoldRange");
     const startProgress = coneFoldState.progress;
     const distance = Math.abs(destination - startProgress);
-    if (distance < .0005) {
+    if (distance < .0005 || prefersReducedMotion()) {
       coneFoldState.progress = destination;
       if (range) { range.value = destination; fillRange(range); }
       renderConeFold();
@@ -1433,6 +1450,14 @@
   function playGeometryStory() {
     if (geometryState.playing) { stopGeometryPlayback(); return; }
     if (geometryState.progress > .999) geometryState.progress = 0;
+    if (prefersReducedMotion()) {
+      geometryState.progress = 1;
+      select("#storyGeometryRange").value = 1;
+      fillRange(select("#storyGeometryRange"));
+      stopGeometryPlayback();
+      renderGeometryStory();
+      return;
+    }
     geometryState.playing = true;
     select("#storyGeometryPlayIcon").textContent = "Ⅱ";
     select("#storyGeometryPlayLabel").textContent = "Pause";
@@ -1458,7 +1483,7 @@
     stopGeometryPlayback();
     const startProgress = geometryState.progress;
     const distance = Math.abs(destination - startProgress);
-    if (distance < .0005) {
+    if (distance < .0005 || prefersReducedMotion()) {
       geometryState.progress = destination;
       geometryRange.value = destination;
       fillRange(geometryRange);
@@ -1521,17 +1546,47 @@
   }
 
   function phaseFamilyRows() {
-    if (!crossingData || !crossingData.columns) return [];
     const rows = [];
-    const columns = crossingData.columns;
-    for (let index = 0; index < columns.R.length; index += 1) {
-      const R = columns.R[index];
-      if (R < phaseFamilyRMin) continue;
-      if (R > phaseFamilyRMax) break;
-      const rho = columns.rho[index];
-      const lambda = (rho / R) ** 2;
-      if (lambda < 2 || lambda > 3) continue;
-      rows.push({ index, R, rho, lambda, gamma: cylinderLimitGamma(lambda), reference: false });
+    const columns = crossingData?.columns;
+    if (columns) {
+      for (let index = 0; index < columns.R.length; index += 1) {
+        const R = columns.R[index];
+        if (R < phaseFamilyRMin) continue;
+        if (R > phaseFamilyRMax) break;
+        const rho = columns.rho[index];
+        const lambda = (rho / R) ** 2;
+        if (lambda < 2 || lambda > 3) continue;
+        rows.push({ index, R, rho, lambda, gamma: cylinderLimitGamma(lambda), reference: false, inProofWindow: true });
+      }
+    }
+
+    const referenceR = Number(data.RStar);
+    const referenceRho = Number(data.rho);
+    const referenceLambda = Number(data.lambdaStar ?? (referenceRho / referenceR) ** 2);
+    if (Number.isFinite(referenceR)
+        && Number.isFinite(referenceRho)
+        && Number.isFinite(referenceLambda)
+        && referenceR >= phaseFamilyRMin
+        && referenceR <= phaseFamilyRMax
+        && referenceLambda > 1
+        && referenceLambda < 4) {
+      const duplicate = rows.find((row) => (
+        Math.abs(row.R - referenceR) < 1e-9
+        && Math.abs(row.rho - referenceRho) < 1e-9
+      ));
+      if (duplicate) {
+        duplicate.reference = true;
+      } else {
+        rows.push({
+          index: -1,
+          R: referenceR,
+          rho: referenceRho,
+          lambda: referenceLambda,
+          gamma: cylinderLimitGamma(referenceLambda),
+          reference: true,
+          inProofWindow: false,
+        });
+      }
     }
     rows.sort((left, right) => left.R - right.R);
     return rows;
@@ -1761,7 +1816,7 @@
     context.restore();
 
     phaseFamilyState.geometry = { pointGeometry, width, height };
-    const windowRows = rows.filter((row) => !row.reference).length;
+    const windowRows = rows.filter((row) => row.inProofWindow).length;
     const phaseFamilyLabel = paperEdition
       ? "Real-order crossing plot with integer fold symmetries, common-zero crossings at the branch origin, and predicted quadratic branch jets bending toward smaller real order."
       : `${windowRows} computed crossings with real order between 6 and 30 and spectral ratio between 2 and 3, together with the separately computed running example at order 28.026397. Every displayed quadratic branch jet bends toward smaller real order as the magnitude of s increases. Tap a point, or use the left and right arrow keys after focusing the plot, to inspect exact values.`;
@@ -1907,6 +1962,26 @@
         phaseFamilyStatus.textContent = phaseFamilySelectionText(currentPoints[selected].row, selected, currentPoints.length);
       }
     };
+
+    const phaseFamilyFigure = phaseFamilyCanvas.closest("figure");
+    if (phaseFamilyFigure) {
+      phaseFamilyFigure.schifferStateAdapter = Object.freeze({
+        getState: () => ({ selectedIndex: phaseFamilyState.selectedIndex }),
+        setState: (state) => {
+          const selectedIndex = state?.selectedIndex;
+          const rowCount = phaseFamilyRows().length;
+          if (!Number.isInteger(selectedIndex) || selectedIndex < -1 || selectedIndex >= rowCount) return;
+          if (selectedIndex >= 0) {
+            selectPhaseFamilyPoint(selectedIndex, true);
+            return;
+          }
+          phaseFamilyState.selectedIndex = -1;
+          phaseFamilyState.hoverIndex = -1;
+          renderPhaseFamily();
+          if (phaseFamilyStatus) phaseFamilyStatus.textContent = "No crossing is selected.";
+        },
+      });
+    }
 
     phaseFamilyCanvas.addEventListener("pointermove", (event) => {
       if (event.pointerType === "touch") {

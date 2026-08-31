@@ -645,16 +645,68 @@
     if (!isEditoriallyVisible(figure)) return;
     const caption = figure.querySelector(":scope > figcaption");
     if (!caption) return;
-    const label = document.createElement("span");
+    const label = document.createElement("a");
     label.className = "figure-label";
+    label.href = "#" + figure.id;
+    label.setAttribute("aria-label", "Permalink to Figure " + figure.dataset.number);
     label.textContent = `Figure ${figure.dataset.number}. `;
     caption.prepend(label);
-    if (figure.dataset.evidence) {
-      const evidence = document.createElement("span");
-      evidence.className = "figure-evidence-label";
-      evidence.textContent = figure.dataset.evidence;
-      label.after(evidence);
+  });
+
+  const evidenceProfiles = Object.freeze({
+    exact: Object.freeze({
+      label: "Exact",
+      explanation: "The displayed identity, theorem, or analytic mechanism is exact. Rendering choices may still be illustrative.",
+    }),
+    certified: Object.freeze({
+      label: "Certified",
+      explanation: "The displayed numerical reconstruction or bound is accompanied by a rigorous enclosure. Read the caption for the precise certified claim.",
+    }),
+    numerical: Object.freeze({
+      label: "Numerical",
+      explanation: "This is a finite computation or numerical illustration. It informs the mechanism but is not itself an existence proof.",
+    }),
+    asymptotic: Object.freeze({
+      label: "Asymptotic",
+      explanation: "This displays a limiting or local expansion. Its range and logical role are stated in the caption and surrounding proof.",
+    }),
+    schematic: Object.freeze({
+      label: "Schematic",
+      explanation: "This is a conceptual or not-to-scale explanation. It organizes the proof but does not supply numerical evidence.",
+    }),
+    context: Object.freeze({
+      label: "Context",
+      explanation: "This photograph or reference image supplies context rather than mathematical evidence.",
+    }),
+  });
+
+  main.querySelectorAll("figure[data-evidence]").forEach((figure, index) => {
+    const caption = figure.querySelector(":scope > figcaption") || figure.querySelector("figcaption");
+    if (!caption) {
+      console.warn("Figure with status “" + figure.dataset.evidence + "” has no caption for its explanation.");
+      return;
     }
+    const profile = evidenceProfiles[figure.dataset.evidence];
+    if (!profile) {
+      console.warn("Unknown epistemic status: " + figure.dataset.evidence);
+      return;
+    }
+    const disclosure = document.createElement("details");
+    disclosure.className = "figure-evidence figure-evidence-" + figure.dataset.evidence;
+    const summary = document.createElement("summary");
+    summary.className = "figure-evidence-label";
+    const prefix = document.createElement("span");
+    prefix.className = "visually-hidden";
+    prefix.textContent = "Epistemic status: ";
+    summary.append(prefix, profile.label);
+    const explanation = document.createElement("p");
+    explanation.id = (figure.id || ("evidence-figure-" + (index + 1))) + "-evidence";
+    explanation.textContent = figure.dataset.evidenceDetail || profile.explanation;
+    summary.setAttribute("aria-controls", explanation.id);
+    disclosure.append(summary, explanation);
+    const figureLabel = caption.querySelector(":scope > .figure-label");
+    if (figureLabel) figureLabel.after(disclosure);
+    else caption.prepend(disclosure);
   });
 
   numberWithinSection("aside[data-aside]", "data-aside", "aside", "Aside");

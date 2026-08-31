@@ -930,6 +930,11 @@
     document.addEventListener("visibilitychange", function pauseWhenHidden() {
       if (document.hidden && state.playing) stopPlaying();
     });
+    reducedMotion.addEventListener?.("change", function stopForReducedMotion(event) {
+      if (!event.matches || !state.playing) return;
+      stopPlaying();
+      setCutoff(model.maxN);
+    });
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(render);
 
     updatePlayControl();
