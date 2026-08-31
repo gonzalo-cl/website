@@ -1459,7 +1459,7 @@
      itself.  Each domain is rescaled so that its own frequency becomes 1, which
      is why the N = 28 one is so much larger than the disc: its k is 1.822983
      against the disc's 1/j_{1,1}. */
-  const PROBE = { domain: 0, t1: 0, t2: 0, angle: 0, dragging: false };
+  const PROBE = { domain: 0, t1: 0, t2: 0, angle: 0, dragging: false, mode: "move" };
 
   function probeDomains() {
     const list = [];
@@ -1606,6 +1606,9 @@
     context.fillText(domain.vanishes
       ? "zero for every position and angle"
       : "changes with position", 14, top + plotHeight + 16);
+    context.textAlign = "right";
+    context.fillText("drag inside to move \u00b7 outside to turn", width - 14, top + plotHeight + 16);
+    context.textAlign = "left";
 
     document.querySelectorAll("[data-probe-domain]").forEach((button, index) => {
       button.classList.toggle("active", index === PROBE.domain);
@@ -1619,38 +1622,87 @@
     PROBE.geometry = { toX, toY, scale, cx, cy, viewHeight };
   }
 
+  function probeInside(domain, x, y) {
+    const dx = x - PROBE.t1, dy = y - PROBE.t2;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    if (!distance) return true;
+    return distance < domain.radius(Math.atan2(dy, dx) - PROBE.angle);
+  }
+
+  /* Three motions, all from the canvas.  Pressing inside the domain drags it,
+     in both directions; pressing outside turns it about its own centre; the
+     slider and the arrow keys do the same two things for anyone not using a
+     pointer.  Both drags are relative to where the pointer went down, so
+     nothing jumps to the cursor when it is grabbed. */
   function bindPompeiuProbe() {
     const canvas = select("#probeCanvas");
     if (!canvas) return;
-    /* The domain is dragged freely in both directions; rotation is the slider.
-       Moving it up and down is worth allowing even though the integral cannot
-       change: cos(x_1) does not vary in x_2, so vertical motion is the cheapest
-       demonstration that the value depends on the position only through t_1. */
-    const setFromPointer = (event) => {
+    const planeOf = (event) => {
       const geometry = PROBE.geometry;
-      if (!geometry) return;
       const box = canvas.getBoundingClientRect();
-      if (!box.width || !box.height) return;
+      if (!geometry || !box.width || !box.height) return null;
       const ratio = window.devicePixelRatio || 1;
       const x = (event.clientX - box.left) / box.width * (canvas.width / ratio);
       const y = (event.clientY - box.top) / box.height * (canvas.height / ratio);
-      PROBE.t1 = (x - geometry.cx) / geometry.scale;
-      PROBE.t2 = (geometry.cy - y) / geometry.scale;
-      renderPompeiuProbe();
+      return { x: (x - geometry.cx) / geometry.scale, y: (geometry.cy - y) / geometry.scale };
+    };
+    const syncSlider = () => {
+      const slider = select("#probeAngle");
+      if (slider) slider.value = String(((PROBE.angle % TAU) + TAU) % TAU);
     };
     canvas.addEventListener("pointerdown", (event) => {
+      const point = planeOf(event);
+      if (!point) return;
       event.preventDefault();
       canvas.setPointerCapture(event.pointerId);
+      const domains = probeDomains();
+      const domain = domains[Math.min(PROBE.domain, domains.length - 1)];
+      PROBE.mode = probeInside(domain, point.x, point.y) ? "move" : "turn";
+      PROBE.grab = point;
+      PROBE.grabT1 = PROBE.t1; PROBE.grabT2 = PROBE.t2;
+      PROBE.grabAngle = PROBE.angle;
+      PROBE.grabBearing = Math.atan2(point.y - PROBE.t2, point.x - PROBE.t1);
       PROBE.dragging = true;
-      setFromPointer(event);
     });
     canvas.addEventListener("pointermove", (event) => {
-      if (PROBE.dragging) setFromPointer(event);
+      if (!PROBE.dragging) return;
+      const point = planeOf(event);
+      if (!point) return;
+      if (PROBE.mode === "move") {
+        PROBE.t1 = PROBE.grabT1 + (point.x - PROBE.grab.x);
+        PROBE.t2 = PROBE.grabT2 + (point.y - PROBE.grab.y);
+      } else {
+        const bearing = Math.atan2(point.y - PROBE.t2, point.x - PROBE.t1);
+        PROBE.angle = PROBE.grabAngle + (bearing - PROBE.grabBearing);
+        syncSlider();
+      }
+      renderPompeiuProbe();
     });
-    canvas.addEventListener("pointerup", (event) => {
+    const release = (event) => {
       PROBE.dragging = false;
-      canvas.releasePointerCapture(event.pointerId);
+      if (canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
+    };
+    canvas.addEventListener("pointerup", release);
+    canvas.addEventListener("pointercancel", release);
+
+    canvas.setAttribute("tabindex", "0");
+    canvas.addEventListener("keydown", (event) => {
+      const step = event.shiftKey ? 4 : 1;
+      const keys = {
+        ArrowLeft: () => { PROBE.t1 -= step / PROBE.geometry.scale * 8; },
+        ArrowRight: () => { PROBE.t1 += step / PROBE.geometry.scale * 8; },
+        ArrowUp: () => { PROBE.t2 += step / PROBE.geometry.scale * 8; },
+        ArrowDown: () => { PROBE.t2 -= step / PROBE.geometry.scale * 8; },
+        "[": () => { PROBE.angle -= .08 * step; syncSlider(); },
+        "]": () => { PROBE.angle += .08 * step; syncSlider(); },
+      };
+      const action = keys[event.key];
+      if (!action || !PROBE.geometry) return;
+      event.preventDefault();
+      action();
+      renderPompeiuProbe();
     });
+
     const angle = select("#probeAngle");
     if (angle) {
       angle.addEventListener("input", () => {
@@ -1661,7 +1713,8 @@
     document.querySelectorAll("[data-probe-domain]").forEach((button, index) => {
       button.addEventListener("click", () => {
         PROBE.domain = index;
-        PROBE.t1 = 0; PROBE.t2 = 0;
+        PROBE.t1 = 0; PROBE.t2 = 0; PROBE.angle = 0;
+        syncSlider();
         renderPompeiuProbe();
       });
     });
