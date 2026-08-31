@@ -1587,3 +1587,6 @@ body.tufte-site main .intro-route-overview p,
 .interior-match-control label { font-size: var(--type-label); color: var(--muted); }
 .interior-match-control output { font-family: var(--mono); font-size: var(--type-label); color: var(--ink); }
 .interior-match-control input[type="range"] { grid-column: 1 / -1; }
+
+.branch-scale-canvas-wrap { position: relative; width: 100%; height: 430px; }
+.branch-scale-canvas-wrap canvas { display: block; width: 100%; height: 100%; }

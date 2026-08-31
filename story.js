@@ -1060,6 +1060,91 @@
      quantitative one; the quantitative clauses are the same DOM, shown or
      hidden.  Null-guarded: story.js is shared with the paper edition, which
      does not carry this markup. */
+  /* The figure beside the Crandall-Rabinowitz box, switching with it.  Each
+     crossing sits a little above an integer and carries its branch, drawn as
+     the two-jet R(s) = R_star - Gamma s^2 / 2, so the branch reaches the integer
+     line exactly when Gamma s_star^2 / 2 clears that gap.  Classically s_star
+     may shrink with R_star and the reach fails; uniformly it does not.
+     Schematic: the true reach is a fraction of a percent of R and would be one
+     pixel, so the curvature and the gap are enlarged together. */
+  const BRANCH_SCALE = {
+    first: 15, last: 30, gamma: 1.67, gap: .25, uniform: .85,
+    classical: (N) => .85 * Math.pow(15 / N, 1.6),
+  };
+
+  function renderBranchScale(variant) {
+    if (!select("#branchScaleCanvasWrap")) return;
+    const { canvas, context, width, height } = canvasMetrics("#branchScaleCanvas", "#branchScaleCanvasWrap", 430);
+    context.clearRect(0, 0, width, height);
+    context.fillStyle = colors.ink; context.fillRect(0, 0, width, height);
+
+    const { first, last, gamma, gap, uniform, classical } = BRANCH_SCALE;
+    const uniformMode = variant === "uniform";
+    const tint = uniformMode ? colors.cyan : "#c07a6d";
+    const left = 26, right = width - 12, top = 20, bottom = height - 44;
+    const xOf = (R) => left + (R - first + .5) / (last - first + 1.6) * (right - left);
+    const yOf = (s) => (top + bottom) / 2 - s / .98 * (bottom - top) / 2;
+
+    context.strokeStyle = colors.grid; context.lineWidth = 1;
+    for (let N = first; N <= last; N++) {
+      context.beginPath();
+      context.moveTo(xOf(N), top); context.lineTo(xOf(N), bottom);
+      context.stroke();
+    }
+    context.beginPath();
+    context.moveTo(left, yOf(0)); context.lineTo(right, yOf(0));
+    context.strokeStyle = colors.faint; context.stroke();
+
+    let reached = 0;
+    for (let N = first; N <= last; N++) {
+      const amplitude = uniformMode ? uniform : classical(N);
+      const origin = N + gap;
+      context.beginPath();
+      for (let i = 0; i <= 60; i++) {
+        const s = -amplitude + 2 * amplitude * i / 60;
+        const x = xOf(origin - gamma * s * s / 2), y = yOf(s);
+        if (!i) context.moveTo(x, y); else context.lineTo(x, y);
+      }
+      context.strokeStyle = tint; context.lineWidth = 1.6; context.stroke();
+
+      context.beginPath();
+      context.arc(xOf(origin), yOf(0), 2.2, 0, TAU);
+      context.fillStyle = colors.faint; context.fill();
+
+      if (gamma * amplitude * amplitude / 2 >= gap) {
+        reached += 1;
+        const s = Math.sqrt(2 * gap / gamma);
+        [-s, s].forEach((value) => {
+          context.beginPath();
+          context.arc(xOf(N), yOf(value), 3, 0, TAU);
+          context.fillStyle = tint; context.fill();
+          context.strokeStyle = colors.ink; context.lineWidth = 1; context.stroke();
+        });
+      }
+    }
+
+    context.fillStyle = colors.faint;
+    context.font = visualTheme.labelFont;
+    context.textAlign = "left"; context.textBaseline = "top";
+    context.fillText("s", 8, top - 4);
+    context.textAlign = "center";
+    context.fillText(String(first), xOf(first), bottom + 8);
+    context.fillText(String(last), xOf(last), bottom + 8);
+    context.textAlign = "left";
+    context.fillStyle = tint;
+    context.fillText(`${reached} of ${last - first + 1} branches reach an integer`, left, bottom + 24);
+
+    canvas.setAttribute("aria-label", uniformMode
+      ? `Uniform branches, all of the same height; ${reached} of ${last - first + 1} reach an integer order.`
+      : `Classical branches, shrinking as the order grows; only ${reached} of ${last - first + 1} reach an integer order.`);
+    const note = select("#branchScaleNote");
+    if (note) {
+      note.textContent = uniformMode
+        ? "Uniform bifurcation branches guarantee some intersection with R \u2208 \u2115. Click Classical to see the problem of using standard Crandall\u2013Rabinowitz in this argument."
+        : "Bifurcation branches get smaller for higher R\u2605, so no intersection with R \u2208 \u2115 can be guaranteed. Click Uniform to see how to solve it.";
+    }
+  }
+
   function bindCrandallRabinowitz() {
     document.querySelectorAll(".cr-statement").forEach((statement) => {
       const buttons = statement.querySelectorAll("[data-cr-variant]");
@@ -1069,6 +1154,7 @@
         buttons.forEach((button) => {
           button.setAttribute("aria-pressed", String(button.dataset.crVariant === variant));
         });
+        renderBranchScale(variant);
       };
       buttons.forEach((button) => {
         button.addEventListener("click", () => choose(button.dataset.crVariant));

@@ -2639,6 +2639,14 @@
         <div class="intro-copy intro-copy-wide">
           <p>We now have a rigorous formulation of the problem as \(\mathcal{G}(R,v)=0\), which yields Schiffer solutions whenever \(R\) is an integer. Notice that \(v=0\) is a trivial solution for every \(R\), corresponding to the balls. Our task is to find \(R(s),v(s)\) solving \(\mathcal{G}(R(s),v(s))=0\), starting from \(R(0)=R_\star\) close to an integer, and to show that \(R(s)\) reaches that integer.</p>
           <p>The standard tool for constructing such branches is the classical Crandall&ndash;Rabinowitz theorem. But there is a twist. Standard Crandall&ndash;Rabinowitz gives a branch that could be extremely small. Recall from the <a class="xref" data-ref="main-question"></a> that we need a branch of uniform size as \(R_\star\to\infty\). We therefore need a <em>uniform</em> Crandall&ndash;Rabinowitz theorem. We write below the classical Crandall&ndash;Rabinowitz theorem, with \(C^4\) regularity, and our uniform version, for comparison.</p>
+          <label for="branch-scale-note" class="margin-toggle" aria-label="Show the branch-size figure">&#8853;</label>
+          <input type="checkbox" id="branch-scale-note" class="margin-toggle">
+          <figure class="marginnote branch-scale-figure" data-figure="branch-scale">
+            <div id="branchScaleCanvasWrap" class="branch-scale-canvas-wrap">
+              <canvas id="branchScaleCanvas" role="img" aria-label="Bifurcation branches at integer orders fifteen to thirty"></canvas>
+            </div>
+            <figcaption id="branchScaleNote">Bifurcation branches get smaller for higher \(R_\star\), so no intersection with \(R\in\mathbb{N}\) can be guaranteed. Click Uniform to see how to solve it.</figcaption>
+          </figure>
         </div>
 
         <article class="math-statement cr-statement" data-kind="theorem" data-label="crandall-rabinowitz" data-variant="classical" aria-labelledby="crandallRabinowitzTitle">
