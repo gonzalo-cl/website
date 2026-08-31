@@ -1564,3 +1564,7 @@ body.tufte-site main .cr-statement .cr-variant-button[data-cr-variant="uniform"]
 .abundance-examples-margin .abundance-examples-table th,
 .abundance-examples-margin .abundance-examples-table td { padding: 7px 8px; }
 .abundance-examples-margin .abundance-examples-table { table-layout: auto; }
+
+.route-overview-list { margin: 14px 0 0; padding-left: 22px; }
+.route-overview-list li { margin: 0 0 14px; }
+.route-overview-list li:last-child { margin-bottom: 0; }
