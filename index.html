@@ -2644,9 +2644,9 @@
           <p>The five constants measure, in order, the size of the interval in \(R\), the size of the ball in \(X\), the derivatives of \(\mathcal{G}\) up to fourth order, the linear inverse together with the kernel and cokernel vectors in norm, and the transversality. In the paper they are written \(c_1,c_2,C_1,C_2,c_3\). Applied to the collar problem, all five can be bounded uniformly over large crossings, which gives the following.</p>
         </div>
         <article id="uniformConeBifurcation" class="math-statement" data-kind="theorem" data-label="uniform-cone-bifurcation" aria-labelledby="uniformConeBifurcationTitle">
-          <header class="math-statement-header"><span>Theorem</span><small id="uniformConeBifurcationTitle">uniform Crandall–Rabinowitz theorem on large cones</small></header>
+          <header class="math-statement-header"><span>Theorem</span><small id="uniformConeBifurcationTitle">uniform branch on large cones</small></header>
           <div class="math-statement-body">
-            <p>There are constants \(R_{\mathrm{unif}},s_*&gt;0\) such that, at every sufficiently large real crossing</p>
+            <p>There are \(R_{\mathrm{unif}},s_*,C&gt;0\) such that every crossing with</p>
             <div class="tex-display">
               \[
               \begin{gathered}
@@ -2655,14 +2655,11 @@
               \end{gathered}
               \]
             </div>
-            <p>the Crandall–Rabinowitz hypotheses hold with constants independent of the crossing: after fixing the rotational gauge, the kernel is one-dimensional, the complementary inverse is uniformly bounded, and the transversality constant is uniformly separated from zero.</p>
-            <p>Consequently, every such Dirichlet–Neumann coincidence produces a nontrivial cone branch \(s\mapsto(R(s),u_s,h_s)\), defined on the same interval \(|s|\le s_*\), with</p>
+            <p>satisfies the hypotheses of <a class="xref" data-ref="crandall-rabinowitz"></a> with \(C_1,\ldots,C_5\) independent of the crossing. On the cone, this gives a branch \(s\mapsto\big(R(s),h_s(\psi),w_s\big)\) defined on the whole of \(|s|\le s_*\), with</p>
             <div class="tex-display">
-              \[
-              R(0)=R_*,\qquad h_s(\psi)=s\cos\psi+O(s^2).
-              \]
+              \[ R(0)=R_*,\qquad h_s(\psi)=s\cos\psi+O(s^2), \]
             </div>
-            <p>The family depends \(C^3\)-smoothly on \(s\), with uniform \(C^3\) bounds in the Banach spaces used for the boundary and the field. Thus the size and regularity of the perturbation do not deteriorate as \(R_*\to\infty\).</p>
+            <p>where \(R\) is of class \(C^3\) and \(\bigl|R^{(j)}(s)\bigr|\le C\) for \(j\le3\).</p>
           </div>
         </article>
         <lean-statement data-statement="uniform-cone-bifurcation"></lean-statement>
