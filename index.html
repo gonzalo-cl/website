@@ -2572,8 +2572,31 @@
           \[ \mathcal{G}_2(R,v):=D_R\big[v(L,\cdot)\big]+\partial_yv(L,\cdot)=0. \]
         </div>
         <p>Only \(v\) appears, because \(w_0\) already extends: it is the restriction of a solution regular at the apex, so it satisfies the matching condition on its own.</p>
-        <p>One further constraint is worth recording, because it dictates the function spaces. Since \(h_v\) is a Neumann trace of \(v\), it has one derivative less than \(v\), while the coefficients above involve \(h''\). The saving observation is that \(h''\) never multiplies \(\partial_y^2\): it appears only in \(a_y\), against a single \(y\)-derivative. The spaces must therefore be anisotropic, counting \(y\)- and \(\psi\)-derivatives separately.</p>
+        <p>Writing \(\mathcal{G}=(\mathcal{G}_1,\mathcal{G}_2)\), a zero of \(\mathcal{G}\) at integer order is already a counterexample.</p>
+        <article class="math-statement" data-kind="proposition" data-label="collar-to-counterexample" aria-labelledby="collarToCounterexampleTitle">
+          <header class="math-statement-header"><span>Proposition</span><small id="collarToCounterexampleTitle">a zero at integer order is a Schiffer domain</small></header>
+          <div class="math-statement-body">
+            <p>Fix \(\rho\) with \(J_1(\rho)=0\), take \(R\in\mathbb{N}\) and \(\lambda=\rho^2/R^2\), and suppose \(v\) satisfies \(\mathcal{G}(R,v)=0\). Then</p>
+            <div class="tex-display">
+              \[ \Omega=\big\{(r,\varphi):0\le r&lt;R-h_v(R\varphi)\big\} \]
+            </div>
+            <p>together with the field \(u\) given by \(w^v\) on the collar and by the interior Dirichlet solve inside \(B(0,R-L)\), solves the Schiffer problem: \((\Delta+\lambda)u=0\) in \(\Omega\), with \(u=1\) and \(\partial_\nu u=0\) on \(\partial\Omega\). Moreover \(\Omega\) is bounded, star-shaped, simply connected and invariant under rotation by \(2\pi/R\), its boundary is smooth, and \(u\in C^\infty(\overline\Omega)\).</p>
+          </div>
+        </article>
+        <p>The two components do exactly the two jobs the construction needs. \(\mathcal{G}_1=0\) makes \(u\) solve the equation on the collar, and unfolding turns \(L^{h_v}_R\) back into the Laplacian because \(R\) is an integer; \(\mathcal{G}_2=0\) makes the normal derivatives agree across \(\{r=R-L\}\), which is what lets the collar solution continue inward. The boundary conditions come for free from the construction of \(w^v\): \(w^v(0,\cdot)=1\) and \(\partial_yw^v(0,\cdot)=0\) are the two identities arranged above.</p>
+        <p>The statement here is informal, in that the function spaces are left out; it is Theorem 2.7 of <a href="https://arxiv.org/abs/2608.05114" target="_blank" rel="noreferrer">the paper</a>, where they are given. Note that the trivial zeros \(\mathcal{G}(R,0)=0\) recover the disks, with \(u=w_0\) and \(\Omega=B_R(0)\). The task is therefore to find a <em>nontrivial</em> zero at integer \(R\).</p>
         </div>
+
+        <details class="optional-digression proof-details intro-proof">
+          <summary><span><small>Optional digression</small>The specific functional setting: anisotropic spaces</span><i>expand +</i></summary>
+          <div class="intro-proof-body">
+            <p>One of the fundamental ideas of Fall, Minlend and Weth was to encode \(v\) in an <em>anisotropic</em> space: \(v\in C^{2,\alpha}\) and \(\partial_yv\in C^{2,\alpha}\), with the two counted separately. The technical reason is that \(h_v\) is built from \(\partial_yv\), while the coefficients of \(L^h_R\) involve \(h''\), so in principle \(\mathcal{G}_1(R,v)=(L^{h_v}_R+\lambda)w^v\) could lose as many as three derivatives.</p>
+            <p>The crucial observation is where \(h''\) actually appears. Of the four coefficients, it enters only \(a_y\), the coefficient of \(\partial_y\), and it carries no angular derivative there at all: \(a_{yy}\), \(a_{y\psi}\) and \(a_{\psi\psi}\) involve only \(h\) and \(h'\). So the worst term is \(h''\,\partial_yw^v\). In an anisotropic space the extra \(\partial_y\) derivative controls that factor, while \(\partial_y\) never touches \(h''\), since \(h\) is a function of \(\psi\) alone.</p>
+            <p>A second and separate strengthening is imposed at the inner edge: the space also asks that the trace \(v(L,\cdot)\) lie in \(C^{3,\alpha}(\mathbb{T})\), one angular derivative better than \(v\) carries in the interior. This is what the matching condition costs. The multiplier \(D_R\) is of first order — its symbol \(\tau_k(R)\) grows linearly in \(k\), and with \(\lambda\) dropped it is exactly \(\tfrac{R}{R-L}\lvert D_\psi\rvert\) — so it spends one angular derivative. For \(\mathcal{G}_2=D_R[v(L,\cdot)]+\partial_yv(L,\cdot)\) to land in \(C^{2,\alpha}(\mathbb{T})\) next to \(\partial_yv\in C^{2,\alpha}\), the inner trace has to be one degree better than that.</p>
+            <p>The same extra derivative is spent once more, on the first component. The trace of \(\mathcal{G}_1\) at \(\{y=L\}\) contains the term \(\tfrac{R^2}{(R-L)^2}\,\partial_\psi^2w^v(L,\cdot)\), and since \(\chi\) vanishes there, \(w^v(L,\cdot)=w_0(L)+v(L,\cdot)\). It is exactly the \(C^{3,\alpha}\) trace that makes this \(C^{1,\alpha}\), which is what the codomain asks for.</p>
+          </div>
+        </details>
+
       <section id="bifurcation-setting" class="bifurcation-setting">
         <header class="section-heading" data-title="The bifurcation setting: a collar problem for every real order" data-toc="proof-subsection">
           <h3>The bifurcation setting: a collar problem for every real order</h3>
