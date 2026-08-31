@@ -4712,3 +4712,13 @@ body.tufte-site main :is(.three-wrap canvas, #phaseFamilyCanvas):focus-visible {
   fill: var(--paper, #fffff8);
   stroke: none;
 }
+
+/* The summary title is a grid inside a flex row, so it was sized to its own
+   min-content and wrapped even with the whole line free.  KaTeX makes that
+   worse: the rendered math is one unbreakable box, so "The formula for L^h_R"
+   split across two lines.  Let the title take the space that is there. */
+body.tufte-site main details.optional-digression > summary > span { flex: 1 1 auto; min-width: 0; }
+/* Summaries that carry no "Optional digression" label have a single title, so
+   the grid is wrong for them: it puts the text and the KaTeX box on separate
+   rows and the title takes two lines however much width is free. */
+body.tufte-site main details.optional-digression > summary > span.digression-title { display: block; }

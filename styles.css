@@ -1113,6 +1113,7 @@ dialog p:not(.eyebrow) {
 .intro-proof { margin: 40px 0 0 70px; max-width: 960px; }
 .intro-proof + .intro-proof { margin-top: 0; border-top: 0; }
 .optional-digression > summary > span { display: grid; gap: 5px; }
+.optional-digression > summary > span.digression-title { display: block; }
 .optional-digression > summary small { color: var(--orange); font: inherit; }
 .intro-proof-body { max-width: 830px; padding: 10px 0 32px; color: var(--muted); font-size: var(--type-proof); line-height: 1.82; }
 .intro-proof-body p { margin: 0 0 16px; }
