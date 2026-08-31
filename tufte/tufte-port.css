@@ -5878,7 +5878,12 @@ body.tufte-site main figure .abundance-toolbar > :is(strong, div) {
 body.tufte-site main .cone-fold-figure.marginnote,
 .cone-fold-figure.marginnote { display: block; min-height: 0; height: auto; }
 body.tufte-site main .cone-fold-figure.marginnote .geometry-canvas-panel,
-.cone-fold-figure.marginnote .geometry-canvas-panel { width: 100%; margin: 0; }
+.cone-fold-figure.marginnote .geometry-canvas-panel { width: 100%; margin: 0; min-height: 0; height: auto; }
+/* The panel is sized for a control column beside the canvas; in the margin
+   there is none, so it should be exactly as tall as the canvas, and the
+   caption follows it rather than a reserved block. */
+body.tufte-site main .cone-fold-figure.marginnote figcaption,
+.cone-fold-figure.marginnote figcaption { margin-top: 0; padding-top: 8px; }
 body.tufte-site main .cone-fold-figure .geometry-scrub,
 .cone-fold-figure .geometry-scrub { display: none; }
 .cone-fold-figure .geometry-controls { border: 0; padding: 0; margin: 0 0 8px; min-height: 0; }
