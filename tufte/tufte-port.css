@@ -4688,3 +4688,7 @@ body.tufte-site main :is(.three-wrap canvas, #phaseFamilyCanvas):focus-visible {
     justify-content: flex-start;
   }
 }
+
+/* Promoted out of an optional-digression expander: the rigidity literature is
+   part of the argument, not an aside, so it needs a heading of its own. */
+.rigidity-heading { margin: 34px 0 12px; color: var(--ink); font: 500 var(--type-body)/1.4 var(--sans); }

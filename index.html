@@ -492,13 +492,11 @@
           </div>
         </details>
 
-        <details class="optional-digression proof-details intro-proof">
-          <summary><span><small>Optional digression</small>What is already known: the rigidity literature</span><i>expand +</i></summary>
-          <div class="intro-proof-body">
-            <p>The linearized obstruction is only the beginning; a substantial rigidity literature confirms the conjecture whenever extra information is available. If \(\lambda\) sits low in the Neumann spectrum the disk is forced: for simply connected planar domains, being among the seven lowest Neumann eigenvalues suffices <a class="history-citation" href="#ref-aviles">[18]</a><a class="history-citation" href="#ref-deng">[19]</a>, and the range widens for centrally symmetric convex domains. Berenstein proved rigidity from the opposite extreme, assuming infinitely many orthogonal Neumann eigenfunctions that are constant on the boundary <a class="history-citation" href="#ref-berenstein-inverse">[20]</a>. A condition on the eigenfunction itself also suffices: Willms and Gladwell showed that if \(u\) has no saddle points, then a simply connected planar domain must be a disk <a class="history-citation" href="#ref-willms-gladwell">[23]</a>.</p>
+        <h4 class="rigidity-heading">What is already known: the rigidity literature</h4>
+        <div class="intro-copy rigidity-copy">
+          <p>The linearized obstruction is only the beginning; a substantial rigidity literature confirms the conjecture whenever extra information is available. If \(\lambda\) sits low in the Neumann spectrum the disk is forced: for simply connected planar domains, being among the seven lowest Neumann eigenvalues suffices <a class="history-citation" href="#ref-aviles">[18]</a><a class="history-citation" href="#ref-deng">[19]</a>, and the range widens for centrally symmetric convex domains. Berenstein proved rigidity from the opposite extreme, assuming infinitely many orthogonal Neumann eigenfunctions that are constant on the boundary <a class="history-citation" href="#ref-berenstein-inverse">[20]</a>. A condition on the eigenfunction itself also suffices: Willms and Gladwell showed that if \(u\) has no saddle points, then a simply connected planar domain must be a disk <a class="history-citation" href="#ref-willms-gladwell">[23]</a>.</p>
             <p>Regularity results say that a counterexample cannot hide in a rough domain. Kinderlehrer and Nirenberg's free-boundary theorem makes \(u\) and \(\partial\Omega\) real-analytic <a class="history-citation" href="#ref-kinderlehrer-nirenberg">[21]</a>, and in the planar Pompeiu setting Williams showed that a bounded Lipschitz counterexample with connected boundary already has real-analytic boundary <a class="history-citation" href="#ref-williams-analyticity">[22]</a>. Any counterexample is therefore as smooth as one could ask, which is why the constructions below produce analytic boundaries rather than merely continuous ones.</p>
-          </div>
-        </details>
+        </div>
 
 
         <section id="borrow-flexibility" class="borrow-flexibility section-subsection">
@@ -1846,7 +1844,7 @@
         <div class="intro-copy intro-copy-wide">
           <p>Work on a ball of radius \(R\) and impose \(R\)-fold symmetry. Suppose for a moment that \(R\) is a natural number. Then the symmetry has a fundamental domain, a single angular sector of opening \(2\pi/R\), and quotienting the ball by the symmetry gives a cone of length \(R\) and circumference \(2\pi\). An \(R\)-fold symmetric solution on the ball is the same thing as a solution on that cone.</p>
         </div>
-        <figure class="geometry-laboratory interactive-plate annotated-plate reading-figure cone-fold-figure" data-figure="cone-unfolding-apparatus" data-evidence="Interactive schematic">
+        <figure class="geometry-laboratory interactive-plate annotated-plate reading-figure cone-fold-figure" data-figure="cone-unfolding-apparatus">
           <aside class="geometry-controls paper-demo-controls">
             <div class="geometry-stages" aria-label="Four stages of the fold">
               <button type="button" data-conefold-stage="0"><span>01</span><strong>The domain</strong></button>
@@ -1862,7 +1860,6 @@
               <canvas id="coneFoldCanvas" role="img" aria-label="Folding one sector of the R-fold domain into the cone, and unfolding it again"></canvas>
             </div>
           </section>
-          <figcaption><span class="figure-caption-summary">One fundamental sector of the \(R\)-fold domain becomes a cone when its radial edges are identified.</span><span class="figure-caption-note"><strong>What to notice.</strong> Six sectors are drawn rather than the true \(R=28\), which could not be told apart at this size. The boundary carries three periods of its profile within each sector, so on the cone it is a mode-three perturbation; the dashed curve is the unperturbed rim. A mode-one profile is very nearly a rigid tilt of the base and would be hard to distinguish from a straight cone. The cone is drawn in perspective, so its rim, a circle in space, appears as a narrow ellipse.</span></figcaption>
         </figure>
         <div class="intro-copy intro-copy-wide">
           <p>In cone coordinates \((r,\psi)\), with \(\psi=R\varphi\), the equation becomes</p>
@@ -1872,17 +1869,20 @@
             \qquad (r,\psi)\in[0,R]\times\mathbb{T},
             \]
           </div>
-          <p>The shaded band is where the work happens: the region \(R-L\le r\le R\) of width \(L\) next to the boundary. There \(R^2/r^2\) is close to \(1\), and \(\partial_r/r\) is of size \(1/R\), so as \(R\to\infty\) the operator degenerates to the flat one,</p>
+          <p>Separating variables, the independent solutions are</p>
+          <div class="tex-display">
+            \[ J_{kR}(\sqrt\lambda\,r)\cos(k\psi), \qquad k=0,1,2,\ldots, \]
+          </div>
+          <p>where \(J\) denotes the Bessel functions. When \(R\) is an integer these are just Bessel functions whose index is a multiple of \(R\). The fundamental point, however, is that the problem on the cone makes sense even when \(R\notin\mathbb{N}\), and the Bessel functions are defined for every \(R\in\mathbb{R}_+\) all the same.</p>
+          <p>A second point, which we take up later, is what happens near the outer edge. Take the neighbourhood of width \(L\) at the exterior of the cone, \(r&gt;R-L\). As \(R\to\infty\) its geometry converges to that of a cylinder, and since \(r\approx R\) there, the operator above converges to</p>
           <div class="tex-display">
             \[ \partial_r^2+\partial_\psi^2+\lambda. \]
           </div>
-          <p>This is why the half-cylinder is the correct limiting model. It guides the uniform estimates that are proved directly for the finite-\(R\) collar problem.</p>
           <p>The finite-\(R\) problem also carries the appropriate regularity condition at \(r=0\). Its radial solutions are Bessel functions of order \(0\), and the first nonradial angular mode brings in Bessel functions of order \(R\). By the criterion of <a class="xref" data-ref="linearized-schiffer-criterion"></a>, a bifurcation needs the radial Neumann condition and a nonradial Dirichlet condition to hold at the same radius, which is to say a \(\rho\) with</p>
           <div class="tex-display">
             \[ J_1(\rho)=0 \qquad\text{and}\qquad J_R(\rho)=0. \]
           </div>
-          <p>When \(R\) is a natural number this is impossible: by <a class="xref" data-ref="bourget-siegel"></a>, two Bessel functions of distinct integer order share no positive zero. That single fact is what has protected the disk from every bifurcation argument.</p>
-          <p>The cone, however, does not care whether \(R\) is an integer. Bessel functions of arbitrary real order are perfectly well defined, and the equation above makes sense for every real \(R>0\); only the reading of the cone as a planar domain needs \(R\in\mathbb{N}\). So we relax the problem and look for crossings at real order, where Bourget&rsquo;s hypothesis says nothing.</p>
+          <p>When \(R\) is a natural number this is impossible: by <a class="xref" data-ref="bourget-siegel"></a>, two Bessel functions of distinct integer order share no positive zero. That single fact is what has protected the disk from every bifurcation argument. The cone interpretation, however, allows us to take \(R\) that are not integers, and in that case we do have solutions to the equation above.</p>
           <article class="math-statement math-statement-lemma" data-kind="lemma" data-label="noninteger-crossing" aria-labelledby="nonintegerCrossingTitle">
             <header class="math-statement-header"><span>Lemma</span><small>crossings at real order</small></header>
             <div class="math-statement-body">

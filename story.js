@@ -883,7 +883,7 @@
     "The R-fold symmetric planar domain.",
     "One fundamental sector.",
     "The sector rolls up.",
-    "The cone, with its mode-three boundary.",
+    "The cone, with its perturbed boundary.",
   ];
 
   /* The 4.1 figure: a cone opens into the flat sector it is isometric to, and
@@ -900,8 +900,12 @@
      mode-one h is very nearly a rigid tilt of the base and reads as an
      unperturbed cone, so the profile carries three periods per sector. */
   const CONE_FOLD_SECTORS = 6;
-  const CONE_FOLD_MODE = 3;
-  const CONE_FOLD_AMPLITUDE = .055;
+  /* Mode three dominates, but a pure mode three repeats three times inside each
+     sector and the planar domain then looks eighteen-fold rather than six-fold.
+     Smaller first and second harmonics break that: the profile still closes up
+     across the sector, so the domain keeps exactly the R-fold symmetry it is
+     supposed to have and no more. */
+  const CONE_FOLD_HARMONICS = [.018, .025, .040];
 
   function drawConeUnfold(context, width, height, progress) {
     const p = Math.max(0, Math.min(1, progress));
@@ -943,10 +947,11 @@
     const depth = Math.max(10, slant * .26);
     const coneHalf = slant * .40;
 
-    // h(psi) = a cos(k psi), with psi = pi * angular running once around the
-    // cone across the sector, so the sector carries k periods of the profile.
-    const profile = (angular) => 1 - CONE_FOLD_AMPLITUDE
-      * Math.cos(CONE_FOLD_MODE * Math.PI * angular);
+    // h(psi) = sum_k a_k cos(k psi), with psi = pi * angular running once around
+    // the cone across the sector.  Every term is even and 2pi-periodic in psi,
+    // so the two straight edges still agree and the sector closes up.
+    const profile = (angular) => 1 - CONE_FOLD_HARMONICS.reduce(
+      (total, amplitude, index) => total + amplitude * Math.cos((index + 1) * Math.PI * angular), 0);
 
     const point = (radial, angular, sectorCentre, deformed = true) => {
       const theta = Math.PI * angular;

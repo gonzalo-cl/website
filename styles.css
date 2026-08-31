@@ -1097,6 +1097,10 @@ dialog p:not(.eyebrow) {
 .intro-copy p:last-child { margin-bottom: 0; }
 .intro-copy a { color: var(--orange); text-underline-offset: 3px; }
 .siegel-theorem { margin: 25px 0 22px; padding: 21px 0 20px; color: var(--ink); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); }
+/* Promoted out of an optional-digression expander: the rigidity literature is
+   part of the argument, not an aside, so it needs a heading of its own. */
+.rigidity-heading { margin: 34px 0 12px; color: var(--ink); font: 500 var(--type-body)/1.4 var(--sans); }
+
 .siegel-theorem h4 { margin: 0 0 13px; color: var(--ink); font: 500 18px/1.35 var(--serif); }
 .siegel-theorem p { margin: 0; color: var(--muted); font-size: var(--type-proof); line-height: 1.72; }
 .siegel-theorem .tex-display { margin: 16px 0 0; padding-left: 18px; color: var(--ink); border-left: 2px solid var(--orange); overflow-x: auto; }
