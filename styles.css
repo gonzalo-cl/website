@@ -1556,3 +1556,11 @@ body.tufte-site main .cr-statement .cr-variant-button[data-cr-variant="uniform"]
   border-color: var(--teal, #287b7b);
   color: var(--teal, #287b7b);
 }
+
+/* The five examples sit beside the theorem rather than under the plot: the
+   table is three short columns and does not need the reading measure. */
+.abundance-examples-margin { border: 0; }
+.abundance-examples-margin h3 { margin: 0 0 10px; font: 400 var(--type-caption)/1.35 var(--serif); }
+.abundance-examples-margin .abundance-examples-table th,
+.abundance-examples-margin .abundance-examples-table td { padding: 7px 8px; }
+.abundance-examples-margin .abundance-examples-table { table-layout: auto; }

@@ -1897,6 +1897,19 @@
             <p>The scatter plot below is a finite numerical sample of these coincidences. The theorem itself comes from aligning the fixed-order McMahon phase and the large-order Debye phase.</p>
           </div>
         </article>
+        <div class="intro-copy intro-copy-wide abundance-examples-host">
+        <label for="abundance-examples-note" class="margin-toggle" aria-label="Show five particularly close examples">&#8853;</label>
+        <input type="checkbox" id="abundance-examples-note" class="margin-toggle">
+        <aside class="marginnote abundance-examples abundance-examples-margin" aria-labelledby="abundanceExamplesTitle">
+          <h3 id="abundanceExamplesTitle">Five particularly close examples.</h3>
+          <div class="abundance-examples-table-wrap">
+            <table class="abundance-examples-table">
+              <thead><tr><th scope="col">integer \(N\)</th><th scope="col">crossing order \(R\)</th><th scope="col">gap \(R-N\)</th></tr></thead>
+              <tbody id="abundanceExamplesBody"></tbody>
+            </table>
+          </div>
+        </aside>
+        </div>
         <lean-statement data-statement="near-integer-crossings"></lean-statement>
         <details class="abundance-proof-details proof-details">
           <summary><span>Proof sketch of <a class="xref" data-ref="near-integer-crossings"></a></span><i>expand +</i></summary>
@@ -1942,17 +1955,6 @@
           </section>
           <figcaption>Each point has horizontal coordinate \(\log R\) and vertical coordinate \(\{R\}\). Points near the baseline are crossings whose real order lies close to an integer.</figcaption>
         </figure>
-        <section class="abundance-examples data-table" aria-labelledby="abundanceExamplesTitle">
-          <header>
-            <h3 id="abundanceExamplesTitle">Five particularly close examples.</h3>
-          </header>
-          <div class="abundance-examples-table-wrap">
-            <table class="abundance-examples-table">
-              <thead><tr><th scope="col">integer \(N\)</th><th scope="col">crossing order \(R\)</th><th scope="col">gap \(R-N\)</th></tr></thead>
-              <tbody id="abundanceExamplesBody"></tbody>
-            </table>
-          </div>
-        </section>
       </section>
         <div class="intro-copy intro-copy-wide">
           <p>For a concrete numerical illustration outside the proof window \(2\le\lambda\le3\), take \(\rho=j_{1,16}=51.0435\ldots\) and solve \(J_R(\rho)=0\): this gives \(R_\star=28.0264\ldots\) and \(\lambda_\star=3.3170\ldots\). The proof instead selects sufficiently large near-integer crossings inside the stated window. In either case, a noninteger crossing is not yet a planar counterexample; the rigorous task is to show that a uniformly controlled branch bends far enough to meet an integer.</p>
