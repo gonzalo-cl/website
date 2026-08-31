@@ -2005,27 +2005,73 @@
             </g>
           </svg>
         </figure>
-        <p>Pulling the Laplacian back through \(\Phi^h\) gives a second-order operator \(L^h_R\), with coefficients that are explicit rational expressions in \(\chi,\chi',\chi''\) and \(h,h',h''\); it is characterized by \((\Delta u)\circ\Phi^h=L^h_R w\) whenever \(u\circ\Phi^h=w\). For \(h=0\) it is the flat Laplacian in these coordinates,</p>
+        <p>Pulling the Laplacian back through \(\Phi^h\) gives a second-order operator \(L^h_R\), characterized by \((\Delta u)\circ\Phi^h=L^h_Rw\) whenever \(u\circ\Phi^h=w\). Therefore, writing \(u\circ\Phi^h=w\), we look for \(w:\mathcal{C}\to\mathbb{R}\) solving</p>
         <div class="tex-display">
-          \[ L^0_R=\partial_y^2-\frac{1}{R-y}\,\partial_y+\frac{R^2}{(R-y)^2}\,\partial_\psi^2, \]
+          \[ (\Delta+\lambda)u=0 \quad\Longleftrightarrow\quad \big(L^h_R+\lambda\big)w=0. \]
         </div>
-        <p>which is the operator of the previous subsection written in depth, and which degenerates to \(\partial_y^2+\partial_\psi^2\) as \(R\to\infty\). The Schiffer problem on \(\Omega_{\mathrm{ext}}\) becomes</p>
+
+        <details class="optional-digression proof-details intro-proof">
+          <summary><span><small>Optional digression</small>The formula for \(L^h_R\)</span><i>expand +</i></summary>
+          <div class="intro-proof-body">
+            <p>Write \(D=1+\chi'(y)h(\psi)\) and \(r=R-y-\chi(y)h(\psi)\) for the radius the point is carried to. Then</p>
+            <div class="tex-display">
+              \[ L^h_Rw=a_{yy}\,\partial_y^2w+a_{y\psi}\,\partial_y\partial_\psi w+a_{\psi\psi}\,\partial_\psi^2w+a_y\,\partial_yw, \]
+            </div>
+            <p>with coefficients, abbreviating \(\chi=\chi(y)\) and \(h=h(\psi)\),</p>
+            <div class="tex-display">
+              \[
+              \begin{aligned}
+              a_{yy}&amp;=\frac{1}{D^2}\Big(1+\frac{R^2\chi^2h'^2}{r^2}\Big),\\[3pt]
+              a_{y\psi}&amp;=-\frac{2R^2\chi h'}{r^2D},\qquad a_{\psi\psi}=\frac{R^2}{r^2},\\[3pt]
+              a_y&amp;=-\frac{1}{rD}-\frac{\chi''h}{D^3}\\[2pt]
+              &amp;\quad-\frac{R^2}{r^2}\cdot\frac{\chi^2\chi''h\,h'^2-2\chi\chi'D\,h'^2+\chi D^2h''}{D^3}.
+              \end{aligned}
+              \]
+            </div>
+            <p>Every coefficient is a rational expression in \(\chi,\chi',\chi''\) and \(h,h',h''\), and none of them knows that \(R\) was meant to be an integer. Setting \(h=0\) gives \(D=1\) and \(r=R-y\), so \(a_{yy}=1\), \(a_{y\psi}=0\), and</p>
+            <div class="tex-display">
+              \[ L^0_R=\partial_y^2-\frac{1}{R-y}\,\partial_y+\frac{R^2}{(R-y)^2}\,\partial_\psi^2, \]
+            </div>
+            <p>which is the operator of the previous subsection written in depth. Since \(y\) ranges only over \([0,L]\) with \(L\) fixed, \(1/(R-y)\to0\) and \(R^2/(R-y)^2\to1\), so \(L^0_R\to\partial_y^2+\partial_\psi^2\) as \(R\to\infty\).</p>
+          </div>
+        </details>
+
+        <p>We want to encode both \(w\) and \(h\) in a single unknown \(v\). First write \(w=w_0+w_1\), where</p>
         <div class="tex-display">
-          \[ \big(L^h_R+\lambda\big)w=0 \quad\text{on }\mathcal{C}, \]
+          \[ w_0(y)=\frac{J_0\big(\sqrt\lambda\,(R-y)\big)}{J_0(\rho)} \]
         </div>
-        <p>and the part of the domain we discarded re-enters through a Dirichlet-to-Neumann operator \(D_R\) at the inner edge, defined for every real \(R\) as a Fourier multiplier and agreeing with the honest interior Dirichlet-to-Neumann map when \(R\in\mathbb{N}\).</p>
-        <p>It remains to say what the unknown is. Write \(w_0(y)=J_0(\sqrt{\lambda}(R-y))/J_0(\rho)\) for the radial solution on the cone, normalized so that</p>
+        <p>is the radial solution on the cone. It solves \((L^0_R+\lambda)w_0=0\) and satisfies</p>
         <div class="tex-display">
           \[ w_0(0)=1,\qquad \partial_yw_0(0)=0,\qquad \partial_y^2w_0(0)=-\lambda, \]
         </div>
-        <p>the last identity because \(\rho\) is a zero of \(J_0'\). This \(w_0\) already satisfies both boundary conditions on \(\{y=0\}\), so the perturbation \(w_1\) we are looking for must satisfy the homogeneous Dirichlet <em>and</em> Neumann conditions there. A perturbation obeying two conditions at once looks overdetermined, and the resolution is the device we borrow from Fall, Minlend and Weth: encode the eigenfunction and the boundary profile in a <em>single</em> unknown \(v\), asked only to be Dirichlet. Given \(v\), set</p>
+        <p>so it already meets both conditions at the boundary: it equals \(1\) there and is Neumann, the latter because \(\rho\) is a zero of \(J_0'\). The remaining piece \(w_1\) must therefore be both Dirichlet and Neumann at \(\{y=0\}\), which looks like one condition too many for a single unknown.</p>
+        <p>The resolution is to take \(v\) merely Dirichlet and read the profile off its Neumann data,</p>
         <div class="tex-display">
-          \[ h_v=\lambda^{-1}\partial_yv(0,\cdot),\qquad w_1^v=v+\chi(y)\,\partial_yw_0(y)\,h_v,\qquad w^v=w_0+w_1^v. \]
+          \[ h_v=\lambda^{-1}\partial_yv(0,\cdot), \]
         </div>
-        <p>Three things are happening here, and each is essential.</p>
-        <p>First, the profile is <em>read off</em> from the Neumann data of \(v\): the shape of the domain is no longer independent data.</p>
-        <p>Second, the extra term is not a trick but the leading correction. Pulling \(w_0\) back through \(\Phi^{h}_R\) rather than evaluating it on the unperturbed cone produces exactly \(\chi\,\partial_yw_0\,h\) at first order in \(h\); we are simply carrying that term along explicitly. And it is what repairs the boundary conditions: since \(\chi(0)=1\) and \(\chi'(0)=0\), the normalization of \(w_0\) gives \(w_1^v(0,\cdot)=0\) together with \(\partial_yw_1^v(0,\cdot)=\partial_yv(0,\cdot)-\lambda h_v=0\). So a merely Dirichlet \(v\) produces a \(w^v\) satisfying both conditions, which is the cancellation that makes the whole scheme work.</p>
-        <p>Third, the spaces must be anisotropic. Since \(h_v\) is a Neumann trace of \(v\), it has one derivative less than \(v\), while the coefficients of \(L^h_R\) involve \(h''\). The saving observation is that \(h''\) never multiplies \(\partial_y^2\): it appears only in the coefficient of \(\partial_y\). Measuring \(v\) in a space with one more derivative in \(y\) than in \(\psi\) therefore makes \(L^{h_v}_R w^v\) lose exactly two derivatives and no more, and the loss that would otherwise defeat the argument disappears.</p>
+        <p>so that the shape of the domain is no longer independent data. The key observation is that \(w_1\), which must be both Dirichlet and Neumann, can be built from \(v\), which is only Dirichlet, by carrying along the leading-order term of \(w_0\) under the pullback. That is, set</p>
+        <div class="tex-display">
+          \[ w^v=w_0+\underbrace{\chi(y)\,\partial_yw_0(y)\,h_v+v}_{w_1^v}. \]
+        </div>
+        <p>Two facts make this work. First, \(w_0+\chi\,\partial_yw_0\,h_v\) is an \(O(h^2)\) approximation of \(w_0\circ\Phi^{h_v}\): the added term is exactly the linear dragging term produced by pulling \(w_0\) back through the map, not a device introduced to fix the count. Second, although \(v\) is only Dirichlet at \(\{y=0\}\), the sum \(\chi\,\partial_yw_0\,h_v+v\) satisfies both conditions there, by a cancellation between the dragging term and \(v\). Indeed \(\chi(0)=1\) and \(\partial_yw_0(0)=0\) give \(w_1^v(0,\cdot)=0\), while</p>
+        <div class="tex-display">
+          \[ \partial_yw_1^v(0,\cdot)=\partial_yv(0,\cdot)+\chi(0)\,\partial_y^2w_0(0)\,h_v=\partial_yv(0,\cdot)-\lambda h_v=0. \]
+        </div>
+        <p>The boundary conditions on \(\{y=0\}\) are thus encoded in</p>
+        <div class="tex-display">
+          \[ \mathcal{G}_1(R,v):=\big(L^{h_v}_R+\lambda\big)w^v=0. \]
+        </div>
+        <p>We are left with the edge \(\{y=L\}\), where the collar meets the part of the cone we set aside. There we can simply solve the Dirichlet problem \((\Delta+\lambda)u=0\) inside \(\{r&lt;R-L\}\) with the boundary data our collar solution supplies, which is \(w_0(L)+v(L,\cdot)\), since \(\chi\) vanishes near \(y=L\). But for the two pieces to fit together into one solution of the equation, the normal derivatives must agree as well. That is what a Dirichlet-to-Neumann map records: \(D_R\) is the Fourier multiplier</p>
+        <div class="tex-display">
+          \[ D_R\big[\cos k\psi\big]=\tau_k(R)\cos k\psi,\qquad
+          \tau_k(R)=\sqrt\lambda\,\frac{J_{kR}'\big(\sqrt\lambda\,(R-L)\big)}{J_{kR}\big(\sqrt\lambda\,(R-L)\big)},\qquad k\in\mathbb{N}_0, \]
+        </div>
+        <p>which for integer \(R\) is the honest interior Dirichlet-to-Neumann map of \(\Delta+\lambda\) on \(B(0,R-L)\) for even, \(R\)-fold symmetric functions, and which is defined for every real \(R\) by the same expression. The condition for extending our solution smoothly to the inside is then</p>
+        <div class="tex-display">
+          \[ \mathcal{G}_2(R,v):=D_R\big[v(L,\cdot)\big]+\partial_yv(L,\cdot)=0. \]
+        </div>
+        <p>Only \(v\) appears, because \(w_0\) already extends: it is the restriction of a solution regular at the apex, so it satisfies the matching condition on its own.</p>
+        <p>One further constraint is worth recording, because it dictates the function spaces. Since \(h_v\) is a Neumann trace of \(v\), it has one derivative less than \(v\), while the coefficients above involve \(h''\). The saving observation is that \(h''\) never multiplies \(\partial_y^2\): it appears only in \(a_y\), against a single \(y\)-derivative. The spaces must therefore be anisotropic, counting \(y\)- and \(\psi\)-derivatives separately.</p>
         </div>
         <header id="half-cylinder-strategy" class="section-heading proof-strategy-subheading" data-title="A motivation for uniformity: the cylinder" data-toc="proof-subsection">
           <h3>A motivation for uniformity: the cylinder</h3>
