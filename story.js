@@ -912,12 +912,12 @@
     // scale the unfolded state is a sliver a few pixels tall.  The displayed
     // opening is enlarged so the unfolding is legible.
     const halfSector = .44;
-    /* Mode one: the rim radius varies as cos(psi), a rigid tilt of the base, so
-       the axis does not meet the base circle at its centre.  One full period of
-       that cosine runs across the sector, because closing the sector up is what
-       identifies its two edges; the amplitude is small enough that the flat
-       state still reads as a sector with a wavy edge. */
-    const tiltAmplitude = .085;
+    /* Mode one: the boundary sits at distance R - a cos(psi) along each
+       generator, a rigid tilt of the base.  One full period runs across the
+       sector, because closing the sector up identifies its two edges.  The
+       amplitude has to stay well under the foreshortening or the tilt widens
+       the rim instead of rotating it and the cone reads as a circle. */
+    const tiltAmplitude = .06;
     const rimDepth = Math.max(11, slant * .085);
     const coneHalf = slant * .42;
 
@@ -928,8 +928,12 @@
       const flatAngle = halfSector * angular;
       const flatX = apexX + reach * slant * Math.cos(flatAngle);
       const flatY = cy + reach * slant * Math.sin(flatAngle);
-      const coneX = apexX + reach * (slant + rimDepth * Math.cos(theta));
-      const coneY = cy + reach * coneHalf * Math.sin(theta);
+      /* Oblique projection of the cone: the depth axis contributes sin(theta)
+         to x while the tilt contributes cos(theta) through `reach`.  Keeping
+         those two in quadrature is what makes the rim a rotated ellipse rather
+         than a fattened one. */
+      const coneX = apexX + reach * slant + reach * rimDepth * Math.sin(theta);
+      const coneY = cy + reach * coneHalf * Math.cos(theta);
       return { x: lerp(flatX, coneX, 1 - open), y: lerp(flatY, coneY, 1 - open) };
     };
 
