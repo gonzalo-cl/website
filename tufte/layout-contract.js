@@ -214,10 +214,13 @@
       errors.push("Section IV visual proof stages are incomplete or out of order");
     }
     const expectedProofSectionOrder = [
+      // The near-integer material now sits inside 4.1, so abundance-experiment
+      // comes first and carries no heading of its own; the collar comparison
+      // lost its heading when 4.3 and 4.4 merged.
+      "abundance-experiment",
       "debye-experiment",
       "bifurcation-setting",
       "phase-story",
-      "abundance-experiment",
       "modes-experiment",
     ];
     const actualProofSectionOrder = Array.from(document.querySelectorAll("#experiment > section[id]:not([hidden])"), (section) => section.id);
@@ -268,13 +271,11 @@
       ["3.8", "Local boundary data versus global solvability", "#computer-local-global", "proof-subsection"],
       ["4", "The bifurcation proof", "#experiment", "section"],
       ["4.1", "Remapping the problem to a cone", "#cone-remap", "proof-subsection"],
-      ["4.2", "Expressing the problem on a fixed domain", "#fixed-domain", "proof-subsection"],
-      ["4.3", "The half-cylinder as a uniform limiting model", "#half-cylinder-strategy", "proof-subsection"],
-      ["4.4", "Uniform collar comparison for large cones", "#debye-experiment", "proof-subsection"],
-      ["4.5", "The bifurcation setting: a collar problem for every real order", "#bifurcation-setting", "proof-subsection"],
-      ["4.6", "Exploring the cone bifurcation", "#phase-story", "proof-subsection"],
-      ["4.7", "Equidistributed phases supply near-integer crossing orders", "#abundance-experiment", "proof-subsection"],
-      ["4.8", "Closing the argument", "#modes-experiment", "proof-subsection"],
+      ["4.2", "A motivation for uniformity: the cylinder", "#half-cylinder-strategy", "proof-subsection"],
+      ["4.3", "Expressing the problem on a fixed domain", "#fixed-domain", "proof-subsection"],
+      ["4.4", "The bifurcation setting: a collar problem for every real order", "#bifurcation-setting", "proof-subsection"],
+      ["4.5", "Exploring the cone bifurcation", "#phase-story", "proof-subsection"],
+      ["4.6", "Closing the argument", "#modes-experiment", "proof-subsection"],
       ["", "References", "#references", "section"],
       ["", "Acknowledgements", "#acknowledgements", "section"],
     ];

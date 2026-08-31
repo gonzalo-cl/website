@@ -883,7 +883,7 @@
     "The R-fold symmetric planar domain.",
     "One fundamental sector.",
     "The sector rolls up.",
-    "The cone, with its mode-three boundary.",
+    "The cone, with its perturbed boundary.",
   ];
 
   /* The 4.1 figure: a cone opens into the flat sector it is isometric to, and
@@ -900,8 +900,12 @@
      mode-one h is very nearly a rigid tilt of the base and reads as an
      unperturbed cone, so the profile carries three periods per sector. */
   const CONE_FOLD_SECTORS = 6;
-  const CONE_FOLD_MODE = 3;
-  const CONE_FOLD_AMPLITUDE = .055;
+  /* Mode three dominates, but a pure mode three repeats three times inside each
+     sector and the planar domain then looks eighteen-fold rather than six-fold.
+     Smaller first and second harmonics break that: the profile still closes up
+     across the sector, so the domain keeps exactly the R-fold symmetry it is
+     supposed to have and no more. */
+  const CONE_FOLD_HARMONICS = [.018, .025, .040];
 
   function drawConeUnfold(context, width, height, progress) {
     const p = Math.max(0, Math.min(1, progress));
@@ -943,10 +947,11 @@
     const depth = Math.max(10, slant * .26);
     const coneHalf = slant * .40;
 
-    // h(psi) = a cos(k psi), with psi = pi * angular running once around the
-    // cone across the sector, so the sector carries k periods of the profile.
-    const profile = (angular) => 1 - CONE_FOLD_AMPLITUDE
-      * Math.cos(CONE_FOLD_MODE * Math.PI * angular);
+    // h(psi) = sum_k a_k cos(k psi), with psi = pi * angular running once around
+    // the cone across the sector.  Every term is even and 2pi-periodic in psi,
+    // so the two straight edges still agree and the sector closes up.
+    const profile = (angular) => 1 - CONE_FOLD_HARMONICS.reduce(
+      (total, amplitude, index) => total + amplitude * Math.cos((index + 1) * Math.PI * angular), 0);
 
     const point = (radial, angular, sectorCentre, deformed = true) => {
       const theta = Math.PI * angular;
@@ -1050,6 +1055,829 @@
     context.arc(apexX, cy, 3, 0, TAU);
     context.fillStyle = colors.paper; context.fill();
   }
+
+  /* The Crandall-Rabinowitz box reads either as the classical theorem or as the
+     quantitative one; the quantitative clauses are the same DOM, shown or
+     hidden.  Null-guarded: story.js is shared with the paper edition, which
+     does not carry this markup. */
+  /* The figure beside the Crandall-Rabinowitz box, switching with it.  The
+     crossings and their curvatures are the real ones: the same rows Figure 4.7
+     plots, restricted to 15 <= R <= 30, with gamma from the cylinder limit.  A
+     branch reaches the integer below its crossing when gamma s^2 / 2 clears the
+     fractional part of R.  What is illustrative is the classical amplitude:
+     classical Crandall-Rabinowitz gives no lower bound on it at all, so the
+     shrinking profile stands in for "could be anything, and nothing stops it
+     going to zero". */
+  const BRANCH_SCALE = { first: 15, last: 30, uniform: 1, classical: (R) => Math.pow(15 / R, 1.6) };
+
+  /* The same filter phaseFamilyRows applies, read straight off the crossing
+     data.  Calling that function here would touch phaseFamilyRMin, a const
+     declared several hundred lines below this binding, and throw on load. */
+  function branchScaleRows() {
+    if (!crossingData || !crossingData.columns) return [];
+    const columns = crossingData.columns;
+    const rows = [];
+    for (let index = 0; index < columns.R.length; index += 1) {
+      const R = columns.R[index];
+      if (R < BRANCH_SCALE.first) continue;
+      if (R > BRANCH_SCALE.last) break;
+      const rho = columns.rho[index];
+      const lambda = (rho / R) ** 2;
+      if (lambda < 2 || lambda > 3) continue;
+      rows.push({ R, rho, lambda, gamma: cylinderLimitGamma(lambda) });
+    }
+    rows.sort((left, right) => left.R - right.R);
+    return rows;
+  }
+
+  function renderBranchScale(variant) {
+    if (!select("#branchScaleCanvasWrap")) return;
+    const { canvas, context, width, height } = canvasMetrics("#branchScaleCanvas", "#branchScaleCanvasWrap", 430);
+    context.clearRect(0, 0, width, height);
+    context.fillStyle = colors.ink; context.fillRect(0, 0, width, height);
+
+    const rows = branchScaleRows();
+    const { first, last, uniform, classical } = BRANCH_SCALE;
+    const uniformMode = variant === "uniform";
+    const tint = uniformMode ? colors.cyan : "#c07a6d";
+    const left = 30, right = width - 14, top = 22, bottom = height - 60;
+    const xOf = (R) => left + (R - first) / (last - first) * (right - left);
+    const yOf = (s) => (top + bottom) / 2 - s / 1.12 * (bottom - top) / 2;
+
+    context.strokeStyle = colors.grid; context.lineWidth = 1;
+    for (let N = first; N <= last; N++) {
+      context.beginPath(); context.moveTo(xOf(N), top); context.lineTo(xOf(N), bottom); context.stroke();
+    }
+    context.beginPath();
+    context.moveTo(left, yOf(0)); context.lineTo(right, yOf(0));
+    context.strokeStyle = colors.faint; context.stroke();
+
+    /* The real reach is at most a fifth of a unit in R, four pixels here, so
+       the distance from each crossing to the integer below it is magnified.
+       Every crossing keeps its own integer, and a branch tip lands exactly on
+       that integer's line when its reach equals the fractional part. */
+    const zoom = 15;
+    let reached = 0, smallest = Infinity;
+    rows.forEach((row) => {
+      const amplitude = uniformMode ? uniform : uniform * classical(row.R);
+      const reach = row.gamma * amplitude * amplitude / 2;
+      const gap = row.R - Math.floor(row.R);
+      smallest = Math.min(smallest, reach);
+      const base = xOf(Math.floor(row.R));
+      context.beginPath();
+      for (let i = 0; i <= 60; i++) {
+        const s = -amplitude + 2 * amplitude * i / 60;
+        const drop = row.gamma * s * s / 2;
+        const shown = base + (gap - drop) * zoom;
+        if (!i) context.moveTo(shown, yOf(s)); else context.lineTo(shown, yOf(s));
+      }
+      context.strokeStyle = tint; context.lineWidth = 1.6; context.stroke();
+
+      context.beginPath();
+      context.arc(base + gap * zoom, yOf(0), 2.4, 0, TAU);
+      context.fillStyle = colors.faint; context.fill();
+
+      if (reach >= gap) {
+        reached += 1;
+        const s = Math.sqrt(2 * gap / row.gamma);
+        [-s, s].forEach((value) => {
+          context.beginPath();
+          context.arc(base, yOf(value), 3, 0, TAU);
+          context.fillStyle = tint; context.fill();
+          context.strokeStyle = colors.ink; context.lineWidth = 1; context.stroke();
+        });
+      }
+    });
+
+    context.fillStyle = colors.faint;
+    context.font = visualTheme.labelFont;
+    context.textAlign = "left"; context.textBaseline = "top";
+    context.fillText("s", 10, top - 4);
+    context.textAlign = "center";
+    context.fillText(String(first), xOf(first), bottom + 8);
+    context.fillText(String(last), xOf(last), bottom + 8);
+    context.textAlign = "left";
+    context.fillStyle = tint;
+    context.fillText(`${rows.length} real crossings; ${reached} reach an integer`, left, bottom + 24);
+    context.fillStyle = colors.faint;
+    context.fillText(`smallest reach ${smallest.toFixed(3)} in R`, left, bottom + 38);
+
+    canvas.setAttribute("aria-label", uniformMode
+      ? `Uniform branches at ${rows.length} real crossings, all of the same amplitude; ${reached} reach an integer order.`
+      : `Classical branches at ${rows.length} real crossings, shrinking as the order grows; ${reached} reach an integer order.`);
+    const note = select("#branchScaleNote");
+    if (note) {
+      note.textContent = uniformMode
+        ? "Uniform bifurcation branches guarantee some intersection with R \u2208 \u2115. Click Classical to see the problem of using standard Crandall\u2013Rabinowitz in this argument."
+        : "Bifurcation branches get smaller for higher R\u2605, so no intersection with R \u2208 \u2115 can be guaranteed. Click Uniform to see how to solve it.";
+    }
+  }
+
+  /* Five stages from the single unknown to a Schiffer solution on the cone.
+     The first three paint the field on a cylinder in the site's tube
+     projection; the last two paint it on a cone, first the collar alone and
+     then the interior once the Dirichlet problem inside has been solved.
+     Two things are drawn larger than life and the caption says so: the profile
+     is mode three rather than the mode one the theorem produces, as in section
+     4.1, and the collar is drawn as the outer fifth of the cone where the true
+     ratio L/R is one part in seventy. */
+  const ENCODING = { progress: 0 };
+  const ENCODING_CAPTIONS = [
+    "v on the cylinder, Dirichlet at y = 0.",
+    "h read off the Neumann trace; the dragging term completes w\u2081.",
+    "The ground state w\u2080 is added, giving w.",
+    "h and w give the collar of the cone.",
+    "The interior is completed by solving the Dirichlet problem.",
+  ];
+  const ENCODING_FORMULAS = [
+    "v(0,\\cdot)=0,\\qquad \\partial_yv(0,\\cdot)=\\lambda h_v",
+    "h_v(\\psi)=\\lambda^{-1}\\partial_yv(0,\\cdot),\\qquad w_1=v+\\chi\\,\\partial_yw_0\\,h_v",
+    "w=w_0+w_1",
+    "\\Omega=\\{\\,r<R-h_v(R\\varphi)\\,\\}",
+    "(\\Delta+\\lambda)u=0\\ \\text{ in }\\Omega,\\qquad u=1,\\ \\partial_\\nu u=0\\ \\text{ on }\\partial\\Omega",
+  ];
+  const ENCODING_LAMBDA = 3.317, ENCODING_L = .4, ENCODING_H = .05;
+  const ENCODING_MODE = 3, ENCODING_COLLAR = .2;
+
+  function encodingCutoff(y) {
+    const t = Math.max(0, Math.min(1, (y / ENCODING_L - 1 / 3) / (1 / 3)));
+    return 1 - (3 * t * t - 2 * t * t * t);
+  }
+
+  function encodingProfile(psi) { return ENCODING_H * Math.cos(ENCODING_MODE * psi); }
+
+  function encodingField(y, psi, stage) {
+    const h = encodingProfile(psi);
+    const v = ENCODING_LAMBDA * h * y * (1 - y / (2 * ENCODING_L));
+    if (stage < 1) return v;
+    const w1 = v - encodingCutoff(y) * ENCODING_LAMBDA * y * h;
+    if (stage < 2) return w1;
+    return 1 - ENCODING_LAMBDA * y * y / 2 + w1;
+  }
+
+  /* Inside the collar the field is the interior Dirichlet solve, which is the
+     radial mode: the same profile dtn-data.js carries, normalized to meet the
+     collar value at the junction. */
+  function encodingInterior(fraction) {
+    const data = window.DTN_INTERIOR;
+    const edge = 1 - ENCODING_LAMBDA * ENCODING_L * ENCODING_L / 2;
+    if (!data || !data.profiles) return edge;
+    const profile = data.profiles[0];
+    const t = Math.max(0, Math.min(1, fraction)) * (profile.length - 1);
+    const index = Math.min(profile.length - 2, Math.floor(t));
+    return edge * (profile[index] + (profile[index + 1] - profile[index]) * (t - index));
+  }
+
+  function encodingTube(box, y, psi) {
+    return {
+      x: box.right - (y / ENCODING_L) * box.length + box.depth * Math.cos(psi),
+      y: box.cy + box.half * Math.sin(psi),
+    };
+  }
+
+  /* The perturbation rides the cross-section, not the slant.  Scaling the whole
+     radius moves the point axially by seven per cent of the cone's length,
+     which is twenty times the depth of the rim ellipse in this projection, and
+     the rim crossed itself into a bow tie. */
+  function encodingCone(box, fraction, psi) {
+    const wall = 1 - .11 * (encodingProfile(psi) / ENCODING_H);
+    return {
+      x: box.apex + fraction * (box.length + box.depth * Math.cos(psi) * wall),
+      y: box.cy + fraction * box.half * Math.sin(psi) * wall,
+    };
+  }
+
+  function encodingPaint(context, value, low, high, front) {
+    /* A field that changes sign is scaled about zero, so the two colours mean
+       the two signs; one that does not is scaled about its own midrange, or it
+       would come out a single flat tone.  The interior mode runs from about
+       -3.5 to 8.8, and centring that on its midrange painted almost the whole
+       cone on one side of the ramp. */
+    const signed = low < 0 && high > 0;
+    const centre = signed ? 0 : (low + high) / 2;
+    const half = Math.max(signed ? Math.max(-low, high) : (high - low) / 2, 1e-6);
+    const t = Math.max(-1, Math.min(1, (value - centre) / half));
+    const shade = .45 + .55 * Math.max(0, front);
+    context.fillStyle = t >= 0
+      ? `rgba(7,87,96,${(shade * (.16 + .74 * t)).toFixed(3)})`
+      : `rgba(168,78,66,${(shade * (.16 - .74 * t)).toFixed(3)})`;
+  }
+
+  function renderEncoding() {
+    if (!select("#encodingCanvasWrap")) return;
+    const { canvas, context, width, height } = canvasMetrics("#encodingCanvas", "#encodingCanvasWrap", 380);
+    context.clearRect(0, 0, width, height);
+    context.fillStyle = colors.ink; context.fillRect(0, 0, width, height);
+
+    const stage = Math.max(0, Math.min(4, Math.round(ENCODING.progress * 4)));
+    const laboratory = select("#encodingCanvasWrap")?.closest(".geometry-laboratory");
+    const token = laboratory
+      ? parseFloat(getComputedStyle(laboratory).getPropertyValue("--geometry-key-width")) / 100
+      : 0;
+    const inset = width * (Number.isFinite(token) ? Math.max(0, Math.min(.45, token)) : 0) + 26;
+    const plotHeight = 76;
+    const bodyHeight = height - plotHeight - 50;
+
+    const cols = 240, rows = stage >= 3 ? 72 : 40;
+    let low = Infinity, high = -Infinity;
+    const grid = [];
+    for (let j = 0; j < rows; j++) {
+      const row = [];
+      for (let i = 0; i < cols; i++) {
+        const psi = (i + .5) / cols * TAU;
+        let value;
+        if (stage < 3) value = encodingField((j + .5) / rows * ENCODING_L, psi, stage);
+        else {
+          const fraction = (j + .5) / rows;
+          value = fraction > 1 - ENCODING_COLLAR
+            ? encodingField((1 - fraction) / ENCODING_COLLAR * ENCODING_L, psi, 2)
+            : encodingInterior(fraction / (1 - ENCODING_COLLAR));
+        }
+        low = Math.min(low, value); high = Math.max(high, value);
+        row.push(value);
+      }
+      grid.push(row);
+    }
+
+    if (stage < 3) {
+      const box = {
+        right: width - 54, length: width - inset - 78,
+        cy: bodyHeight / 2 + 6, half: Math.min(74, bodyHeight * .30), depth: 22,
+      };
+      context.beginPath();
+      for (let i = 0; i <= 240; i++) {
+        const q = encodingTube(box, 0, TAU * i / 240);
+        if (!i) context.moveTo(q.x, q.y); else context.lineTo(q.x, q.y);
+      }
+      for (let i = 240; i >= 0; i--) context.lineTo(encodingTube(box, ENCODING_L, TAU * i / 240).x, encodingTube(box, ENCODING_L, TAU * i / 240).y);
+      context.closePath(); context.fillStyle = colors.ink; context.fill();
+      for (let i = 0; i < cols; i++) {
+        const front = Math.cos((i + .5) / cols * TAU);
+        if (front <= 0) continue;
+        const psi0 = i / cols * TAU, psi1 = (i + 1) / cols * TAU;
+        for (let j = 0; j < rows; j++) {
+          const y0 = j / rows * ENCODING_L, y1 = (j + 1) / rows * ENCODING_L;
+          const a = encodingTube(box, y0, psi0), b = encodingTube(box, y0, psi1);
+          const c = encodingTube(box, y1, psi1), d = encodingTube(box, y1, psi0);
+          context.beginPath();
+          context.moveTo(a.x, a.y); context.lineTo(b.x, b.y);
+          context.lineTo(c.x, c.y); context.lineTo(d.x, d.y);
+          context.closePath();
+          encodingPaint(context, grid[j][i], low, high, front);
+          context.fill();
+        }
+      }
+      [0, ENCODING_L].forEach((y, index) => {
+        context.beginPath();
+        for (let i = 0; i <= 240; i++) {
+          const q = encodingTube(box, y, TAU * i / 240);
+          if (!i) context.moveTo(q.x, q.y); else context.lineTo(q.x, q.y);
+        }
+        context.closePath();
+        context.strokeStyle = index ? colors.grid : colors.paper;
+        context.lineWidth = index ? 1.2 : 2.2; context.stroke();
+      });
+      context.font = visualTheme.labelFont; context.fillStyle = colors.faint;
+      context.textAlign = "center"; context.textBaseline = "top";
+      context.fillText("y = 0", box.right + 6, box.cy + box.half + 10);
+      context.fillText("y = L", box.right - box.length, box.cy + box.half + 10);
+    } else {
+      const box = {
+        apex: inset + 8, length: width - inset - 84,
+        cy: bodyHeight / 2 + 4, half: Math.min(88, bodyHeight * .38), depth: 44,
+      };
+      const first = stage === 3 ? Math.floor(rows * (1 - ENCODING_COLLAR)) : 0;
+      // the cone silhouette, so the unpainted interior still reads as a cone
+      context.beginPath();
+      for (let i = 0; i <= 480; i++) {
+        const q = encodingCone(box, 1, TAU * i / 480);
+        if (!i) context.moveTo(q.x, q.y); else context.lineTo(q.x, q.y);
+      }
+      context.closePath();
+      context.fillStyle = colors.ink; context.fill();
+      context.strokeStyle = colors.grid; context.lineWidth = 1; context.stroke();
+      [-1, 1].forEach((side) => {
+        context.beginPath();
+        context.moveTo(box.apex, box.cy);
+        const q = encodingCone(box, 1, side > 0 ? Math.PI / 2 : -Math.PI / 2);
+        context.lineTo(q.x, q.y);
+        context.strokeStyle = colors.grid; context.lineWidth = 1; context.stroke();
+      });
+      for (let i = 0; i < cols; i++) {
+        const front = Math.cos((i + .5) / cols * TAU);
+        const psi0 = i / cols * TAU, psi1 = (i + 1) / cols * TAU;
+        for (let j = first; j < rows; j++) {
+          const f0 = j / rows, f1 = (j + 1) / rows;
+          const a = encodingCone(box, f0, psi0), b = encodingCone(box, f0, psi1);
+          const c = encodingCone(box, f1, psi1), d = encodingCone(box, f1, psi0);
+          context.beginPath();
+          context.moveTo(a.x, a.y); context.lineTo(b.x, b.y);
+          context.lineTo(c.x, c.y); context.lineTo(d.x, d.y);
+          context.closePath();
+          encodingPaint(context, grid[j][i], low, high, .55 + .45 * front);
+          context.fill();
+        }
+      }
+      context.beginPath();
+      for (let i = 0; i <= 480; i++) {
+        const q = encodingCone(box, 1, TAU * i / 480);
+        if (!i) context.moveTo(q.x, q.y); else context.lineTo(q.x, q.y);
+      }
+      context.closePath();
+      context.strokeStyle = colors.paper; context.lineWidth = 2.2; context.stroke();
+      if (stage === 3) {
+        context.beginPath();
+        for (let i = 0; i <= 480; i++) {
+          const q = encodingCone(box, 1 - ENCODING_COLLAR, TAU * i / 480);
+          if (!i) context.moveTo(q.x, q.y); else context.lineTo(q.x, q.y);
+        }
+        context.closePath();
+        context.strokeStyle = colors.faint; context.lineWidth = 1.2;
+        context.setLineDash([4, 4]); context.stroke(); context.setLineDash([]);
+      }
+      context.font = visualTheme.labelFont; context.fillStyle = colors.faint;
+      context.textAlign = "center"; context.textBaseline = "top";
+      context.fillText("r = R", box.apex + box.length + 14, box.cy + box.half + 10);
+      if (stage === 3) context.fillText("R \u2212 L", box.apex + box.length * (1 - ENCODING_COLLAR), box.cy + box.half * (1 - ENCODING_COLLAR) + 10);
+    }
+
+    const top = bodyHeight + 22, mid = top + plotHeight / 2;
+    context.beginPath();
+    context.moveTo(inset, mid); context.lineTo(width - 20, mid);
+    context.strokeStyle = colors.grid; context.lineWidth = 1; context.stroke();
+    if (stage >= 1) {
+      context.beginPath();
+      for (let i = 0; i <= 480; i++) {
+        const psi = TAU * i / 480;
+        const x = inset + i / 480 * (width - 20 - inset);
+        const y = mid - encodingProfile(psi) / (ENCODING_H * 1.3) * (plotHeight / 2);
+        if (!i) context.moveTo(x, y); else context.lineTo(x, y);
+      }
+      context.strokeStyle = colors.orange; context.lineWidth = 2; context.stroke();
+      context.font = visualTheme.labelFont; context.fillStyle = colors.faint;
+      context.textAlign = "left"; context.textBaseline = "bottom";
+      context.fillText("h(\u03c8)", inset, top - 4);
+      context.textAlign = "center"; context.textBaseline = "top";
+      context.fillText("2\u03c0", width - 20, mid + 6);
+    }
+
+    context.font = visualTheme.labelFont; context.fillStyle = colors.faint;
+    context.textAlign = "left"; context.textBaseline = "bottom";
+    context.fillText(ENCODING_CAPTIONS[stage], inset, height - 6);
+
+    document.querySelectorAll("[data-encoding-stage]").forEach((button, index) => {
+      button.classList.toggle("active", index === stage);
+    });
+    const formula = select("#encodingFormula");
+    if (formula && window.SchifferMath?.render) {
+      window.SchifferMath.render(formula, ENCODING_FORMULAS[stage], { displayMode: true });
+    }
+    canvas.setAttribute("aria-label", `Stage ${stage + 1} of 5: ${ENCODING_CAPTIONS[stage]}`);
+  }
+
+  function bindEncoding() {
+    const range = select("#encodingRange");
+    if (!range) return;
+    range.addEventListener("input", () => {
+      ENCODING.progress = Number(range.value);
+      renderEncoding();
+    });
+    document.querySelectorAll("[data-encoding-stage]").forEach((button) => {
+      button.addEventListener("click", () => {
+        ENCODING.progress = Number(button.dataset.encodingStage);
+        range.value = String(ENCODING.progress);
+        renderEncoding();
+      });
+    });
+    renderEncoding();
+  }
+
+  bindEncoding();
+
+  /* Move a domain over cos(x_1) and watch its integral.  For a Schiffer domain
+     the integral vanishes for every rigid motion, which is the Pompeiu failure
+     itself.  Each domain is rescaled so that its own frequency becomes 1, which
+     is why the N = 28 one is so much larger than the disc: its k is 1.822983
+     against the disc's 1/j_{1,1}. */
+  const PROBE = { domain: 0, t1: 0, t2: 0, angle: 0, dragging: false, mode: "move" };
+
+  function probeDomains() {
+    const list = [];
+    const j11 = 3.8317059702;
+    list.push({
+      name: "disc, radius j\u2081,\u2081",
+      note: "the classical Pompeiu failure",
+      vanishes: true,
+      radius: () => j11,
+      extent: j11 * 1.35,
+    });
+    const data = window.CONE_NUMERICS;
+    if (data && data.records) {
+      const record = data.records.reduce((best, row) =>
+        Math.abs(row.s - data.landingS) < Math.abs(best.s - data.landingS) ? row : best);
+      const scale = Math.sqrt(record.lambda), order = record.R, h = record.h;
+      list.push({
+        name: `N = ${order}, this proof`,
+        note: "boundary from the landing record",
+        vanishes: true,
+        radius: (theta) => {
+          let sum = 0;
+          for (let j = 0; j < h.length; j++) sum += h[j] * Math.cos(j * order * theta);
+          return scale * (order - sum);
+        },
+        extent: scale * order * 1.12,
+      });
+    }
+    const side = 2 * j11;
+    list.push({
+      name: "square",
+      note: "has the Pompeiu property",
+      vanishes: false,
+      radius: (theta) => (side / 2) / Math.max(Math.abs(Math.cos(theta)), Math.abs(Math.sin(theta))),
+      extent: side * .95,
+    });
+    return list;
+  }
+
+  /* The integral reduces to one angular quadrature: the radial part of
+     int e^{i y_1} dy has a closed form on every ray. */
+  function probeAmplitude(domain, angle, samples = 2000) {
+    let re = 0, im = 0;
+    for (let i = 0; i < samples; i++) {
+      const theta = TAU * (i + .5) / samples;
+      const radius = domain.radius(theta - angle);
+      const c = Math.cos(theta);
+      if (Math.abs(c) < 1e-7) {
+        re += radius * radius / 2;
+        im += c * radius * radius * radius / 3;
+      } else {
+        const t = c * radius;
+        re += (Math.cos(t) + Math.sin(t) * t - 1) / (c * c);
+        im += (Math.sin(t) - t * Math.cos(t)) / (c * c);
+      }
+    }
+    const weight = TAU / samples;
+    return { re: re * weight, im: im * weight };
+  }
+
+  function probeIntegral(domain, shift, angle) {
+    const a = probeAmplitude(domain, angle);
+    return Math.cos(shift) * a.re - Math.sin(shift) * a.im;
+  }
+
+  function renderPompeiuProbe() {
+    if (!select("#probeCanvasWrap")) return;
+    const { canvas, context, width, height } = canvasMetrics("#probeCanvas", "#probeCanvasWrap", 420);
+    const domains = probeDomains();
+    const domain = domains[Math.min(PROBE.domain, domains.length - 1)];
+    context.clearRect(0, 0, width, height);
+
+    const plotHeight = 96;
+    const viewHeight = height - plotHeight - 62;
+    const scale = Math.min(width / (2.4 * domain.extent), viewHeight / (2.2 * domain.extent));
+    const cx = width / 2, cy = viewHeight / 2;
+    const toX = (x) => cx + x * scale;
+    const toY = (y) => cy - y * scale;
+
+    // the wave, at its true period
+    const image = context.createImageData(Math.round(width), Math.round(viewHeight));
+    const pixels = image.data;
+    for (let px = 0; px < image.width; px++) {
+      const value = Math.cos((px - cx) / scale);
+      const t = (value + 1) / 2;
+      const r = Math.round(255 - 78 * t), g = Math.round(255 - 24 * t), b = Math.round(248 - 8 * t);
+      const rr = Math.round(232 + 23 * t), gg = Math.round(238 - 60 * t), bb = Math.round(236 - 80 * t);
+      for (let py = 0; py < image.height; py++) {
+        const o = (py * image.width + px) * 4;
+        pixels[o] = value >= 0 ? rr : r;
+        pixels[o + 1] = value >= 0 ? gg : g;
+        pixels[o + 2] = value >= 0 ? bb : b;
+        pixels[o + 3] = 255;
+      }
+    }
+    const buffer = document.createElement("canvas");
+    buffer.width = image.width; buffer.height = image.height;
+    buffer.getContext("2d").putImageData(image, 0, 0);
+    context.drawImage(buffer, 0, 0, width, viewHeight);
+
+    context.beginPath();
+    for (let i = 0; i <= 720; i++) {
+      const theta = TAU * i / 720;
+      const radius = domain.radius(theta - PROBE.angle);
+      const x = toX(PROBE.t1 + radius * Math.cos(theta));
+      const y = toY(PROBE.t2 + radius * Math.sin(theta));
+      if (!i) context.moveTo(x, y); else context.lineTo(x, y);
+    }
+    context.closePath();
+    context.fillStyle = "rgba(7,87,96,.16)";
+    context.fill();
+    context.strokeStyle = colors.paper; context.lineWidth = 2; context.stroke();
+
+    const value = probeIntegral(domain, PROBE.t1, PROBE.angle);
+    const trace = [];
+    let peak = 1e-9;
+    const base = probeAmplitude(domain, PROBE.angle);
+    for (let i = 0; i <= 160; i++) {
+      const shift = -Math.PI + TAU * i / 160;
+      const v = Math.cos(shift) * base.re - Math.sin(shift) * base.im;
+      trace.push(v); peak = Math.max(peak, Math.abs(v));
+    }
+    const top = viewHeight + 16, mid = top + plotHeight / 2;
+    context.beginPath();
+    context.moveTo(14, mid); context.lineTo(width - 14, mid);
+    context.strokeStyle = colors.grid; context.lineWidth = 1; context.stroke();
+    const span = domain.vanishes ? Math.max(peak, 1e-9) * 40 : peak * 1.2;
+    context.beginPath();
+    trace.forEach((v, i) => {
+      const x = 14 + i / (trace.length - 1) * (width - 28);
+      const y = mid - v / span * (plotHeight / 2 - 8);
+      if (!i) context.moveTo(x, y); else context.lineTo(x, y);
+    });
+    context.strokeStyle = domain.vanishes ? colors.cyan : colors.orange;
+    context.lineWidth = 2; context.stroke();
+
+    context.font = visualTheme.labelFont;
+    context.textAlign = "left"; context.textBaseline = "top";
+    context.fillStyle = colors.faint;
+    context.fillText("integral against the shift t\u2081", 14, top - 14);
+    context.fillStyle = domain.vanishes ? colors.cyan : colors.orange;
+    context.fillText(`\u222b cos(x\u2081) = ${value.toExponential(2)}`, 14, top + plotHeight + 2);
+    context.fillStyle = colors.faint;
+    context.fillText(domain.vanishes
+      ? "zero for every position and angle"
+      : "changes with position", 14, top + plotHeight + 16);
+    context.textAlign = "right";
+    context.fillText("drag inside to move \u00b7 outside to turn", width - 14, top + plotHeight + 16);
+    context.textAlign = "left";
+
+    document.querySelectorAll("[data-probe-domain]").forEach((button, index) => {
+      button.classList.toggle("active", index === PROBE.domain);
+    });
+    const label = select("#probeDomainName");
+    if (label) label.textContent = domain.name;
+    canvas.setAttribute("aria-label",
+      `${domain.name} over the plane wave cosine x one; the integral is ${value.toExponential(2)}.`);
+    const limit = (viewHeight / 2 - 6) / scale;
+    PROBE.t2 = Math.max(-limit, Math.min(limit, PROBE.t2));
+    PROBE.geometry = { toX, toY, scale, cx, cy, viewHeight };
+  }
+
+  function probeInside(domain, x, y) {
+    const dx = x - PROBE.t1, dy = y - PROBE.t2;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    if (!distance) return true;
+    return distance < domain.radius(Math.atan2(dy, dx) - PROBE.angle);
+  }
+
+  /* Three motions, all from the canvas.  Pressing inside the domain drags it,
+     in both directions; pressing outside turns it about its own centre; the
+     slider and the arrow keys do the same two things for anyone not using a
+     pointer.  Both drags are relative to where the pointer went down, so
+     nothing jumps to the cursor when it is grabbed. */
+  function bindPompeiuProbe() {
+    const canvas = select("#probeCanvas");
+    if (!canvas) return;
+    const planeOf = (event) => {
+      const geometry = PROBE.geometry;
+      const box = canvas.getBoundingClientRect();
+      if (!geometry || !box.width || !box.height) return null;
+      const ratio = window.devicePixelRatio || 1;
+      const x = (event.clientX - box.left) / box.width * (canvas.width / ratio);
+      const y = (event.clientY - box.top) / box.height * (canvas.height / ratio);
+      return { x: (x - geometry.cx) / geometry.scale, y: (geometry.cy - y) / geometry.scale };
+    };
+    const syncSlider = () => {
+      const slider = select("#probeAngle");
+      if (slider) slider.value = String(((PROBE.angle % TAU) + TAU) % TAU);
+    };
+    canvas.addEventListener("pointerdown", (event) => {
+      const point = planeOf(event);
+      if (!point) return;
+      event.preventDefault();
+      canvas.setPointerCapture(event.pointerId);
+      const domains = probeDomains();
+      const domain = domains[Math.min(PROBE.domain, domains.length - 1)];
+      PROBE.mode = probeInside(domain, point.x, point.y) ? "move" : "turn";
+      PROBE.grab = point;
+      PROBE.grabT1 = PROBE.t1; PROBE.grabT2 = PROBE.t2;
+      PROBE.grabAngle = PROBE.angle;
+      PROBE.grabBearing = Math.atan2(point.y - PROBE.t2, point.x - PROBE.t1);
+      PROBE.dragging = true;
+    });
+    canvas.addEventListener("pointermove", (event) => {
+      if (!PROBE.dragging) return;
+      const point = planeOf(event);
+      if (!point) return;
+      if (PROBE.mode === "move") {
+        PROBE.t1 = PROBE.grabT1 + (point.x - PROBE.grab.x);
+        PROBE.t2 = PROBE.grabT2 + (point.y - PROBE.grab.y);
+      } else {
+        const bearing = Math.atan2(point.y - PROBE.t2, point.x - PROBE.t1);
+        PROBE.angle = PROBE.grabAngle + (bearing - PROBE.grabBearing);
+        syncSlider();
+      }
+      renderPompeiuProbe();
+    });
+    const release = (event) => {
+      PROBE.dragging = false;
+      if (canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
+    };
+    canvas.addEventListener("pointerup", release);
+    canvas.addEventListener("pointercancel", release);
+
+    canvas.setAttribute("tabindex", "0");
+    canvas.addEventListener("keydown", (event) => {
+      const step = event.shiftKey ? 4 : 1;
+      const keys = {
+        ArrowLeft: () => { PROBE.t1 -= step / PROBE.geometry.scale * 8; },
+        ArrowRight: () => { PROBE.t1 += step / PROBE.geometry.scale * 8; },
+        ArrowUp: () => { PROBE.t2 += step / PROBE.geometry.scale * 8; },
+        ArrowDown: () => { PROBE.t2 -= step / PROBE.geometry.scale * 8; },
+        "[": () => { PROBE.angle -= .08 * step; syncSlider(); },
+        "]": () => { PROBE.angle += .08 * step; syncSlider(); },
+      };
+      const action = keys[event.key];
+      if (!action || !PROBE.geometry) return;
+      event.preventDefault();
+      action();
+      renderPompeiuProbe();
+    });
+
+    const angle = select("#probeAngle");
+    if (angle) {
+      angle.addEventListener("input", () => {
+        PROBE.angle = Number(angle.value);
+        renderPompeiuProbe();
+      });
+    }
+    document.querySelectorAll("[data-probe-domain]").forEach((button, index) => {
+      button.addEventListener("click", () => {
+        PROBE.domain = index;
+        PROBE.t1 = 0; PROBE.t2 = 0; PROBE.angle = 0;
+        syncSlider();
+        renderPompeiuProbe();
+      });
+    });
+    renderPompeiuProbe();
+  }
+
+  bindPompeiuProbe();
+
+  function bindCrandallRabinowitz() {
+    document.querySelectorAll(".cr-statement").forEach((statement) => {
+      const buttons = statement.querySelectorAll("[data-cr-variant]");
+      if (!buttons.length) return;
+      const choose = (variant) => {
+        statement.dataset.variant = variant;
+        buttons.forEach((button) => {
+          button.setAttribute("aria-pressed", String(button.dataset.crVariant === variant));
+        });
+        renderBranchScale(variant);
+      };
+      buttons.forEach((button) => {
+        button.addEventListener("click", () => choose(button.dataset.crVariant));
+      });
+      choose(statement.dataset.variant || "classical");
+    });
+  }
+
+  bindCrandallRabinowitz();
+
+  /* The interior matching figure for 4.3.  The reader sets the boundary value
+     on the circle r = R - L; the interior solution of (Delta + lambda)u = 0 is
+     then determined, and so is its normal derivative.  G_2 = 0 says that the
+     derivative the interior produces is the one the collar needs, and the two
+     traces below the disc are exactly those.  Radial profiles and the two
+     multipliers are precomputed in dtn-data.js: they are Bessel functions of
+     order kR at real R, which is not worth evaluating in the browser. */
+  const interiorMatch = { amplitude: .2 };
+
+  function interiorField(radial, angular, amplitude, data) {
+    const grid = data.profiles[0].length - 1;
+    const at = (profile) => {
+      const t = Math.max(0, Math.min(1, radial)) * grid;
+      const i = Math.min(grid - 1, Math.floor(t));
+      return profile[i] + (profile[i + 1] - profile[i]) * (t - i);
+    };
+    return .745 * at(data.profiles[0]) + amplitude * at(data.profiles[1]) * Math.cos(angular);
+  }
+
+  function interiorColor(value) {
+    const t = Math.max(-1, Math.min(1, value / 4));
+    if (t >= 0) return [Math.round(255 - 175 * t), Math.round(255 - 118 * t), Math.round(248 - 120 * t)];
+    return [Math.round(255 + 87 * t), Math.round(255 + 177 * t), Math.round(248 + 182 * t)];
+  }
+
+  /* putImageData ignores the canvas transform, so the field is painted into an
+     offscreen buffer at its own scale and composited with drawImage, which does
+     respect it.  Painting straight onto the figure put the disc in the corner at
+     half size. */
+  function drawInteriorDisc(context, size, originX, originY, amplitude, data) {
+    const buffer = document.createElement("canvas");
+    buffer.width = size; buffer.height = size;
+    const paint = buffer.getContext("2d");
+    if (!paint) return;
+    const width = size, height = size;
+    const cx = width / 2, cy = height / 2, radius = Math.min(width, height) / 2 - 2;
+    const image = paint.createImageData(width, height);
+    const pixels = image.data;
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const dx = x - cx, dy = y - cy;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        const o = (y * width + x) * 4;
+        if (d > radius) { pixels[o + 3] = 0; continue; }
+        const [r, g, b] = interiorColor(interiorField(d / radius, Math.atan2(dy, dx), amplitude, data));
+        pixels[o] = r; pixels[o + 1] = g; pixels[o + 2] = b; pixels[o + 3] = 255;
+      }
+    }
+    paint.putImageData(image, 0, 0);
+    context.drawImage(buffer, originX, originY, size, size);
+    context.beginPath();
+    context.arc(originX + cx, originY + cy, radius, 0, TAU);
+    context.strokeStyle = colors.paper; context.lineWidth = 1.6; context.stroke();
+  }
+
+  function drawTrace(context, box, series, label) {
+    const { x, y, w, h } = box;
+    let span = .0001;
+    series.forEach((entry) => entry.values.forEach((v) => { span = Math.max(span, Math.abs(v)); }));
+    span *= 1.25;
+    const px = (i, n) => x + i / n * w;
+    const py = (v) => y + h / 2 - v / span * (h / 2);
+    context.beginPath(); context.moveTo(x, py(0)); context.lineTo(x + w, py(0));
+    context.strokeStyle = colors.grid; context.lineWidth = 1; context.stroke();
+    series.forEach((entry) => {
+      context.beginPath();
+      entry.values.forEach((v, i) => {
+        const a = px(i, entry.values.length - 1), b = py(v);
+        if (!i) context.moveTo(a, b); else context.lineTo(a, b);
+      });
+      context.strokeStyle = entry.color;
+      context.lineWidth = entry.width || 2;
+      if (entry.dash) context.setLineDash(entry.dash); else context.setLineDash([]);
+      context.stroke(); context.setLineDash([]);
+    });
+    context.fillStyle = colors.faint;
+    context.font = visualTheme.labelFont;
+    context.textAlign = "left"; context.textBaseline = "bottom";
+    context.fillText(label, x, y - 4);
+  }
+
+  function renderInteriorMatch() {
+    const data = window.DTN_INTERIOR;
+    if (!data || !select("#interiorMatchCanvasWrap")) return;
+    const { canvas, context, width, height } = canvasMetrics("#interiorMatchCanvas", "#interiorMatchCanvasWrap", 430);
+    context.clearRect(0, 0, width, height);
+    context.fillStyle = colors.ink; context.fillRect(0, 0, width, height);
+
+    const amplitude = interiorMatch.amplitude;
+    const target = data.targetAmplitude;
+    const discSize = Math.round(Math.min(width * .74, height * .42));
+    drawInteriorDisc(context, discSize, Math.round((width - discSize) / 2), 0, amplitude, data);
+
+    const samples = 121;
+    const psi = (i) => i / (samples - 1) * TAU;
+    const dirichlet = [], produced = [], required = [];
+    for (let i = 0; i < samples; i++) {
+      dirichlet.push(.745 + amplitude * Math.cos(psi(i)));
+      produced.push(data.tau[0] * .745 + data.tau[1] * amplitude * Math.cos(psi(i)));
+      required.push(data.tau[0] * .745 + data.tau[1] * target * Math.cos(psi(i)));
+    }
+    const left = 10, plotWidth = width - 20;
+    const top = discSize + 26, plotHeight = (height - top - 34) / 2;
+    drawTrace(context, { x: left, y: top, w: plotWidth, h: plotHeight },
+      [{ values: dirichlet, color: colors.cyan }], "u on the circle");
+    drawTrace(context, { x: left, y: top + plotHeight + 24, w: plotWidth, h: plotHeight },
+      [{ values: required, color: colors.faint, width: 1.6, dash: [5, 4] },
+       { values: produced, color: colors.orange }], "normal derivative: produced, required");
+
+    const gap = Math.abs(amplitude - target) * Math.abs(data.tau[1]);
+    const matched = gap < .04;
+    context.fillStyle = matched ? colors.cyan : colors.orange;
+    context.font = visualTheme.labelFont;
+    context.textAlign = "left"; context.textBaseline = "bottom";
+    context.fillText(matched
+      ? "matches: the solution continues across"
+      : `mismatch ${gap.toFixed(2)}: no continuation`, left, height - 6);
+
+    const value = select("#interiorMatchValue");
+    if (value) value.textContent = amplitude.toFixed(2);
+    canvas.setAttribute("aria-label",
+      `Interior solution with boundary amplitude ${amplitude.toFixed(2)}; the normal derivative it produces ${matched ? "matches" : "does not match"} the one the collar requires.`);
+  }
+
+  function bindInteriorMatch() {
+    const range = select("#interiorMatchRange");
+    if (!range) return;
+    range.addEventListener("input", () => {
+      interiorMatch.amplitude = Number(range.value);
+      renderInteriorMatch();
+    });
+    renderInteriorMatch();
+  }
+
+  bindInteriorMatch();
 
   function renderConeFold() {
     if (!select("#coneFoldCanvasWrap")) return;

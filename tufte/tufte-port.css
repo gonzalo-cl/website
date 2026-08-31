@@ -808,6 +808,7 @@ body.tufte-site main .math-statement-body li {
   line-height: var(--leading-proof);
 }
 .math-statement-problem .math-statement-body p,
+.math-statement-question .math-statement-body p,
 .math-statement-conjecture .math-statement-body p { font-style: italic; font-size: var(--type-body) !important; }
 
 /* A prose theorem and its machine-readable counterpart are one editorial
@@ -1159,12 +1160,12 @@ body.tufte-site main .margin-figure-row > .side-figure {
 /* The two boundary values are the content of this card, not a legend. */
 .world-cards .world-sketch .annulus-value-label {
   fill: var(--ink);
-  font: 400 12px/1 var(--serif);
+  font: 400 30px/1 var(--serif);
   font-style: italic;
 }
 .world-cards .world-sketch .annulus-value-label-note {
   fill: var(--muted);
-  font-size: 10.5px;
+  font-size: 26px;
   font-style: normal;
 }
 .world-cards .world-sketch .annulus-leader {
@@ -4238,6 +4239,11 @@ body.tufte-site main .geometry-laboratory .geometry-stages button {
   padding: .28rem 0;
 }
 body.tufte-site main .geometry-laboratory .geometry-scrub { display: none; }
+/* The labs that predate these two drive themselves from stage buttons, so their
+   scrub rows are hidden.  The probe and the encoding figure carry their only
+   continuous control there, and hiding it left the rotation unreachable. */
+body.tufte-site main :is(.probe-figure, .encoding-figure) .geometry-scrub { display: grid; }
+body.tufte-site main :is(.probe-figure, .encoding-figure) .geometry-scrub output { display: block; }
 body.tufte-site main .geometry-laboratory .play-button { margin-top: .3rem; }
 body.tufte-site main .geometry-laboratory > figcaption {
   grid-area: caption;
@@ -4705,3 +4711,156 @@ body.tufte-site main :is(.three-wrap canvas, #phaseFamilyCanvas):focus-visible {
     justify-content: flex-start;
   }
 }
+
+/* Promoted out of an optional-digression expander: the rigidity literature is
+   part of the argument, not an aside, so it needs a heading of its own. */
+.rigidity-heading { margin: 34px 0 12px; color: var(--ink); font: 500 var(--type-body)/1.4 var(--sans); }
+
+.cone-remap-figure svg .remap-inner-face {
+  /* The cut at r = R - L, and the cylinder face at y = L that maps onto it.
+     Hatched rather than filled: it is an interface, not a piece of the collar,
+     and the interior behind it is handled separately. */
+  fill: url(#collarInnerHatch);
+  stroke: none;
+}
+.cone-remap-figure svg .remap-hatch-line {
+  stroke: rgba(160, 0, 0, .5);
+  stroke-width: 1.6;
+  fill: none;
+}
+.cone-remap-figure svg .remap-collar-mask {
+  /* Opaque backing under the collar so the hatch does not show through where
+     the collar surface passes in front of the cut. */
+  fill: var(--paper, #fffff8);
+  stroke: none;
+}
+
+/* One summary carries no "Optional digression" label, so the grid is wrong for
+   it: the grid puts the text and the KaTeX box on separate rows and the title
+   takes two lines however much width is free.  Scoped to that summary; the
+   labelled ones keep the grid and their own intrinsic width. */
+body.tufte-site main details.optional-digression > summary > span.digression-title {
+  display: block;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* The Crandall-Rabinowitz box is read in two forms.  The classical statement is
+   the black text; the uniform one adds the quantitative clauses, which are the
+   only difference between the two theorems and are coloured to say so. */
+.cr-variant-toggle { display: flex; gap: 8px; margin: 0 0 18px; }
+.cr-variant-button {
+  padding: 6px 14px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: none;
+  color: var(--muted);
+  font: 11px var(--mono);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  cursor: pointer;
+}
+.cr-variant-button[aria-pressed="true"] { border-color: var(--teal, #287b7b); color: var(--teal, #287b7b); }
+.cr-statement .cr-quant { color: var(--teal, #287b7b); }
+.cr-statement[data-variant="classical"] .cr-quant { display: none; }
+.cr-statement[data-variant="uniform"] .cr-classical { display: none; }
+.cr-statement[data-variant="classical"] li.cr-quant { display: none; }
+.cr-hypotheses { margin: 12px 0; padding-left: 22px; }
+.cr-hypotheses li { margin: 0 0 10px; }
+
+/* body.tufte-site main p > span:has(.katex) forces spans containing math to
+   inherit their colour, which beat the .cr-quant rule.  These carry the same
+   colour at higher specificity. */
+body.tufte-site main .cr-statement .cr-quant,
+body.tufte-site main .cr-statement .cr-quant p,
+body.tufte-site main .cr-statement .cr-quant .tex-display,
+body.tufte-site main .cr-statement li.cr-quant,
+body.tufte-site main .cr-statement p > span.cr-quant { color: var(--teal, #287b7b); }
+
+/* .experiment :is(.play-button, button:not(.tab-button)) sets colour and border
+   on every button inside section 4, and outranks the plain class selector, so
+   the selected variant was indistinguishable. */
+body.tufte-site main .cr-statement .cr-variant-button[aria-pressed="true"],
+.experiment .cr-statement .cr-variant-button[aria-pressed="true"] {
+  border-color: var(--teal, #287b7b);
+  color: var(--teal, #287b7b);
+}
+
+.cr-source { margin-top: 20px; font-size: var(--type-caption); }
+
+/* The slider under each pitchfork is no longer the control: the diagram itself
+   is dragged, on the trivial line as well as up the branch.  It stays in the
+   DOM because it holds the branch parameter and is what the renderers listen
+   to, but it is out of the layout and out of the tab order. */
+input[type="range"].branch-range-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  clip-path: inset(50%);
+  overflow: hidden;
+  pointer-events: none;
+}
+.branch-hint { margin: 10px 0 0; font-size: var(--type-caption); line-height: 1.5; }
+
+/* Classical-only text is what the uniform reading replaces, so it is marked in
+   a soft red against the teal of the quantitative clauses, and each button
+   takes the colour of the form it selects. */
+body.tufte-site main .cr-statement .cr-classical,
+body.tufte-site main .cr-statement .cr-classical p,
+body.tufte-site main .cr-statement li.cr-classical,
+body.tufte-site main .cr-statement p > span.cr-classical,
+body.tufte-site main .cr-statement small > span.cr-classical,
+.cr-statement .cr-classical { color: #c07a6d; }
+body.tufte-site main .cr-statement .cr-variant-button[data-cr-variant="classical"][aria-pressed="true"],
+.experiment .cr-statement .cr-variant-button[data-cr-variant="classical"][aria-pressed="true"] {
+  border-color: #c07a6d;
+  color: #c07a6d;
+}
+body.tufte-site main .cr-statement .cr-variant-button[data-cr-variant="uniform"][aria-pressed="true"],
+.experiment .cr-statement .cr-variant-button[data-cr-variant="uniform"][aria-pressed="true"] {
+  border-color: var(--teal, #287b7b);
+  color: var(--teal, #287b7b);
+}
+
+/* The five examples sit beside the theorem rather than under the plot: the
+   table is three short columns and does not need the reading measure. */
+.abundance-examples-margin { border: 0; }
+.abundance-examples-margin h3 { margin: 0 0 10px; font: 400 var(--type-caption)/1.35 var(--serif); }
+.abundance-examples-margin .abundance-examples-table th,
+.abundance-examples-margin .abundance-examples-table td { padding: 7px 8px; }
+.abundance-examples-margin .abundance-examples-table { table-layout: auto; }
+
+/* The route overview inherited the .intro-bottom register, 21px and muted, from
+   the block it shares a wrapper with.  It reads as body prose, so it takes the
+   same size, leading and colour as the introduction's own paragraphs. */
+body.tufte-site main .intro-route-overview p,
+.intro-route-overview p {
+  /* the .intro-bottom family rule carries !important, so this has to as well */
+  font-size: var(--type-proof) !important;
+  line-height: 1.43;
+  color: var(--ink);
+}
+
+.fact-list { margin: 14px 0; padding-left: 22px; list-style: disc; }
+.fact-list li { margin: 0 0 14px; }
+.fact-list li:last-child { margin-bottom: 0; }
+.fact-list .tex-display { margin: 14px 0 4px; }
+
+.interior-match-canvas-wrap { position: relative; width: 100%; height: 430px; }
+.interior-match-canvas-wrap canvas { display: block; width: 100%; height: 100%; }
+.interior-match-control { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 4px 10px; margin-top: 10px; }
+.interior-match-control label { font-size: var(--type-label); color: var(--muted); }
+.interior-match-control output { font-family: var(--mono); font-size: var(--type-label); color: var(--ink); }
+.interior-match-control input[type="range"] { grid-column: 1 / -1; }
+
+.branch-scale-canvas-wrap { position: relative; width: 100%; height: 430px; }
+.branch-scale-canvas-wrap canvas { display: block; width: 100%; height: 100%; }
+
+.encoding-figure .geometry-canvas-wrap { height: 380px; }
+
+.probe-figure .geometry-canvas-wrap { height: 420px; cursor: ew-resize; }
+
+.encoding-formula { margin: 10px 0 0; text-align: center; min-height: 30px; }
