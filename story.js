@@ -1056,6 +1056,29 @@
     context.fillStyle = colors.paper; context.fill();
   }
 
+  /* The Crandall-Rabinowitz box reads either as the classical theorem or as the
+     quantitative one; the quantitative clauses are the same DOM, shown or
+     hidden.  Null-guarded: story.js is shared with the paper edition, which
+     does not carry this markup. */
+  function bindCrandallRabinowitz() {
+    document.querySelectorAll(".cr-statement").forEach((statement) => {
+      const buttons = statement.querySelectorAll("[data-cr-variant]");
+      if (!buttons.length) return;
+      const choose = (variant) => {
+        statement.dataset.variant = variant;
+        buttons.forEach((button) => {
+          button.setAttribute("aria-pressed", String(button.dataset.crVariant === variant));
+        });
+      };
+      buttons.forEach((button) => {
+        button.addEventListener("click", () => choose(button.dataset.crVariant));
+      });
+      choose(statement.dataset.variant || "classical");
+    });
+  }
+
+  bindCrandallRabinowitz();
+
   function renderConeFold() {
     if (!select("#coneFoldCanvasWrap")) return;
     const { canvas, context, width, height } = canvasMetrics("#coneFoldCanvas", "#coneFoldCanvasWrap", 420);

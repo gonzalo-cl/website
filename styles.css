@@ -1476,3 +1476,43 @@ body > footer { padding-inline: var(--layout-gutter); }
   fill: var(--paper, #fffff8);
   stroke: none;
 }
+
+/* The Crandall-Rabinowitz box is read in two forms.  The classical statement is
+   the black text; the uniform one adds the quantitative clauses, which are the
+   only difference between the two theorems and are coloured to say so. */
+.cr-variant-toggle { display: flex; gap: 8px; margin: 0 0 18px; }
+.cr-variant-button {
+  padding: 6px 14px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: none;
+  color: var(--muted);
+  font: 11px var(--mono);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  cursor: pointer;
+}
+.cr-variant-button[aria-pressed="true"] { border-color: var(--teal, #287b7b); color: var(--teal, #287b7b); }
+.cr-statement .cr-quant { color: var(--teal, #287b7b); }
+.cr-statement[data-variant="classical"] .cr-quant { display: none; }
+.cr-statement[data-variant="classical"] li.cr-quant { display: none; }
+.cr-hypotheses { margin: 12px 0; padding-left: 22px; }
+.cr-hypotheses li { margin: 0 0 10px; }
+
+/* body.tufte-site main p > span:has(.katex) forces spans containing math to
+   inherit their colour, which beat the .cr-quant rule.  These carry the same
+   colour at higher specificity. */
+body.tufte-site main .cr-statement .cr-quant,
+body.tufte-site main .cr-statement .cr-quant p,
+body.tufte-site main .cr-statement .cr-quant .tex-display,
+body.tufte-site main .cr-statement li.cr-quant,
+body.tufte-site main .cr-statement p > span.cr-quant { color: var(--teal, #287b7b); }
+
+/* .experiment :is(.play-button, button:not(.tab-button)) sets colour and border
+   on every button inside section 4, and outranks the plain class selector, so
+   the selected variant was indistinguishable. */
+body.tufte-site main .cr-statement .cr-variant-button[aria-pressed="true"],
+.experiment .cr-statement .cr-variant-button[aria-pressed="true"] {
+  border-color: var(--teal, #287b7b);
+  color: var(--teal, #287b7b);
+}

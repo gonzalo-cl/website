@@ -2611,50 +2611,46 @@
           </div>
         </details>
 
-      <section id="bifurcation-setting" class="bifurcation-setting">
+            <section id="bifurcation-setting" class="bifurcation-setting">
         <header class="section-heading" data-title="The bifurcation setting: a collar problem for every real order" data-toc="proof-subsection">
           <h3>The bifurcation setting: a collar problem for every real order</h3>
         </header>
-
-        <div class="real-order-setup paper-copy">
-          <p>The cone metric \(g_R=dr^2+(r^2/R^2)d\psi^2\) and its regular separated modes \(J_{kR}\) are defined for every real \(R&gt;0\). A planar \(N\)-fold quotient is obtained at an integer value \(R=N\), when the cone is unfolded into the plane.</p>
-
-          <p><strong>Where the setting comes from.</strong> The functional framework used below is due to Fall, Minlend and Weth, who introduced it for the cylinder and the sphere: the anisotropic spaces, and with them the device of carrying the moving boundary and the eigenfunction in a single unknown, which is what keeps the linearization from losing a derivative. Enciso, Fernández, Ruiz and Sicbaldi then used the same setting to produce annular counterexamples in the plane, where the boundary has two components and the eigenfunction is constant on each but with different values <a class="history-citation" href="#ref-efrs">[17]</a>; the half-sphere example above uses it too. What is new here is the treatment of the interior. Cutting the domain at a fixed depth and replacing the discarded disk by a Dirichlet-to-Neumann map, with the matching condition carried as a second component of the target space, is what allows the problem to be posed at noninteger order at all.</p>
-
-          <p><strong>Cutting a collar.</strong> Fix a small depth \(L\) and discard the interior. The Schiffer problem is posed only on \(\Omega_{\mathrm{ext}}=\Omega\setminus B(0,R-L)\), the collar between the perturbed boundary \(r=R-h(\psi)\) and the fixed inner circle \(r=R-L\). A cutoff \(\chi\), equal to \(1\) near the boundary and to \(0\) before the inner circle, carries that collar onto a cylinder \(\mathcal C_L=[0,L]\times S^1\) of unit radius and height \(L\), fixed once and for all:</p>
-          <div class="tex-display">
-            \[
-            \Phi^h(y,\psi)=(r,\varphi)=\bigl(R-y-\chi(y)h(\psi),\ \psi/R\bigr).
-            \]
-          </div>
-          <p>Here \(y\) is depth below the boundary. Because \(\chi\) vanishes before \(y=L\), the inner circle never moves: the whole deformation is confined to a neighbourhood of \(\partial\Omega\), and the two ends of the collar can be treated separately.</p>
-
-          <p><strong>Why the relaxed problem is a genuine one.</strong> The angular map \(\varphi\mapsto R\varphi\) is well defined on the circle only when \(R\) is an integer, so \(\Phi^h\) is a diffeomorphism only in that case. But the Laplacian transported through it becomes a second-order operator in \((y,\psi)\) whose coefficients are explicit rational expressions in \(\chi\), \(h\) and \(R\), and those expressions do not know that \(R\) was meant to be an integer. They define a uniformly elliptic operator on the fixed cylinder for every real \(R\), agreeing with the pulled-back Laplacian whenever \(R\in\mathbb N\). This, rather than the geometry of the cone, is what carries the relaxation: beyond this point the cone itself is no longer needed.</p>
-
-          <p><strong>The discarded interior.</strong> What was removed is restored by a Dirichlet-to-Neumann map on the inner circle, again defined for every real \(R\) by an explicit Fourier multiplier:</p>
-          <div class="tex-display">
-            \[
-            D_R\bigl(\cos k\psi\bigr)=\tau_k\cos k\psi,\qquad
-            \tau_k=\sqrt\lambda\;\frac{J'_{kR}\bigl(\sqrt\lambda\,(R-L)\bigr)}{J_{kR}\bigl(\sqrt\lambda\,(R-L)\bigr)}.
-            \]
-          </div>
-          <p>At integer \(R\) this is the honest interior Dirichlet-to-Neumann map of \(\Delta+\lambda\) on \(B(0,R-L)\), for even \(R\)-fold symmetric data. Imposing \(\partial_y u+D_Ru=0\) at \(y=L\) says exactly that the collar solution continues across the inner circle to a solution regular at the origin, and that the two pieces meet there in \(C^1\). Regularity at the cone tip, which is where the singularity would have been, becomes a boundary condition.</p>
-
-          <p><strong>One unknown for the boundary and the field.</strong> Following Fall, Minlend and Weth, the moving boundary and the eigenfunction are read off a single unknown \(v\) on the cylinder, required only to vanish at \(y=0\). The boundary displacement is its normal derivative there, and the eigenfunction is built from it:</p>
-          <div class="tex-display">
-            \[
-            \begin{gathered}
-            h_v=\lambda^{-1}\partial_yv(0,\cdot),\qquad
-            w_0(y)=\frac{J_0\bigl(\sqrt\lambda\,(R-y)\bigr)}{J_0(\rho)},\\[6pt]
-            w_v=w_0+v+\chi(y)\,\partial_yw_0(y)\,h_v(\psi).
-            \end{gathered}
-            \]
-          </div>
-          <p>The last term is not a correction chosen for convenience. It is the first variation of the transported radial mode as the boundary moves, \(\tfrac{d}{ds}\big|_{s=0}w_0\bigl(R-y-s\chi(y)h(\psi)\bigr)\). Straightening a moving domain drags the background field along with it, and this term is that drag.</p>
-
-          <p><strong>Why a single Dirichlet unknown suffices.</strong> The unperturbed mode \(w_0\) already satisfies both Schiffer conditions: \(w_0(0)=1\), and \(\partial_yw_0(0)=0\) because \(J_1(\rho)=0\). The correction must therefore vanish to first order in both. Neither piece does so alone — \(v\) is Dirichlet by assumption, and the drag term is Dirichlet only because \(\partial_yw_0(0)=0\). But the drag term's own normal derivative at \(y=0\) is \(\chi(0)\,\partial^2_yw_0(0)\,h_v=-\lambda h_v=-\partial_yv(0,\cdot)\), using \(\partial^2_yw_0(0)=-\lambda\) from the equation itself. That is exactly \(v\)'s Neumann defect with the opposite sign, so the sum satisfies both conditions although neither summand does. The accounting closes: one Dirichlet unknown carries a Dirichlet-and-Neumann field correction together with one free function of the angle, because the normal derivative \(v\) surrenders to the Neumann condition is precisely what is spent on \(h\).</p>
+        <div class="intro-copy intro-copy-wide">
+          <p>We now have a rigorous formulation of the problem as \(\mathcal{G}(R,v)=0\), which yields Schiffer solutions whenever \(R\) is an integer. Notice that \(v=0\) is a trivial solution for every \(R\), corresponding to the balls. Our task is to find \(R(s),v(s)\) solving \(\mathcal{G}(R(s),v(s))=0\), starting from \(R(0)=R_\star\) close to an integer, and to show that \(R(s)\) reaches that integer.</p>
+          <p>The standard tool for constructing such branches is the classical Crandall&ndash;Rabinowitz theorem. But there is a twist. Standard Crandall&ndash;Rabinowitz gives a branch that could be extremely small. Recall from the <a class="xref" data-ref="main-question"></a> that we need a branch of uniform size as \(R_\star\to\infty\). We therefore need a <em>uniform</em> Crandall&ndash;Rabinowitz theorem.</p>
         </div>
 
+        <article class="math-statement cr-statement" data-kind="theorem" data-label="crandall-rabinowitz" data-variant="classical" aria-labelledby="crandallRabinowitzTitle">
+          <header class="math-statement-header"><span>Theorem</span><small id="crandallRabinowitzTitle">bifurcation from a simple eigenvalue</small></header>
+          <div class="cr-variant-toggle" role="group" aria-label="Choose which form of the theorem to read">
+            <button type="button" class="cr-variant-button" data-cr-variant="classical" aria-pressed="true">Classical</button>
+            <button type="button" class="cr-variant-button" data-cr-variant="uniform" aria-pressed="false">Uniform</button>
+          </div>
+          <div class="math-statement-body">
+            <p>Let \(X,Y\) be Banach spaces and let \(\mathcal{G}\) be of class \(C^4\) on an interval about \(R_\star\) times a ball about \(0\) in \(X\), with values in \(Y\)<span class="cr-quant">, the interval being \((R_\star-C_1,R_\star+C_1)\) and the ball \(B_X(0,C_2)\)</span>. Assume</p>
+            <ol class="cr-hypotheses">
+              <li>\(\mathcal{G}(R,0)=0\) for every \(R\) in the interval;</li>
+              <li>there are \(\xi_\star\in X\), \(a_\star\in X^*\) and \(\ell_\star\in Y^*\) with \(a_\star(\xi_\star)=1\) such that \(\ker D_v\mathcal{G}(R_\star,0)=\mathbb{R}\xi_\star\), \(\operatorname{ran}D_v\mathcal{G}(R_\star,0)=\ker\ell_\star\), and \(D_v\mathcal{G}(R_\star,0)\) restricted to \(\ker a_\star\) is an isomorphism onto \(\ker\ell_\star\)<span class="cr-quant">, with \(\lVert(D_v\mathcal{G}(R_\star,0)|_{\ker a_\star})^{-1}\rVert+\lVert\xi_\star\rVert+\lVert\ell_\star\rVert+\lVert a_\star\rVert\le C_3\)</span>;</li>
+              <li class="cr-quant">\(\lVert D^j\mathcal{G}\rVert\le C_4\) for \(j\le4\);</li>
+              <li>the transversality condition \(\ell_\star\big(\partial_RD_v\mathcal{G}(R_\star,0)\,\xi_\star\big)\neq0\)<span class="cr-quant">, quantified as \(\bigl|\ell_\star\big(\partial_RD_v\mathcal{G}(R_\star,0)\,\xi_\star\big)\bigr|\ge C_5\)</span>.</li>
+            </ol>
+            <p>Then there are \(\varepsilon_0&gt;0\) and a \(C^3\) curve \(s\mapsto(R(s),v(s))\) on \((-\varepsilon_0,\varepsilon_0)\) with</p>
+            <div class="tex-display">
+              \[ R(0)=R_\star,\qquad v(0)=0,\qquad \mathcal{G}\big(R(s),v(s)\big)=0,\qquad a_\star\big(v(s)\big)=s, \]
+            </div>
+            <p>and every nontrivial zero of \(\mathcal{G}\) near \((R_\star,0)\) lies on this curve.</p>
+            <div class="cr-quant">
+              <p>Moreover \(\varepsilon_0\) and the constant in</p>
+              <div class="tex-display">
+                \[ \lVert v(s)\rVert_X\le C\lvert s\rvert,\qquad \lVert v(s)-s\xi_\star\rVert_X\le Cs^2,\qquad \sup_{\lvert s\rvert\le\varepsilon_0/2}\bigl|R^{\prime\prime\prime}(s)\bigr|\le C \]
+              </div>
+              <p>depend only on \(C_1,\ldots,C_5\). They do not depend on \(R_\star\), nor on \(\mathcal{G}\) in any other way. That is the whole point: five quantities bounded in advance, and the branch has a length that cannot shrink.</p>
+            </div>
+          </div>
+        </article>
+        <div class="intro-copy intro-copy-wide">
+          <p>The five constants measure, in order, the size of the interval in \(R\), the size of the ball in \(X\), the linear inverse together with the kernel and cokernel vectors in norm, the nonlinear bounds up to fourth order, and the transversality. In the paper they are written \(c_1,c_2,C_2,C_1,c_3\). Applied to the collar problem, all five can be bounded uniformly over large crossings, which gives the following.</p>
+        </div>
         <article id="uniformConeBifurcation" class="math-statement" data-kind="theorem" data-label="uniform-cone-bifurcation" aria-labelledby="uniformConeBifurcationTitle">
           <header class="math-statement-header"><span>Theorem</span><small id="uniformConeBifurcationTitle">uniform Crandall–Rabinowitz theorem on large cones</small></header>
           <div class="math-statement-body">
@@ -2679,6 +2675,7 @@
         </article>
         <lean-statement data-statement="uniform-cone-bifurcation"></lean-statement>
       </section>
+
 
       <section id="phase-story" class="phase-story">
         <header class="section-heading" data-title="Exploring the cone bifurcation" data-toc="proof-subsection">
