@@ -1537,3 +1537,14 @@ body.tufte-site main .cone-fold-figure .figure-tools,
 .cone-fold-figure .figure-evidence,
 .cone-fold-figure .figure-tools { display: none; }
 .cone-fold-figure figcaption { font-size: var(--type-caption); line-height: 1.5; }
+
+.strategy-steps { margin: 14px 0 0; padding-left: 22px; }
+.strategy-steps li { margin: 0 0 12px; }
+.strategy-steps li:last-child { margin-bottom: 0; }
+
+.fixed-collar-figure .geometry-canvas-wrap, .fixed-collar-figure .figure-canvas-wrap { height: 240px; }
+body.tufte-site main .fixed-collar-figure .figure-evidence,
+body.tufte-site main .fixed-collar-figure .figure-tools,
+.fixed-collar-figure .figure-evidence,
+.fixed-collar-figure .figure-tools { display: none; }
+.fixed-collar-figure figcaption { font-size: var(--type-caption); line-height: 1.5; }
