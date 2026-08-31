@@ -49,7 +49,7 @@
 
   const rounded = (value) => Math.round(value * 10) / 10;
   const marginSelector = "body.tufte-site main .marginnote";
-  const disclosureSelector = "body.tufte-site main details:not(.secondary-controls):not(.mobile-apparatus-disclosure)";
+  const disclosureSelector = "body.tufte-site main details:not(.secondary-controls, .mobile-apparatus-disclosure, .figure-evidence, .certificate-provenance-index)";
   const roleSelector = ".paper-copy, .math-statement, .lean-statement, .small-multiples, .figure-band, .reading-figure, .margin-figure-sequence, .data-table";
 
   function runLayoutContract() {
@@ -72,6 +72,22 @@
     const typeSubsection = parseFloat(rootStyle.getPropertyValue("--type-subsection")) * parseFloat(rootStyle.fontSize);
     const typeControlValue = parseFloat(rootStyle.getPropertyValue("--type-control-value")) * parseFloat(rootStyle.fontSize);
     const typeCode = parseFloat(rootStyle.getPropertyValue("--type-code")) * parseFloat(rootStyle.fontSize);
+    const leadingCaption = parseFloat(rootStyle.getPropertyValue("--leading-caption"));
+    const serifFamily = rootStyle.getPropertyValue("--serif").trim();
+    const monoFamily = rootStyle.getPropertyValue("--mono").trim();
+    const regularWeight = rootStyle.getPropertyValue("--weight-regular").trim();
+
+    const resolvedColor = (customProperty) => {
+      const probe = document.createElement("span");
+      probe.style.color = `var(${customProperty})`;
+      probe.hidden = true;
+      document.body.append(probe);
+      const color = getComputedStyle(probe).color;
+      probe.remove();
+      return color;
+    };
+    const inkColor = resolvedColor("--ink");
+    const mutedColor = resolvedColor("--muted");
 
     if (!narrow && Math.abs(aside - reading * noteInReading) > .001) {
       errors.push("the apparatus aside measure has drifted from native Tufte marginalia");
@@ -100,6 +116,43 @@
       if (closedDetails && !closedDetails.querySelector(":scope > summary")?.contains(element)) return false;
       const style = getComputedStyle(element);
       return style.display !== "none" && style.visibility !== "hidden";
+    };
+
+    const normalizedFamily = (value) => value
+      .toLowerCase()
+      .replace(/["']/g, "")
+      .replace(/\s+/g, "");
+
+    const checkTypography = (selector, expected, label) => {
+      document.querySelectorAll(selector).forEach((element, index) => {
+        if (!visible(element)) return;
+        const style = getComputedStyle(element);
+        const mismatches = [];
+        if (expected.family
+            && normalizedFamily(style.fontFamily) !== normalizedFamily(expected.family)) {
+          mismatches.push(`family ${style.fontFamily}`);
+        }
+        if (Number.isFinite(expected.size)
+            && Math.abs(parseFloat(style.fontSize) - expected.size) > .2) {
+          mismatches.push(`size ${rounded(parseFloat(style.fontSize))}px`);
+        }
+        if (expected.weight && style.fontWeight !== expected.weight) {
+          mismatches.push(`weight ${style.fontWeight}`);
+        }
+        if (expected.style && style.fontStyle !== expected.style) {
+          mismatches.push(`style ${style.fontStyle}`);
+        }
+        if (expected.color && style.color !== expected.color) {
+          mismatches.push(`colour ${style.color}`);
+        }
+        if (Number.isFinite(expected.lineHeight)
+            && Math.abs(parseFloat(style.lineHeight) - expected.lineHeight) > .2) {
+          mismatches.push(`leading ${rounded(parseFloat(style.lineHeight))}px`);
+        }
+        if (mismatches.length) {
+          errors.push(`${label} ${index + 1} violates its type role: ${mismatches.join(", ")}`);
+        }
+      });
     };
 
     const directVisibleText = (root) => Array.from(root.querySelectorAll("*"))
@@ -868,6 +921,87 @@
     checkType("body.tufte-site main :is(.solver-readout, .modes-status, .phase-story-readout, .collar-field-readout, .debye-status, .abundance-readout) strong, body.tufte-site main .measurement-value-line strong", typeControlValue, "readout value");
     checkType("body.tufte-site main .lean-statement > summary small", typeLabel, "Lean disclosure label");
     checkType("body.tufte-site main .lean-statement :is(summary code, pre code)", typeCode, "Lean source");
+
+    /* Font size alone cannot detect a component reintroducing a local family,
+       colour, weight, or italic treatment. These are the canonical editorial
+       roles; animation-internal labels are deliberately audited separately. */
+    checkTypography(
+      "body.tufte-site main :is(figure > figcaption, table > caption)",
+      {
+        family: serifFamily,
+        size: typeCaption,
+        weight: regularWeight,
+        style: "normal",
+        color: mutedColor,
+        lineHeight: typeCaption * leadingCaption,
+      },
+      "caption",
+    );
+    checkTypography(
+      "body.tufte-site main figure > figcaption > :is(.figure-caption-metadata, .figure-caption-summary, .figure-caption-note, p:not(.eyebrow))",
+      {
+        family: serifFamily,
+        size: typeCaption,
+        weight: regularWeight,
+        style: "normal",
+        color: mutedColor,
+        lineHeight: typeCaption * leadingCaption,
+      },
+      "caption content",
+    );
+    checkTypography(
+      "body.tufte-site main .figure-evidence > summary",
+      {
+        family: serifFamily,
+        size: typeCaption,
+        weight: regularWeight,
+        style: "normal",
+        lineHeight: typeCaption * leadingCaption,
+      },
+      "figure evidence label",
+    );
+    checkTypography(
+      "body.tufte-site main figure > figcaption .figure-evidence > p",
+      {
+        family: serifFamily,
+        size: parseFloat(rootStyle.getPropertyValue("--type-note")) * parseFloat(rootStyle.fontSize),
+        weight: regularWeight,
+        style: "normal",
+        color: inkColor,
+        lineHeight: parseFloat(rootStyle.getPropertyValue("--type-note")) * parseFloat(rootStyle.fontSize) * 1.5,
+      },
+      "figure evidence explanation",
+    );
+    checkTypography(
+      "body.tufte-site main .section-heading > h2",
+      { family: serifFamily, size: typeSection, weight: regularWeight, style: "italic", color: inkColor },
+      "section title",
+    );
+    checkTypography(
+      "body.tufte-site main .section-heading > h3",
+      { family: serifFamily, size: typeSubsection, weight: regularWeight, style: "italic", color: inkColor },
+      "subsection title",
+    );
+    checkTypography(
+      "body.tufte-site main .paper-copy p:not(.eyebrow)",
+      { family: serifFamily, weight: regularWeight, style: "normal" },
+      "proof prose",
+    );
+    checkTypography(
+      "body.tufte-site main .math-statement:not(.math-statement-problem):not(.math-statement-question):not(.math-statement-conjecture) .math-statement-body p",
+      { family: serifFamily, weight: regularWeight, style: "normal" },
+      "statement prose",
+    );
+    checkTypography(
+      "body.tufte-site main :is(pre, code, kbd, samp)",
+      { family: monoFamily, weight: regularWeight, style: "normal" },
+      "source code",
+    );
+    checkTypography(
+      "body.tufte-site main :is(.route-comparison-controls button, .proof-atlas-filters button, .certificate-explorer button, .certificate-explorer select, .certificate-explorer-actions a, .certificate-provenance-index > summary)",
+      { family: monoFamily, weight: regularWeight, style: "normal" },
+      "document control",
+    );
 
     const forbiddenControlChrome = ":is(.variation-equation, .variation-equation-label, .variation-legend, .geometry-stage-note, .solver-readout, .crossing-card, .parameter-pair, .fixed-zoom-pair, .problem-map, .phase-law, .phase-agreement, .collar-field-readout, .collar-field-locator, .debye-status, .phase-story-readout, .modes-status)";
     document.querySelectorAll("body.tufte-site main .paper-demo-controls:not(.geometry-controls)").forEach((controls, index) => {

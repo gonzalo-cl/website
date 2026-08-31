@@ -667,12 +667,15 @@
     if (!isEditoriallyVisible(figure)) return;
     const caption = figure.querySelector(":scope > figcaption");
     if (!caption) return;
+    const metadata = document.createElement("div");
+    metadata.className = "figure-caption-metadata";
     const label = document.createElement("a");
     label.className = "figure-label";
     label.href = "#" + figure.id;
     label.setAttribute("aria-label", "Permalink to Figure " + figure.dataset.number);
-    label.textContent = `Figure ${figure.dataset.number}. `;
-    caption.prepend(label);
+    label.textContent = `Figure ${figure.dataset.number}.`;
+    metadata.append(label);
+    caption.prepend(metadata);
   });
 
   const evidenceProfiles = Object.freeze({
@@ -726,9 +729,13 @@
     explanation.textContent = figure.dataset.evidenceDetail || profile.explanation;
     summary.setAttribute("aria-controls", explanation.id);
     disclosure.append(summary, explanation);
-    const figureLabel = caption.querySelector(":scope > .figure-label");
-    if (figureLabel) figureLabel.after(disclosure);
-    else caption.prepend(disclosure);
+    let metadata = caption.querySelector(":scope > .figure-caption-metadata");
+    if (!metadata) {
+      metadata = document.createElement("div");
+      metadata.className = "figure-caption-metadata";
+      caption.prepend(metadata);
+    }
+    metadata.append(disclosure);
   });
 
   numberWithinSection("aside[data-aside]", "data-aside", "aside", "Aside");

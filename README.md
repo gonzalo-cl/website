@@ -101,6 +101,7 @@ Before publishing, run:
     node --check lean-statements.js
     node --check math.js
     node --check pompeiu.js
+    node --check scholarly-tools.js
     node --check story.js
     node --check tufte/layout-contract.js
 
