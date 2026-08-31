@@ -113,6 +113,9 @@
   --measure-side-figure-in-margin: 68.75%;
   --measure-apparatus-visual: 55%;
   --measure-apparatus-controls: var(--measure-aside);
+  /* Folio furniture follows the same envelope as prose plus a canonical
+     sidenote. The unused tail remains a real right margin. */
+  --measure-folio: min(100%, calc(var(--measure-reading) + var(--measure-gutter) + var(--measure-aside)));
   --measure-mobile-note: 95%;
   --measure-mobile-note-inset: 2.5%;
   --layout-prose: var(--measure-reading);
@@ -223,19 +226,20 @@ body.tufte-site main a.xref:hover { color: var(--orange); }
   font-variant: small-caps;
 }
 .figure-caption-summary {
-  display: block;
-  margin-top: .2rem;
+  display: inline;
+  margin: 0;
   color: inherit;
   font: inherit;
   text-wrap: pretty;
 }
 .figure-caption-note {
-  display: block;
-  margin-top: .35rem;
+  display: inline;
+  margin: 0;
   color: inherit;
   font: inherit;
   text-wrap: pretty;
 }
+.figure-caption-summary + .figure-caption-note::before { content: " "; }
 .figure-caption-note strong {
   color: inherit;
   font-weight: var(--weight-regular);
@@ -256,8 +260,9 @@ body.tufte-site main a.xref:hover { color: var(--orange); }
 .topbar {
   min-height: 0;
   height: auto;
+  width: var(--measure-folio);
   display: grid;
-  grid-template-columns: var(--measure-reading) var(--measure-gutter) var(--measure-margin);
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 0;
   align-items: baseline;
   padding: 1.25rem 0 .85rem;
@@ -278,7 +283,7 @@ body.tufte-site main a.xref:hover { color: var(--orange); }
 .brand img { width: 1.65rem; height: 1.65rem; }
 
 .topbar .method-button {
-  grid-column: 3;
+  grid-column: 2;
   justify-self: end;
   align-self: center;
   padding: .3rem 0 .2rem;
@@ -304,7 +309,7 @@ body.tufte-site main a.xref:hover { color: var(--orange); }
   position: sticky;
   z-index: 70;
   top: 0;
-  width: 100%;
+  width: var(--measure-folio);
   margin: 0;
   overflow: visible;
   color: var(--ink);
@@ -324,10 +329,10 @@ body.tufte-site main a.xref:hover { color: var(--orange); }
   list-style: none;
 }
 .section-banner-list {
-  display: grid;
-  grid-template-columns: 1.05fr 1.25fr 1.25fr 1.05fr .75fr .75fr;
+  display: flex;
 }
 .section-banner-item {
+  flex: 1 1 0;
   position: relative;
   min-width: 0;
   margin: 0;
@@ -2481,10 +2486,6 @@ body.tufte-site main figcaption {
   color: var(--muted);
   font-family: var(--serif);
   font-style: normal !important;
-}
-body.tufte-site main .figure-caption-summary {
-  color: var(--ink);
-  font-style: italic !important;
 }
 /* Figure apparatus shares one type role across the exposition. Canvas and SVG
    annotations set their own vector-space sizes; HTML controls keep this floor. */

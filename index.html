@@ -20,8 +20,8 @@
     <script defer src="lean-statements.js?v=20260828.6"></script>
     <script defer src="math.js?v=20260830.1"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tufte-css@1.9.0/tufte.min.css">
-    <link rel="stylesheet" href="styles.css?v=20260831.13">
-    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260831.13">
+    <link rel="stylesheet" href="styles.css?v=20260831.14">
+    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260831.14">
   </head>
   <body class="tufte-site">
     <a class="skip-link" href="#top">Skip to the exposition</a>
@@ -43,8 +43,6 @@
           <li class="section-banner-item"><a class="section-banner-link" href="#geometric-escape"><b>2</b><span>Two routes to a counterexample</span></a></li>
           <li class="section-banner-item"><a class="section-banner-link" href="#computer-assisted-proof"><b>3</b><span>The computer-assisted proof</span></a></li>
           <li class="section-banner-item"><a class="section-banner-link" href="#experiment"><b>4</b><span>The bifurcation proof</span></a></li>
-          <li class="section-banner-item"><a class="section-banner-link" href="#references"><b aria-hidden="true"></b><span>References</span></a></li>
-          <li class="section-banner-item"><a class="section-banner-link" href="#acknowledgements"><b aria-hidden="true"></b><span>Acknowledgements</span></a></li>
         </ol>
       </nav>
     </details>
@@ -130,7 +128,7 @@
               <canvas id="probeCanvas" tabindex="0" role="img" aria-label="A domain moved over the plane wave cosine of x one, with its integral plotted below" aria-describedby="pompeiuProbeOverviewCaption" aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown Shift+ArrowLeft Shift+ArrowRight Shift+ArrowUp Shift+ArrowDown [ ]"></canvas>
             </div>
           </section>
-          <figcaption id="pompeiuProbeOverviewCaption"><span class="figure-caption-summary">Moving the footprints over the plane wave compares when their averaged signals vanish.</span><span class="figure-caption-note">The disk uses the exact Bessel radius. The \(N=10\) outline is the numerical centre of the certified counterexample, rescaled by its frequency; the exact boundary is visually indistinguishable at this scale. The \(N=28\) profile is the saved numerical landing record, and the square is a comparison. Drag inside a footprint to move it and outside to rotate it. With the canvas focused, the arrow keys move it, Shift takes a larger step, and the bracket keys rotate it.</span></figcaption>
+          <figcaption id="pompeiuProbeOverviewCaption">Move each footprint over the plane wave \(\cos x_1\) to compare when its integral vanishes. The disk uses an exact Bessel-zero radius. The \(N=10\) outline is the frequency-rescaled numerical centre enclosed by the computer-assisted proof; its exact boundary is visually indistinguishable at this scale. The \(N=28\) profile is a saved numerical landing record, and the square is a comparison shape. Drag inside a footprint to translate it and outside to rotate it. When the canvas has focus, use the arrow keys to translate, Shift for larger steps, and the bracket keys to rotate.</figcaption>
         </figure>
       </section>
 
@@ -3367,7 +3365,7 @@
       <p>The final scatter plot filters the saved common-zero data to <span class="formula">\(N\le200\)</span> and uses a logarithmic horizontal <span class="formula">\(R\)</span>-axis. The small table lists five particularly close examples from separated order ranges in the full search through <span class="formula">\(R\approx841\)</span>. The proof uses simultaneous McMahon and Debye phase alignment through Kronecker's theorem. The finite data illustrate the resulting distribution of crossings.</p>
     </dialog>
 
-    <script defer src="document-structure.js?v=20260831.13"></script>
+    <script defer src="document-structure.js?v=20260831.14"></script>
     <script defer src="cone-data.js"></script>
     <script defer src="debye-data.js?v=20260828.1"></script>
     <script defer src="abundance-data.js"></script>
@@ -3381,6 +3379,6 @@
     <script defer src="certificate-checker.js?v=20260831.8"></script>
     <script defer src="research-guide.js?v=20260831.9"></script>
     <script defer src="scholarly-tools.js?v=20260831.11"></script>
-    <script defer src="tufte/layout-contract.js?v=20260831.13"></script>
+    <script defer src="tufte/layout-contract.js?v=20260831.14"></script>
   </body>
 </html>

@@ -268,11 +268,12 @@
     }
     const expectedProofSectionOrder = [
       // The near-integer material now sits inside 4.1, so abundance-experiment
-      // comes first and carries no heading of its own. The branch curvature
-      // then motivates the uniform cylinder and finite-order arguments.
+      // comes first and carries no heading of its own. The cylinder motivates
+      // uniformity before the branch-curvature calculation and finite-order
+      // formulation make that mechanism precise.
       "abundance-experiment",
-      "phase-story",
       "debye-experiment",
+      "phase-story",
       "bifurcation-setting",
       "modes-experiment",
     ];
@@ -325,8 +326,8 @@
       ["3.8", "Local boundary data versus global solvability", "#computer-local-global", "proof-subsection"],
       ["4", "The bifurcation proof", "#experiment", "section"],
       ["4.1", "The cone quotient", "#cone-remap", "proof-subsection"],
-      ["4.2", "Exploring the cone bifurcation", "#phase-story", "proof-subsection"],
-      ["4.3", "A motivation for uniformity: the cylinder", "#half-cylinder-strategy", "proof-subsection"],
+      ["4.2", "A motivation for uniformity: the cylinder", "#half-cylinder-strategy", "proof-subsection"],
+      ["4.3", "Exploring the cone bifurcation", "#phase-story", "proof-subsection"],
       ["4.4", "The fixed-collar formulation", "#fixed-domain", "proof-subsection"],
       ["4.5", "The bifurcation setting: a collar problem for every real R", "#bifurcation-setting", "proof-subsection"],
       ["4.6", "Integer landing and planar lift", "#modes-experiment", "proof-subsection"],
@@ -410,7 +411,7 @@
       }
     });
     const expectedNavigationContents = expectedHeadingContract
-      .filter(([, , , toc]) => toc)
+      .filter(([number, , , toc]) => toc && (toc !== "section" || number))
       .map(([number, title, href, toc]) => [number, title, href, toc]);
     const actualNavigationContents = Array.from(document.querySelectorAll(".section-banner [data-heading-link]"), (link) => [
       normalizeText(link.querySelector("b")?.textContent),
@@ -468,10 +469,7 @@
         .join("")
         .trim();
     });
-    [
-      "The Schiffer–Pompeiu equivalence",
-      "Berenstein conjecture: What if we switch the Neumann and Dirichlet conditions?",
-    ].forEach((title) => {
+    ["The Schiffer–Pompeiu equivalence"].forEach((title) => {
       if (!optionalTitles.includes(title)) errors.push(`missing optional digression: ${title}`);
     });
 
