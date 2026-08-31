@@ -1173,32 +1173,38 @@
     }
   }
 
-  /* Four stages from the single unknown to the cone.  v is only Dirichlet; its
-     Neumann trace gives h; the dragging term completes w_1; the ground state
-     gives w; and the rim then carries h.  The field is painted on a cylinder in
-     the site's tube projection -- a cross-section ellipse of semi-axes
-     (rimDepth, half) with the axis across the frame -- and h is drawn beneath as
-     an ordinary plot.  Near the boundary w_0 = 1 - lambda y^2 / 2 to one per
-     cent over the collar, which is what is drawn. */
+  /* Five stages from the single unknown to a Schiffer solution on the cone.
+     The first three paint the field on a cylinder in the site's tube
+     projection; the last two paint it on a cone, first the collar alone and
+     then the interior once the Dirichlet problem inside has been solved.
+     Two things are drawn larger than life and the caption says so: the profile
+     is mode three rather than the mode one the theorem produces, as in section
+     4.1, and the collar is drawn as the outer fifth of the cone where the true
+     ratio L/R is one part in seventy. */
   const ENCODING = { progress: 0 };
   const ENCODING_CAPTIONS = [
     "v on the cylinder, Dirichlet at y = 0.",
     "h read off the Neumann trace; the dragging term completes w\u2081.",
     "The ground state w\u2080 is added, giving w.",
-    "h and w map onto the collar of the cone.",
+    "h and w give the collar of the cone.",
+    "The interior is completed by solving the Dirichlet problem.",
+  ];
+  const ENCODING_FORMULAS = [
+    "v(0,\\cdot)=0,\\qquad \\partial_yv(0,\\cdot)=\\lambda h_v",
+    "h_v(\\psi)=\\lambda^{-1}\\partial_yv(0,\\cdot),\\qquad w_1=v+\\chi\\,\\partial_yw_0\\,h_v",
+    "w=w_0+w_1",
+    "\\Omega=\\{\\,r<R-h_v(R\\varphi)\\,\\}",
+    "(\\Delta+\\lambda)u=0\\ \\text{ in }\\Omega,\\qquad u=1,\\ \\partial_\\nu u=0\\ \\text{ on }\\partial\\Omega",
   ];
   const ENCODING_LAMBDA = 3.317, ENCODING_L = .4, ENCODING_H = .05;
+  const ENCODING_MODE = 3, ENCODING_COLLAR = .2;
 
   function encodingCutoff(y) {
     const t = Math.max(0, Math.min(1, (y / ENCODING_L - 1 / 3) / (1 / 3)));
     return 1 - (3 * t * t - 2 * t * t * t);
   }
 
-  /* sin rather than cos: the visible half of the tube is psi in (-pi/2, pi/2),
-     where cos keeps one sign and the whole surface reads as a single colour.
-     Turning the domain a quarter turn about its axis is a gauge choice, and it
-     puts both signs of h on the face the reader can see. */
-  function encodingProfile(psi) { return ENCODING_H * Math.sin(psi); }
+  function encodingProfile(psi) { return ENCODING_H * Math.cos(ENCODING_MODE * psi); }
 
   function encodingField(y, psi, stage) {
     const h = encodingProfile(psi);
@@ -1209,14 +1215,52 @@
     return 1 - ENCODING_LAMBDA * y * y / 2 + w1;
   }
 
-  function encodingTube(box, y, psi, rim) {
-    // y = 0 is the outer rim, on the right; y = L is the inner edge, on the left
-    // the rim deformation is h itself, scaled for visibility
-    const wall = 1 - rim * encodingCutoff(y) * (encodingProfile(psi) / ENCODING_H) * .30;
+  /* Inside the collar the field is the interior Dirichlet solve, which is the
+     radial mode: the same profile dtn-data.js carries, normalized to meet the
+     collar value at the junction. */
+  function encodingInterior(fraction) {
+    const data = window.DTN_INTERIOR;
+    const edge = 1 - ENCODING_LAMBDA * ENCODING_L * ENCODING_L / 2;
+    if (!data || !data.profiles) return edge;
+    const profile = data.profiles[0];
+    const t = Math.max(0, Math.min(1, fraction)) * (profile.length - 1);
+    const index = Math.min(profile.length - 2, Math.floor(t));
+    return edge * (profile[index] + (profile[index + 1] - profile[index]) * (t - index));
+  }
+
+  function encodingTube(box, y, psi) {
     return {
-      x: box.right - (y / ENCODING_L) * box.length + box.depth * Math.cos(psi) * wall,
-      y: box.cy + box.half * Math.sin(psi) * wall,
+      x: box.right - (y / ENCODING_L) * box.length + box.depth * Math.cos(psi),
+      y: box.cy + box.half * Math.sin(psi),
     };
+  }
+
+  /* The perturbation rides the cross-section, not the slant.  Scaling the whole
+     radius moves the point axially by seven per cent of the cone's length,
+     which is twenty times the depth of the rim ellipse in this projection, and
+     the rim crossed itself into a bow tie. */
+  function encodingCone(box, fraction, psi) {
+    const wall = 1 - .11 * (encodingProfile(psi) / ENCODING_H);
+    return {
+      x: box.apex + fraction * (box.length + box.depth * Math.cos(psi) * wall),
+      y: box.cy + fraction * box.half * Math.sin(psi) * wall,
+    };
+  }
+
+  function encodingPaint(context, value, low, high, front) {
+    /* A field that changes sign is scaled about zero, so the two colours mean
+       the two signs; one that does not is scaled about its own midrange, or it
+       would come out a single flat tone.  The interior mode runs from about
+       -3.5 to 8.8, and centring that on its midrange painted almost the whole
+       cone on one side of the ramp. */
+    const signed = low < 0 && high > 0;
+    const centre = signed ? 0 : (low + high) / 2;
+    const half = Math.max(signed ? Math.max(-low, high) : (high - low) / 2, 1e-6);
+    const t = Math.max(-1, Math.min(1, (value - centre) / half));
+    const shade = .45 + .55 * Math.max(0, front);
+    context.fillStyle = t >= 0
+      ? `rgba(7,87,96,${(shade * (.16 + .74 * t)).toFixed(3)})`
+      : `rgba(168,78,66,${(shade * (.16 - .74 * t)).toFixed(3)})`;
   }
 
   function renderEncoding() {
@@ -1225,125 +1269,170 @@
     context.clearRect(0, 0, width, height);
     context.fillStyle = colors.ink; context.fillRect(0, 0, width, height);
 
-    const p = Math.max(0, Math.min(1, ENCODING.progress)) * 3;
-    const stage = Math.min(2, Math.floor(p + .5));
-    const rim = ease(Math.max(0, Math.min(1, p - 2)));
-    const active = rim > .5 ? 3 : stage;
-
+    const stage = Math.max(0, Math.min(4, Math.round(ENCODING.progress * 4)));
     const laboratory = select("#encodingCanvasWrap")?.closest(".geometry-laboratory");
     const token = laboratory
       ? parseFloat(getComputedStyle(laboratory).getPropertyValue("--geometry-key-width")) / 100
       : 0;
     const inset = width * (Number.isFinite(token) ? Math.max(0, Math.min(.45, token)) : 0) + 26;
-    const plotHeight = 82;
-    const tubeHeight = height - plotHeight - 54;
-    const box = {
-      right: width - 54, length: width - inset - 78,
-      cy: tubeHeight / 2 + 6,
-      half: Math.min(74, tubeHeight * .30),
-      depth: 22,
-    };
+    const plotHeight = 76;
+    const bodyHeight = height - plotHeight - 50;
 
-    const cols = 108, rows = 22;
+    const cols = 240, rows = stage >= 3 ? 72 : 40;
     let low = Infinity, high = -Infinity;
     const grid = [];
     for (let j = 0; j < rows; j++) {
       const row = [];
       for (let i = 0; i < cols; i++) {
-        const value = encodingField((j + .5) / rows * ENCODING_L, (i + .5) / cols * TAU, stage);
+        const psi = (i + .5) / cols * TAU;
+        let value;
+        if (stage < 3) value = encodingField((j + .5) / rows * ENCODING_L, psi, stage);
+        else {
+          const fraction = (j + .5) / rows;
+          value = fraction > 1 - ENCODING_COLLAR
+            ? encodingField((1 - fraction) / ENCODING_COLLAR * ENCODING_L, psi, 2)
+            : encodingInterior(fraction / (1 - ENCODING_COLLAR));
+        }
         low = Math.min(low, value); high = Math.max(high, value);
         row.push(value);
       }
       grid.push(row);
     }
-    const half = Math.max((high - low) / 2, 1e-6);
 
-    /* The tube is opaque, so only the near half is painted, over a solid body.
-       Letting the far side show through alpha fills turned every colour to mud. */
-    context.beginPath();
-    for (let i = 0; i <= 240; i++) {
-      const q = encodingTube(box, 0, TAU * i / 240, rim);
-      if (!i) context.moveTo(q.x, q.y); else context.lineTo(q.x, q.y);
-    }
-    for (let i = 240; i >= 0; i--) {
-      const q = encodingTube(box, ENCODING_L, TAU * i / 240, rim);
-      context.lineTo(q.x, q.y);
-    }
-    context.closePath();
-    context.fillStyle = colors.ink; context.fill();
-
-    for (let i = 0; i < cols; i++) {
-      const psi0 = i / cols * TAU, psi1 = (i + 1) / cols * TAU;
-      const front = Math.cos((i + .5) / cols * TAU);
-      if (front <= 0) continue;
-      for (let j = 0; j < rows; j++) {
-        const y0 = j / rows * ENCODING_L, y1 = (j + 1) / rows * ENCODING_L;
-        const a = encodingTube(box, y0, psi0, rim), b = encodingTube(box, y0, psi1, rim);
-        const c = encodingTube(box, y1, psi1, rim), d = encodingTube(box, y1, psi0, rim);
-        context.beginPath();
-        context.moveTo(a.x, a.y); context.lineTo(b.x, b.y);
-        context.lineTo(c.x, c.y); context.lineTo(d.x, d.y);
-        context.closePath();
-        const t = Math.max(-1, Math.min(1, (grid[j][i] - (low + high) / 2) / half));
-        // the far side is dimmed, which is what reads as curvature
-        // the rim of the visible half turns away from the viewer, so it darkens
-        const shade = .45 + .55 * front;
-        context.fillStyle = t >= 0
-          ? `rgba(7,87,96,${(shade * (.16 + .74 * t)).toFixed(3)})`
-          : `rgba(168,78,66,${(shade * (.16 - .74 * t)).toFixed(3)})`;
-        context.fill();
-      }
-    }
-
-    [0, ENCODING_L].forEach((y, index) => {
+    if (stage < 3) {
+      const box = {
+        right: width - 54, length: width - inset - 78,
+        cy: bodyHeight / 2 + 6, half: Math.min(74, bodyHeight * .30), depth: 22,
+      };
       context.beginPath();
       for (let i = 0; i <= 240; i++) {
-        const q = encodingTube(box, y, TAU * i / 240, rim);
+        const q = encodingTube(box, 0, TAU * i / 240);
+        if (!i) context.moveTo(q.x, q.y); else context.lineTo(q.x, q.y);
+      }
+      for (let i = 240; i >= 0; i--) context.lineTo(encodingTube(box, ENCODING_L, TAU * i / 240).x, encodingTube(box, ENCODING_L, TAU * i / 240).y);
+      context.closePath(); context.fillStyle = colors.ink; context.fill();
+      for (let i = 0; i < cols; i++) {
+        const front = Math.cos((i + .5) / cols * TAU);
+        if (front <= 0) continue;
+        const psi0 = i / cols * TAU, psi1 = (i + 1) / cols * TAU;
+        for (let j = 0; j < rows; j++) {
+          const y0 = j / rows * ENCODING_L, y1 = (j + 1) / rows * ENCODING_L;
+          const a = encodingTube(box, y0, psi0), b = encodingTube(box, y0, psi1);
+          const c = encodingTube(box, y1, psi1), d = encodingTube(box, y1, psi0);
+          context.beginPath();
+          context.moveTo(a.x, a.y); context.lineTo(b.x, b.y);
+          context.lineTo(c.x, c.y); context.lineTo(d.x, d.y);
+          context.closePath();
+          encodingPaint(context, grid[j][i], low, high, front);
+          context.fill();
+        }
+      }
+      [0, ENCODING_L].forEach((y, index) => {
+        context.beginPath();
+        for (let i = 0; i <= 240; i++) {
+          const q = encodingTube(box, y, TAU * i / 240);
+          if (!i) context.moveTo(q.x, q.y); else context.lineTo(q.x, q.y);
+        }
+        context.closePath();
+        context.strokeStyle = index ? colors.grid : colors.paper;
+        context.lineWidth = index ? 1.2 : 2.2; context.stroke();
+      });
+      context.font = visualTheme.labelFont; context.fillStyle = colors.faint;
+      context.textAlign = "center"; context.textBaseline = "top";
+      context.fillText("y = 0", box.right + 6, box.cy + box.half + 10);
+      context.fillText("y = L", box.right - box.length, box.cy + box.half + 10);
+    } else {
+      const box = {
+        apex: inset + 8, length: width - inset - 84,
+        cy: bodyHeight / 2 + 4, half: Math.min(88, bodyHeight * .38), depth: 44,
+      };
+      const first = stage === 3 ? Math.floor(rows * (1 - ENCODING_COLLAR)) : 0;
+      // the cone silhouette, so the unpainted interior still reads as a cone
+      context.beginPath();
+      for (let i = 0; i <= 480; i++) {
+        const q = encodingCone(box, 1, TAU * i / 480);
         if (!i) context.moveTo(q.x, q.y); else context.lineTo(q.x, q.y);
       }
       context.closePath();
-      context.strokeStyle = index ? colors.grid : colors.paper;
-      context.lineWidth = index ? 1.2 : 2.2;
-      context.stroke();
-    });
+      context.fillStyle = colors.ink; context.fill();
+      context.strokeStyle = colors.grid; context.lineWidth = 1; context.stroke();
+      [-1, 1].forEach((side) => {
+        context.beginPath();
+        context.moveTo(box.apex, box.cy);
+        const q = encodingCone(box, 1, side > 0 ? Math.PI / 2 : -Math.PI / 2);
+        context.lineTo(q.x, q.y);
+        context.strokeStyle = colors.grid; context.lineWidth = 1; context.stroke();
+      });
+      for (let i = 0; i < cols; i++) {
+        const front = Math.cos((i + .5) / cols * TAU);
+        const psi0 = i / cols * TAU, psi1 = (i + 1) / cols * TAU;
+        for (let j = first; j < rows; j++) {
+          const f0 = j / rows, f1 = (j + 1) / rows;
+          const a = encodingCone(box, f0, psi0), b = encodingCone(box, f0, psi1);
+          const c = encodingCone(box, f1, psi1), d = encodingCone(box, f1, psi0);
+          context.beginPath();
+          context.moveTo(a.x, a.y); context.lineTo(b.x, b.y);
+          context.lineTo(c.x, c.y); context.lineTo(d.x, d.y);
+          context.closePath();
+          encodingPaint(context, grid[j][i], low, high, .55 + .45 * front);
+          context.fill();
+        }
+      }
+      context.beginPath();
+      for (let i = 0; i <= 480; i++) {
+        const q = encodingCone(box, 1, TAU * i / 480);
+        if (!i) context.moveTo(q.x, q.y); else context.lineTo(q.x, q.y);
+      }
+      context.closePath();
+      context.strokeStyle = colors.paper; context.lineWidth = 2.2; context.stroke();
+      if (stage === 3) {
+        context.beginPath();
+        for (let i = 0; i <= 480; i++) {
+          const q = encodingCone(box, 1 - ENCODING_COLLAR, TAU * i / 480);
+          if (!i) context.moveTo(q.x, q.y); else context.lineTo(q.x, q.y);
+        }
+        context.closePath();
+        context.strokeStyle = colors.faint; context.lineWidth = 1.2;
+        context.setLineDash([4, 4]); context.stroke(); context.setLineDash([]);
+      }
+      context.font = visualTheme.labelFont; context.fillStyle = colors.faint;
+      context.textAlign = "center"; context.textBaseline = "top";
+      context.fillText("r = R", box.apex + box.length + 14, box.cy + box.half + 10);
+      if (stage === 3) context.fillText("R \u2212 L", box.apex + box.length * (1 - ENCODING_COLLAR), box.cy + box.half * (1 - ENCODING_COLLAR) + 10);
+    }
 
-    context.font = visualTheme.labelFont;
-    context.fillStyle = colors.faint;
-    context.textAlign = "center"; context.textBaseline = "top";
-    context.fillText("y = 0", box.right + 6, box.cy + box.half + 10);
-    context.fillText("y = L", box.right - box.length, box.cy + box.half + 10);
-
-    // h below, as an ordinary plot, once it has been read off
-    const top = tubeHeight + 26, mid = top + plotHeight / 2;
+    const top = bodyHeight + 22, mid = top + plotHeight / 2;
     context.beginPath();
     context.moveTo(inset, mid); context.lineTo(width - 20, mid);
     context.strokeStyle = colors.grid; context.lineWidth = 1; context.stroke();
     if (stage >= 1) {
       context.beginPath();
-      for (let i = 0; i <= 240; i++) {
-        const psi = TAU * i / 240;
-        const x = inset + i / 240 * (width - 20 - inset);
-        const y = mid - encodingProfile(psi) / (ENCODING_H * 1.35) * (plotHeight / 2);
+      for (let i = 0; i <= 480; i++) {
+        const psi = TAU * i / 480;
+        const x = inset + i / 480 * (width - 20 - inset);
+        const y = mid - encodingProfile(psi) / (ENCODING_H * 1.3) * (plotHeight / 2);
         if (!i) context.moveTo(x, y); else context.lineTo(x, y);
       }
       context.strokeStyle = colors.orange; context.lineWidth = 2; context.stroke();
+      context.font = visualTheme.labelFont; context.fillStyle = colors.faint;
       context.textAlign = "left"; context.textBaseline = "bottom";
-      context.fillStyle = colors.faint;
-      context.fillText("h(\u03c8) = \u03bb\u207b\u00b9 \u2202\u1d67v(0,\u00b7)", inset, top - 4);
-      context.textBaseline = "top";
-      context.fillText("0", inset - 12, mid - 6);
-      context.textAlign = "center";
+      context.fillText("h(\u03c8)", inset, top - 4);
+      context.textAlign = "center"; context.textBaseline = "top";
       context.fillText("2\u03c0", width - 20, mid + 6);
     }
 
+    context.font = visualTheme.labelFont; context.fillStyle = colors.faint;
     context.textAlign = "left"; context.textBaseline = "bottom";
-    context.fillStyle = colors.faint;
-    context.fillText(ENCODING_CAPTIONS[active], inset, height - 6);
+    context.fillText(ENCODING_CAPTIONS[stage], inset, height - 6);
 
     document.querySelectorAll("[data-encoding-stage]").forEach((button, index) => {
-      button.classList.toggle("active", index === active);
+      button.classList.toggle("active", index === stage);
     });
-    canvas.setAttribute("aria-label", `Stage ${active + 1} of 4: ${ENCODING_CAPTIONS[active]}`);
+    const formula = select("#encodingFormula");
+    if (formula && window.SchifferMath?.render) {
+      window.SchifferMath.render(formula, ENCODING_FORMULAS[stage], { displayMode: true });
+    }
+    canvas.setAttribute("aria-label", `Stage ${stage + 1} of 5: ${ENCODING_CAPTIONS[stage]}`);
   }
 
   function bindEncoding() {

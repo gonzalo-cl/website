@@ -2580,9 +2580,10 @@
           <aside class="geometry-controls paper-demo-controls">
             <div class="geometry-stages" aria-label="Four stages from v to the cone">
               <button type="button" data-encoding-stage="0"><span>01</span><strong>v on the cylinder</strong></button>
-              <button type="button" data-encoding-stage="0.333333"><span>02</span><strong>read h, complete w&#8321;</strong></button>
-              <button type="button" data-encoding-stage="0.666667"><span>03</span><strong>add w&#8320;</strong></button>
-              <button type="button" data-encoding-stage="1"><span>04</span><strong>map to the cone</strong></button>
+              <button type="button" data-encoding-stage="0.25"><span>02</span><strong>read h, complete w&#8321;</strong></button>
+              <button type="button" data-encoding-stage="0.5"><span>03</span><strong>add w&#8320;</strong></button>
+              <button type="button" data-encoding-stage="0.75"><span>04</span><strong>the collar of the cone</strong></button>
+              <button type="button" data-encoding-stage="1"><span>05</span><strong>complete the interior</strong></button>
             </div>
             <div class="geometry-scrub"><div class="control-label"><label for="encodingRange">stage</label></div><input id="encodingRange" type="range" min="0" max="1" value="0" step="0.001"></div>
           </aside>
@@ -2590,8 +2591,9 @@
             <div id="encodingCanvasWrap" class="geometry-canvas-wrap">
               <canvas id="encodingCanvas" role="img" aria-label="Four stages from v on the cylinder to the collar of the cone"></canvas>
             </div>
+            <p class="encoding-formula" id="encodingFormula"></p>
           </section>
-          <figcaption><span class="figure-caption-summary">From the single unknown to the domain and the field.</span><span class="figure-caption-note"><strong>What to notice.</strong> The boundary \(y=0\) is the top edge, and the dashed curve on it is \(h\). At the first stage \(v\) vanishes there but leaves with a nonzero slope; adding the dragging term flattens it without disturbing the value. Each stage is scaled to its own range, so the third looks different in kind: \(w_0\) is of size one while the perturbation is of size \(h\).</span></figcaption>
+          <figcaption><span class="figure-caption-summary">From the single unknown to the domain and the field.</span><span class="figure-caption-note"><strong>What to notice.</strong> The boundary \(y=0\) is the near rim of the cylinder, and \(h\) is plotted beneath. At the first stage \(v\) vanishes there but leaves with a nonzero slope; adding the dragging term flattens it without disturbing the value. The last two stages move to the cone: first the collar between \(r=R-L\) and the perturbed boundary, then the whole cone once the interior Dirichlet problem is solved, where the field is the radial mode with its sixteen oscillations. Each stage is scaled to its own range, so the third looks different in kind: \(w_0\) is of size one while the perturbation is of size \(h\). Two things are drawn larger than life: the profile is mode three rather than the mode one the theorem produces, and the collar is the outer fifth of the cone where \(L/R\) is really one part in seventy.</span></figcaption>
         </figure>
         <div class="intro-copy intro-copy-wide">
         <p>Two facts make this work.</p>
