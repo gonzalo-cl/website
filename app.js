@@ -19,11 +19,12 @@ const SCHIFFER_VISUAL_THEME = (() => {
   };
   const monoFamily = rootStyle.getPropertyValue("--mono").trim() || "DM Mono, monospace";
   const serifFamily = rootStyle.getPropertyValue("--serif").trim() || "Georgia, serif";
+  const labelPixels = Math.max(14, tokenPixels("--type-label", 14));
   const typography = {
-    labelFont: `${tokenPixels("--type-label", 11)}px ${monoFamily}`,
+    labelFont: `${labelPixels}px ${monoFamily}`,
     captionFont: `${tokenPixels("--type-caption", 16)}px ${serifFamily}`,
     titleFont: `italic 400 ${tokenPixels("--type-subsection", 25)}px ${serifFamily}`,
-    labelPixels: tokenPixels("--type-label", 11),
+    labelPixels,
     serifFamily,
   };
   const theme = paperEdition ? {
@@ -670,7 +671,7 @@ function installThreeInteraction(canvas) {
   canvas.setAttribute("aria-keyshortcuts", "ArrowLeft ArrowRight ArrowUp ArrowDown + - Home");
   canvas.setAttribute(
     "aria-label",
-    "Rotatable three-dimensional cylinder colored by the numerical field. Drag with a pointer or swipe horizontally to rotate. Use the arrow keys to rotate, plus and minus to zoom, and Home to reset the view.",
+    "Rotatable three-dimensional cylinder coloured by the numerical field. Drag with a pointer or swipe horizontally to rotate. Use the arrow keys to rotate, plus and minus to zoom, and Home to reset the view.",
   );
 
   const announceView = () => {
@@ -992,12 +993,12 @@ function drawBoundaryDiagram() {
   svgElement("path", { d: criticalData, fill: "none", stroke: "rgba(7,87,96,.58)", "stroke-width": "1.2", "stroke-dasharray": "4 4" }, svg);
   const data = `M ${points.map((point) => point.map((value) => value.toFixed(2)).join(" ")).join(" L ")}`;
   svgElement("path", { d: data, fill: "none", stroke: SCHIFFER_VISUAL_THEME.accent, "stroke-width": "3" }, svg);
-  const label = svgElement("text", { x: 24, y: 186, fill: SCHIFFER_VISUAL_THEME.muted, "font-family": "DM Mono, ui-monospace, monospace", "font-size": "8" }, svg);
+  const label = svgElement("text", { x: 24, y: 186, fill: SCHIFFER_VISUAL_THEME.muted, "font-family": "DM Mono, ui-monospace, monospace", "font-size": "14" }, svg);
   const h2 = solvedParameters.wallCoefficients?.[2] || 0;
   const h3 = solvedParameters.wallCoefficients?.[3] || 0;
   label.textContent = state.s === 0
-    ? "Γ₀   flat boundary"
-    : `Γₛ   h₂ = ${h2.toFixed(3)}   h₃ = ${h3.toFixed(3)}`;
+    ? "Γ₀ · flat"
+    : `Γₛ · h₂=${h2.toFixed(2)} · h₃=${h3.toFixed(2)}`;
   svg.setAttribute("aria-label", state.s === 0
     ? "Flat cylinder boundary"
     : `Computed boundary with first mode ${state.s.toFixed(3)}, second mode ${h2.toFixed(4)}, and third mode ${h3.toFixed(4)}. The dashed curve is the first-mode approximation.`);
@@ -1661,7 +1662,7 @@ function installConeThreeInteraction(canvas) {
   canvas.setAttribute("aria-keyshortcuts", "ArrowLeft ArrowRight ArrowUp ArrowDown + - Home");
   canvas.setAttribute(
     "aria-label",
-    "Rotatable three-dimensional cone colored by the numerical field. Drag with a pointer or swipe horizontally to rotate. Use the arrow keys to rotate, plus and minus to zoom, and Home to reset the view.",
+    "Rotatable three-dimensional cone coloured by the numerical field. Drag with a pointer or swipe horizontally to rotate. Use the arrow keys to rotate, plus and minus to zoom, and Home to reset the view.",
   );
 
   const announceView = () => {
@@ -2656,7 +2657,7 @@ function updateModesReadouts() {
   setMath("#modesTransferValue", `R=${solution.R.toFixed(3)}`);
   $("#modesOrderValue").textContent = solution.R.toFixed(6);
   $("#modesAmplitudeValue").textContent = solution.s.toFixed(4);
-  $("#modesCropValue").textContent = modesState.crop < .012 ? "centered on seam" : `${cropDegrees.toFixed(0)}° from seam`;
+  $("#modesCropValue").textContent = modesState.crop < .012 ? "centred on seam" : `${cropDegrees.toFixed(0)}° from seam`;
   $("#modesDepthValue").textContent = `${modesState.depth.toFixed(modesState.depth % 1 ? 2 : 0)} units`;
   setMath("#modesPhaseValue", `\\Delta\\xi=${comparison.phaseDegrees.toFixed(3)}^{\\circ}`);
   setMath("#modesExactPhaseValue", `\\delta=${comparison.exactPhaseDegrees.toFixed(3)}^{\\circ}`);

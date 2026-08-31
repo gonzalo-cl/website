@@ -197,7 +197,7 @@ a { color: inherit; }
 .branch-diagram .branch-trivial { fill: none; stroke: var(--teal); stroke-width: 1.6; stroke-dasharray: 6 5; }
 .branch-diagram .branch-nontrivial { fill: none; stroke: #a84e42; stroke-width: 2; }
 .branch-diagram .branch-marker { fill: var(--orange); stroke: var(--paper-2); stroke-width: 1.5; }
-.branch-diagram .branch-axis-label { fill: rgba(19,33,38,.45); font: italic 11px var(--serif); }
+.branch-diagram .branch-axis-label { fill: rgba(19,33,38,.55); font: italic 14px var(--serif); }
 .world-branch-control { padding: 13px 16px 14px; border-top: 1px solid var(--line); background: rgba(241,238,229,.34); }
 .world-branch-control > div:first-child { display: flex; align-items: center; justify-content: space-between; gap: 14px; color: var(--muted); font: 10px/1.4 var(--mono); text-transform: uppercase; letter-spacing: .065em; }
 .world-branch-control output { color: var(--orange); }
@@ -773,7 +773,7 @@ body > footer { color: var(--ink); background: var(--paper); }
 .abundance-examples-table thead th { color: var(--muted); }
 .abundance-examples-table tbody th { color: var(--ink); }
 .abundance-examples-table tbody td { color: var(--muted); }
-.abundance-examples-table [data-label]::before { color: var(--muted); }
+.abundance-examples-table [data-column-label]::before { color: var(--muted); }
 
 /* Numerical fields retain one dark plotting ground. */
 :is(.geometry-canvas-panel, .canvas-panel, .cone-canvas-panel, .modes-plot-panel, .phase-story-plot, .phase-family-toolbar, .phase-family-canvas-wrap, .phase-family > footer, .collar-field-laboratory, .debye-laboratory, .abundance-plot-panel) { --line-light: rgba(241,238,229,.16); color: var(--paper); background: #101b20; }
@@ -988,7 +988,7 @@ dialog hr { height: 1px; margin: 32px 0; background: var(--line); border: 0; }
   .abundance-examples-table tbody tr { display: grid; grid-template-columns: .65fr 1.2fr 1fr; border-bottom: 1px solid var(--line-light); }
   .abundance-examples-table tbody tr:last-child { border-bottom: 0; }
   .abundance-examples-table th, .abundance-examples-table td { min-width: 0; padding: 14px 12px; border-bottom: 0; text-align: left; }
-  .abundance-examples-table [data-label]::before { content: attr(data-label); display: block; margin-bottom: 7px; color: var(--muted); font: 11px var(--mono); text-transform: uppercase; letter-spacing: .06em; }
+  .abundance-examples-table [data-column-label]::before { content: attr(data-column-label); display: block; margin-bottom: 7px; color: var(--muted); font: 14px var(--mono); text-transform: uppercase; letter-spacing: .06em; }
   footer { grid-template-columns: 1fr; gap: 18px; }
 }
 

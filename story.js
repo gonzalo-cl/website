@@ -62,7 +62,7 @@
     muted: "rgba(241,238,229,.42)",
     panel: "rgba(12,22,27,.65)",
     tooltip: "rgba(10,19,23,.96)",
-    labelFont: "11px DM Mono, monospace",
+    labelFont: "14px DM Mono, monospace",
     titleFont: "italic 400 25px Georgia, serif",
     serifFamily: "Georgia, serif",
   };
@@ -198,7 +198,7 @@
     marker.setAttribute("cx", here.x.toFixed(2));
     marker.setAttribute("cy", here.y.toFixed(2));
     marker.classList.toggle("branch-marker-trivial", !onBranch);
-    // The crossing is where the branch is available; mark it when we are not on it.
+    // The crossing is where the branch is available; mark it off the branch.
     const node = diagram.querySelector(".branch-crossing");
     if (node) node.classList.toggle("branch-crossing-live", !onBranch && Math.abs(trivial) < .06);
   }
@@ -208,7 +208,7 @@
     const { axisY, top, bottom, left, right, criticalX } = BRANCH_DIAGRAM;
     const halfHeight = (bottom - top) / 2;
     // Dragging horizontally along the trivial line is only meaningful where the
-    // renderer knows what the trivial domain looks like, so it is opt-in.
+    // renderer already contains the trivial-domain geometry, so it is opt-in.
     const onTrivial = options.onTrivial;
     const state = { trivial: 0 };
     const setFromPointer = (event) => {
@@ -225,7 +225,7 @@
       }
       /* Leaving the line requires being at the crossing: away from it there is
          no branch to step onto, which is the content of the picture.  Near the
-         line we stay on it and the horizontal position becomes the unknown. */
+         line the marker stays on it and the horizontal position becomes unknown. */
       const nearLine = Math.abs(amount) < .12;
       const atCrossing = Math.abs(state.trivial) < .08;
       if (nearLine || !atCrossing) {
@@ -283,7 +283,7 @@
     if (!annulusDomainFill || !annulusBoundaryOuter || !annulusBoundaryInner) return;
     // Enciso-Fernandez-Ruiz-Sicbaldi bifurcate from the annulus {a < r < 1} at
     // the crossing mu_{0,2}(a) = lambda_{l,0}(a), which exists for every l >= 4.
-    // We draw the verified case l = 4, where a_4 = 0.140989 and mu = 57.5851.
+    // Draw the verified case l = 4, where a_4 = 0.140989 and mu = 57.5851.
     const centreX = 260;
     const centreY = 143;
     const outerRadius = 111;
@@ -291,13 +291,13 @@
        parameter is its inner radius a.  a_4 = 0.140989 is the crossing; moving
        off it along the line grows or shrinks the hole, and no branch exists
        there.  The displayed range is deliberately narrow, since the crossing is
-       what the picture is about. */
+       the intended geometry. */
     const innerFraction = .1409893 * (1 + .55 * annulusTrivial);
     // Both boundaries move as cos(4 theta), but not by the same amount: the
     // true ratio of the two amplitudes is -27.883, computed from the crossing
     // eigenfunctions.  At that exact ratio the inner ripple is 1.0 px
     // peak-to-peak against the outer's 28.9, which reads as an unperturbed
-    // circle and misinforms: the point is that the inner boundary moves much
+    // circle and misinforms because the inner boundary moves much
     // less, not that it stays put.  INNER_RIPPLE_GAIN opens it to 6.2 px, still
     // 4.6 times smaller than the outer ripple, so the comparison survives while
     // the motion becomes visible.  The sign makes the domain thicken where
@@ -333,7 +333,7 @@
     const sphereBack = [];
     const sphereRadius = 111;
     // The paper bifurcates from cos(theta) > a_* with a_* about 0.477.
-    // We view the north-pole cap obliquely but from within it, so its projected
+    // View the north-pole cap obliquely but from within it, so its projected
     // image is a closed domain inside the sphere rather than a band cut along
     // the equator.  The angular amplitude is deliberately enlarged for sight.
     /* On the trivial line the domain is the round spherical cap and the free
@@ -471,7 +471,7 @@
   function canvasMetrics(canvasSelector, wrapSelector, minimumHeight) {
     const canvas = select(canvasSelector);
     const wrap = select(wrapSelector);
-    // The bitmap and its CSS box must have the same aspect ratio.  Earlier we
+    // The bitmap and its CSS box must have the same aspect ratio. An earlier version
     // clamped the backing store to a minimum size while CSS was free to make
     // the wrapper smaller; the browser then independently scaled x and y and
     // visibly crushed circles and cone sections at narrow breakpoints.
@@ -1084,7 +1084,7 @@
      crossings and their curvatures are the real ones: the same rows Figure 4.7
      plots, restricted to 15 <= R <= 30, with gamma from the cylinder limit.  A
      branch reaches the integer below its crossing when gamma s^2 / 2 clears the
-     fractional part of R.  What is illustrative is the classical amplitude:
+     fractional part of R.  The classical amplitude remains illustrative:
      classical Crandall-Rabinowitz gives no lower bound on it at all, so the
      shrinking profile stands in for "could be anything, and nothing stops it
      going to zero". */
@@ -1188,8 +1188,8 @@
     const note = select("[data-branch-scale-note]");
     if (note) {
       note.textContent = uniformMode
-        ? "A uniform amplitude bound lets sufficiently near-integer branches reach an integer. The displayed bends use the crossing curvatures; select Classical to see what the standard theorem alone cannot guarantee."
-        : "Classical Crandall\u2013Rabinowitz supplies no uniform lower bound. The shrinking amplitudes drawn here are schematic, showing what the theorem does not rule out; select Uniform to see the consequence of an R-independent bound.";
+        ? "A uniform amplitude bound lets sufficiently near-integer branches reach an integer. The displayed bends use the crossing curvatures; the Classical view omits this uniform guarantee."
+        : "Classical Crandall\u2013Rabinowitz supplies no uniform lower bound. The shrinking amplitudes are schematic possibilities not excluded by the theorem; the Uniform view displays the consequence of an R-independent bound.";
     }
   }
 
@@ -1210,10 +1210,10 @@
   ];
   const ENCODING_NOTES = [
     "A Dirichlet function \\(v:\\mathcal{C}\\to\\mathbb{R}\\), encoding both the boundary perturbation and the eigenfunction perturbation.",
-    "We read the boundary perturbation \\(h_v=\\lambda^{-1}\\partial_yv(0,\\cdot)\\) and the eigenfunction perturbation \\(w_1=v+\\chi\\,\\partial_yw_0\\,h_v\\). Although \\(v\\) is only Dirichlet at \\(y=0\\), \\(w_1\\) is both Dirichlet and Neumann there.",
-    "We add the radial solution \\(w_0(y)=J_0\\bigl(\\sqrt\\lambda\\,(R-y)\\bigr)/J_0(\\rho)\\), giving \\(w=w_0+w_1\\).",
-    "We use \\(h_v\\) to transfer \\(w\\) onto the exterior part of the cone, obtaining \\(u\\) on \\(r>R-L\\). The cut at \\(R-L\\) is round; only the outer boundary carries the profile.",
-    "We solve the Dirichlet problem to complete \\(u\\) for \\(r<R-L\\). It is regular across the transition exactly when its Neumann data on the inner circle agrees with the Dirichlet-to-Neumann operator applied to its Dirichlet data.",
+    "The boundary perturbation is \\(h_v=\\lambda^{-1}\\partial_yv(0,\\cdot)\\), and the eigenfunction perturbation is \\(w_1=v+\\chi\\,\\partial_yw_0\\,h_v\\). Although \\(v\\) has only Dirichlet data at \\(y=0\\), \\(w_1\\) has both Dirichlet and Neumann data there.",
+    "Adding the radial solution \\(w_0(y)=J_0\\bigl(\\sqrt\\lambda\\,(R-y)\\bigr)/J_0(\\rho)\\) gives \\(w=w_0+w_1\\).",
+    "The pair \\(h_v,w\\) transfers to the exterior cone and gives \\(u\\) on \\(r>R-L\\). The cut at \\(R-L\\) is round; only the outer boundary carries the profile.",
+    "Solving the interior Dirichlet problem completes \\(u\\) for \\(r<R-L\\). Regularity across the transition is equivalent to agreement between its Neumann data on the inner circle and the Dirichlet-to-Neumann operator applied to its Dirichlet data.",
   ];
   const ENCODING_LAMBDA = Number(window.DTN_INTERIOR?.lambda) || 3.317011204;
   const ENCODING_L = Number(window.DTN_INTERIOR?.L) || .4;
@@ -1492,21 +1492,57 @@
 
   /* Move a domain over cos(x_1) and watch its integral.  For a Schiffer domain
      the integral vanishes for every rigid motion, which is the Pompeiu failure
-     itself.  Each domain is rescaled so that its own frequency becomes 1, which
-     is why the N = 28 one is so much larger than the disc: its k is 1.822983
-     against the disc's 1/j_{1,1}. */
+     itself.  Each domain is rescaled so that its own frequency becomes 1. */
   const PROBE = { domain: 0, t1: 0, t2: 0, angle: 0, dragging: false, mode: "move" };
   const PROBE_PLOT_SPAN = 12;
+
+  /* Polar Fourier coefficients of k phi(D), derived from the same thirty
+     printed q_j coefficients used for the D_10 numerical centre in Section 3.
+     The frequency is k = 31.9670072772.  The computer-assisted estimate puts
+     the exact boundary within 7.13e-11 of this displayed centre. */
+  const D10_PROBE_RADIAL_COEFFICIENTS = Object.freeze([
+    3.21860651609208617e1, 1.18317668926126984, 4.18853684983765268e-2,
+    8.02282390730528483e-3, -1.08919784413794227e-2, 1.21835914103899691e-3,
+    2.99822787940798806e-4, 7.30311029334076869e-5, -6.78306044518120005e-5,
+    2.10621897215732202e-6, 3.14540788172358943e-6, 1.04917268716762398e-6,
+    -5.95998126156438166e-7, -4.96666674887544090e-8, 3.30080115842736328e-8,
+    1.64924834919748095e-8, -5.54545157202423822e-9, -1.35935887294035853e-9,
+    2.95834307451356309e-10, 2.59704615837165278e-10, -4.54264693406107092e-11,
+    -2.54424317918814675e-11, 1.33641650992982592e-12, 3.96335331625388129e-12,
+    -1.80998138453636123e-13, -4.12185136720764060e-13, -2.89868225474049291e-14,
+    5.73265489952223839e-14, 4.42538607148879651e-15, -6.01733717278669433e-15,
+    -1.14899323543046421e-15,
+  ]);
+  const d10ProbeRadius = (theta) => {
+    let radius = D10_PROBE_RADIAL_COEFFICIENTS[0];
+    for (let index = 1; index < D10_PROBE_RADIAL_COEFFICIENTS.length; index += 1) {
+      radius += D10_PROBE_RADIAL_COEFFICIENTS[index] * Math.cos(10 * index * theta);
+    }
+    return radius;
+  };
+  const D10_PROBE_EXTENT = D10_PROBE_RADIAL_COEFFICIENTS.reduce(
+    (bound, coefficient) => bound + Math.abs(coefficient),
+    0,
+  ) * 1.12;
 
   function probeDomains() {
     const list = [];
     const j11 = 3.8317059702;
     list.push({
-      name: "disc, radius j\u2081,\u2081",
+      name: "disk, radius j\u2081,\u2081",
       note: "the classical Pompeiu failure",
       vanishes: true,
+      readout: "zero for every position and angle",
       radius: () => j11,
       extent: j11 * 1.35,
+    });
+    list.push({
+      name: "N = 10, certified example",
+      note: "the stored centre of the computer-assisted proof",
+      vanishes: true,
+      readout: "certified exact domain: zero at every motion",
+      radius: d10ProbeRadius,
+      extent: D10_PROBE_EXTENT,
     });
     const data = window.CONE_NUMERICS;
     if (data && data.records) {
@@ -1517,6 +1553,7 @@
         name: `N = ${order}, this proof`,
         note: "boundary from the landing record",
         vanishes: true,
+        readout: "numerically zero at every sampled motion",
         radius: (theta) => {
           let sum = 0;
           for (let j = 0; j < h.length; j++) sum += h[j] * Math.cos(j * order * theta);
@@ -1530,6 +1567,7 @@
       name: "square",
       note: "has the Pompeiu property",
       vanishes: false,
+      readout: "changes with position",
       radius: (theta) => (side / 2) / Math.max(Math.abs(Math.cos(theta)), Math.abs(Math.sin(theta))),
       extent: side * .95,
     });
@@ -1555,11 +1593,6 @@
     }
     const weight = TAU / samples;
     return { re: re * weight, im: im * weight };
-  }
-
-  function probeIntegral(domain, shift, angle) {
-    const a = probeAmplitude(domain, angle);
-    return Math.cos(shift) * a.re - Math.sin(shift) * a.im;
   }
 
   function renderPompeiuProbe() {
@@ -1620,9 +1653,9 @@
     context.fill();
     context.strokeStyle = colors.paper; context.lineWidth = 2; context.stroke();
 
-    const value = probeIntegral(domain, PROBE.t1, PROBE.angle);
     const trace = [];
     const base = probeAmplitude(domain, PROBE.angle);
+    const value = Math.cos(PROBE.t1) * base.re - Math.sin(PROBE.t1) * base.im;
     for (let i = 0; i <= 160; i++) {
       const shift = -Math.PI + TAU * i / 160;
       const v = Math.cos(shift) * base.re - Math.sin(shift) * base.im;
@@ -1648,9 +1681,7 @@
     context.fillStyle = domain.vanishes ? colors.cyan : colors.orange;
     context.fillText(`\u222b cos(x\u2081) = ${value.toExponential(2)}`, 14, top + plotHeight + 2);
     context.fillStyle = colors.faint;
-    context.fillText(domain.vanishes
-      ? "zero for every position and angle"
-      : "changes with position", 14, top + plotHeight + 16);
+    context.fillText(domain.readout, 14, top + plotHeight + 16);
     context.textAlign = "right";
     context.fillText("drag inside to move \u00b7 outside to turn", width - 14, top + plotHeight + 16);
     context.textAlign = "left";
@@ -1693,7 +1724,9 @@
     };
     const syncSlider = () => {
       const slider = select("#probeAngle");
-      if (slider) slider.value = String(((PROBE.angle % TAU) + TAU) % TAU);
+      if (!slider) return;
+      slider.value = String(((PROBE.angle % TAU) + TAU) % TAU);
+      fillRange(slider);
     };
     canvas.addEventListener("pointerdown", (event) => {
       const point = planeOf(event);
@@ -1826,7 +1859,7 @@
      on the circle r = R - L; the interior solution of (Delta + lambda)u = 0 is
      then determined, and so is its normal derivative.  G_2 = 0 says that the
      derivative the interior produces is the one the collar needs, and the two
-     traces below the disc are exactly those.  Radial profiles and the two
+     traces below the disk are exactly those.  Radial profiles and the two
      multipliers are precomputed in dtn-data.js: they are Bessel functions of
      order kR at real R, which is not worth evaluating in the browser. */
   const interiorMatch = { amplitude: .2 };
@@ -1849,7 +1882,7 @@
 
   /* putImageData ignores the canvas transform, so the field is painted into an
      offscreen buffer at its own scale and composited with drawImage, which does
-     respect it.  Painting straight onto the figure put the disc in the corner at
+     respect it.  Painting straight onto the figure put the disk in the corner at
      half size. */
   function drawInteriorDisc(context, size, originX, originY, amplitude, data) {
     const buffer = document.createElement("canvas");
@@ -2688,7 +2721,7 @@
       context.fillText("each quadratic jet opens toward decreasing R", plot.left + 8, plot.top + 10);
       /* The jet is a local model.  Saying only that a ring is where it reaches
          an integer invites reading each ring as a counterexample; the rings are
-         where the quadratic would land, which is what the proof then has to
+         where the quadratic would land; the proof must then
          establish for genuinely small amplitude. */
       context.fillText("white rings mark where the quadratic model would reach an integer", plot.left + 8, plot.top + 26);
       context.fillText("extrapolated to |s| ≤ 1; the jet is only a small-amplitude approximation", plot.left + 8, plot.top + 42);

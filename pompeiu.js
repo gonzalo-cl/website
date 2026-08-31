@@ -289,7 +289,7 @@
     context.strokeStyle = "rgba(19,33,38,.32)";
     context.fillStyle = "rgba(19,33,38,.5)";
     context.lineWidth = Math.max(1, dpr);
-    context.font = `${(window.SCHIFFER_VISUAL_THEME?.labelPixels || 11) * dpr}px "KaTeX_Main", serif`;
+    context.font = `${(window.SCHIFFER_VISUAL_THEME?.labelPixels || 14) * dpr}px "KaTeX_Main", serif`;
     context.textAlign = "center";
     const tickLimit = Math.floor(width / (2 * scale * Math.PI));
     for (let k = -tickLimit; k <= tickLimit; k++) {
@@ -533,7 +533,7 @@
     context.moveTo(left, intervalY - 7); context.lineTo(left, intervalY + 7);
     context.moveTo(right, intervalY - 7); context.lineTo(right, intervalY + 7);
     context.stroke();
-    context.font = `500 ${window.SCHIFFER_VISUAL_THEME?.labelPixels || 11}px "KaTeX_Main", serif`;
+    context.font = `500 ${window.SCHIFFER_VISUAL_THEME?.labelPixels || 14}px "KaTeX_Main", serif`;
     context.textAlign = "center";
     const lengthLabel = Math.abs(state.length - 2 * Math.PI) < 1e-7
       ? "L = 2π"
@@ -824,7 +824,7 @@
 
     if (!visualTheme.paperEdition) {
       context.fillStyle = "rgba(19,33,38,.62)";
-      context.font = '500 11px "DM Mono", ui-monospace, monospace';
+      context.font = '500 14px "DM Mono", ui-monospace, monospace';
       context.textAlign = "left";
       context.fillText("shallow 3D displacement", width * .06, height * .11);
       context.fillStyle = visualTheme.accent || "#a00000";
@@ -875,7 +875,7 @@
     context.beginPath(); context.arc(graphRight, rimY, 3.2, 0, Math.PI * 2); context.fill();
 
     context.fillStyle = "rgba(19,33,38,.62)";
-    context.font = window.SCHIFFER_VISUAL_THEME?.labelFont || '500 11px "DM Mono", ui-monospace, monospace';
+    context.font = window.SCHIFFER_VISUAL_THEME?.labelFont || '500 14px "DM Mono", ui-monospace, monospace';
     context.textAlign = "left";
     context.fillText("centre", graphLeft, height * .91);
     context.textAlign = "right";

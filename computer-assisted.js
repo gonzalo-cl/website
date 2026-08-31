@@ -43,7 +43,7 @@
       lineJoin: "miter",
       lineDash: [],
       globalAlpha: 1,
-      font: "10px sans-serif",
+      font: "14px sans-serif",
       textAlign: "left",
       textBaseline: "alphabetic",
       clipId: null,
@@ -298,7 +298,7 @@
     const requestedSize = Number(options.size ?? 12);
     const size = computerProofFigureIds.has(context.canvas?.id)
       ? Math.max(16, requestedSize)
-      : requestedSize;
+      : Math.max(14, requestedSize);
     context.fillStyle = options.color || colors.muted;
     context.font = `${options.weight || 400} ${size}px et-book, Palatino, Georgia, serif`;
     context.textAlign = options.align || "left";
@@ -592,7 +592,7 @@
     if (boundaryModes) boundaryModes.setAttribute("aria-valuetext", `${cutoff} of 30 normalized conformal-map coefficients q j`);
     boundaryCanvas.setAttribute(
       "aria-label",
-      `Exploratory computation from finite numerical data. Ten-fold conformal boundary using ${cutoff} of 30 normalized coefficients q j, compared with the dashed unit circle. The newest included coefficient has size ${selectedCoefficient.toExponential(3)} and adds a ${10 * cutoff}-fold correction. The certificate later controls the omitted infinite tail. Overall radial range ${minimumRadius.toFixed(6)} to ${maximumRadius.toFixed(6)}.`,
+      `Exploratory computation from finite numerical data. Tenfold conformal boundary using ${cutoff} of 30 normalized coefficients q j, compared with the dashed unit circle. The newest included coefficient has size ${selectedCoefficient.toExponential(3)} and adds a ${10 * cutoff}-fold correction. The certificate later controls the omitted infinite tail. Overall radial range ${minimumRadius.toFixed(6)} to ${maximumRadius.toFixed(6)}.`,
     );
   };
 
@@ -606,7 +606,7 @@
   const searchStageStatus = document.getElementById("searchStageStatus");
   const searchStages = Object.freeze([
     Object.freeze({
-      label: "ten-fold direction",
+      label: "tenfold direction",
       title: "A ten-lobed kernel at the disk",
       status: "Exact linear mechanism: W₁,₁₀(μ) = 0 makes the cos(10θ) displacement a kernel direction in the relaxed problem.",
       amplitude: 0,
@@ -998,7 +998,7 @@
 
     drawLabel(
       context,
-      compact ? "same field value at z and φₚ(z)" : "schematic scalar field · same sampled color at z and x",
+      compact ? "same field value at z and φₚ(z)" : "schematic scalar field · same sampled colour at z and x",
       width / 2,
       height - 16,
       { align: "center", color: colors.muted, size: compact ? 12 : 14 },
@@ -1006,7 +1006,7 @@
 
     pullbackCanvas.setAttribute(
       "aria-label",
-      "Schematic mechanism. The fixed disk is mapped by phi sub p to the physical domain. A marked disk point z maps to x equals phi sub p of z, and its sampled color matches exactly on both sides. The colors are an illustrative scalar field for the coordinate transfer, not the certified eigenfunction. The exact identity is U of z equals u of x.",
+      "Schematic mechanism. The fixed disk is mapped by phi sub p to the physical domain. A marked disk point z maps to x equals phi sub p of z, and its sampled colour matches exactly on both sides. The colours are an illustrative scalar field for the coordinate transfer, not the certified eigenfunction. The exact identity is U of z equals u of x.",
     );
   };
 
@@ -2062,8 +2062,8 @@
     selectedCertificateView = certificateView?.value === "iteration" ? "iteration" : "radius";
     const data = currentCertificateData();
     if (certificateViewValue) certificateViewValue.textContent = selectedCertificateView === "radius"
-      ? "why the radius works"
-      : "why iteration converges";
+      ? "radius test"
+      : "fixed-point iteration";
     if (certificateValue) certificateValue.textContent = "Pass — enclosure/r ≤ 0.621281000000012 < 1.";
     if (certificateDerivative) certificateDerivative.textContent = "Pass — q(r) ≤ 0.621244000000036 < 1.";
     if (certificateVerdict) certificateVerdict.textContent = selectedCertificateView === "radius"
@@ -3046,7 +3046,7 @@
       "aria-label",
       "Schematic mechanism. " + state.label + " boundary data " + state.data + ". "
         + (isGlobal
-          ? "The whole disk is filled to show global closure: all interior equations, boundary or compatibility equations, and infinite-tail equations hold simultaneously. This is conceptual, not a computed field."
+          ? "The whole disk is filled to show global closure: all interior equations, boundary or compatibility equations, and infinite-tail equations hold simultaneously. The rendering is conceptual, not a computed field."
           : "Only a boundary collar is filled. Local analytic Cauchy theory supplies this collar but leaves the centre unresolved and therefore does not by itself produce a counterexample."),
     );
   };
@@ -3106,8 +3106,8 @@
     }),
     Object.freeze({
       title: "Move every candidate to one disk",
-      note: "The conformal map φₚ carries the unit disk to the candidate domain. Looking back through that map gives U = u ∘ φₚ, the same Helmholtz field in fixed disk coordinates. The geometry is stored in p = kφₚ′.",
-      noteMath: "The conformal map \\(\\phi_p\\) carries the unit disk to the candidate domain. Looking back through that map gives \\(U=u\\circ\\phi_p\\), the same Helmholtz field in fixed disk coordinates. The geometry is stored in \\(p=k\\phi_p'\\).",
+      note: "The conformal map φₚ carries the unit disk to the candidate domain. Pulling the field back through this map gives U = u ∘ φₚ, the same Helmholtz field in fixed disk coordinates. The geometry is stored in p = kφₚ′.",
+      noteMath: "The conformal map \\(\\phi_p\\) carries the unit disk to the candidate domain. Pulling the field back through this map gives \\(U=u\\circ\\phi_p\\), the same Helmholtz field in fixed disk coordinates. The geometry is stored in \\(p=k\\phi_p'\\).",
       animation: 2400,
       hold: 3000,
     }),
@@ -3120,8 +3120,8 @@
     }),
     Object.freeze({
       title: "Prove convergence",
-      note: "We choose r = 10⁻⁶ and certify the bound ‖T(x) − x°‖ ≤ Y + Zr + C₂r² + C₃r³ < 0.622r for every x in the ball. Here Y bounds the error at the centre, Z the linear change, and C₂,C₃ the nonlinear change. Thus every Newton step stays inside the ball. A second estimate says that T shrinks distances there by a factor less than 0.622, so its iterates converge to one exact zero x*.",
-      noteMath: "We choose \\(r=10^{-6}\\) and certify \\(\\lVert T(x)-x^\\circ\\rVert\\le Y+Zr+C_2r^2+C_3r^3<0.622r\\) for every \\(x\\) in the ball. Here \\(Y\\) bounds the error at the centre, \\(Z\\) the linear change, and \\(C_2,C_3\\) the nonlinear change. Thus every Newton step stays inside the ball. A second estimate says that \\(T\\) shrinks distances there by a factor less than \\(0.622\\), so its iterates converge to one exact zero \\(x^*\\).",
+      note: "At r = 10⁻⁶, the certified bound ‖T(x) − x°‖ ≤ Y + Zr + C₂r² + C₃r³ < 0.622r holds for every x in the ball. Here Y bounds the error at the centre, Z the linear change, and C₂,C₃ the nonlinear change. Every Newton step therefore stays inside the ball. A second estimate shows that T shrinks distances there by a factor less than 0.622, so its iterates converge to one exact zero x*.",
+      noteMath: "At \\(r=10^{-6}\\), the certified bound \\(\\lVert T(x)-x^\\circ\\rVert\\le Y+Zr+C_2r^2+C_3r^3<0.622r\\) holds for every \\(x\\) in the ball. Here \\(Y\\) bounds the error at the centre, \\(Z\\) the linear change, and \\(C_2,C_3\\) the nonlinear change. Every Newton step therefore stays inside the ball. A second estimate shows that \\(T\\) shrinks distances there by a factor less than \\(0.622\\), so its iterates converge to one exact zero \\(x^*\\).",
       animation: 2800,
       hold: 4000,
     }),

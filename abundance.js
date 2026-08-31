@@ -24,7 +24,7 @@
     faint: "rgba(241,238,229,0.12)",
     line: "rgba(241,238,229,0.10)",
     lineStrong: "rgba(241,238,229,0.28)",
-    labelFont: "11px 'DM Mono', monospace",
+    labelFont: "14px 'DM Mono', monospace",
   };
   const paperEdition = Boolean(visualTheme.paperEdition || document.body.classList.contains("tufte-site"));
   const COLORS = {
@@ -232,7 +232,7 @@
       values.forEach(function renderValue(value, columnIndex) {
         const cell = document.createElement(columnIndex === 0 ? "th" : "td");
         if (columnIndex === 0) cell.scope = "row";
-        cell.dataset.label = labels[columnIndex];
+        cell.dataset.columnLabel = labels[columnIndex];
         cell.textContent = value;
         row.appendChild(cell);
       });

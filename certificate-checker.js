@@ -126,7 +126,7 @@
 
   const buildTranscript = (computed) => [
     "Constructing Noncircular Schiffer Domains",
-    "Exact rational implication replay · fixed-disc certificate",
+    "Exact rational implication replay · fixed-disk certificate",
     "",
     `Schema: ${payload.schema}`,
     `Site-pinned payload SHA-256: ${EXPECTED_SHA256}`,

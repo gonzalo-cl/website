@@ -121,7 +121,7 @@
       ? container.querySelector(":scope > a")
       : container.querySelector(".proof-node-card > a");
     const dependency = container.querySelector(".proof-node-dependency")?.textContent
-      || "This is the obstruction that both constructions must overcome.";
+      || "Both constructions must overcome this common obstruction.";
     if (atlasDetailBranch) atlasDetailBranch.textContent = branch;
     renderAtlasDetail(atlasDetailTitle, sourceFromRenderedMath(button.querySelector("strong")));
     renderAtlasDetail(atlasDetailSummary, sourceFromRenderedMath(button.querySelector("small")));
@@ -173,7 +173,7 @@
 
   const tourSteps = Object.freeze([
     Object.freeze({
-      title: "Why the disk looks rigid",
+      title: "Linear rigidity at the disk",
       target: "#shapeVariationFigure",
       focus: "#shapeVariationSlider",
       doText: "Move the normal-displacement slider from zero to either side.",
@@ -191,9 +191,9 @@
       title: "From a numerical centre to an exact domain",
       target: "#figure-computer-proof-overview",
       focus: "[data-computer-overview-stage='0']",
-      doText: "Compare stages 01, 04, and 05 of the fixed-disc proof map.",
+      doText: "Compare stages 01, 04, and 05 of the fixed-disk proof map.",
       observe: "Continuation supplies only the stored centre x°; the contraction produces the exact solution x*.",
-      conclude: "The search path suggests the centre, while the independent certificate establishes existence and noncircularity.",
+      conclude: "The search path supplies the numerical centre, while the independent certificate establishes existence and noncircularity.",
       prepare: () => {
         stopButtonIfPlaying(document.getElementById("computerOverviewPlayButton"));
         document.querySelector("[data-computer-overview-stage='0']")?.click();
