@@ -1893,12 +1893,14 @@ body.tufte-site main .paper-demo-controls .control-heading:has(> [hidden]:only-c
   display: none;
 }
 body.tufte-site main .paper-demo-controls .control-heading > span,
+/* The solver readout is deliberately exempt: the computational notes state
+   that the Dirichlet and Neumann defects are reported, so hiding them turned
+   off the very thing that lets a reader check the approximation. */
 body.tufte-site main .paper-demo-controls :is(
   .variation-equation,
   .variation-equation-label,
   .variation-legend,
   .geometry-stage-note,
-  .solver-readout,
   .crossing-card,
   .parameter-pair,
   .fixed-zoom-pair,
