@@ -2822,6 +2822,24 @@ body.tufte-site main .computer-assisted-control select:focus-visible {
   outline-offset: 2px;
 }
 
+/* Figure controls and keys must remain readable at the same zoom level as the
+   vector annotations.  Fourteen pixels is the floor; narrow layouts wrap. */
+body.tufte-site main .computer-assisted-figure :is(
+  .computer-assisted-control label,
+  .computer-assisted-control output,
+  .computer-assisted-control select,
+  .computer-assisted-controls .eyebrow,
+  .computer-assisted-range-scale,
+  .boundary-legend,
+  .berenstein-field-legend,
+  .berenstein-field-guide-wrap > span,
+  .berenstein-field-facts dt,
+  .certificate-readout-label,
+  .play-button
+) {
+  font-size: max(14px, var(--type-label)) !important;
+}
+
 body.tufte-site main .certificate-play-button:is(:disabled, [aria-disabled="true"]) {
   cursor: progress;
   color: var(--muted) !important;
@@ -3061,8 +3079,8 @@ body.tufte-site main .coefficient-norm-total {
 
 body.tufte-site main .certificate-scale-budget {
   box-sizing: border-box;
-  width: var(--measure-figure);
-  max-width: var(--measure-figure);
+  width: var(--measure-reading);
+  max-width: var(--measure-reading);
   margin: 2rem 0 2.6rem;
   padding: 1rem 0 1.1rem;
   border-top: 2px solid var(--orange);
@@ -3076,27 +3094,60 @@ body.tufte-site main .certificate-scale-budget h4 {
   font: italic 400 var(--type-note)/1.25 var(--serif);
 }
 
-body.tufte-site main .certificate-scale-budget > div {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: .55rem 1.2rem;
+body.tufte-site main .certificate-scale-table {
+  width: 100%;
+  margin: 0;
+  border-collapse: collapse;
+  table-layout: auto;
+  font-variant-numeric: tabular-nums;
 }
 
-body.tufte-site main .certificate-scale-budget span {
-  display: block;
-  min-width: 0;
-  color: var(--ink);
-  font-size: var(--type-note);
+body.tufte-site main .certificate-scale-table :is(th, td) {
+  box-sizing: border-box;
+  padding: .58rem .45rem;
+  vertical-align: baseline;
+  border: 0;
+  border-top: 1px solid var(--line);
+  text-align: left;
 }
 
-body.tufte-site main .certificate-scale-budget b {
-  display: block;
+body.tufte-site main .certificate-scale-table thead th {
+  padding-top: 0;
+  padding-bottom: .45rem;
+  color: var(--muted);
+  border-top: 0;
+  font: 400 var(--type-label)/1.25 var(--mono);
+  letter-spacing: .035em;
+  text-transform: lowercase;
+}
+
+body.tufte-site main .certificate-scale-table tbody th {
   color: var(--orange);
   font-family: var(--mono);
-  font-size: var(--type-label);
-  font-variant: small-caps;
+  font-size: var(--type-note);
   font-weight: 400;
-  letter-spacing: .035em;
+  line-height: 1.3;
+}
+
+body.tufte-site main .certificate-scale-table :is(th, td):first-child {
+  padding-left: 0;
+}
+
+body.tufte-site main .certificate-scale-table :is(th, td):nth-child(2) {
+  width: 22%;
+  text-align: center;
+  white-space: nowrap;
+}
+
+body.tufte-site main .certificate-scale-table :is(th, td):last-child {
+  padding-right: 0;
+  text-align: right;
+  white-space: nowrap;
+}
+
+body.tufte-site main .certificate-scale-table tbody td {
+  color: var(--ink);
+  font-size: var(--type-note);
 }
 
 body.tufte-site main .certificate-scale-budget p {
@@ -3212,7 +3263,7 @@ body.tufte-site main .berenstein-field-viewport {
   border: 1px solid var(--line);
 }
 
-body.tufte-site main .berenstein-field-viewport img {
+body.tufte-site main .berenstein-field-viewport :is(img, svg) {
   display: block;
   width: 100%;
   height: auto;
@@ -4574,7 +4625,6 @@ body.tufte-site main :is(.three-wrap canvas, #phaseFamilyCanvas):focus-visible {
 @media (max-width: 620px) {
   body.tufte-site main .shape-equation-lanes,
   body.tufte-site main :is(.coefficient-norm-grid, .operator-bound-grid),
-  body.tufte-site main .certificate-scale-budget > div,
   body.tufte-site main .berenstein-search-route,
   body.tufte-site main .berenstein-sign-flow ol {
     grid-template-columns: minmax(0, 1fr);

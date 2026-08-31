@@ -282,9 +282,25 @@
     }
   };
 
+  const computerProofFigureIds = new Set([
+    "searchCanvas",
+    "boundaryCanvas",
+    "pullbackCanvas",
+    "inverseCanvas",
+    "tailCanvas",
+    "certificateCanvas",
+    "reconstructionCanvas",
+    "berensteinBoundaryCanvas",
+    "localGlobalCanvas",
+  ]);
+
   const drawLabel = (context, text, x, y, options = {}) => {
+    const requestedSize = Number(options.size ?? 12);
+    const size = computerProofFigureIds.has(context.canvas?.id)
+      ? Math.max(14, requestedSize)
+      : requestedSize;
     context.fillStyle = options.color || colors.muted;
-    context.font = `${options.weight || 400} ${options.size || 12}px et-book, Palatino, Georgia, serif`;
+    context.font = `${options.weight || 400} ${size}px et-book, Palatino, Georgia, serif`;
     context.textAlign = options.align || "left";
     context.textBaseline = options.baseline || "alphabetic";
     context.fillText(text, x, y);
@@ -473,9 +489,12 @@
       weight: 700,
     });
     const selectedCoefficient = normalizedConformalCoefficients[cutoff - 1];
+    const selectedCoefficientLabel = compact || plot.width < 280
+      ? `|q${subscript(cutoff)}| = ${formatScientific(selectedCoefficient, 2)}`
+      : `|q${subscript(cutoff)}| = ${formatScientific(selectedCoefficient, 2)} · ${10 * cutoff}-fold correction`;
     drawLabel(
       context,
-      `|q${subscript(cutoff)}| = ${formatScientific(selectedCoefficient, 2)} · ${10 * cutoff}-fold correction`,
+      selectedCoefficientLabel,
       plot.x,
       plot.y + 18,
       { color: colors.muted, size: compact ? 12 : 14 },
@@ -683,9 +702,12 @@
     const stage = searchStages[selectedSearchStage];
 
     const domainCenterX = width / 2;
-    const domainCenterY = compact ? height * .46 : height * .47;
-    const domainRadius = Math.min(compact ? width * .29 : width * .27, compact ? height * .27 : height * .31);
-    drawLabel(context, stage.title, domainCenterX, 30, {
+    const domainCenterY = compact ? height * .53 : height * .54;
+    const domainRadius = Math.min(
+      compact ? width * .25 : width * .24,
+      compact ? height * .225 : height * .27,
+    );
+    drawLabel(context, stage.title, domainCenterX, 28, {
       align: "center",
       color: colors.heading,
       size: 14,
@@ -711,7 +733,7 @@
         lineWidth: 1.5,
         cutoff: 1,
       });
-      drawLabel(context, "W₁,₁₀(μ) = 0 · cos(10θ) kernel", domainCenterX, domainCenterY - domainRadius - 14, {
+      drawLabel(context, "W₁,₁₀(μ) = 0 · cos(10θ) kernel", domainCenterX, 60, {
         align: "center",
         color: colors.teal,
         size: compact ? 11 : 13,
@@ -727,7 +749,7 @@
       });
     }
     if (selectedSearchStage === 1) {
-      drawLabel(context, "schematic continuation path", domainCenterX, domainCenterY - domainRadius - 14, {
+      drawLabel(context, "schematic continuation path", domainCenterX, 60, {
         align: "center",
         color: colors.gold,
         size: compact ? 11 : 13,
@@ -748,7 +770,7 @@
       stage.amplitude,
       stage.flux,
     );
-    drawLabel(context, stage.flux > 0 ? "constant normal derivative c all around" : "constant normal derivative c = 0", domainCenterX, domainCenterY + domainRadius + 48, {
+    drawLabel(context, stage.flux > 0 ? "constant normal derivative c all around" : "constant normal derivative c = 0", domainCenterX, Math.min(height - 20, domainCenterY + domainRadius + 43), {
       align: "center",
       color: stage.flux > 0 ? colors.teal : colors.accent,
       size: 14,
@@ -907,14 +929,14 @@
     drawCanvasBackdrop(context, width, height);
     const compact = width < 520;
     const radius = Math.min(
-      compact ? width * .245 : width * .185,
-      compact ? height * .175 : height * .31,
+      compact ? width * .235 : width * .185,
+      compact ? height * .165 : height * .31,
     );
     const diskCenter = compact
-      ? { x: width / 2, y: height * .245 }
+      ? { x: width / 2, y: height * .27 }
       : { x: width * .76, y: height * .53 };
     const domainCenter = compact
-      ? { x: width / 2, y: height * .755 }
+      ? { x: width / 2, y: height * .73 }
       : { x: width * .24, y: height * .53 };
 
     drawTransferField(context, diskCenter.x, diskCenter.y, radius, false);
@@ -930,8 +952,8 @@
       stroke: colors.accent,
     });
     if (compact) {
-      drawLabel(context, "fixed disk 𝔻", diskCenter.x, diskCenter.y - radius - 4, { align: "center", color: colors.heading, size: 14, weight: 700 });
-      drawLabel(context, "physical domain Ω", domainCenter.x, domainCenter.y - radius - 4, { align: "center", color: colors.heading, size: 14, weight: 700 });
+      drawLabel(context, "fixed disk 𝔻", diskCenter.x, diskCenter.y - radius - 14, { align: "center", color: colors.heading, size: 14, weight: 700 });
+      drawLabel(context, "physical domain Ω", domainCenter.x, domainCenter.y - radius - 14, { align: "center", color: colors.heading, size: 14, weight: 700 });
     } else {
       drawLabel(context, "physical domain Ω", domainCenter.x, domainCenter.y - radius - 24, { align: "center", color: colors.heading, size: 14, weight: 700 });
       drawLabel(context, "fixed disk 𝔻", diskCenter.x, diskCenter.y - radius - 24, { align: "center", color: colors.heading, size: 14, weight: 700 });
@@ -965,18 +987,18 @@
     drawCorrespondingPoint(context, diskPoint.x, diskPoint.y, "z", {
       color: colors.teal,
       halo: "rgba(7, 87, 96, .28)",
-      labelX: -27,
-      labelY: -14,
+      labelX: 10,
+      labelY: -10,
     });
     drawCorrespondingPoint(context, physicalPoint.x, physicalPoint.y, "x = φₚ(z)", {
       color: colors.accent,
-      labelX: -53,
+      labelX: 10,
       labelY: -10,
     });
 
     drawLabel(
       context,
-      "schematic scalar field · same sampled color at z and x",
+      compact ? "same field value at z and φₚ(z)" : "schematic scalar field · same sampled color at z and x",
       width / 2,
       height - 16,
       { align: "center", color: colors.muted, size: compact ? 12 : 14 },
@@ -1099,26 +1121,26 @@
 
     const sourceHeaderX = compact ? width * .21 : width * .235;
     const responseHeaderX = compact ? width * .77 : width * .765;
-    const headerArrowStart = compact ? width * .37 : width * .38;
+    const headerArrowStart = compact ? width * .40 : width * .38;
     const headerArrowEnd = compact ? width * .57 : width * .60;
-    drawLabel(context, `source Φ${selectedInverseAngular},${selectedInverseRadial}`, sourceHeaderX, 27, {
+    drawLabel(context, `source Φ${selectedInverseAngular},${selectedInverseRadial}`, sourceHeaderX, 32, {
       align: "center",
       color: colors.heading,
       size: compact ? 16 : 18,
       weight: 700,
     });
-    drawArrow(context, headerArrowStart, 22, headerArrowEnd, 22, {
+    drawArrow(context, headerArrowStart, 29, headerArrowEnd, 29, {
       color: colors.accent,
       width: 3,
       head: 6,
     });
-    drawLabel(context, "K", (headerArrowStart + headerArrowEnd) / 2, 15, {
+    drawLabel(context, "K", (headerArrowStart + headerArrowEnd) / 2, 18, {
       align: "center",
       color: colors.accent,
       size: 16,
       weight: 700,
     });
-    drawLabel(context, "response v = KΦ", responseHeaderX, 27, {
+    drawLabel(context, compact ? "v = KΦ" : "response v = KΦ", responseHeaderX, 32, {
       align: "center",
       color: colors.heading,
       size: compact ? 16 : 18,
@@ -1357,7 +1379,7 @@
     const pTop = diagram.y + diagram.height * .72;
     const pHeight = Math.max(30, diagram.height * .13);
 
-    drawLabel(context, "index regions schematic · not to scale", diagram.x, diagram.y + 10, {
+    drawLabel(context, compact ? "index regions · not to scale" : "index regions schematic · not to scale", diagram.x, diagram.y + 10, {
       color: colors.muted,
       size: compact ? 11 : 13,
       weight: 700,
@@ -1384,15 +1406,17 @@
     context.lineWidth = .7;
     const gridColumns = compact ? 8 : 12;
     const gridRows = compact ? 5 : 8;
+    const finiteGHeaderHeight = 28;
     for (let column = 1; column < gridColumns; column += 1) {
       const x = finiteG.x + column / gridColumns * finiteG.width;
       context.beginPath();
-      context.moveTo(x, finiteG.y);
+      context.moveTo(x, finiteG.y + finiteGHeaderHeight);
       context.lineTo(x, finiteG.y + finiteG.height);
       context.stroke();
     }
     for (let row = 1; row < gridRows; row += 1) {
       const y = finiteG.y + row / gridRows * finiteG.height;
+      if (y < finiteG.y + finiteGHeaderHeight) continue;
       context.beginPath();
       context.moveTo(finiteG.x, y);
       context.lineTo(finiteG.x + finiteG.width, y);
@@ -1410,15 +1434,18 @@
     context.strokeStyle = colors.teal;
     context.lineWidth = 1.5;
     context.strokeRect(finiteP.x + .5, finiteP.y + .5, finiteP.width - 1, finiteP.height - 1);
+    const detailedPLabel = finiteP.width >= 180;
+    const finitePLabelSafeRight = finiteP.x + (detailedPLabel ? 154 : 82);
     for (let cell = 1; cell < 10; cell += 1) {
       const x = finiteP.x + cell / 10 * finiteP.width;
+      if (x <= finitePLabelSafeRight) continue;
       context.beginPath();
       context.moveTo(x, finiteP.y);
       context.lineTo(x, finiteP.y + finiteP.height);
       context.strokeStyle = "rgba(7, 87, 96, .20)";
       context.stroke();
     }
-    drawLabel(context, compact ? "31 stored" : "31 stored · j = 0…30", finiteP.x + 8, finiteP.y + finiteP.height / 2 + 1, {
+    drawLabel(context, detailedPLabel ? "31 stored · j = 0…30" : "31 stored", finiteP.x + 8, finiteP.y + finiteP.height / 2 + 1, {
       baseline: "middle",
       color: colors.teal,
       size: 14,
@@ -1440,13 +1467,13 @@
       context.strokeRect(omittedX + .5, pTop + .5, omittedWidth - 1, pHeight - 1);
       context.strokeRect(finiteG.x + .5, gTop - 12.5, finiteG.width + omittedWidth - 1, 12);
       context.setLineDash([]);
-      drawLabel(context, "reached equations", finiteG.x + 6, gTop - 6.5, {
+      drawLabel(context, compact ? "reached rows" : "reached equations", finiteG.x + 6, gTop - 4, {
         baseline: "middle",
         color: colors.accent,
-        size: compact ? 9 : 11,
+        size: 14,
         weight: 700,
       });
-      drawLabel(context, "rows ≠ unknowns", omittedX + omittedWidth / 2, pTop + pHeight + 18, {
+      drawLabel(context, compact ? "rows ≠ variables" : "rows ≠ unknowns", omittedX + omittedWidth / 2, pTop + pHeight + 20, {
         align: "center",
         color: colors.accent,
         size: compact ? 10 : 12,
@@ -1472,7 +1499,8 @@
         width: 1.4,
         head: 5,
       });
-      drawArrow(context, finiteP.x + finiteP.width * .72, pTop + pHeight * .50, nearbyX + nearbyWidth * .58, pTop + pHeight * .50, {
+      const pInteractionY = pTop + pHeight * (compact ? .90 : .72);
+      drawArrow(context, finiteP.x + finiteP.width * .72, pInteractionY, nearbyX + nearbyWidth * .58, pInteractionY, {
         color: colors.gold,
         width: 1.4,
         head: 5,
@@ -1497,10 +1525,10 @@
         size: 14,
         weight: 700,
       });
-      drawLabel(context, "K-mode bound ~ D⁻²", remoteX + remoteWidth / 2, gTop + gHeight + 18, {
+      drawLabel(context, compact ? "K bound ∼ D⁻²" : "K-mode bound ∼ D⁻²", remoteX + remoteWidth / 2, gTop + gHeight - 12, {
         align: "center",
         color: colors.blue,
-        size: compact ? 10 : 12,
+        size: 14,
         weight: 700,
       });
     }
@@ -1514,19 +1542,19 @@
       context.strokeStyle = colors.heading;
       context.lineWidth = 1.5;
       context.strokeRect(checker.x + .5, checker.y + .5, checker.width - 1, checker.height - 1);
-      drawLabel(context, "exact checker", checker.x + checker.width / 2, checker.y + (compact ? 20 : 25), {
+      drawLabel(context, "exact checker", checker.x + checker.width / 2, checker.y + checker.height * .24, {
         align: "center",
         color: colors.heading,
         size: 14,
         weight: 700,
       });
-      drawLabel(context, "finite + nearby + tail", checker.x + checker.width / 2, checker.y + checker.height * .52, {
+      drawLabel(context, checker.width < 160 ? "core + near + tail" : "finite + nearby + tail", checker.x + checker.width / 2, checker.y + checker.height * .55, {
         align: "center",
         baseline: "middle",
         color: colors.muted,
         size: 14,
       });
-      drawLabel(context, "Y, Z, C₂, C₃", checker.x + checker.width / 2, checker.y + checker.height * .79, {
+      drawLabel(context, "Y, Z, C₂, C₃", checker.x + checker.width / 2, checker.y + checker.height * .81, {
         align: "center",
         baseline: "middle",
         color: colors.accent,
@@ -1534,7 +1562,7 @@
         weight: 700,
       });
       if (compact) drawArrow(context, width / 2, diagram.y + diagram.height + 2, width / 2, checker.y - 7, { color: colors.heading });
-      else drawArrow(context, diagram.x + diagram.width + 2, diagram.y + diagram.height / 2, checker.x - 8, checker.y + checker.height / 2, { color: colors.heading });
+      else drawArrow(context, diagram.x + diagram.width + 2, diagram.y + diagram.height / 2, checker.x - 8, checker.y + checker.height * .40, { color: colors.heading });
     }
     tailCanvas.setAttribute(
       "aria-label",
@@ -1601,9 +1629,9 @@
     const compact = width < 520;
     const plot = {
       x: compact ? 48 : 66,
-      y: compact ? 72 : 76,
+      y: compact ? 82 : 84,
       width: width - (compact ? 66 : 96),
-      height: height - (compact ? 154 : 150),
+      height: height - (compact ? 164 : 158),
     };
     const logMinimum = -10;
     const logMaximum = Math.log10(2e-6);
@@ -1617,7 +1645,7 @@
     const zeroY = mapY(0);
     const passingStart = 4.20e-10;
 
-    drawLabel(context, "Rigorous certificate · two normalized margins", width / 2, 27, {
+    drawLabel(context, compact ? "two rigorous margin tests" : "Rigorous certificate · two normalized margins", width / 2, 27, {
       align: "center",
       color: colors.heading,
       size: compact ? 13 : 15,
@@ -1631,11 +1659,6 @@
 
     context.fillStyle = "rgba(7, 87, 96, .08)";
     context.fillRect(mapX(passingStart), zeroY, plot.x + plot.width - mapX(passingStart), plot.y + plot.height - zeroY);
-    drawLabel(context, "both tests < 0", mapX(passingStart) + 7, plot.y + plot.height - 9, {
-      color: colors.teal,
-      size: compact ? 10 : 12,
-      weight: 700,
-    });
 
     [-.4, 0, .4, .8, 1.2].forEach((tick) => {
       const y = mapY(tick);
@@ -1696,7 +1719,7 @@
 
     const chosenX = mapX(certificateRadius);
     context.beginPath();
-    context.moveTo(chosenX, plot.y - 4);
+    context.moveTo(chosenX, plot.y);
     context.lineTo(chosenX, plot.y + plot.height);
     context.strokeStyle = colors.heading;
     context.lineWidth = 1.4;
@@ -1717,7 +1740,7 @@
     context.strokeStyle = colors.teal;
     context.lineWidth = 2;
     context.stroke();
-    drawLabel(context, "chosen r = 10⁻⁶", chosenX - 6, plot.y + 14, {
+    drawLabel(context, "chosen r = 10⁻⁶", chosenX - 6, plot.y - 9, {
       align: "right",
       color: colors.heading,
       size: compact ? 10 : 12,
@@ -1757,15 +1780,15 @@
   const drawIterationCertificate = (context, width, height, data) => {
     const compact = width < 520;
     const center = compact
-      ? { x: width / 2, y: height * .27 }
-      : { x: width * .27, y: height * .52 };
+      ? { x: width / 2, y: height * .35 }
+      : { x: width * .27, y: height * .50 };
     const ballRadius = Math.min(
-      compact ? width * .27 : width * .19,
-      compact ? height * .18 : height * .30,
+      compact ? width * .24 : width * .18,
+      compact ? height * .17 : height * .28,
     );
     const enclosureRadius = ballRadius * data.enclosureRatio;
 
-    drawLabel(context, "Rigorous enclosure · schematic geometry", width / 2, 27, {
+    drawLabel(context, compact ? "certified fixed-point ball" : "Rigorous enclosure · schematic geometry", width / 2, 27, {
       align: "center",
       color: colors.heading,
       size: compact ? 13 : 15,
@@ -1804,21 +1827,22 @@
       size: 12,
       weight: 700,
     });
-    drawLabel(context, "Bᵣ(x°)", center.x - ballRadius * .72, center.y - ballRadius * .73, {
+    drawLabel(context, "Bᵣ(x°)", center.x, center.y - ballRadius - 14, {
+      align: "center",
       color: colors.heading,
       size: 12,
       weight: 700,
     });
-    drawLabel(context, "certified enclosure containing T(Bᵣ)", center.x, center.y + enclosureRadius + 18, {
+    drawLabel(context, compact ? "T(Bᵣ) fits inside Bᵣ" : "certified T(Bᵣ) enclosure lies inside Bᵣ", center.x, center.y + ballRadius + 22, {
       align: "center",
       color: colors.teal,
-      size: compact ? 10 : 12,
+      size: 14,
       weight: 700,
     });
-    drawLabel(context, "x* enclosure about x° is subpixel", center.x, center.y + ballRadius + 22, {
+    drawLabel(context, "x* is within 0.000420r of x°", center.x, center.y + ballRadius + 44, {
       align: "center",
       color: colors.accent,
-      size: compact ? 10 : 12,
+      size: 14,
     });
 
     context.beginPath();
@@ -1827,30 +1851,25 @@
     context.fill();
 
     const inset = compact
-      ? { x: 22, y: height * .57, width: width - 44, height: height * .35 }
+      ? { x: 20, y: height * .68, width: width - 40, height: height * .27 }
       : { x: width * .55, y: height * .18, width: width * .40, height: height * .68 };
     context.fillStyle = "rgba(255, 255, 248, .96)";
     context.fillRect(inset.x, inset.y, inset.width, inset.height);
     context.strokeStyle = colors.ruleDark;
     context.lineWidth = 1.2;
     context.strokeRect(inset.x + .5, inset.y + .5, inset.width - 1, inset.height - 1);
-    drawLabel(context, "~600× magnified schematic inset", inset.x + inset.width / 2, inset.y + 22, {
+    drawLabel(context, "magnified fixed-point orbit", inset.x + inset.width / 2, inset.y + 22, {
       align: "center",
       color: colors.heading,
-      size: compact ? 11 : 13,
+      size: 14,
       weight: 700,
-    });
-    drawLabel(context, "orientation and path are illustrative", inset.x + inset.width / 2, inset.y + 40, {
-      align: "center",
-      color: colors.muted,
-      size: compact ? 9 : 11,
     });
 
     const insetCenter = {
       x: inset.x + inset.width * .48,
-      y: inset.y + inset.height * .58,
+      y: inset.y + inset.height * (compact ? .52 : .58),
     };
-    const insetRadius = Math.min(inset.width, inset.height) * .27;
+    const insetRadius = Math.min(inset.width, inset.height) * (compact ? .18 : .27);
     context.beginPath();
     context.arc(insetCenter.x, insetCenter.y, insetRadius, 0, Math.PI * 2);
     context.fillStyle = "rgba(160, 0, 0, .07)";
@@ -1860,13 +1879,6 @@
     context.setLineDash([4, 3]);
     context.stroke();
     context.setLineDash([]);
-    drawLabel(context, "‖x*−x°‖/r < 0.000420", insetCenter.x, insetCenter.y + insetRadius + 17, {
-      align: "center",
-      color: colors.accent,
-      size: compact ? 9 : 11,
-      weight: 700,
-    });
-
     const representative = {
       x: insetCenter.x + insetRadius * .38,
       y: insetCenter.y - insetRadius * .25,
@@ -1916,25 +1928,26 @@
     context.strokeStyle = colors.accent;
     context.lineWidth = 2;
     context.stroke();
-    drawLabel(context, "representative x*", representative.x + 7, representative.y - 7, {
+    const fixedPointLabelX = insetCenter.x + insetRadius + 12;
+    context.beginPath();
+    context.moveTo(representative.x + 7, representative.y);
+    context.lineTo(fixedPointLabelX - 5, representative.y);
+    context.strokeStyle = colors.accent;
+    context.lineWidth = 1.1;
+    context.stroke();
+    drawLabel(context, "x*", fixedPointLabelX, representative.y + 5, {
       color: colors.accent,
-      size: compact ? 10 : 12,
+      size: 14,
       weight: 700,
     });
-    drawLabel(context, "distance bound ≤ qⁿ of the start", inset.x + inset.width / 2, inset.y + inset.height - 12, {
+    drawLabel(context, compact ? "distance shrinks by factor q" : "distance shrinks by q each step", inset.x + inset.width / 2, inset.y + inset.height - 10, {
       align: "center",
       color: colors.teal,
-      size: compact ? 9 : 11,
+      size: 14,
       weight: 700,
     });
 
-    if (compact) {
-      drawArrow(context, center.x, center.y + ballRadius + 28, inset.x + inset.width * .80, inset.y - 6, {
-        color: colors.ruleDark,
-        dashed: true,
-        head: 6,
-      });
-    } else {
+    if (!compact) {
       drawArrow(context, center.x + 4, center.y - 4, inset.x - 11, inset.y + inset.height * .48, {
         color: colors.ruleDark,
         dashed: true,
@@ -2102,10 +2115,10 @@
   const drawReconstructionEnclosure = (context, width, height) => {
     const compact = width < 520;
     const centerX = compact ? width / 2 : width * .27;
-    const centerY = compact ? height * .27 : height * .54;
+    const centerY = compact ? height * .31 : height * .53;
     const radius = Math.min(
-      compact ? width * .24 : width * .18,
-      compact ? height * .18 : height * .30,
+      compact ? width * .22 : width * .18,
+      compact ? height * .17 : height * .28,
     );
     traceConformalBoundary(context, centerX, centerY, radius, 1, {
       stroke: "rgba(160, 0, 0, .14)",
@@ -2116,13 +2129,13 @@
       lineWidth: 2.3,
       fill: colors.tealLight,
     });
-    drawLabel(context, "finite numerical centre", centerX, centerY - radius - 20, {
+    drawLabel(context, "finite numerical centre", centerX, centerY - radius - 16, {
       align: "center",
       color: colors.heading,
       size: 14,
       weight: 700,
     });
-    drawLabel(context, "certified tube · enlarged", centerX, centerY + radius + 23, {
+    drawLabel(context, "certified tube · enlarged", centerX, centerY + radius + 22, {
       align: "center",
       color: colors.accent,
       size: 14,
@@ -2139,14 +2152,14 @@
     context.stroke();
 
     const inset = compact
-      ? { x: 22, y: height * .58, width: width - 44, height: height * .34 }
-      : { x: width * .56, y: height * .28, width: width * .38, height: height * .47 };
+      ? { x: 20, y: height * .60, width: width - 40, height: height * .35 }
+      : { x: width * .56, y: height * .26, width: width * .38, height: height * .50 };
     context.fillStyle = "rgba(255, 255, 248, .92)";
     context.fillRect(inset.x, inset.y, inset.width, inset.height);
     context.strokeStyle = colors.ruleDark;
     context.lineWidth = 1.2;
     context.strokeRect(inset.x + .5, inset.y + .5, inset.width - 1, inset.height - 1);
-    drawLabel(context, "one boundary segment · greatly enlarged", inset.x + inset.width / 2, inset.y + 23, {
+    drawLabel(context, "certified tube ≤ 7.13 × 10⁻¹¹", inset.x + inset.width / 2, inset.y + 22, {
       align: "center",
       color: colors.heading,
       size: compact ? 12 : 14,
@@ -2155,8 +2168,8 @@
 
     const lineLeft = inset.x + 22;
     const lineRight = inset.x + inset.width - 22;
-    const lineCenterY = inset.y + inset.height * .56;
-    const tubeHalfWidth = Math.max(11, inset.height * .12);
+    const lineCenterY = inset.y + inset.height * .54;
+    const tubeHalfWidth = Math.max(10, inset.height * .11);
     const wave = (x) => 4 * Math.sin((x - lineLeft) / Math.max(1, lineRight - lineLeft) * Math.PI * 1.25 - .4);
     context.beginPath();
     for (let step = 0; step <= 80; step += 1) {
@@ -2197,31 +2210,18 @@
     context.stroke();
     context.setLineDash([]);
 
-    drawLabel(context, "computed", lineLeft, lineCenterY - tubeHalfWidth - 8, {
+    drawLabel(context, "computed boundary", lineLeft, lineCenterY - tubeHalfWidth - 9, {
       color: colors.accent,
       size: compact ? 12 : 14,
       weight: 700,
     });
-    drawLabel(context, "schematic candidate inside tube", lineRight, lineCenterY + tubeHalfWidth + (compact ? 16 : 18), {
+    drawLabel(context, "exact boundary lies in tube", lineRight, lineCenterY + tubeHalfWidth + 20, {
       align: "right",
       color: colors.teal,
       size: compact ? 12 : 14,
       weight: 700,
     });
-    drawLabel(context, "distance ≤ 7.13 × 10⁻¹¹", inset.x + inset.width / 2, inset.y + inset.height - (compact ? 4 : 14), {
-      align: "center",
-      color: colors.heading,
-      size: compact ? 12 : 14,
-      weight: 700,
-    });
-
-    if (compact) {
-      drawArrow(context, highlightX, highlightY + 14, inset.x + inset.width * .72, inset.y - 10, {
-        color: colors.ruleDark,
-        dashed: true,
-        head: 6,
-      });
-    } else {
+    if (!compact) {
       drawArrow(context, highlightX + 15, highlightY, inset.x - 14, inset.y + inset.height * .48, {
         color: colors.ruleDark,
         dashed: true,
@@ -2233,15 +2233,15 @@
   const drawReconstructionUnivalence = (context, width, height) => {
     const compact = width < 520;
     const radius = Math.min(
-      compact ? width * .23 : width * .17,
-      compact ? height * .16 : height * .29,
+      compact ? width * .21 : width * .17,
+      compact ? height * .14 : height * .27,
     );
     const diskCenter = compact
-      ? { x: width / 2, y: height * .25 }
-      : { x: width * .25, y: height * .53 };
+      ? { x: width / 2, y: height * .28 }
+      : { x: width * .25, y: height * .52 };
     const domainCenter = compact
-      ? { x: width / 2, y: height * .75 }
-      : { x: width * .75, y: height * .53 };
+      ? { x: width / 2, y: height * .73 }
+      : { x: width * .75, y: height * .52 };
 
     context.beginPath();
     context.arc(diskCenter.x, diskCenter.y, radius, 0, Math.PI * 2);
@@ -2256,13 +2256,13 @@
       lineWidth: 2.2,
     });
 
-    drawLabel(context, "unit disk", diskCenter.x, diskCenter.y - radius - 20, {
+    drawLabel(context, "unit disk", diskCenter.x, diskCenter.y - radius - (compact ? 16 : 20), {
       align: "center",
       color: colors.heading,
       size: 14,
       weight: 700,
     });
-    drawLabel(context, "numerical centre map shown", domainCenter.x, domainCenter.y - radius - 20, {
+    drawLabel(context, compact ? "mapped domain" : "numerical centre map shown", domainCenter.x, domainCenter.y - radius - (compact ? 16 : 20), {
       align: "center",
       color: colors.heading,
       size: 14,
@@ -2319,10 +2319,10 @@
     const mappedStart = domainProject(mappedAt(0));
     const mappedEnd = domainProject(mappedAt(1));
     [
-      { point: diskStart, label: "z₁" },
-      { point: diskEnd, label: "z₂" },
-      { point: mappedStart, label: "φ(z₁)" },
-      { point: mappedEnd, label: "φ(z₂)" },
+      { point: diskStart, label: "z₁", dx: -8, dy: 20, align: "right" },
+      { point: diskEnd, label: "z₂", dx: 8, dy: -10, align: "left" },
+      { point: mappedStart, label: "φ(z₁)", dx: -8, dy: 20, align: "right" },
+      { point: mappedEnd, label: "φ(z₂)", dx: 8, dy: -10, align: "left" },
     ].forEach((item) => {
       context.beginPath();
       context.arc(item.point.x, item.point.y, 3.8, 0, Math.PI * 2);
@@ -2331,7 +2331,8 @@
       context.strokeStyle = colors.accent;
       context.lineWidth = 1.8;
       context.stroke();
-      drawLabel(context, item.label, item.point.x + 7, item.point.y - 7, {
+      drawLabel(context, item.label, item.point.x + item.dx, item.point.y + item.dy, {
+        align: item.align,
         color: colors.accent,
         size: 14,
         weight: 700,
@@ -2339,11 +2340,11 @@
     });
 
     if (compact) {
-      const arrowX = width / 2 + radius + 19;
+      const arrowX = width / 2 + radius + 18;
       const fromY = diskCenter.y + radius * .72;
       const toY = domainCenter.y - radius * .72;
       drawArrow(context, arrowX, fromY, arrowX, toY, { color: colors.accent, width: 2, head: 7 });
-      drawLabel(context, "φₚ*", arrowX + 11, (fromY + toY) / 2 + 4, { color: colors.accent, size: 14, weight: 700 });
+      drawLabel(context, "φₚ*", arrowX + 10, (fromY + toY) / 2 + 4, { color: colors.accent, size: 14, weight: 700 });
     } else {
       const fromX = diskCenter.x + radius + 24;
       const toX = domainCenter.x - radius - 24;
@@ -2351,7 +2352,7 @@
       drawLabel(context, "φₚ*", (fromX + toX) / 2, diskCenter.y - 14, { align: "center", color: colors.accent, size: 14, weight: 700 });
     }
 
-    drawLabel(context, "Re φ′ > 0.35 is certified for the whole ball", width / 2, height - 18, {
+    drawLabel(context, "Re φ′ > 0.35 ⇒ φ(z₁) ≠ φ(z₂)", width / 2, height - 18, {
       align: "center",
       color: colors.teal,
       size: 14,
@@ -2363,14 +2364,14 @@
     const compact = width < 520;
     const radius = Math.min(
       compact ? width * .21 : width * .175,
-      compact ? height * .17 : height * .30,
+      compact ? height * .14 : height * .28,
     );
     const circleCenter = compact
-      ? { x: width / 2, y: height * .25 }
-      : { x: width * .25, y: height * .53 };
+      ? { x: width / 2, y: height * .27 }
+      : { x: width * .25, y: height * .52 };
     const domainCenter = compact
-      ? { x: width / 2, y: height * .74 }
-      : { x: width * .75, y: height * .53 };
+      ? { x: width / 2, y: height * .73 }
+      : { x: width * .75, y: height * .52 };
 
     context.beginPath();
     context.arc(circleCenter.x, circleCenter.y, radius, 0, Math.PI * 2);
@@ -2379,7 +2380,7 @@
     context.strokeStyle = colors.heading;
     context.lineWidth = 2;
     context.stroke();
-    drawLabel(context, "linear map", circleCenter.x, circleCenter.y - radius - (compact ? 5 : 20), {
+    drawLabel(context, "linear map", circleCenter.x, circleCenter.y - radius - (compact ? 16 : 20), {
       align: "center",
       color: colors.heading,
       size: 14,
@@ -2403,25 +2404,18 @@
       stroke: colors.accent,
       lineWidth: 2.5,
     });
-    drawLabel(context, "numerical centre", domainCenter.x, domainCenter.y - radius - 24, {
+    drawLabel(context, "final non-disk domain", domainCenter.x, compact ? domainCenter.y + 5 : domainCenter.y - radius - 24, {
       align: "center",
       color: colors.heading,
       size: 14,
       weight: 700,
     });
-    drawLabel(context, "exact boundary is indistinguishable at this scale", domainCenter.x, domainCenter.y - radius - 5, {
-      align: "center",
-      color: colors.accent,
-      size: 12,
-      weight: 700,
-    });
-
     if (compact) {
-      const arrowX = width / 2 + radius + 19;
+      const arrowX = width / 2 + radius + 18;
       const fromY = circleCenter.y + radius * .72;
       const toY = domainCenter.y - radius * .72;
       drawArrow(context, arrowX, fromY, arrowX, toY, { color: colors.accent, width: 2, head: 7 });
-      drawLabel(context, "q₁* z¹¹ is present", width / 2, circleCenter.y + radius + 21, {
+      drawLabel(context, "q₁* z¹¹ ≠ 0", width / 2, circleCenter.y + radius + 21, {
         align: "center",
         color: colors.accent,
         size: 14,
@@ -2431,7 +2425,7 @@
       const fromX = circleCenter.x + radius + 24;
       const toX = domainCenter.x - radius - 24;
       drawArrow(context, fromX, circleCenter.y, toX, domainCenter.y, { color: colors.accent, width: 2, head: 7 });
-      drawLabel(context, "q₁* z¹¹ is present", (fromX + toX) / 2, circleCenter.y - 15, {
+      drawLabel(context, "q₁* z¹¹ ≠ 0", (fromX + toX) / 2, circleCenter.y - 15, {
         align: "center",
         color: colors.accent,
         size: 14,
@@ -2439,7 +2433,7 @@
       });
     }
 
-    drawLabel(context, "|q₁*| > 0.03459, so the map is not linear", width / 2, height - 18, {
+    drawLabel(context, compact ? "|q₁*| > 0.03459 ⇒ not linear" : "|q₁*| > 0.03459, so the map is not linear", width / 2, height - 18, {
       align: "center",
       color: colors.accent,
       size: 14,
@@ -2564,7 +2558,7 @@
       left: Math.max(20, box.width * .09),
       right: Math.max(14, box.width * .06),
       top: Math.max(21, box.height * .14),
-      bottom: Math.max(23, box.height * .16),
+      bottom: Math.max(34, box.height * .18),
     };
     const left = box.x + margin.left;
     const right = box.x + box.width - margin.right;
@@ -2638,13 +2632,14 @@
       context.stroke();
     }
 
-    drawLabel(context, "inside", left, bottom + 17, { color: colors.muted, size: 10 });
-    drawLabel(context, "boundary", boundaryX - 18, bottom + 17, { align: "right", color: colors.muted, size: 10 });
-    drawLabel(context, "outside", right, bottom + 17, { align: "right", color: colors.muted, size: 10 });
+    const axisY = bottom + 20;
+    drawLabel(context, "s < 0", left, axisY, { color: colors.muted, size: 14 });
+    drawLabel(context, "0", boundaryX - 15, axisY, { align: "right", color: colors.muted, size: 14 });
+    drawLabel(context, "s > 0", right, axisY, { align: "right", color: colors.muted, size: 14 });
     drawLabel(context, schiffer ? "u = 1" : "u = 0", boundaryX - 8, mapY(boundaryValue) - 9, {
       align: "right",
       color,
-      size: 12,
+      size: 14,
       weight: 700,
     });
   };
@@ -2654,43 +2649,50 @@
     const color = schiffer ? colors.accent : colors.teal;
     const title = schiffer ? "Schiffer endpoint" : "Berenstein endpoint";
     const data = schiffer ? "height 1 · slope 0" : "height 0 · slope 1";
+    const stackHeader = box.width < 310;
+    const headerHeight = stackHeader ? 52 : 31;
     context.beginPath();
     context.moveTo(box.x, box.y + 1);
     context.lineTo(box.x + box.width, box.y + 1);
     context.strokeStyle = color;
     context.lineWidth = 2;
     context.stroke();
-    drawLabel(context, title, box.x, box.y + 20, { color, size: 12, weight: 700 });
-    drawLabel(context, data, box.x + box.width, box.y + 20, { align: "right", color: colors.heading, size: 12 });
+    drawLabel(context, title, box.x, box.y + 20, { color, size: 14, weight: 700 });
+    drawLabel(context, data, stackHeader ? box.x : box.x + box.width, box.y + (stackHeader ? 42 : 20), {
+      align: stackHeader ? "left" : "right",
+      color: colors.heading,
+      size: 14,
+    });
 
     const rowLayout = box.height < 270;
     if (rowLayout) {
       const domainWidth = Math.min(92, box.width * .36);
       drawBerensteinDomainGlyph(context, {
         x: box.x + 1,
-        y: box.y + 31,
+        y: box.y + headerHeight,
         width: domainWidth,
-        height: box.height - 39,
+        height: box.height - headerHeight - 4,
       }, kind, emphasis);
       drawBerensteinProfile(context, {
         x: box.x + domainWidth + 3,
-        y: box.y + 27,
+        y: box.y + headerHeight - 4,
         width: box.width - domainWidth - 3,
-        height: box.height - 31,
+        height: box.height - headerHeight,
       }, kind, emphasis);
     } else {
-      const domainHeight = Math.min(148, box.height * .39);
+      const contentHeight = box.height - headerHeight;
+      const domainHeight = Math.min(148, contentHeight * .40);
       drawBerensteinDomainGlyph(context, {
         x: box.x + box.width * .19,
-        y: box.y + 27,
+        y: box.y + headerHeight,
         width: box.width * .62,
         height: domainHeight,
       }, kind, emphasis);
       drawBerensteinProfile(context, {
         x: box.x + 1,
-        y: box.y + domainHeight + 24,
+        y: box.y + headerHeight + domainHeight,
         width: box.width - 2,
-        height: box.height - domainHeight - 27,
+        height: contentHeight - domainHeight,
       }, kind, emphasis);
     }
   };
@@ -2960,12 +2962,6 @@
       context.strokeStyle = colors.teal;
       context.lineWidth = 2.5;
       context.stroke();
-      drawLabel(context, "all interior and boundary rows satisfied", centerX, centerY + 4, {
-        align: "center",
-        color: colors.teal,
-        size: compact ? 11 : 13,
-        weight: 700,
-      });
     } else {
       traceSymmetricOutline(context, centerX, centerY, radius, state.folds, amplitude);
       context.fillStyle = "rgba(255, 255, 248, .98)";
@@ -2986,16 +2982,11 @@
       context.setLineDash([5, 5]);
       context.stroke();
       context.setLineDash([]);
-      drawLabel(context, "interior unresolved", centerX, centerY - 3, {
+      drawLabel(context, "unresolved", centerX, centerY + 4, {
         align: "center",
         color: colors.muted,
         size: compact ? 12 : 14,
         weight: 700,
-      });
-      drawLabel(context, "local theory does not fill this region", centerX, centerY + 18, {
-        align: "center",
-        color: colors.muted,
-        size: compact ? 9 : 11,
       });
     }
 
@@ -3035,8 +3026,8 @@
     drawLabel(
       context,
       isGlobal
-        ? "fixed-disk equations + compatibility + infinite tails"
-        : "analytic Cauchy data ⇒ a sufficiently thin collar",
+        ? (compact ? "fixed-disk bounds close globally" : "fixed-disk equations + compatibility + infinite tails")
+        : (compact ? "Cauchy data give a collar only" : "analytic Cauchy data ⇒ a sufficiently thin collar"),
       centerX,
       height - 18,
       {

@@ -1,0 +1,122 @@
+# Paper of the Future concept demonstration
+
+Internal rough draft for Gonzalo, Matt, George, and Jaume.
+
+## Concept
+
+This should be a selective demonstration of what the website communicates that the papers cannot communicate in the same way—not a compressed tour of every section.
+
+The central idea is that a reader can move between three linked levels of each construction:
+
+1. the geometric idea;
+2. the reformulation of a changing domain as an equation on a fixed space; and
+3. the rigorous argument that proves an exact solution exists.
+
+Interactive transitions let readers recognize the same mathematical object as its representation changes. Evidence labels and captions distinguish exploratory numerics, explanatory diagrams, exact algebra, and rigorous certification. The parallel layout also lets readers compare two very different proof structures without forcing either into the linear order of the other.
+
+Target duration: 3:50–4:05, about 540 spoken words.
+
+## Recording setup
+
+There is no build step for the current site. From the repository root, run:
+
+    python3 -m http.server 8000
+
+Each person should record the screen and narration for their own segment. Use the same 16:9 browser size, 100% zoom, cursor size, and light/dark setting for all four recordings. Preload the figures, begin and end each clip with a one-second pause, and make the final cuts while a heading or static figure is visible.
+
+The main stops are:
+
+1. http://localhost:8000/#top
+2. http://localhost:8000/#routeComparisonTitle
+3. http://localhost:8000/#computerOverviewFigureTitle
+4. http://localhost:8000/#certificateFigureTitle
+5. http://localhost:8000/#reconstructionFigureTitle
+6. http://localhost:8000/#berensteinFixedDiscTitle
+7. http://localhost:8000/#cone-route
+8. http://localhost:8000/#phase-story
+9. http://localhost:8000/#abundance-experiment
+10. http://localhost:8000/#modes-experiment
+
+## Script and shot list
+
+### 0:00–0:45 — Gonzalo — The problem and the website’s purpose
+
+Screen: Begin on the title, author names, and main theorem. Briefly reveal the Schiffer boundary-value problem, then settle on the table comparing the two proof routes. Do not detour through the introductory applets.
+
+GONZALO:
+
+“The planar Schiffer conjecture asks whether a smooth connected domain supporting a nonconstant Laplace eigenfunction with constant boundary value and zero normal derivative must be a disk. Physically, this is a vibration mode that is constant along the edge and has zero outward slope. By its equivalence with Pompeiu’s problem, it also asks whether integrals over every rigid motion determine an unknown function.
+
+“Our papers give two counterexample constructions, plus a Berenstein companion. The website lets readers follow each proof across its geometric picture, analytic reduction, and rigorous closure, while distinguishing certified computation from illustration. Here are the two routes side by side.”
+
+Transition: On “side by side,” hold on the three-row comparison table and then open the computer-assisted overview.
+
+### 0:45–1:30 — Matt — From numerical discovery to a fixed-disc equation
+
+Screen: Use only the first three stages of the computer-assisted overview: “Follow \(c\) to zero,” “Move to one disk,” and “One point, two functions.” Let the animation carry the eye between the physical domain, the disk, and the coefficient point.
+
+MATT:
+
+“The fixed-disc route first relaxes the Neumann condition to \(\partial_\nu u=c\). At a higher \(D_{10}\) Wronskian crossing, the linearization acquires a one-dimensional kernel with a ten-lobed boundary mode. Numerical continuation follows this branch until \(c=0\), producing an accurate numerical centre.
+
+“The overview then tracks the conformal pullback: \(\phi\) maps the unit disk to the unknown domain, while \(U=u\circ\phi\) moves the eigenfunction to that fixed disk. A compatible inverse enforces both boundary conditions and yields a cubic equation for an infinite coefficient vector \(x=(g,p)\), separating field and shape. The numerical branch tells us where to look; the certificate must control the full infinite-dimensional problem.”
+
+Transition: Advance the overview to “Prove convergence,” then cut to the certificate interaction.
+
+### 1:30–2:20 — George — Certification, reconstruction, and the Berenstein companion
+
+Screen: In the certificate figure, begin with “why the radius works,” switch to the iteration view, and run it once. Briefly show the reconstruction checks. Then move to the Schiffer/Berenstein fixed-disc comparison for the final two sentences.
+
+GEORGE:
+
+“The certificate turns this candidate into a theorem. Interval arithmetic controls the finite block, including rounding errors, while analytic estimates bound the infinite tail. At \(r=10^{-6}\), the radii-polynomial inequalities show that a Newton-like map sends the ball into itself and has Lipschitz constant below point six two two. Banach’s fixed-point theorem gives a unique exact solution in that certified ball.
+
+“Reconstruction proves that the conformal map is injective, while a nonzero shape coefficient rules out a disk.
+
+“In companion work with Siavash Sadeghi, the method also adapts to Berenstein’s switched boundary data. The Neumann trace becomes a separate equation; squaring loses its sign, and a certified sign gate recovers \(\partial_\nu u=1\). The side-by-side view makes that structural change visible.”
+
+Transition: Cut from the two fixed-disc formulations to the first stage of the real-order cone overview.
+
+### 2:20–3:58 — Jaume — Real order, quadratic bending, and integer landing
+
+Screen: Run the seven-stage cone overview. Pause at the finite-\(R\) collar and at the integer lift. Then show the quadratic bending plot and the near-integer scatter plot. Finish on the seam-closing visualization, but keep its numerical-illustration caption visible.
+
+JAUME:
+
+“The real-order route begins with an \(N\)-fold quotient. We select one fundamental sector, identify its sides to form a cone, and rescale the angle. The integer \(N\) becomes a real parameter \(R\). Only integer \(R\) unfolds into the plane, but the cone-collar operator makes sense for every real \(R\). The proof works on a fixed collar and uses a Dirichlet-to-Neumann map at its inner boundary to retain the discarded core exactly. The half-cylinder shown here is the limiting model, not the domain of the proof.
+
+“Bifurcation begins at a Dirichlet–Neumann coincidence, \(J_1(\rho)=J_R(\rho)=0\). A uniform Crandall–Rabinowitz theorem produces nontrivial branches for sufficiently large \(R\). The second variation gives \(R'(0)=0\) and \(R''(0)<0\), so the branch bends toward smaller order by a uniform amount.
+
+“The near-integer step uses McMahon and Debye asymptotics together with equidistribution to find crossings \(R_*=N+\delta\) arbitrarily close above integers. Choose \(\delta\) smaller than the uniform decrease. The branch starts above \(N\) and reaches below it, so continuity forces \(R=N\) at nonzero amplitude. The integer lift then unfolds the cone into a noncircular \(D_N\)-symmetric planar Schiffer domain. This works for arbitrarily large \(N\), giving infinitely many examples.
+
+“The displayed \(D_{28}\) continuation illustrates the seam closing, but lies outside the theorem’s spectral window. The site keeps proof and illustration clearly labeled while linking the geometry, bifurcation, and arithmetic.”
+
+End screen: Hold for two seconds on the closed domain and its evidence caption, then fade to the title and the four author names.
+
+## Accuracy notes
+
+- Numerical continuation constructs the centre of the computer-assisted proof; it does not prove that an exact solution exists.
+- The contraction proves uniqueness only inside the certified coefficient ball.
+- The radius \(10^{-6}\) is a weighted coefficient-space radius, not a physical boundary distance.
+- The contraction animation explains the exact inequalities; it does not rerun the archived interval-arithmetic certificate in the browser.
+- The half-cylinder explains the large-order limit; the bifurcation theorem constructs branches directly on finite real-\(R\) collars.
+- The displayed \(D_{28}\) continuation is a numerical illustration outside the proof window. It is not the branch selected in the nonexplicit existence proof.
+- The bifurcation argument gives examples for arbitrarily large rotational orders, not for every sufficiently large order.
+
+## Competition alignment
+
+Checked against the official 2026 Paper of the Future Prize page on August 30, 2026:
+
+https://amathr.org/prizes/paper-of-the-future-prize/
+
+The judges ask each submission to articulate an essential communicative function unavailable in a linear paper. This script therefore emphasizes the synchronized transformations, nonlinear comparison of proof architectures, visible evidence categories, and embedded interactive explanation. It avoids presenting production polish or popularization as the main contribution.
+
+Current submission checklist:
+
+- Upload a short public concept-demonstration video to YouTube.
+- Put a concise explanation of both the mathematics and the communicative innovation in the YouTube description.
+- Include #AMRPotF.
+- Email the YouTube link to PotFPrize@amathr.org by September 1, 2026.
+- If selected as a finalist, provide a fully accessible prototype suitable for AMR Reviews to host or link.
+
+Before recording, verify the official page once more in case the instructions change.

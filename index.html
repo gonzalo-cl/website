@@ -20,7 +20,7 @@
     <script defer src="math.js?v=20260830.1"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tufte-css@1.9.0/tufte.min.css">
     <link rel="stylesheet" href="styles.css?v=20260830.5">
-    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260830.21">
+    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260830.23">
   </head>
   <body class="tufte-site">
     <a class="skip-link" href="#top">Skip to the exposition</a>
@@ -1373,12 +1373,17 @@
           <p>Thus \(Y\) is the size of the first Newton move from the centre, after applying \(\mathcal A\). The number \(Z\) is the worst possible linear stretching left after \(\mathcal A\) tries to invert \(DF(x^\circ)\). Finally, \(C_2\) and \(C_3\) are worst-case bounds for the quadratic and cubic parts. They apply to arbitrary coefficient changes, not samples from a plot.</p>
           <aside class="certificate-scale-budget" aria-labelledby="certificateScaleBudgetTitle">
             <h4 id="certificateScaleBudgetTitle">The scale budget at \(r=10^{-6}\)</h4>
-            <div>
-              <span><b>residual</b> \(Y\le1.59\times10^{-10}\)</span>
-              <span><b>linear defect</b> \(Zr\le6.21\times10^{-7}\)</span>
-              <span><b>quadratic</b> \(C_2r^2\le1.22\times10^{-10}\)</span>
-              <span><b>cubic</b> \(C_3r^3\le1.2\times10^{-20}\)</span>
-            </div>
+            <table class="certificate-scale-table">
+              <thead>
+                <tr><th scope="col">piece</th><th scope="col">term</th><th scope="col">upper bound</th></tr>
+              </thead>
+              <tbody>
+                <tr><th scope="row">residual</th><td>\(Y\)</td><td>\(1.59\times10^{-10}\)</td></tr>
+                <tr><th scope="row">linear defect</th><td>\(Zr\)</td><td>\(6.21\times10^{-7}\)</td></tr>
+                <tr><th scope="row">quadratic</th><td>\(C_2r^2\)</td><td>\(1.22\times10^{-10}\)</td></tr>
+                <tr><th scope="row">cubic</th><td>\(C_3r^3\)</td><td>\(1.2\times10^{-20}\)</td></tr>
+              </tbody>
+            </table>
             <p>The linear inverse defect dominates. Although \(C_2=122\) looks large alone, multiplication by \(r^2\) makes its contribution tiny. Together the four pieces use less than \(0.622r\).</p>
           </aside>
         </div>
@@ -1634,7 +1639,11 @@
         <figure class="computer-assisted-figure interactive-plate figure-band berenstein-field-comparison" data-apparatus="visual-aside" data-figure="berenstein-field-comparison" data-evidence="Certified reconstruction" aria-labelledby="berensteinFieldComparisonTitle">
           <section class="computer-assisted-canvas-panel apparatus-visual berenstein-field-portrait" aria-label="Certified Berenstein field portrait">
             <div id="berensteinFieldViewport" class="berenstein-field-viewport">
-              <img src="assets/berenstein-domain-solution.png" width="1890" height="1560" loading="lazy" decoding="async" alt="The finite numerical centre of the thirteenfold Berenstein domain, coloured blue and orange in alternating sign bands and separated by eight plotted interior zero curves">
+              <svg class="berenstein-field-image" viewBox="270 10 1348 1348" role="img" aria-labelledby="berensteinFieldImageTitle berensteinFieldImageDesc">
+                <title id="berensteinFieldImageTitle">Finite numerical centre of the Berenstein field</title>
+                <desc id="berensteinFieldImageDesc">A thirteenfold domain with alternating blue and orange sign bands separated by eight plotted interior zero curves.</desc>
+                <image href="assets/berenstein-domain-solution.png" width="1890" height="1560"></image>
+              </svg>
             </div>
             <div class="berenstein-field-legend" aria-label="Field colour key">
               <span><i class="berenstein-legend-positive"></i>positive \(u\)</span>
@@ -2931,7 +2940,7 @@
     <script defer src="story.js?v=20260830.6"></script>
     <script defer src="abundance.js?v=20260830.1"></script>
     <script defer src="pompeiu.js?v=20260830.1"></script>
-    <script defer src="computer-assisted.js?v=20260830.15"></script>
+    <script defer src="computer-assisted.js?v=20260830.16"></script>
     <script defer src="applet-layout.js?v=20260830.1"></script>
     <script defer src="tufte/layout-contract.js?v=20260830.12"></script>
   </body>
