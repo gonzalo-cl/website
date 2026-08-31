@@ -297,7 +297,7 @@
   const drawLabel = (context, text, x, y, options = {}) => {
     const requestedSize = Number(options.size ?? 12);
     const size = computerProofFigureIds.has(context.canvas?.id)
-      ? Math.max(14, requestedSize)
+      ? Math.max(16, requestedSize)
       : requestedSize;
     context.fillStyle = options.color || colors.muted;
     context.font = `${options.weight || 400} ${size}px et-book, Palatino, Georgia, serif`;
@@ -1370,12 +1370,12 @@
     const labelWidth = compact ? 54 : 70;
     const stripX = diagram.x + labelWidth;
     const stripWidth = diagram.width - labelWidth;
-    const finiteWidth = stripWidth * .47;
+    const finiteWidth = stripWidth * (compact ? .44 : .47);
     const omittedWidth = stripWidth * .08;
-    const nearbyWidth = stripWidth * .15;
+    const nearbyWidth = stripWidth * (compact ? .20 : .15);
     const remoteWidth = stripWidth - finiteWidth - omittedWidth - nearbyWidth;
-    const gTop = diagram.y + 36;
-    const gHeight = diagram.height * .48;
+    const gTop = diagram.y + (compact ? 54 : 50);
+    const gHeight = diagram.height * (compact ? .44 : .48);
     const pTop = diagram.y + diagram.height * .72;
     const pHeight = Math.max(30, diagram.height * .13);
 
@@ -1406,7 +1406,7 @@
     context.lineWidth = .7;
     const gridColumns = compact ? 8 : 12;
     const gridRows = compact ? 5 : 8;
-    const finiteGHeaderHeight = 28;
+    const finiteGHeaderHeight = 30;
     for (let column = 1; column < gridColumns; column += 1) {
       const x = finiteG.x + column / gridColumns * finiteG.width;
       context.beginPath();
@@ -1422,7 +1422,8 @@
       context.lineTo(finiteG.x + finiteG.width, y);
       context.stroke();
     }
-    drawLabel(context, "61 × 40 stored", finiteG.x + 9, finiteG.y + 19, {
+    drawLabel(context, finiteG.width < 120 ? "61 × 40" : "61 × 40 stored", finiteG.x + finiteG.width / 2, finiteG.y + 20, {
+      align: "center",
       color: colors.teal,
       size: 14,
       weight: 700,
@@ -1435,7 +1436,7 @@
     context.lineWidth = 1.5;
     context.strokeRect(finiteP.x + .5, finiteP.y + .5, finiteP.width - 1, finiteP.height - 1);
     const detailedPLabel = finiteP.width >= 180;
-    const finitePLabelSafeRight = finiteP.x + (detailedPLabel ? 154 : 82);
+    const finitePLabelSafeRight = finiteP.x + (detailedPLabel ? 164 : finiteP.width);
     for (let cell = 1; cell < 10; cell += 1) {
       const x = finiteP.x + cell / 10 * finiteP.width;
       if (x <= finitePLabelSafeRight) continue;
@@ -1445,7 +1446,8 @@
       context.strokeStyle = "rgba(7, 87, 96, .20)";
       context.stroke();
     }
-    drawLabel(context, detailedPLabel ? "31 stored · j = 0…30" : "31 stored", finiteP.x + 8, finiteP.y + finiteP.height / 2 + 1, {
+    drawLabel(context, detailedPLabel ? "31 stored · j = 0…30" : "31 stored", finiteP.x + finiteP.width / 2, finiteP.y + finiteP.height / 2 + 1, {
+      align: "center",
       baseline: "middle",
       color: colors.teal,
       size: 14,
@@ -1455,26 +1457,29 @@
     const omittedX = stripX + finiteWidth;
     const nearbyX = omittedX + omittedWidth;
     const remoteX = nearbyX + nearbyWidth;
+    const footerLabelY = pTop + pHeight + 24;
+    const compressedTailLabels = compact || stripWidth < 340;
     if (selectedTailStage >= 1) {
+      const reachedBandHeight = 28;
       context.fillStyle = "rgba(160, 0, 0, .09)";
       context.fillRect(omittedX, gTop, omittedWidth, gHeight);
       context.fillRect(omittedX, pTop, omittedWidth, pHeight);
-      context.fillRect(finiteG.x, gTop - 13, finiteG.width + omittedWidth, 13);
+      context.fillRect(finiteG.x, gTop - reachedBandHeight, finiteG.width + omittedWidth, reachedBandHeight);
       context.strokeStyle = colors.accent;
       context.lineWidth = 1.2;
       context.setLineDash([4, 3]);
       context.strokeRect(omittedX + .5, gTop + .5, omittedWidth - 1, gHeight - 1);
       context.strokeRect(omittedX + .5, pTop + .5, omittedWidth - 1, pHeight - 1);
-      context.strokeRect(finiteG.x + .5, gTop - 12.5, finiteG.width + omittedWidth - 1, 12);
+      context.strokeRect(finiteG.x + .5, gTop - reachedBandHeight + .5, finiteG.width + omittedWidth - 1, reachedBandHeight - 1);
       context.setLineDash([]);
-      drawLabel(context, compact ? "reached rows" : "reached equations", finiteG.x + 6, gTop - 4, {
+      drawLabel(context, compact && finiteG.width + omittedWidth < 130 ? "outer rows" : compact ? "reached rows" : "reached equations", finiteG.x + (finiteG.width + omittedWidth) / 2, gTop - reachedBandHeight / 2 + 1, {
+        align: "center",
         baseline: "middle",
         color: colors.accent,
         size: 14,
         weight: 700,
       });
-      drawLabel(context, compact ? "rows ≠ variables" : "rows ≠ unknowns", omittedX + omittedWidth / 2, pTop + pHeight + 20, {
-        align: "center",
+      drawLabel(context, compressedTailLabels ? "extra rows" : "rows ≠ unknowns", finiteP.x, footerLabelY, {
         color: colors.accent,
         size: compact ? 10 : 12,
       });
@@ -1525,8 +1530,8 @@
         size: 14,
         weight: 700,
       });
-      drawLabel(context, compact ? "K bound ∼ D⁻²" : "K-mode bound ∼ D⁻²", remoteX + remoteWidth / 2, gTop + gHeight - 12, {
-        align: "center",
+      drawLabel(context, compressedTailLabels ? "D⁻² tail" : "K-mode bound ∼ D⁻²", stripX + stripWidth, footerLabelY, {
+        align: "right",
         color: colors.blue,
         size: 14,
         weight: 700,
@@ -1542,19 +1547,19 @@
       context.strokeStyle = colors.heading;
       context.lineWidth = 1.5;
       context.strokeRect(checker.x + .5, checker.y + .5, checker.width - 1, checker.height - 1);
-      drawLabel(context, "exact checker", checker.x + checker.width / 2, checker.y + checker.height * .24, {
+      drawLabel(context, "exact checker", checker.x + checker.width / 2, checker.y + checker.height * .29, {
         align: "center",
         color: colors.heading,
         size: 14,
         weight: 700,
       });
-      drawLabel(context, checker.width < 160 ? "core + near + tail" : "finite + nearby + tail", checker.x + checker.width / 2, checker.y + checker.height * .55, {
+      drawLabel(context, checker.width < 160 ? "all bounds" : "finite + nearby + tail", checker.x + checker.width / 2, checker.y + checker.height * .56, {
         align: "center",
         baseline: "middle",
         color: colors.muted,
         size: 14,
       });
-      drawLabel(context, "Y, Z, C₂, C₃", checker.x + checker.width / 2, checker.y + checker.height * .81, {
+      drawLabel(context, "Y, Z, C₂, C₃", checker.x + checker.width / 2, checker.y + checker.height * .80, {
         align: "center",
         baseline: "middle",
         color: colors.accent,

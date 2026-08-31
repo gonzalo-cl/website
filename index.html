@@ -20,7 +20,7 @@
     <script defer src="math.js?v=20260830.1"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tufte-css@1.9.0/tufte.min.css">
     <link rel="stylesheet" href="styles.css?v=20260830.5">
-    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260830.23">
+    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260831.2">
   </head>
   <body class="tufte-site">
     <a class="skip-link" href="#top">Skip to the exposition</a>
@@ -1014,9 +1014,9 @@
             <div class="computer-assisted-control apparatus-control">
               <label for="searchStage">Search stage <output id="searchStageValue" for="searchStage">ten-fold direction</output></label>
               <select id="searchStage">
-                <option value="0">1 · ten-fold direction</option>
-                <option value="1">2 · follow relaxed solutions</option>
-                <option value="2">3 · reach zero flux</option>
+                <option value="0">1 · ten-fold seed</option>
+                <option value="1">2 · follow branch</option>
+                <option value="2">3 · zero flux</option>
               </select>
             </div>
             <output id="searchStageStatus" class="computer-assisted-status" for="searchStage" aria-live="polite">At this disk frequency, the equations allow a ten-lobed first motion.</output>
@@ -1281,10 +1281,10 @@
               <label for="tailStage">Part of the estimate <output id="tailStageValue" for="tailStage">finite core</output></label>
               <select id="tailStage">
                 <option value="0">1 · finite core</option>
-                <option value="1">2 · checked outer equations</option>
-                <option value="2">3 · nearby interaction band</option>
-                <option value="3">4 · remote analytic tail</option>
-                <option value="4">5 · combine all bounds</option>
+                <option value="1">2 · outer rows</option>
+                <option value="2">3 · nearby band</option>
+                <option value="3">4 · remote tail</option>
+                <option value="4">5 · all bounds</option>
               </select>
             </div>
             <output id="tailStatus" class="computer-assisted-status" for="tailStage" aria-live="polite">The finite matrix contains 2,440 field coefficients and 31 shape-and-frequency coefficients.</output>
@@ -1447,8 +1447,8 @@
             <div class="computer-assisted-control apparatus-control">
               <label for="certificateView">Certificate view <output id="certificateViewValue" for="certificateView">why the radius works</output></label>
               <select id="certificateView">
-                <option value="radius">1 · why the radius works</option>
-                <option value="iteration">2 · why iteration converges</option>
+                <option value="radius">1 · radius test</option>
+                <option value="iteration">2 · iteration</option>
               </select>
             </div>
             <p class="computer-assisted-status"><strong>Chosen radius:</strong> \(r=10^{-6}\).</p>
@@ -1541,9 +1541,9 @@
             <div class="computer-assisted-control apparatus-control">
               <label for="reconstructionStage">Geometry check <output id="reconstructionStageValue" for="reconstructionStage">exact boundary is nearby</output></label>
               <select id="reconstructionStage">
-                <option value="0">1 · exact boundary is nearby</option>
-                <option value="1">2 · map does not fold</option>
-                <option value="2">3 · shape is not a disk</option>
+                <option value="0">1 · boundary tube</option>
+                <option value="1">2 · no folding</option>
+                <option value="2">3 · non-disk</option>
               </select>
             </div>
             <output id="reconstructionStatus" class="computer-assisted-status" for="reconstructionStage" aria-live="polite">The exact boundary is uniformly within \(7.13\times10^{-11}\) of the printed centre.</output>
@@ -1627,9 +1627,9 @@
             <div class="computer-assisted-control apparatus-control">
               <label for="berensteinEndpointStage">Boundary view <output id="berensteinEndpointStageValue" for="berensteinEndpointStage">compare endpoints</output></label>
               <select id="berensteinEndpointStage">
-                <option value="pair">1 · compare endpoints</option>
-                <option value="height">2 · compare boundary height</option>
-                <option value="slope">3 · compare outward slope</option>
+                <option value="pair">1 · both endpoints</option>
+                <option value="height">2 · boundary height</option>
+                <option value="slope">3 · outward slope</option>
               </select>
             </div>
             <output id="berensteinEndpointStatus" class="computer-assisted-status" for="berensteinEndpointStage" aria-live="polite">Schiffer reaches height one and becomes flat. Berenstein crosses height zero with unit outward slope.</output>
@@ -1657,9 +1657,9 @@
               <label for="berensteinFieldStage">Reading guide <output id="berensteinFieldStageValue" for="berensteinFieldStage">signed regions</output></label>
               <select id="berensteinFieldStage">
                 <option value="field">1 · signed regions</option>
-                <option value="nodal">2 · interior zero curves</option>
-                <option value="boundary">3 · outer nodal boundary</option>
-                <option value="symmetry">4 · thirteenfold symmetry</option>
+                <option value="nodal">2 · zero curves</option>
+                <option value="boundary">3 · outer boundary</option>
+                <option value="symmetry">4 · symmetry</option>
               </select>
             </div>
             <output id="berensteinFieldStatus" class="computer-assisted-status" for="berensteinFieldStage" aria-live="polite">The certified image remains unchanged; the guide shows nine alternating sign regions, with a negative centre and negative outer rim.</output>
@@ -1813,15 +1813,15 @@
             <div class="computer-assisted-control apparatus-control">
               <label for="localGlobalProblem">Boundary data <output id="localGlobalProblemValue" for="localGlobalProblem">Schiffer</output></label>
               <select id="localGlobalProblem">
-                <option value="schiffer">Schiffer · (u, ∂νu) = (1, 0)</option>
-                <option value="berenstein">Berenstein · (u, ∂νu) = (0, 1)</option>
+                <option value="schiffer">Schiffer · (1, 0)</option>
+                <option value="berenstein">Berenstein · (0, 1)</option>
               </select>
             </div>
             <div class="computer-assisted-control apparatus-control">
               <label for="localGlobalScope">Scope <output id="localGlobalScopeValue" for="localGlobalScope">local collar</output></label>
               <select id="localGlobalScope">
-                <option value="local">1 · local analytic collar</option>
-                <option value="global">2 · globally closed solution</option>
+                <option value="local">1 · local collar</option>
+                <option value="global">2 · global solution</option>
               </select>
             </div>
             <output id="localGlobalStatus" class="computer-assisted-status" for="localGlobalProblem localGlobalScope" aria-live="polite">Local analytic Cauchy theory supplies a collar solution, but says nothing yet about regular closure through the interior.</output>
@@ -2941,7 +2941,7 @@
     <script defer src="story.js?v=20260830.6"></script>
     <script defer src="abundance.js?v=20260830.1"></script>
     <script defer src="pompeiu.js?v=20260830.1"></script>
-    <script defer src="computer-assisted.js?v=20260830.16"></script>
+    <script defer src="computer-assisted.js?v=20260831.2"></script>
     <script defer src="applet-layout.js?v=20260830.1"></script>
     <script defer src="tufte/layout-contract.js?v=20260830.12"></script>
   </body>

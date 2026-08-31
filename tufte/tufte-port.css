@@ -2765,11 +2765,17 @@ body.tufte-site main .conformal-transfer-key .computer-assisted-status + .comput
 }
 
 body.tufte-site main .computer-assisted-control {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
   margin-top: .45rem;
 }
 
 body.tufte-site main .computer-assisted-control label {
   display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
   justify-content: space-between;
   gap: .65rem;
   margin-bottom: .45rem;
@@ -2782,11 +2788,16 @@ body.tufte-site main .computer-assisted-control label {
 
 body.tufte-site main .computer-assisted-control output {
   flex: 0 0 auto;
+  min-width: 0;
+  max-width: 100%;
+  margin-left: auto;
   color: var(--orange);
   font-family: var(--mono);
   font-size: var(--type-label);
   font-variant: normal;
   letter-spacing: 0;
+  overflow-wrap: anywhere;
+  text-align: right;
 }
 
 body.tufte-site main .computer-assisted-control input[type="range"] {
@@ -2805,11 +2816,15 @@ body.tufte-site main .computer-assisted-range-scale {
 }
 
 body.tufte-site main .computer-assisted-control select {
+  display: block;
   box-sizing: border-box;
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
   min-height: 2.25rem;
   margin: 0;
-  padding: .38rem 1.9rem .38rem .5rem;
+  padding: .38rem 2.5rem .38rem .5rem;
+  overflow: hidden;
   color: var(--ink);
   background-color: var(--paper);
   border: 1px solid var(--line);
@@ -2817,6 +2832,8 @@ body.tufte-site main .computer-assisted-control select {
   font-family: var(--mono);
   font-size: var(--type-label);
   line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 body.tufte-site main .computer-assisted-control select:focus-visible {
@@ -2825,7 +2842,7 @@ body.tufte-site main .computer-assisted-control select:focus-visible {
 }
 
 /* Figure controls and keys must remain readable at the same zoom level as the
-   vector annotations.  Fourteen pixels is the floor; narrow layouts wrap. */
+   vector annotations. Sixteen pixels is the floor; narrow layouts wrap. */
 body.tufte-site main .computer-assisted-figure :is(
   .computer-assisted-control label,
   .computer-assisted-control output,
@@ -2839,7 +2856,7 @@ body.tufte-site main .computer-assisted-figure :is(
   .certificate-readout-label,
   .play-button
 ) {
-  font-size: max(14px, var(--type-label)) !important;
+  font-size: max(16px, var(--type-label)) !important;
 }
 
 body.tufte-site main .certificate-play-button:is(:disabled, [aria-disabled="true"]) {
