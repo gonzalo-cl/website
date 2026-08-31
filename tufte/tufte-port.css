@@ -60,6 +60,9 @@
   --type-display: 3.2rem;
   --type-section: 2.2rem;
   --type-subsection: 1.7rem;
+  --type-feature-heading: var(--type-subsection);
+  --type-subsubsection: 1.4rem;
+  --type-component-heading: var(--type-subsubsection);
   --type-body: 1.4rem;
   --type-body-current: var(--type-body);
   --type-proof: 1.2rem;
@@ -76,6 +79,15 @@
   --leading-body: 1.43;
   --leading-proof: 1.62;
   --leading-caption: 1.55;
+  /* Semantic type families and weights. Components choose a role; they do
+     not invent a local font stack or weight. */
+  --font-prose: var(--serif);
+  --font-heading: var(--serif);
+  --font-caption: var(--serif);
+  --font-interface: var(--mono);
+  --font-code: var(--mono);
+  --weight-regular: 400;
+  --weight-emphasis: 500;
   --layout-max: 1400px;
   --layout-gutter: 0px;
   --layout-indent: 0px;
@@ -202,20 +214,33 @@ body.tufte-site main a.xref:hover { color: var(--orange); }
   font-size: var(--type-note);
   text-decoration: none;
 }
-.figure-label { color: var(--ink); font-style: normal; font-variant: small-caps; }
+.figure-label {
+  display: inline-block;
+  margin-right: .45rem;
+  color: inherit;
+  font: inherit;
+  font-style: normal;
+  font-variant: small-caps;
+}
 .figure-caption-summary {
   display: block;
   margin-top: .2rem;
-  color: var(--ink);
-  font-style: italic;
+  color: inherit;
+  font: inherit;
   text-wrap: pretty;
 }
 .figure-caption-note {
   display: block;
   margin-top: .35rem;
-  color: var(--muted);
-  font-style: normal;
+  color: inherit;
+  font: inherit;
   text-wrap: pretty;
+}
+.figure-caption-note strong {
+  color: inherit;
+  font-weight: var(--weight-regular);
+  font-variant: small-caps;
+  letter-spacing: .02em;
 }
 .aside-label {
   float: left;
@@ -538,13 +563,14 @@ body.tufte-site main #experiment > .modes-experiment { padding-bottom: 0; }
 }
 
 body.tufte-site main :where(p:not(.eyebrow)) {
-  font-family: var(--serif);
+  font-family: var(--font-prose);
   font-size: var(--type-body-current);
+  font-style: normal;
+  font-weight: var(--weight-regular);
   line-height: var(--leading-body);
 }
 
 body.tufte-site main :is(
-  figcaption,
   .formula-note,
   .measurement-hint,
   .applet-instruction,
@@ -557,6 +583,47 @@ body.tufte-site main :is(
 ) {
   font-size: var(--type-caption) !important;
   line-height: var(--leading-caption);
+}
+
+/* Captions are one editorial role, independent of a figure's layout or
+   subject. Nested evidence disclosures and controls declare their own roles. */
+body.tufte-site main figure > figcaption,
+body.tufte-site main table > caption {
+  color: var(--muted);
+  font-family: var(--font-caption);
+  font-size: var(--type-caption) !important;
+  font-style: normal;
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-caption) !important;
+  letter-spacing: normal;
+  text-transform: none;
+}
+body.tufte-site main figure > figcaption > :is(p, .figure-caption-summary, .figure-caption-note) {
+  color: inherit;
+  font: inherit;
+  line-height: inherit;
+}
+
+/* Source code is the one document-level exception to the prose family.
+   Syntax colour may vary, but code does not acquire a component-local stack. */
+body.tufte-site main :is(pre, code, kbd, samp) {
+  font-family: var(--font-code);
+  font-style: normal;
+  font-weight: var(--weight-regular);
+}
+
+/* Document-level actions are interface text. Editorial disclosures remain in
+   the prose family, while controls use the compact tabular face. */
+body.tufte-site main :is(
+  .route-comparison-controls button,
+  .proof-atlas-filters button,
+  .certificate-explorer button,
+  .certificate-explorer select,
+  .certificate-explorer-actions a,
+  .certificate-provenance-index > summary
+) {
+  font-family: var(--font-interface);
+  font-style: normal;
 }
 
 body.tufte-site main :is(
@@ -584,13 +651,13 @@ body.tufte-site main p > span:has(.katex) {
 
 body.tufte-site h2 {
   margin: 2.1rem 0 1.4rem;
-  font: italic 400 var(--type-section)/1 var(--serif);
+  font: italic var(--weight-regular) var(--type-section)/1 var(--font-heading);
   letter-spacing: 0;
 }
 
 body.tufte-site h3 {
   margin: 2rem 0 1.4rem;
-  font: italic 400 var(--type-subsection)/1.05 var(--serif);
+  font: italic var(--weight-regular) var(--type-subsection)/1.05 var(--font-heading);
   letter-spacing: 0;
 }
 
@@ -629,11 +696,11 @@ body.tufte-site main .section-heading :is(h2, h3) {
 }
 
 body.tufte-site main .section-heading h2 {
-  font: italic 400 var(--type-section)/1.06 var(--serif);
+  font: italic var(--weight-regular) var(--type-section)/1.06 var(--font-heading);
 }
 
 body.tufte-site main .section-heading h3 {
-  font: italic 400 var(--type-subsection)/1.12 var(--serif);
+  font: italic var(--weight-regular) var(--type-subsection)/1.12 var(--font-heading);
 }
 
 :is(.intro-copy, .paper-copy) > .section-heading {
@@ -1009,10 +1076,6 @@ body.tufte-site main .side-applet > aside { padding: .7rem 0 0; border: 0; }
 body.tufte-site main .side-applet > figcaption {
   float: none;
   padding: .75rem 0 0;
-  color: var(--muted);
-  font-size: var(--type-caption) !important;
-  font-style: italic;
-  line-height: var(--leading-caption) !important;
 }
 
 /* Interactive marginalia use the same square, stacked composition regardless
@@ -1075,8 +1138,6 @@ body.tufte-site main .marginnote.side-applet > aside.paper-demo-controls {
   max-width: none;
   margin: 0;
   padding: .65rem 0 0;
-  font-size: var(--type-caption) !important;
-  line-height: var(--leading-caption) !important;
 }
 .schiffer-mode-panel {
   width: 100%;
@@ -1087,7 +1148,6 @@ body.tufte-site main .marginnote.side-applet > aside.paper-demo-controls {
 .schiffer-mode-panel canvas { background: var(--paper); border: 0; }
 .schiffer-mode-controls { border: 0; border-top: 0; }
 .membrane-model-note { padding: .75rem 0 0; }
-.chladni-photo-panel figcaption,
 .membrane-model-note { font-style: italic; }
 
 .phase-derivation-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -1146,9 +1206,6 @@ body.tufte-site main .margin-figure-row > .side-figure {
   width: 100%;
   max-width: 100%;
   margin: .75rem 0 0;
-  color: var(--muted);
-  font-style: italic;
-  line-height: var(--leading-caption) !important;
 }
 .world-cards .branch-keyboard-instruction {
   margin: .55rem 0 0;
@@ -1251,12 +1308,17 @@ body.tufte-site main .marginnote {
   font-size: var(--type-caption) !important;
   line-height: 1.4 !important;
 }
-body.tufte-site main .marginnote :is(p, figcaption) {
+body.tufte-site main .marginnote p {
   width: 100%;
   max-width: 100%;
   margin: .65rem 0 0;
   font-size: var(--type-caption) !important;
   line-height: 1.42 !important;
+}
+body.tufte-site main .marginnote > figcaption {
+  width: 100%;
+  max-width: 100%;
+  margin: .65rem 0 0;
 }
 body.tufte-site main .marginnote.side-figure {
   padding-top: 0;
@@ -1305,13 +1367,13 @@ body.tufte-site main .proof-details-body > :is(.paper-copy, .math-statement, .da
 /* Every details element in the article is a prose disclosure unless it lives
    inside an apparatus. The content layer supplies only native semantics; this
    presentation layer owns the measure and rules automatically. */
-body.tufte-site main details:not(.secondary-controls) {
+body.tufte-site main details:not(.secondary-controls, .certificate-provenance-index) {
   box-sizing: border-box;
   width: var(--measure-figure);
   max-width: var(--measure-figure);
   border: 0;
 }
-body.tufte-site main details:not(.secondary-controls) > summary {
+body.tufte-site main details:not(.secondary-controls, .certificate-provenance-index) > summary {
   box-sizing: border-box;
   width: var(--measure-reading-in-figure);
   max-width: var(--measure-reading-in-figure);
@@ -1322,7 +1384,7 @@ body.tufte-site main details:not(.secondary-controls) > summary {
   font-variant: small-caps;
   text-transform: none;
 }
-body.tufte-site main details:not(.secondary-controls)[open] > summary { border-bottom: 1px solid var(--line); }
+body.tufte-site main details:not(.secondary-controls, .certificate-provenance-index)[open] > summary { border-bottom: 1px solid var(--line); }
 
 /* Formalization disclosures have one component-owned reading measure.  `cqw`
    is relative to the page frame, while `min(100%, ...)` lets the same element
@@ -1429,10 +1491,6 @@ body.tufte-site main .interactive-plate > figcaption {
   max-width: 100%;
   margin: 0;
   padding: .8rem 0 0;
-  color: var(--muted);
-  font-size: var(--type-caption) !important;
-  font-style: italic;
-  line-height: var(--leading-caption) !important;
 }
 
 :is(.geometry-laboratory, .laboratory, .modes-laboratory, .phase-story-lab, .debye-laboratory, .abundance-laboratory) {
@@ -1743,11 +1801,8 @@ body.tufte-site main .collar-field-controls .control-label > :is(span, output) {
   width: 100%;
   max-width: 100%;
   padding: .8rem 0 0;
-  color: var(--muted) !important;
   background: transparent !important;
   border: 0;
-  font-family: var(--serif);
-  font-style: italic;
 }
 .collar-crop-key { display: flex; align-items: center; gap: .35rem; }
 .collar-crop-key i {
@@ -1786,10 +1841,6 @@ body.tufte-site main .reading-figure > figcaption {
   max-width: 100%;
   margin: 0;
   padding: .8rem 0 0;
-  color: var(--muted);
-  font-size: var(--type-caption) !important;
-  font-style: italic;
-  line-height: var(--leading-caption) !important;
 }
 body.tufte-site main .modes-experiment {
   padding-top: 3rem;
@@ -2352,11 +2403,6 @@ body.tufte-site main .route-comparison-table {
 body.tufte-site main .route-comparison-table caption {
   caption-side: bottom;
   padding: .85rem .8rem 1rem;
-  color: var(--muted);
-  font-family: var(--serif);
-  font-size: var(--type-caption);
-  font-style: italic;
-  line-height: var(--leading-caption);
   text-align: left;
 }
 body.tufte-site main .route-comparison-table :is(th, td) {
@@ -2427,7 +2473,7 @@ body.tufte-site main :is(.figure-band, .interactive-plate, .small-multiples) foo
 
 /* Typography is attached to editorial roles. Local component rules from the
    visual-first edition cannot create new prose sizes in this edition. */
-body.tufte-site main :is(figcaption, .formula-note, .phase-family-note, .abundance-provenance, .collar-field-caption) {
+body.tufte-site main :is(.formula-note, .phase-family-note, .abundance-provenance, .collar-field-caption) {
   font-size: var(--type-caption) !important;
   line-height: var(--leading-caption) !important;
 }
@@ -2453,7 +2499,6 @@ body.tufte-site main figure :is(
   .geometry-stages button strong,
   .geometry-stages button small,
   .measurement-range-scale,
-  .figure-tools > summary,
   .panel-evidence,
   .eyebrow,
   .phase-story-legend,
@@ -2592,6 +2637,7 @@ body.tufte-site main .math-statement-body > .tex-display {
 }
 body.tufte-site main .math-statement .katex,
 body.tufte-site main .math-statement .katex * { color: inherit !important; }
+body.tufte-site main .katex { font-size: 1em; }
 body.tufte-site main .tex-display { --math-scale: 1; --math-size: var(--type-math); }
 body.tufte-site main .tex-display .katex { font-size: var(--math-size) !important; }
 body.tufte-site main .tex-display.math-fitted { overflow-x: hidden; }
@@ -3035,7 +3081,7 @@ body.tufte-site main .shape-equation-mechanism > header .eyebrow {
 body.tufte-site main .shape-equation-mechanism > header h4 {
   margin-top: 0;
   margin-bottom: 1.15rem;
-  font: italic 400 var(--type-subsection)/1.2 var(--serif);
+  font: italic var(--weight-regular) var(--type-feature-heading)/1.2 var(--font-heading);
 }
 
 body.tufte-site main .shape-equation-lanes {
@@ -4754,7 +4800,11 @@ body.tufte-site main :is(.three-wrap canvas, #phaseFamilyCanvas):focus-visible {
 
 /* Promoted out of an optional-digression expander: the rigidity literature is
    part of the argument, not an aside, so it needs a heading of its own. */
-.rigidity-heading { margin: 34px 0 12px; color: var(--ink); font: 500 var(--type-body)/1.4 var(--sans); }
+.rigidity-heading {
+  margin: 34px 0 12px;
+  color: var(--ink);
+  font: var(--weight-emphasis) var(--type-component-heading)/1.4 var(--font-heading);
+}
 
 .cone-remap-figure svg .remap-inner-face {
   /* The cut at r = R - L, and the cylinder face at y = L that maps onto it.
@@ -4773,16 +4823,6 @@ body.tufte-site main :is(.three-wrap canvas, #phaseFamilyCanvas):focus-visible {
      the collar surface passes in front of the cut. */
   fill: var(--paper, #fffff8);
   stroke: none;
-}
-
-/* One summary carries no "Optional digression" label, so the grid is wrong for
-   it: the grid puts the text and the KaTeX box on separate rows and the title
-   takes two lines however much width is free.  Scoped to that summary; the
-   labelled ones keep the grid and their own intrinsic width. */
-body.tufte-site main details.optional-digression > summary > span.digression-title {
-  display: block;
-  flex: 1 1 auto;
-  min-width: 0;
 }
 
 /* The Crandall-Rabinowitz box is read in two forms.  The classical statement is
@@ -5046,56 +5086,6 @@ body.tufte-site main .research-entry-heading > p:last-child {
 .math-statement-header > .object-permalink { margin-left: auto; }
 .figure-label { text-decoration: none; }
 
-.figure-tools {
-  display: inline-block;
-  margin: .65rem 0 0;
-  font-style: normal;
-}
-.figure-tools > summary {
-  width: fit-content;
-  min-height: 32px;
-  display: inline-flex;
-  align-items: center;
-  color: var(--muted);
-  cursor: pointer;
-  font-family: var(--mono);
-  font-size: var(--type-label);
-  font-variant: small-caps;
-  list-style: none;
-}
-.figure-tools > summary::-webkit-details-marker { display: none; }
-.figure-tools > summary::after { content: " +"; margin-left: .25rem; color: var(--orange); }
-.figure-tools[open] > summary::after { content: " −"; }
-.figure-tools-menu {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: .45rem;
-  margin-top: .35rem;
-}
-.figure-tools-menu :is(button, a) {
-  min-height: 34px;
-  display: inline-flex;
-  align-items: center;
-  padding: .35rem .55rem;
-  color: var(--ink);
-  border: 1px solid var(--line);
-  background: transparent;
-  cursor: pointer;
-  font-family: var(--mono);
-  font-size: var(--type-label);
-  font-style: normal;
-  text-decoration: none;
-}
-.figure-tools-menu :is(button, a):hover { border-color: var(--orange); }
-.figure-tools-status {
-  flex-basis: 100%;
-  min-height: 1.2em;
-  color: var(--muted);
-  font-family: var(--sans);
-  font-size: var(--type-label);
-}
-
 .route-comparison-controls {
   display: flex;
   flex-wrap: wrap;
@@ -5138,8 +5128,9 @@ body.tufte-site main .research-entry-heading > p:last-child {
 .route-comparison-continuations a { color: var(--ink); }
 
 .proof-atlas {
-  width: var(--measure-figure);
-  max-width: 100%;
+  width: var(--measure-reading);
+  max-width: var(--measure-reading);
+  container: proof-atlas / inline-size;
   margin: 4.25rem 0 5rem;
   padding: 1.4rem 0 0;
   border-top: 1px solid var(--ink);
@@ -5176,7 +5167,7 @@ body.tufte-site main .proof-atlas-heading > p:last-child {
   border-bottom: 1px solid var(--line);
 }
 .proof-atlas-common {
-  width: min(100%, var(--measure-reading));
+  width: 100%;
   margin: 0 auto 1.25rem;
   text-align: center;
 }
@@ -5199,6 +5190,16 @@ body.tufte-site main .proof-atlas-heading > p:last-child {
 }
 .proof-atlas-lane { min-width: 0; padding: 1.2rem; }
 .proof-atlas-lane + .proof-atlas-lane { border-left: 1px solid var(--line); }
+
+/* The lanes share the prose measure and collapse when the component itself
+   no longer has room for two compact dependency columns. */
+@container proof-atlas (max-width: 40rem) {
+  .proof-atlas-lanes { grid-template-columns: minmax(0, 1fr); }
+  .proof-atlas-lane + .proof-atlas-lane {
+    border-top: 1px solid var(--ink);
+    border-left: 0;
+  }
+}
 .proof-atlas-lane > header {
   min-height: 6.5rem;
   position: relative;
@@ -5208,10 +5209,17 @@ body.tufte-site main .proof-atlas-heading > p:last-child {
 body.tufte-site main .proof-atlas-lane > header h4 {
   margin: .35rem 4rem 0 0;
   color: var(--ink);
-  font: 500 var(--type-body)/1.25 var(--serif);
+  font: var(--weight-emphasis) var(--type-component-heading)/1.25 var(--font-heading);
 }
 .proof-atlas-lane > header a { position: absolute; right: 0; bottom: 1rem; font-size: var(--type-note); }
-.proof-atlas-lane ol { margin: 0; padding: 0; list-style: none; counter-reset: proof-node; }
+.proof-atlas-lane ol {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: proof-node;
+}
 .proof-atlas-lane .proof-atlas-deduction { counter-reset: proof-node 2; }
 .proof-atlas-sequence-label {
   margin: .85rem 0 .35rem !important;
@@ -5311,7 +5319,7 @@ body.tufte-site main .proof-atlas-lane > header h4 {
   line-height: 1.45 !important;
 }
 .proof-atlas-detail {
-  width: min(100%, var(--measure-reading));
+  width: 100%;
   min-height: 10rem;
   margin: 1.25rem auto;
   padding: 1rem 1.15rem;
@@ -5321,7 +5329,7 @@ body.tufte-site main .proof-atlas-lane > header h4 {
 body.tufte-site main .proof-atlas-detail h4 {
   margin: .3rem 0 .4rem;
   color: var(--ink);
-  font: 500 var(--type-body)/1.3 var(--serif);
+  font: var(--weight-emphasis) var(--type-component-heading)/1.3 var(--font-heading);
 }
 body.tufte-site main .proof-atlas-detail p {
   margin: .3rem 0;
@@ -5342,7 +5350,7 @@ body.tufte-site main .proof-atlas-detail p {
 .proof-atlas-endpoint a,
 .proof-atlas-companion { font-size: var(--type-note); }
 .proof-atlas-companion {
-  width: min(100%, var(--measure-reading));
+  width: 100%;
   margin: 0 auto 1.25rem !important;
   color: var(--muted) !important;
 }
@@ -5597,7 +5605,6 @@ html:not(.js) .route-comparison-controls,
 html:not(.js) .route-comparison-continuations,
 html:not(.js) .proof-atlas-filters,
 html:not(.js) .proof-atlas-detail,
-html:not(.js) .figure-tools,
 html:not(.js) .paper-demo-controls,
 html:not(.js) .apparatus-controls,
 html:not(.js) .method-button,
@@ -5745,8 +5752,6 @@ body.tufte-site main figure .abundance-toolbar > :is(strong, div) {
 }
 
 @media (pointer: coarse) {
-  .figure-tools > summary,
-  .figure-tools-menu :is(button, a),
   .object-permalink {
     min-width: 44px;
     min-height: 44px;
@@ -5845,7 +5850,6 @@ body.tufte-site main figure .abundance-toolbar > :is(strong, div) {
   .proof-atlas-detail,
   .certificate-explorer-actions,
   .certificate-checker-status,
-  .figure-tools,
   .object-permalink,
   .research-tour { display: none !important; }
   .proof-atlas { break-inside: auto; }
@@ -5853,3 +5857,17 @@ body.tufte-site main figure .abundance-toolbar > :is(strong, div) {
   .proof-atlas-lane + .proof-atlas-lane { border-top: 1px solid #000; border-left: 0; }
   .proof-node-card > .proof-node-select { display: block !important; }
 }
+
+/* The cone fold sits in the margin now, so it takes the note measure and its
+   canvas follows the wrapper rather than the reading column. */
+.cone-fold-figure .geometry-canvas-wrap { height: 300px; }
+.cone-fold-figure .geometry-controls { display: none; }
+
+.cone-fold-figure figcaption { font-size: var(--type-caption); line-height: 1.5; }
+
+.strategy-steps { margin: 14px 0 0; padding-left: 22px; }
+.strategy-steps li { margin: 0 0 12px; }
+.strategy-steps li:last-child { margin-bottom: 0; }
+
+.fixed-collar-figure .geometry-canvas-wrap, .fixed-collar-figure .figure-canvas-wrap { height: 240px; }
+.fixed-collar-figure figcaption { font-size: var(--type-caption); line-height: 1.5; }

@@ -86,7 +86,7 @@ a { color: inherit; }
 .variation-point.original { fill: var(--paper); }
 .variation-point.moved { fill: var(--orange); }
 .variation-distance { stroke: var(--orange); stroke-width: 1.4; }
-.shape-variation-figure figcaption { margin: 0; padding: 18px 28px; color: rgba(241,238,229,.46); border-top: 1px solid var(--line-light); font-size: 11px; line-height: 1.7; }
+.shape-variation-figure figcaption { margin: 0; padding: 18px 28px; border-top: 1px solid var(--line-light); }
 .shape-variation-interactive { display: grid; grid-template-columns: minmax(0,1fr) 310px; min-height: 430px; }
 .shape-variation-stage { min-width: 0; border-right: 1px solid var(--line-light); }
 .shape-variation-stage svg { display: block; width: 100%; height: auto; }
@@ -749,7 +749,6 @@ body > footer { color: var(--ink); background: var(--paper); }
 .abundance-conclusion .tex-display { color: var(--ink); }
 .proof-details summary { color: var(--ink); }
 
-.story-intro .shape-variation-figure figcaption { color: var(--muted); }
 .story-intro .variation-original-boundary { stroke: rgba(19,33,38,.48); }
 .story-intro .variation-point.original { fill: var(--ink); }
 
@@ -1008,83 +1007,9 @@ dialog hr { height: 1px; margin: 32px 0; background: var(--line); border: 0; }
   .abundance-examples-table tbody tr { grid-template-columns: minmax(0, 1fr); }
 }
 
-/* Readable typographic scale.
-   Expository prose, proof prose, captions, controls, and labels each use one
-   size throughout the document. Display mathematics keeps a 16px base on
-   desktop and mobile; wide formulas scroll instead of being miniaturized. */
-body { font-size: 16px; }
-
-main p:not(.eyebrow),
-dialog p:not(.eyebrow) {
-  font-size: var(--type-proof) !important;
-  line-height: 1.78;
-}
-
-:is(.intro-bottom,
-  .borrow-lead,
-  .geometry-lead,
-  .proof-strategy-lead,
-  .half-cylinder-introduction,
-  .experiment-story-lead,
-  .cone-lead,
-  .modes-lead,
-  .interpretation-copy,
-  .phase-story-lead,
-  .debye-lead,
-  .abundance-lead
-) p:not(.eyebrow) {
-  font-size: var(--type-body) !important;
-  line-height: 1.76;
-}
-
-:is(.control-block,
-  .modes-control-block,
-  .collar-field-control-block,
-  .debye-control-block,
-  .abundance-control-block
-) p:not(.eyebrow),
-:is(.shape-variation-heading,
-  .shape-variation-figure,
-  .collar-field-laboratory
-) :is(p, figcaption),
-:is(.formula-note,
-  .phase-family-note,
-  .abundance-provenance,
-  .measurement-hint) {
-  font-size: var(--type-caption) !important;
-  line-height: 1.72;
-}
-
-:is(.control-label,
-  .control-heading,
-  .play-button,
-  .view-button,
-  .secondary-controls summary,
-  .proof-details > summary,
-  .method-button
-) {
-  font-size: var(--type-control) !important;
-}
-
-:is(.solver-readout,
-  .crossing-card,
-  .modes-status,
-  .phase-story-readout,
-  .collar-field-readout,
-  .debye-status,
-  .abundance-readout
-) strong {
-  font-size: var(--type-caption) !important;
-}
-
-.formula,
-.katex { font-size: 1em !important; }
-.katex-display > .katex { font-size: var(--type-math) !important; }
+/* Editorial typography belongs to the semantic Tufte layer. This shared
+   stylesheet provides only the overflow behavior needed by these formulas. */
 :is(.world-mode-pair, .cylinder-mode-pair) { overflow-x: auto; }
-
-.abundance-examples-table thead th { font-size: var(--type-label); }
-.abundance-examples-table tbody td { font-size: var(--type-caption); }
-.abundance-examples-table tbody th { font-size: var(--type-proof); }
 
 /* Introduction · Pompeiu's question, Chakalov's disk, and Williams' equivalence.
    Sits between the hero and section 01; shares the flex order of .intro so that
@@ -1126,8 +1051,6 @@ dialog p:not(.eyebrow) {
 
 .intro-shapes { margin: 72px 0 0 70px; max-width: 1100px; padding: 34px 0 0; border-top: 1px solid var(--line); }
 .intro-shapes figcaption { max-width: 880px; }
-.intro-shapes figcaption h3 { margin: 8px 0 14px; font: 500 clamp(25px, 2.5vw, 36px)/1.12 var(--serif); letter-spacing: -.02em; }
-.intro-shapes figcaption p:last-child { margin: 0 0 34px; color: var(--muted); font-size: var(--type-body); line-height: 1.8; }
 .intro-shapes-row { display: block; }
 .intro-shapes-examples { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); }
 .intro-shape-result { padding: 0 40px 0 0; }
@@ -1601,3 +1524,17 @@ body.tufte-site main .intro-route-overview p,
 
 .encoding-note { font-size: var(--type-caption); line-height: 1.55; }
 .encoding-note-host { margin-bottom: 0; }
+
+/* The cone fold sits in the margin now, so it takes the note measure and its
+   canvas follows the wrapper rather than the reading column. */
+.cone-fold-figure .geometry-canvas-wrap { height: 300px; }
+.cone-fold-figure .geometry-controls { display: none; }
+
+.cone-fold-figure figcaption { font-size: var(--type-caption); line-height: 1.5; }
+
+.strategy-steps { margin: 14px 0 0; padding-left: 22px; }
+.strategy-steps li { margin: 0 0 12px; }
+.strategy-steps li:last-child { margin-bottom: 0; }
+
+.fixed-collar-figure .geometry-canvas-wrap, .fixed-collar-figure .figure-canvas-wrap { height: 240px; }
+.fixed-collar-figure figcaption { font-size: var(--type-caption); line-height: 1.5; }

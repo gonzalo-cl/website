@@ -49,7 +49,7 @@
 
   const rounded = (value) => Math.round(value * 10) / 10;
   const marginSelector = "body.tufte-site main .marginnote";
-  const disclosureSelector = "body.tufte-site main details:not(.secondary-controls):not(.mobile-apparatus-disclosure)";
+  const disclosureSelector = "body.tufte-site main details:not(.secondary-controls, .mobile-apparatus-disclosure, .certificate-provenance-index)";
   const roleSelector = ".paper-copy, .math-statement, .lean-statement, .small-multiples, .figure-band, .reading-figure, .margin-figure-sequence, .data-table";
 
   function runLayoutContract() {
@@ -72,6 +72,22 @@
     const typeSubsection = parseFloat(rootStyle.getPropertyValue("--type-subsection")) * parseFloat(rootStyle.fontSize);
     const typeControlValue = parseFloat(rootStyle.getPropertyValue("--type-control-value")) * parseFloat(rootStyle.fontSize);
     const typeCode = parseFloat(rootStyle.getPropertyValue("--type-code")) * parseFloat(rootStyle.fontSize);
+    const leadingCaption = parseFloat(rootStyle.getPropertyValue("--leading-caption"));
+    const serifFamily = rootStyle.getPropertyValue("--serif").trim();
+    const monoFamily = rootStyle.getPropertyValue("--mono").trim();
+    const regularWeight = rootStyle.getPropertyValue("--weight-regular").trim();
+
+    const resolvedColor = (customProperty) => {
+      const probe = document.createElement("span");
+      probe.style.color = `var(${customProperty})`;
+      probe.hidden = true;
+      document.body.append(probe);
+      const color = getComputedStyle(probe).color;
+      probe.remove();
+      return color;
+    };
+    const inkColor = resolvedColor("--ink");
+    const mutedColor = resolvedColor("--muted");
 
     if (!narrow && Math.abs(aside - reading * noteInReading) > .001) {
       errors.push("the apparatus aside measure has drifted from native Tufte marginalia");
@@ -100,6 +116,43 @@
       if (closedDetails && !closedDetails.querySelector(":scope > summary")?.contains(element)) return false;
       const style = getComputedStyle(element);
       return style.display !== "none" && style.visibility !== "hidden";
+    };
+
+    const normalizedFamily = (value) => value
+      .toLowerCase()
+      .replace(/["']/g, "")
+      .replace(/\s+/g, "");
+
+    const checkTypography = (selector, expected, label) => {
+      document.querySelectorAll(selector).forEach((element, index) => {
+        if (!visible(element)) return;
+        const style = getComputedStyle(element);
+        const mismatches = [];
+        if (expected.family
+            && normalizedFamily(style.fontFamily) !== normalizedFamily(expected.family)) {
+          mismatches.push(`family ${style.fontFamily}`);
+        }
+        if (Number.isFinite(expected.size)
+            && Math.abs(parseFloat(style.fontSize) - expected.size) > .2) {
+          mismatches.push(`size ${rounded(parseFloat(style.fontSize))}px`);
+        }
+        if (expected.weight && style.fontWeight !== expected.weight) {
+          mismatches.push(`weight ${style.fontWeight}`);
+        }
+        if (expected.style && style.fontStyle !== expected.style) {
+          mismatches.push(`style ${style.fontStyle}`);
+        }
+        if (expected.color && style.color !== expected.color) {
+          mismatches.push(`colour ${style.color}`);
+        }
+        if (Number.isFinite(expected.lineHeight)
+            && Math.abs(parseFloat(style.lineHeight) - expected.lineHeight) > .2) {
+          mismatches.push(`leading ${rounded(parseFloat(style.lineHeight))}px`);
+        }
+        if (mismatches.length) {
+          errors.push(`${label} ${index + 1} violates its type role: ${mismatches.join(", ")}`);
+        }
+      });
     };
 
     const directVisibleText = (root) => Array.from(root.querySelectorAll("*"))
@@ -146,8 +199,8 @@
       "schiffer-property",
       "schiffer-pompeiu-equivalence",
       "pompeiu-star-shaped",
-      "near-integer-crossings",
       "uniform-cone-bifurcation",
+      "near-integer-crossings",
     ];
     const actualLeanStatements = Array.from(document.querySelectorAll("details.lean-statement"), (statement) => statement.dataset.statement);
     if (actualLeanStatements.length !== expectedLeanStatements.length
@@ -215,18 +268,18 @@
     }
     const expectedProofSectionOrder = [
       // The near-integer material now sits inside 4.1, so abundance-experiment
-      // comes first and carries no heading of its own; the collar comparison
-      // lost its heading when 4.3 and 4.4 merged.
+      // comes first and carries no heading of its own. The branch curvature
+      // then motivates the uniform cylinder and finite-order arguments.
       "abundance-experiment",
+      "phase-story",
       "debye-experiment",
       "bifurcation-setting",
-      "phase-story",
       "modes-experiment",
     ];
     const actualProofSectionOrder = Array.from(document.querySelectorAll("#experiment > section[id]:not([hidden])"), (section) => section.id);
     if (actualProofSectionOrder.length !== expectedProofSectionOrder.length
         || expectedProofSectionOrder.some((id, index) => actualProofSectionOrder[index] !== id)) {
-      errors.push("Section V proof subsections do not follow source reading order");
+      errors.push("bifurcation proof subsections do not follow source reading order");
     }
     const transferSection = document.querySelector("#debye-experiment");
     const finiteOrderSection = document.querySelector("#bifurcation-setting");
@@ -246,8 +299,9 @@
     const nearIntegerTheorem = document.querySelector("[data-label='near-integer-crossings']");
     const nearIntegerLean = document.querySelector(".lean-statement[data-statement='near-integer-crossings']");
     if (!nearIntegerTheorem || !nearIntegerLean
-        || nearIntegerTheorem.nextElementSibling !== nearIntegerLean) {
-      errors.push("Theorem 5.10 is missing its adjacent Lean counterpart");
+        || nearIntegerTheorem.closest("section") !== nearIntegerLean.closest("section")
+        || !(nearIntegerTheorem.compareDocumentPosition(nearIntegerLean) & Node.DOCUMENT_POSITION_FOLLOWING)) {
+      errors.push("the near-integer theorem does not precede its Lean counterpart in the same subsection");
     }
 
     const expectedHeadingContract = [
@@ -271,10 +325,10 @@
       ["3.8", "Local boundary data versus global solvability", "#computer-local-global", "proof-subsection"],
       ["4", "The real-order proof", "#experiment", "section"],
       ["4.1", "The real-order cone quotient", "#cone-remap", "proof-subsection"],
-      ["4.2", "A motivation for uniformity: the cylinder", "#half-cylinder-strategy", "proof-subsection"],
-      ["4.3", "The fixed-collar formulation", "#fixed-domain", "proof-subsection"],
-      ["4.4", "The bifurcation setting: a collar problem for every real order", "#bifurcation-setting", "proof-subsection"],
-      ["4.5", "Quadratic bending of the cone branch", "#phase-story", "proof-subsection"],
+      ["4.2", "Exploring the cone bifurcation", "#phase-story", "proof-subsection"],
+      ["4.3", "A motivation for uniformity: the cylinder", "#half-cylinder-strategy", "proof-subsection"],
+      ["4.4", "The fixed-collar formulation", "#fixed-domain", "proof-subsection"],
+      ["4.5", "The bifurcation setting: a collar problem for every real order", "#bifurcation-setting", "proof-subsection"],
       ["4.6", "Integer landing and planar lift", "#modes-experiment", "proof-subsection"],
       ["", "References", "#references", "section"],
       ["", "Acknowledgements", "#acknowledgements", "section"],
@@ -465,14 +519,13 @@
       document.querySelector("#experiment [aria-labelledby='cylinderExpansionTitle']"),
       document.querySelector("#experiment .cylinder-jet-proof"),
       document.querySelector("#experiment .cylinder-uniform-lead"),
-      document.querySelector("#experiment [aria-labelledby='uniformCylinderBranchTitle']"),
       document.querySelector("#experiment .cylinder-uniform-proof"),
     ];
     if (halfCylinderSequence.some((node) => !node) || halfCylinderSequence.some((node, index) => {
       if (!index) return false;
       return !(halfCylinderSequence[index - 1].compareDocumentPosition(node) & Node.DOCUMENT_POSITION_FOLLOWING);
     })) {
-      errors.push("Subsection 5.3 does not follow theorem and three-lemma order");
+      errors.push("the cylinder subsection does not follow its theorem, expansion, and uniformity order");
     }
 
     document.querySelectorAll(marginSelector).forEach((aside, index) => {
@@ -728,6 +781,19 @@
       if (Math.abs(box.width - expectedWidth) > 2) errors.push(`data table ${index + 1} is outside the reading measure`);
     });
 
+    const proofAtlas = document.querySelector("body.tufte-site main .proof-atlas");
+    if (visible(proofAtlas)) {
+      const box = proofAtlas.getBoundingClientRect();
+      const sectionBox = proofAtlas.closest("main > section")?.getBoundingClientRect();
+      const expectedWidth = sectionMeasure(proofAtlas, narrow ? 1 : reading);
+      if (Math.abs(box.width - expectedWidth) > 2) {
+        errors.push("proof atlas is outside the reading measure");
+      }
+      if (sectionBox && Math.abs(box.left - sectionBox.left) > 1) {
+        errors.push("proof atlas is not aligned with the reading measure");
+      }
+    }
+
     document.querySelectorAll("body.tufte-site main .figure-band").forEach((band, index) => {
       if (!band.getClientRects().length) return;
       const box = band.getBoundingClientRect();
@@ -868,6 +934,64 @@
     checkType("body.tufte-site main :is(.solver-readout, .modes-status, .phase-story-readout, .collar-field-readout, .debye-status, .abundance-readout) strong, body.tufte-site main .measurement-value-line strong", typeControlValue, "readout value");
     checkType("body.tufte-site main .lean-statement > summary small", typeLabel, "Lean disclosure label");
     checkType("body.tufte-site main .lean-statement :is(summary code, pre code)", typeCode, "Lean source");
+
+    /* Font size alone cannot detect a component reintroducing a local family,
+       colour, weight, or italic treatment. These are the canonical editorial
+       roles; animation-internal labels are deliberately audited separately. */
+    checkTypography(
+      "body.tufte-site main :is(figure > figcaption, table > caption)",
+      {
+        family: serifFamily,
+        size: typeCaption,
+        weight: regularWeight,
+        style: "normal",
+        color: mutedColor,
+        lineHeight: typeCaption * leadingCaption,
+      },
+      "caption",
+    );
+    checkTypography(
+      "body.tufte-site main figure > figcaption > :is(.figure-caption-summary, .figure-caption-note, p:not(.eyebrow))",
+      {
+        family: serifFamily,
+        size: typeCaption,
+        weight: regularWeight,
+        style: "normal",
+        color: mutedColor,
+        lineHeight: typeCaption * leadingCaption,
+      },
+      "caption content",
+    );
+    checkTypography(
+      "body.tufte-site main .section-heading > h2",
+      { family: serifFamily, size: typeSection, weight: regularWeight, style: "italic", color: inkColor },
+      "section title",
+    );
+    checkTypography(
+      "body.tufte-site main .section-heading > h3",
+      { family: serifFamily, size: typeSubsection, weight: regularWeight, style: "italic", color: inkColor },
+      "subsection title",
+    );
+    checkTypography(
+      "body.tufte-site main .paper-copy p:not(.eyebrow)",
+      { family: serifFamily, weight: regularWeight, style: "normal" },
+      "proof prose",
+    );
+    checkTypography(
+      "body.tufte-site main .math-statement:not(.math-statement-problem):not(.math-statement-question):not(.math-statement-conjecture) .math-statement-body p",
+      { family: serifFamily, weight: regularWeight, style: "normal" },
+      "statement prose",
+    );
+    checkTypography(
+      "body.tufte-site main :is(pre, code, kbd, samp)",
+      { family: monoFamily, weight: regularWeight, style: "normal" },
+      "source code",
+    );
+    checkTypography(
+      "body.tufte-site main :is(.route-comparison-controls button, .proof-atlas-filters button, .certificate-explorer button, .certificate-explorer select, .certificate-explorer-actions a, .certificate-provenance-index > summary)",
+      { family: monoFamily, weight: regularWeight, style: "normal" },
+      "document control",
+    );
 
     const forbiddenControlChrome = ":is(.variation-equation, .variation-equation-label, .variation-legend, .geometry-stage-note, .solver-readout, .crossing-card, .parameter-pair, .fixed-zoom-pair, .problem-map, .phase-law, .phase-agreement, .collar-field-readout, .collar-field-locator, .debye-status, .phase-story-readout, .modes-status)";
     document.querySelectorAll("body.tufte-site main .paper-demo-controls:not(.geometry-controls)").forEach((controls, index) => {

@@ -671,7 +671,7 @@
     label.className = "figure-label";
     label.href = "#" + figure.id;
     label.setAttribute("aria-label", "Permalink to Figure " + figure.dataset.number);
-    label.textContent = `Figure ${figure.dataset.number}. `;
+    label.textContent = `Figure ${figure.dataset.number}.`;
     caption.prepend(label);
   });
 

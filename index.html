@@ -20,8 +20,8 @@
     <script defer src="lean-statements.js?v=20260828.6"></script>
     <script defer src="math.js?v=20260830.1"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tufte-css@1.9.0/tufte.min.css">
-    <link rel="stylesheet" href="styles.css?v=20260831.8">
-    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260831.11">
+    <link rel="stylesheet" href="styles.css?v=20260831.13">
+    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260831.13">
   </head>
   <body class="tufte-site">
     <a class="skip-link" href="#top">Skip to the exposition</a>
@@ -2126,14 +2126,11 @@
         <div class="intro-copy intro-copy-wide">
           <p>Work on a ball of radius \(R\) and impose \(R\)-fold symmetry. Suppose for a moment that \(R\) is a natural number. Then the symmetry has a fundamental domain, a single angular sector of opening \(2\pi/R\), and quotienting the ball by the symmetry gives a cone of length \(R\) and circumference \(2\pi\). An \(R\)-fold symmetric solution on the ball is the same thing as a solution on that cone.</p>
         </div>
-        <figure class="geometry-laboratory interactive-plate annotated-plate reading-figure cone-fold-figure" data-figure="cone-unfolding-apparatus" data-evidence="schematic">
+        <div class="intro-copy intro-copy-wide cone-fold-host">
+          <label for="cone-fold-note" class="margin-toggle" aria-label="Show the cone folding figure">&#8853;</label>
+          <input type="checkbox" id="cone-fold-note" class="margin-toggle">
+          <figure class="marginnote side-figure cone-fold-figure" data-figure="cone-unfolding-apparatus" data-evidence="schematic">
           <aside class="geometry-controls paper-demo-controls">
-            <div class="geometry-stages" aria-label="Four stages of the fold">
-              <button type="button" data-conefold-stage="0"><span>01</span><strong>The domain</strong></button>
-              <button type="button" data-conefold-stage="0.333333"><span>02</span><strong>One sector</strong></button>
-              <button type="button" data-conefold-stage="0.666667"><span>03</span><strong>Rolling up</strong></button>
-              <button type="button" data-conefold-stage="1"><span>04</span><strong>The cone</strong></button>
-            </div>
             <div class="geometry-scrub"><div class="control-label"><label for="coneFoldRange">fold</label><output id="coneFoldValue">stage 1</output></div><input id="coneFoldRange" type="range" min="0" max="1" value="0" step="0.001"></div>
             <button id="coneFoldPlayButton" class="play-button" type="button" aria-pressed="false"><span id="coneFoldPlayIcon">&#9654;</span><span id="coneFoldPlayLabel">Fold</span></button>
           </aside>
@@ -2143,7 +2140,8 @@
             </div>
           </section>
           <figcaption><span class="figure-caption-summary">An \(R\)-fold symmetric domain reduces to one fundamental sector with its radial sides identified.</span><span class="figure-caption-note">The identified sector forms the quotient cone, and the boundary profile makes one period around it. The drawing represents this exact quotient geometry schematically; it is not a numerical reconstruction.</span></figcaption>
-        </figure>
+          </figure>
+        </div>
         <div class="intro-copy intro-copy-wide">
           <p>In cone coordinates \((r,\psi)\), with \(\psi=R\varphi\), the equation becomes</p>
           <div class="tex-display">
@@ -2158,82 +2156,21 @@
           </div>
           <p>where \(J\) denotes the Bessel functions. When \(R\) is an integer these are Bessel functions whose index is a multiple of \(R\). The cone problem and its Bessel functions remain defined when \(R\notin\mathbb{N}\), providing the continuous real parameter used by the construction.</p>
           <p>The finite-\(R\) problem also carries the appropriate regularity condition at \(r=0\). Its radial solutions are Bessel functions of order \(0\), and the first nonradial angular mode brings in Bessel functions of order \(R\). By the criterion of <a class="xref" data-ref="linearized-schiffer-criterion" href="#statement-linearized-schiffer-criterion">the linearized Schiffer criterion</a>, a bifurcation needs the radial Neumann condition and a nonradial Dirichlet condition to hold at the same radius, which is to say a \(\rho\) with</p>
-          <div class="tex-display">
+          <div id="equation-crossing-conditions" class="tex-display" data-equation="crossing-conditions">
             \[ J_1(\rho)=0 \qquad\text{and}\qquad J_R(\rho)=0. \]
           </div>
           <p>When \(R\) is a natural number this is impossible: by <a class="xref" data-ref="bourget-siegel" href="#statement-bourget-siegel">the Bourget–Siegel theorem</a>, two Bessel functions of distinct integer order share no positive zero. This obstruction blocks bifurcation directly from the disk. The cone interpretation permits noninteger \(R\), for which the displayed equation does have solutions.</p>
         </div>
 <section id="abundance-experiment" class="abundance-experiment">
-        <article id="statement-near-integer-crossings" class="math-statement near-integer-theorem" data-kind="theorem" data-label="near-integer-crossings">
-          <header class="math-statement-header"><span>Theorem</span><small>near-integer crossings</small></header>
+        <article class="math-statement" data-kind="claim" data-label="near-integer-claim" aria-labelledby="nearIntegerClaimTitle">
+          <header class="math-statement-header"><span>Claim</span><small id="nearIntegerClaimTitle">crossings arbitrarily close to an integer</small></header>
           <div class="math-statement-body">
-            <p>For every \(\delta&gt;0\) and every lower threshold \(N_{\min}\), there are an integer \(N\ge N_{\min}\), a real order \(R_*\), and a frequency \(\rho&gt;0\) such that</p>
-            <div class="tex-display">
-              \[
-              \begin{gathered}
-              N&lt;R_*&lt;N+\delta,\\
-              J_1(\rho)=J_{R_*}(\rho)=0,\\
-              2&lt;\dfrac{\rho^2}{R_*^2}&lt;3.
-              \end{gathered}
-              \]
-            </div>
-            <p>The scatter plot below is a finite numerical sample of these coincidences. The theorem itself comes from aligning the fixed-order McMahon phase and the large-order Debye phase.</p>
+            <p>There exist solutions to <a class="xref" data-ref="crossing-conditions" data-ref-short href="#equation-crossing-conditions"></a> with \(R_\star\) as close to a natural number as we want. See <a class="xref" data-ref="near-integer-crossings"></a> for details.</p>
           </div>
         </article>
-        <div class="intro-copy intro-copy-wide abundance-examples-host">
-        <label for="abundance-examples-note" class="margin-toggle" aria-label="Show five particularly close examples">&#8853;</label>
-        <input type="checkbox" id="abundance-examples-note" class="margin-toggle">
-        <aside class="marginnote abundance-examples abundance-examples-margin" aria-labelledby="abundanceExamplesTitle">
-          <h3 id="abundanceExamplesTitle">Five particularly close examples.</h3>
-          <div class="abundance-examples-table-wrap">
-            <table class="abundance-examples-table">
-              <caption class="visually-hidden">Five particularly close near-integer common Bessel-zero crossings</caption>
-              <thead><tr><th scope="col">integer \(N\)</th><th scope="col">crossing order \(R\)</th><th scope="col">gap \(R-N\)</th></tr></thead>
-              <tbody id="abundanceExamplesBody">
-                <tr data-radius="34.066215102"><th scope="row" data-column-label="integer N">34</th><td data-column-label="crossing order R">34.066215102</td><td data-column-label="gap R − N">0.066215</td></tr>
-                <tr data-radius="47.007880084"><th scope="row" data-column-label="integer N">47</th><td data-column-label="crossing order R">47.007880084</td><td data-column-label="gap R − N">0.00788</td></tr>
-                <tr data-radius="152.000973398"><th scope="row" data-column-label="integer N">152</th><td data-column-label="crossing order R">152.000973398</td><td data-column-label="gap R − N">9.73 × 10⁻⁴</td></tr>
-                <tr data-radius="324.001338702"><th scope="row" data-column-label="integer N">324</th><td data-column-label="crossing order R">324.001338702</td><td data-column-label="gap R − N">0.001339</td></tr>
-                <tr data-radius="764.000063548"><th scope="row" data-column-label="integer N">764</th><td data-column-label="crossing order R">764.000063548</td><td data-column-label="gap R − N">6.35 × 10⁻⁵</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </aside>
+        <div class="intro-copy intro-copy-wide">
+          <p>One particularly close solution is to take the sixteenth zero of \(J_1\), namely \(\rho=51.043535\ldots\), for which \(J_R(\rho)=0\) at \(R=28.026397\ldots\)</p>
         </div>
-        <lean-statement data-statement="near-integer-crossings"></lean-statement>
-        <details class="abundance-proof-details proof-details">
-          <summary><span>Proof sketch of <a class="xref" data-ref="near-integer-crossings" href="#statement-near-integer-crossings">the near-integer crossing theorem</a></span><i>expand +</i></summary>
-          <div class="proof-argument abundance-proof-argument">
-            <p><em>Proof sketch.</em> Put</p>
-            <div class="tex-display">
-              \[
-              \Phi(q)=\sqrt{q^2-1}-\arccos(q^{-1}),
-              \qquad \sqrt2&lt;q&lt;\sqrt3.
-              \]
-            </div>
-            <p>The fixed-order McMahon expansion and the large-order Debye expansion give, in the relevant range,</p>
-            <div class="tex-display">
-              \[
-              \begin{aligned}
-              j_{1,n}&amp;=\pi\left(n+\frac14\right)+o(1),\\
-              N\Phi\!\left(\frac{j_{N,m}}N\right)
-              &amp;=\pi\left(m-\frac14\right)+o(1).
-              \end{aligned}
-              \]
-            </div>
-            <p>Choose \(q_*\in(\sqrt2,\sqrt3)\) such that \(1\), \(q_*/\pi\), and \(\Phi(q_*)/\pi\) are linearly independent over \(\mathbb Q\). Kronecker's theorem makes the orbit</p>
-            <div class="tex-display">
-              \[
-              N\longmapsto
-              \left(N\frac{q_*}{\pi},
-              N\frac{\Phi(q_*)}{\pi}\right)
-              \pmod{\mathbb Z^2}
-              \]
-            </div>
-            <p>equidistributed in the two-torus. Hence, for arbitrarily large integers \(N\), the two phases can be chosen simultaneously so that a zero \(j_{1,n}\) lies just above \(Nq_*\), while a zero \(j_{N,m}\) lies just below it. The errors in the two asymptotic formulae tend to zero, so their gap can be made arbitrarily small.</p>
-            <p>For fixed \(m\), the map \(\nu\mapsto j_{\nu,m}\) is strictly increasing. Increasing the order continuously from \(N\) therefore produces a unique \(R_*&gt;N\) for which \(j_{R_*,m}=j_{1,n}=:\rho\). Uniform control of the order derivative in this compact \(q\)-window converts the small zero gap into \(0&lt;R_*-N&lt;\delta\); and \(\rho/R_*\to q_*\in(\sqrt2,\sqrt3)\), which gives \(2&lt;\rho^2/R_*^2&lt;3\) for sufficiently large \(N\). <span class="qed" aria-label="end of proof sketch">□</span></p>
-          </div>
-        </details>
         <figure class="abundance-laboratory reading-figure" data-figure="near-integer-crossing-sample" data-evidence="numerical">
           <section class="abundance-plot-panel" aria-label="Finite modulo-one sample of near-integer common Bessel zero crossings">
             <div class="passive-script-targets" hidden aria-hidden="true">
@@ -2244,6 +2181,73 @@
             <div id="abundanceCanvasWrap" class="abundance-canvas-wrap"><canvas id="abundanceCanvas" tabindex="0" role="img" aria-label="Modulo-one plot of real Bessel crossing orders" aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown Home End"></canvas></div>
           </section>
           <figcaption><span class="figure-caption-summary">Near-integer crossings appear as points close to the baseline.</span><span class="figure-caption-note">Each point has horizontal coordinate \(\log R\) and vertical coordinate \(\{R\}\). Keyboard: focus the plot and use the arrow keys to move between points; Home and End move to the first and last displayed points.</span></figcaption>
+        </figure>
+        <div class="intro-copy intro-copy-wide">
+          <p>The strategy is to take one of the \(R_\star\) from the claim, generate a perturbation branch \(R(s)\), and show that it reaches an integer. There are three steps.</p>
+          <ol class="strategy-steps">
+            <li>Compute the first coefficients \(R'(0)\) and \(R''(0)\) of a branch, to show that \(R(s)\) bends uniformly in \(R\). This is done in <a class="xref" data-ref="phase-story"></a>.</li>
+            <li>Show that the bifurcation exists in a uniform window, with uniform bounds on \(|R'''|\), however large \(R_\star\) is. The intuition is in <a class="xref" data-ref="half-cylinder-strategy"></a>, which does the limiting case of a cylinder; the rigorous version is in <a class="xref" data-ref="fixed-domain"></a> and <a class="xref" data-ref="bifurcation-setting"></a>.</li>
+            <li>Prove the claim, in a refined form. This is done in <a class="xref" data-ref="modes-experiment"></a>.</li>
+          </ol>
+        </div>
+        <figure class="modes-laboratory interactive-plate figure-band" data-apparatus="visual-aside" data-figure="global-collar-zoom" data-evidence="numerical">
+          <section class="modes-plot-panel apparatus-visual" aria-label="Global 28-sector field and one-wavelength collar zoom">
+            <div class="passive-script-targets" hidden aria-hidden="true"><strong id="modesPlotState">28 copies · one wavelength selected</strong></div>
+            <div id="modesCanvasWrap" class="modes-canvas-wrap">
+              <canvas id="modesCanvas" role="img" aria-label="A 28-fold global domain and an isotropically enlarged boundary-collar zoom"></canvas>
+            </div>
+          </section>
+
+          <aside class="modes-controls apparatus-controls light-controls paper-demo-controls" aria-label="Cone branch controls">
+            <div class="control-heading" hidden aria-hidden="true">
+              <button id="modesResetButton" type="button" hidden aria-hidden="true">Reset</button>
+            </div>
+
+            <div class="modes-control-block apparatus-control">
+              <div class="control-label"><label for="modesTransferRange">cone order</label><output id="modesTransferValue">\(R=28.016\)</output></div>
+              <input id="modesTransferRange" type="range" min="0" max="1" value="0.62" step="0.002">
+              <div class="range-scale"><span>\(R_*\) / open seam</span><span>\(N=28\) / closed</span></div>
+              <div class="parameter-pair" hidden aria-hidden="true">
+                <div><span>real order \(R(s)\)</span><strong id="modesOrderValue">28.016…</strong></div>
+                <div><span>boundary amplitude \(s\)</span><strong id="modesAmplitudeValue">0.2228</strong></div>
+              </div>
+            </div>
+
+            <div class="modes-control-block" hidden aria-hidden="true">
+              <div class="control-label"><span>one-wavelength crop</span><output id="modesCropValue">centered on seam</output></div>
+              <div class="fixed-zoom-pair">
+                <div><span>angular position</span><strong>seam · \(0^\circ\)</strong></div>
+                <div><span>radial crop depth</span><strong id="modesDepthValue">5 units</strong></div>
+              </div>
+              <p>The crop spans one full angular wavelength and five radial units. These scales are fixed so the mismatch is always visible in the large flat zoom.</p>
+            </div>
+
+            <div class="modes-control-block phase-control-block" hidden aria-hidden="true">
+              <div class="control-label"><span>\(R\)-problem \(\longrightarrow\) cylinder phase</span><output id="modesPhaseValue">\(\Delta\xi=0.543^\circ\)</output></div>
+              <div class="problem-map" aria-label="The Bessel radial problem becomes a sine-cosine problem on a flat collar">
+                <div><span>cone · regular at the cone point</span><strong>\(B_R=J_R\)</strong></div>
+                <i aria-hidden="true">→</i>
+                <div><span>Debye collar</span><strong>\(A\cos(\omega x+\xi_R)\)</strong></div>
+              </div>
+              <div id="modesPhaseTrack" class="phase-track" role="img" aria-label="Local cylinder phase along the branch">
+                <span id="modesPhaseFill"></span>
+                <i id="modesPhaseMarker"></i>
+              </div>
+              <div class="range-scale"><span>\(R_*\) · pure sine</span><span>\(N=28\) · \(\Delta\xi_N\)</span></div>
+              <div class="phase-law"><span>\(\xi'(R)=-\arccos(R/\rho)\)</span><span>\(\Delta\xi(s)\sim R(s)-R_*\sim s^2\)</span></div>
+              <div class="phase-agreement"><span>exact boundary Cauchy phase</span><strong id="modesExactPhaseValue">\(\delta=0.543^\circ\)</strong></div>
+            </div>
+
+            <button id="modesPlayButton" class="play-button modes-play-button" type="button" aria-pressed="false"><span id="modesPlayIcon">▶</span><span id="modesPlayLabel">Animate</span></button>
+
+            <div class="modes-status" hidden aria-hidden="true">
+              <div><span>28-copy seam</span><strong id="modesGapValue">0.20°</strong></div>
+              <div><span>one angular wavelength</span><strong id="modesWavelengthValue">6.283 units</strong></div>
+              <div><span>local curvature</span><strong id="modesCurvatureValue">\(1/28.016\)</strong></div>
+            </div>
+          </aside>
+
+          <figcaption><span class="figure-caption-summary">The same continued \(D_{28}\) field is shown globally and in collar coordinates.</span><span class="figure-caption-note">The animation follows the numerically continued branch from the noninteger crossing \(R_*=28.026\ldots\) to \(R=28\). This numerical illustration lies outside the proof window and is not the branch selected by the nonexplicit existence argument. The crop box and its connector lines identify the same boundary collar in the global and local views. The enlargement is isotropic: equal lengths in \(x\) and \(\psi\) have equal lengths on the page. The missing angular sector is slightly exaggerated so that its closure remains legible.</span></figcaption>
         </figure>
       </section>
           <article id="statement-main-question" class="math-statement math-statement-question" data-kind="main question" data-label="main-question" aria-labelledby="mainQuestionTitle">
@@ -2256,6 +2260,103 @@
           <p>Since <a class="xref" data-ref="near-integer-crossings" href="#statement-near-integer-crossings">the near-integer crossing theorem</a> makes \(\delta\) arbitrarily small, it remains to prove a <strong>uniform perturbation</strong>: there is an \(\varepsilon&gt;0\) such that every sufficiently large \(R_\star\) can be perturbed by at least \(\varepsilon\).</p>
           </div>
 
+        <section id="phase-story" class="phase-story">
+        <header class="section-heading" data-title="Exploring the cone bifurcation" data-toc="proof-subsection">
+          <h3>Exploring the cone bifurcation</h3>
+        </header>
+        <div class="phase-story-lead paper-copy">
+          <p>Each point in the plot below is a noninteger order \(R_*\) at which the cone problem bifurcates. The curve issuing from it is the predicted two-jet of the corresponding branch, \(R(s)=R_*+\tfrac12R''(0)s^2\). This puts the two ingredients of the planar construction in one picture.</p>
+        </div>
+        <figure class="phase-family reading-figure" data-figure="cone-branch-curvature" data-evidence="asymptotic" aria-labelledby="phaseFamilyTitle">
+          <div id="phaseFamilyCanvasWrap" class="phase-family-canvas-wrap"><canvas id="phaseFamilyCanvas" role="img" aria-label="Real Bessel crossing orders and their predicted decreasing quadratic branch curves"></canvas></div>
+          <figcaption id="phaseFamilyTitle"><span class="figure-caption-summary">The quadratic approximation predicts a decrease in \(R\) at every displayed crossing.</span><span class="figure-caption-note">The points are crossings with \(6\le R_*\le30\) and \(2\le\lambda_*\le3\); each curve is the local two-jet \(R(s)=R_*-\tfrac12\Gamma(\lambda_*)s^2\). The curves extend well past the amplitudes for which that jet is accurate, so they show the direction of the prediction rather than its range. The second-variation formula is proved in <a class="xref" data-ref="cone-second-variation" href="#statement-cone-second-variation">the second-variation theorem</a> below.</span></figcaption>
+        </figure>
+        <div class="phase-observations paper-copy">
+          <p>The plot suggests two facts. First, the fractional parts of the crossing orders have no visible pattern; the equidistributed phase mechanism behind <a class="xref" data-ref="near-integer-crossings" href="#statement-near-integer-crossings">the near-integer crossing theorem</a> explains that, and in particular produces crossings arbitrarily close to an integer. Second, every branch is tangent to the line \(s=0\) and bends to the left by nearly the same amount. The theorem below makes that second observation uniform.</p>
+          <p>A cone solution at, say, \(R_*=28.026\ldots\) cannot be unfolded into a planar solution: twenty-eight copies leave a seam. If its branch reaches \(R=28\), the copies close exactly and the cone solution becomes a \(D_{28}\)-symmetric planar solution.</p>
+        </div>
+        <article id="statement-cone-second-variation" class="math-statement second-variation-theorem" data-kind="theorem" data-label="cone-second-variation">
+          <header class="math-statement-header"><span>Theorem</span><small>second variation of the cone order</small></header>
+          <div class="math-statement-body">
+            <p>At every sufficiently large crossing in \(2\le\lambda_*\le3\), the cone branch is even in \(s\) and</p>
+            <div class="tex-display">
+              \[
+              \begin{aligned}
+              R'(0)&amp;=0,\\
+              R''(0)&amp;=-\frac{\sqrt{\lambda_*}}{4R_*d_*}
+              \left(2+\rho\frac{J'_{2R_*}(\rho)}{J_{2R_*}(\rho)}\right),\\
+              R''(0)&amp;=-\Gamma(\lambda_*)+O(R_*^{-1}),
+              \end{aligned}
+              \]
+            </div>
+            <p>where \(d_*=(\partial_\nu j_{\nu,m})|_{\nu=R_*}&gt;0\) and</p>
+            <div class="tex-display">
+              \[
+              \Gamma(\lambda)=
+              \frac{\sqrt{(\lambda-1)(4-\lambda)}}
+              {4\arccos(\lambda^{-1/2})}&gt;0.
+              \]
+            </div>
+          </div>
+        </article>
+        <article id="statement-uniform-cone-decrease" class="math-statement uniform-drop-theorem" data-kind="corollary" data-label="uniform-cone-decrease">
+          <header class="math-statement-header"><span>Corollary</span><small>uniform decrease of \(R\)</small></header>
+          <div class="math-statement-body">
+            <p>There are constants \(R_{\mathrm{drop}},s_*,\eta_*&gt;0\), independent of the crossing, such that every real-order crossing with</p>
+            <div class="tex-display">
+              \[
+              \begin{gathered}
+              R_*\ge R_{\mathrm{drop}},\qquad J_1(\rho)=J_{R_*}(\rho)=0,\\
+              2\le\dfrac{\rho^2}{R_*^2}\le3,
+              \end{gathered}
+              \]
+            </div>
+            <p>has a cone branch defined through \(s=s_*\) for which</p>
+            <div class="tex-display uniform-drop-result">
+              \[
+              R(0)=R_*,\qquad R(s_*)\le R_*-\eta_*.
+              \]
+            </div>
+            <p>The number \(\eta_*\) may be small, but it is independent of \(R_*\) for all sufficiently large crossings. This is the estimate needed to reach an integer value of \(R\).</p>
+          </div>
+        </article>
+        <details class="proof-details second-variation-proof">
+          <summary><span>Derivation of the second variation and the uniform decrease</span><i>expand +</i></summary>
+          <div class="proof-details-body">
+        <div class="phase-derivation paper-copy">
+            <p>Half-turn symmetry gives \(R(-s)=R(s)\), so \(R'(0)=0\) and the first variation of \(R\) is quadratic in \(s\). The product \(\cos^2\theta=\tfrac12(1+\cos2\theta)\) leaves only the modes \(0\) and \(2\), so the second harmonic decides the sign. Here \(t=r/R_*\in[0,1]\) is the radius normalized to the boundary, so that \(\sqrt{\lambda_*}\,r=\rho t\); and \(j_{\nu,m}\) is the \(m\)-th positive zero of \(J_\nu\), with \(d_*=(\partial_\nu j_{\nu,m})|_{\nu=R_*}\) its derivative in the order. Zeros of \(J_\nu\) increase with \(\nu\), so \(d_*&gt;0\). The regular second harmonic and its boundary slope are</p>
+            <div class="tex-display phase-tex">\[W_2(t)=-\frac{\rho^2}{4}\frac{J_{2R_*}(\rho t)}{J_{2R_*}(\rho)},\qquad S_2=W_2'(1)=-\frac{\rho^3}{4}\frac{J'_{2R_*}(\rho)}{J_{2R_*}(\rho)}.\]</div>
+            <p>At cubic order the mode-1 component has to be solvable again, and that forces a single scalar condition. Write \(V_1\) for the mode-1 radial profile generated at this order and \(Q\) for the mode-1 profile carrying the derivative in the Bessel order, whose boundary value is \(Q(1)=-\rho d_*\), and let \(\mu=R_*^2R''(0)/2\) be the coefficient with which the order moves along the branch. The condition reads \(V_1(1)=\rho^2/4-S_2/2=\mu Q(1)\), a scalar equation whose solution is the exact curvature</p>
+            <div class="tex-display phase-tex boxed-equation">\[R''(0)=-\frac{\sqrt{\lambda_*}}{4R_*d_*}\left(2+\rho\frac{J'_{2R_*}(\rho)}{J_{2R_*}(\rho)}\right).\]</div>
+            <p>Both factors on the right have a definite sign: \(d_*&gt;0\) as noted, and the bracket is positive — at the crossing displayed below it equals \(27.1\) — so \(R''(0)&lt;0\) and the cone radius does decrease. For large \(R_*\), the order derivative and the mode-2 logarithmic derivative have Debye limits. Hence</p>
+            <div class="tex-display phase-tex">\[R''(0)=-\Gamma(\lambda_*)+O(R_*^{-1}),\qquad \Gamma(\lambda)=\frac{\sqrt{(\lambda-1)(4-\lambda)}}{4\arccos(\lambda^{-1/2})}>0.\]</div>
+            <p>Along this branch \(\rho\) is fixed, so the oscillatory Debye phase at the boundary is</p>
+            <div class="tex-display phase-tex">\[\xi(R;\rho)=\sqrt{\rho^2-R^2}-R\arccos\!\left(\frac R\rho\right)-\frac\pi4,\qquad \partial_R\xi=-\arccos\!\left(\frac R\rho\right).\]</div>
+            <p>Thus \(R\mapsto\xi\) is locally linear and invertible. The signed branch parameter enters through an even function,</p>
+            <div class="tex-display phase-tex">\[R(s)=R_*+\frac12R''(0)s^2+O(s^4).\]</div>
+            <p>The chain rule now gives the motion seen in the second graph:</p>
+            <div class="tex-display phase-tex boxed-equation">\[\Delta\xi(s)=-\frac12\arccos\!\left(\frac{R_*}{\rho}\right)R''(0)s^2+O(s^4).\]</div>
+            <p>Because both factors on the right are negative, \(\Delta\xi(s)>0\): the cone radius decreases while the local cylinder phase advances. There is a linear relation between phase and \(R-R_*\), and a quadratic relation between either of them and \(s\).</p>
+        </div>
+        <div class="motion-split paper-copy" aria-label="Linear boundary motion versus quadratic radius motion">
+          <p>The visible boundary wave moves at first order:</p>
+          <div class="tex-display">\[r_{\partial}(\psi;s)=R(s)-s\cos\psi+O(s^2).\]</div>
+          <p>The opposite points \(\psi=0,\pi\) move in opposite directions at speed one. The cosine has zero average, however, so the mean radius moves only at second order:</p>
+          <div class="tex-display">\[\frac1{2\pi}\int_0^{2\pi}r_{\partial}(\psi;s)\,d\psi=R_*+\frac12R''(0)s^2+O(s^4).\]</div>
+          <p>Thus the first nonzero variation of the cone parameter \(R\) is the negative quadratic term computed above.</p>
+        </div>
+          </div>
+        </details>
+        <article class="math-statement planar-landing-theorem" data-kind="corollary" data-label="planar-landing">
+          <header class="math-statement-header"><span>Conclusion</span><small>planar landing</small></header>
+          <div class="math-statement-body">
+            <p>For arbitrarily large integers \(N\), a noncircular \(D_N\)-symmetric planar Schiffer domain exists.</p>
+          </div>
+        </article>
+        <div class="paper-copy">
+          <p><em>Proof.</em> Choose, by <a class="xref" data-ref="near-integer-crossings" href="#statement-near-integer-crossings">the near-integer crossing theorem</a>, a crossing \(R_*=N+\delta\) with \(0&lt;\delta&lt;\eta_*\). The uniform-decrease corollary gives \(R(0)=R_*&gt;N\) and \(R(s_*)\le R_* -\eta_*&lt;N\). Continuity supplies \(s_N\in(0,s_*)\) with \(R(s_N)=N\). At this nonzero parameter the cone unfolds into a noncircular \(D_N\)-symmetric planar domain. <span class="qed" aria-label="end of proof">□</span></p>
+        </div>
+        </section>
         <header id="half-cylinder-strategy" class="section-heading proof-strategy-subheading" data-title="A motivation for uniformity: the cylinder" data-toc="proof-subsection">
           <h3>A motivation for uniformity: the cylinder</h3>
         </header>
@@ -2510,12 +2611,6 @@
           <p>The Crandall–Rabinowitz theorem turns this formal kernel direction into an actual local branch. To use the branch later on large cones, however, its size and estimates must be uniform as <span class="formula">\(\lambda\)</span> varies.</p>
         </div>
 
-        <article class="math-statement math-statement-lemma" data-kind="lemma" data-label="uniform-cylinder-branch" aria-labelledby="uniformCylinderBranchTitle">
-          <header class="math-statement-header"><span>Lemma</span><small>Uniform bifurcation</small></header>
-          <div class="math-statement-body">
-            <p id="uniformCylinderBranchTitle">The Crandall–Rabinowitz hypotheses hold at every <span class="formula">\((\lambda,0)\)</span> with <span class="formula">\(\lambda\in[2,3]\)</span>. The complementary inverse, the transversality constant, and the nonlinear estimates may all be bounded independently of <span class="formula">\(\lambda\)</span>. Consequently the local branches contain one common interval <span class="formula">\(|s|&lt;\varepsilon\)</span>.</p>
-          </div>
-        </article>
 
         <details class="proof-details cylinder-uniform-proof">
           <summary><span>Uniformity of the bifurcation in \(\lambda\)</span><i>expand +</i></summary>
@@ -2760,7 +2855,9 @@
           \[ y\ \longmapsto\ R-y-\chi(y)h(\psi), \]
         </div>
         <p>where \(\chi\) is a cut-off equal to \(1\) on the lower face of the cylinder, which corresponds to the outer part of the cone, and to \(0\) on the upper face, which corresponds to the inner cut at \(r=R-L\).</p>
-        <figure class="fullwidth cone-remap-figure" data-figure="fixed-collar" data-evidence="exact">
+        <label for="fixed-collar-note" class="margin-toggle" aria-label="Show the fixed collar figure">&#8853;</label>
+        <input type="checkbox" id="fixed-collar-note" class="margin-toggle">
+        <figure class="marginnote side-figure fixed-collar-figure" data-figure="fixed-collar" data-evidence="exact">
           <svg viewBox="0 0 760 250" role="img" aria-labelledby="fixedCollarTitle fixedCollarDesc">
             <title id="fixedCollarTitle">The fixed cylinder and the collar it parametrizes</title>
             <desc id="fixedCollarDesc">On the left, the fixed cylinder T times the interval from 0 to L, shaded throughout, with its upper face at y equals L hatched in red. An arrow labelled Phi superscript h runs to the right, where the cone is drawn in perspective. Its cut at distance R minus L from the apex is an exact circle, hatched in red where it is seen directly through the mouth of the cone and shaded where the collar surface passes in front of it. Its outer cut is the boundary r equals R minus h, carrying three periods of the profile, so it is visibly not a circle. The surface between the two cuts is shaded.</desc>
@@ -2805,7 +2902,7 @@
 
         </div>
         <details class="optional-digression proof-details intro-proof">
-          <summary><span class="digression-title">The formula for \(L^h_R\)</span><i>expand +</i></summary>
+          <summary><span><small>Optional digression</small>The formula for \(L^h_R\)</span><i>expand +</i></summary>
           <div class="intro-proof-body">
             <p>Abbreviating \(\chi=\chi(y)\) and \(h=h(\psi)\),</p>
             <div class="tex-display">
@@ -2889,24 +2986,11 @@
         <div class="tex-display">
           \[ \mathcal{G}_1(R,v):=\big(L^{h_v}_R+\lambda\big)w^v=0. \]
         </div>
-        <label for="interior-match-note" class="margin-toggle" aria-label="Show the interior matching figure">&#8853;</label>
-        <input type="checkbox" id="interior-match-note" class="margin-toggle">
-        <figure class="marginnote side-figure interior-match-figure" data-figure="interior-matching" data-evidence="numerical" data-evidence-detail="Precomputed Bessel profiles and Dirichlet-to-Neumann multipliers illustrate the matching equation. The dashed collar-side trace is a prescribed pedagogical target, not a separately computed nonlinear collar solution.">
-          <div id="interiorMatchCanvasWrap" class="interior-match-canvas-wrap">
-            <canvas id="interiorMatchCanvas" role="img" aria-label="Interior solution on the disk, with its boundary value and normal derivative plotted below" aria-describedby="interiorMatchingCaption"></canvas>
-          </div>
-          <div class="interior-match-control">
-            <label for="interiorMatchRange">boundary amplitude</label>
-            <output id="interiorMatchValue" for="interiorMatchRange">0.20</output>
-            <input id="interiorMatchRange" type="range" min="-1" max="1" step="0.01" value="0.2" aria-label="Amplitude of the first angular mode of the boundary value" aria-describedby="interiorMatchingCaption">
-          </div>
-          <figcaption id="interiorMatchingCaption">Set the boundary value on \(r=R-L\); the interior solution and its normal derivative are then determined. The dashed curve is a prescribed collar-side target at amplitude \(0.55\), formed from the same saved Dirichlet-to-Neumann multipliers. Moving the slider shows when the interior-produced trace meets that target, illustrating the equation \(\mathcal{G}_2=0\) rather than computing the nonlinear collar solution. The picture uses the quotient angle \(\psi\); at integer \(R\) it unfolds to \(B(0,R-L)\).</figcaption>
-        </figure>
         <p>At the upper end of the collar \(\{y=L\}\), the condition \(\mathcal{G}_2(R,v)=0\) ensures that the corresponding cone solution extends regularly to a Schiffer solution on the full cone. A Dirichlet-to-Neumann map, detailed in the following disclosure, expresses the condition.</p>
         </div>
 
         <details class="optional-digression proof-details intro-proof">
-          <summary><span><small>Optional explanation</small>Encoding regular extension in \(\mathcal{G}_2\)</span><i>expand +</i></summary>
+          <summary><span><small>Optional digression</small>Encoding regular extension in \(\mathcal{G}_2\)</span><i>expand +</i></summary>
           <div class="intro-proof-body">
             <p>The edge \(\{y=L\}\) is where the collar meets the omitted interior of the cone. Solve \((\Delta+\lambda)u=0\) inside \(\{r&lt;R-L\}\) with the boundary value \(w_0(L)+v(L,\cdot)\) supplied by the collar; here \(\chi\) vanishes near \(y=L\). The two pieces form one solution only when their normal derivatives also agree. The Dirichlet-to-Neumann map records this derivative: \(D_R\) is the Fourier multiplier</p>
             <div class="tex-display">
@@ -3012,103 +3096,6 @@
       </section>
 
 
-      <section id="phase-story" class="phase-story">
-        <header class="section-heading" data-title="Quadratic bending of the cone branch" data-toc="proof-subsection">
-          <h3>Quadratic bending of the cone branch</h3>
-        </header>
-        <div class="phase-story-lead paper-copy">
-          <p>Each point in the plot below is a noninteger order \(R_*\) at which the cone problem bifurcates. The curve issuing from it is the predicted two-jet of the corresponding branch, \(R(s)=R_*+\tfrac12R''(0)s^2\). The plot combines the near-integer crossings with the direction in which their branches bend.</p>
-        </div>
-        <figure class="phase-family reading-figure" data-figure="cone-branch-curvature" data-evidence="asymptotic" aria-labelledby="phaseFamilyTitle">
-          <div id="phaseFamilyCanvasWrap" class="phase-family-canvas-wrap"><canvas id="phaseFamilyCanvas" role="img" aria-label="Real Bessel crossing orders and their predicted decreasing quadratic branch curves"></canvas></div>
-          <figcaption id="phaseFamilyTitle"><span class="figure-caption-summary">The quadratic approximation predicts a decrease in \(R\) at every displayed crossing.</span><span class="figure-caption-note">The points are crossings with \(6\le R_*\le30\) and \(2\le\lambda_*\le3\); each curve is the local two-jet \(R(s)=R_*-\tfrac12\Gamma(\lambda_*)s^2\). The curves extend well past the amplitudes for which that jet is accurate, so they show the direction of the prediction rather than its range. The second-variation formula is proved in <a class="xref" data-ref="cone-second-variation" href="#statement-cone-second-variation">the second-variation theorem</a> below.</span></figcaption>
-        </figure>
-        <div class="phase-observations paper-copy">
-          <p>Two features of the plot match the analysis. First, the fractional parts of the crossing orders have no visible pattern; the equidistributed phase mechanism behind <a class="xref" data-ref="near-integer-crossings" href="#statement-near-integer-crossings">the near-integer crossing theorem</a> produces crossings arbitrarily close to an integer. Second, every branch is tangent to the line \(s=0\) and bends to the left by nearly the same amount. <a class="xref" data-ref="uniform-cone-decrease" href="#statement-uniform-cone-decrease">The uniform-decrease corollary</a> proves that this bending is uniform.</p>
-          <p>A cone solution at, say, \(R_*=28.026\ldots\) cannot be unfolded into a planar solution: twenty-eight copies leave a seam. If its branch reaches \(R=28\), the copies close exactly and the cone solution becomes a \(D_{28}\)-symmetric planar solution.</p>
-        </div>
-        <article id="statement-cone-second-variation" class="math-statement second-variation-theorem" data-kind="theorem" data-label="cone-second-variation">
-          <header class="math-statement-header"><span>Theorem</span><small>second variation of the cone order</small></header>
-          <div class="math-statement-body">
-            <p>At every sufficiently large crossing in \(2\le\lambda_*\le3\), the cone branch is even in \(s\) and</p>
-            <div class="tex-display">
-              \[
-              \begin{aligned}
-              R'(0)&amp;=0,\\
-              R''(0)&amp;=-\frac{\sqrt{\lambda_*}}{4R_*d_*}
-              \left(2+\rho\frac{J'_{2R_*}(\rho)}{J_{2R_*}(\rho)}\right),\\
-              R''(0)&amp;=-\Gamma(\lambda_*)+O(R_*^{-1}),
-              \end{aligned}
-              \]
-            </div>
-            <p>where \(d_*=(\partial_\nu j_{\nu,m})|_{\nu=R_*}&gt;0\) and</p>
-            <div class="tex-display">
-              \[
-              \Gamma(\lambda)=
-              \frac{\sqrt{(\lambda-1)(4-\lambda)}}
-              {4\arccos(\lambda^{-1/2})}&gt;0.
-              \]
-            </div>
-          </div>
-        </article>
-        <article id="statement-uniform-cone-decrease" class="math-statement uniform-drop-theorem" data-kind="corollary" data-label="uniform-cone-decrease">
-          <header class="math-statement-header"><span>Corollary</span><small>uniform decrease of \(R\)</small></header>
-          <div class="math-statement-body">
-            <p>There are constants \(R_{\mathrm{drop}},s_*,\eta_*&gt;0\), independent of the crossing, such that every real-order crossing with</p>
-            <div class="tex-display">
-              \[
-              \begin{gathered}
-              R_*\ge R_{\mathrm{drop}},\qquad J_1(\rho)=J_{R_*}(\rho)=0,\\
-              2\le\dfrac{\rho^2}{R_*^2}\le3,
-              \end{gathered}
-              \]
-            </div>
-            <p>has a cone branch defined through \(s=s_*\) for which</p>
-            <div class="tex-display uniform-drop-result">
-              \[
-              R(0)=R_*,\qquad R(s_*)\le R_*-\eta_*.
-              \]
-            </div>
-            <p>The number \(\eta_*\) may be small, but it is independent of \(R_*\) for all sufficiently large crossings. It therefore exceeds a sufficiently small near-integer gap and permits the branch to reach an integer value of \(R\).</p>
-          </div>
-        </article>
-        <details class="proof-details second-variation-proof">
-          <summary><span>Derivation of the second variation and the uniform decrease</span><i>expand +</i></summary>
-          <div class="proof-details-body">
-        <div class="phase-derivation paper-copy">
-            <p>Half-turn symmetry gives \(R(-s)=R(s)\), so \(R'(0)=0\) and the first variation of \(R\) is quadratic in \(s\). The product \(\cos^2\theta=\tfrac12(1+\cos2\theta)\) leaves only the modes \(0\) and \(2\), so the second harmonic decides the sign. Here \(t=r/R_*\in[0,1]\) is the radius normalized to the boundary, so that \(\sqrt{\lambda_*}\,r=\rho t\); and \(j_{\nu,m}\) is the \(m\)-th positive zero of \(J_\nu\), with \(d_*=(\partial_\nu j_{\nu,m})|_{\nu=R_*}\) its derivative in the order. Zeros of \(J_\nu\) increase with \(\nu\), so \(d_*&gt;0\). The regular second harmonic and its boundary slope are</p>
-            <div class="tex-display phase-tex">\[W_2(t)=-\frac{\rho^2}{4}\frac{J_{2R_*}(\rho t)}{J_{2R_*}(\rho)},\qquad S_2=W_2'(1)=-\frac{\rho^3}{4}\frac{J'_{2R_*}(\rho)}{J_{2R_*}(\rho)}.\]</div>
-            <p>At cubic order the mode-1 component has to be solvable again, and that forces a single scalar condition. Write \(V_1\) for the mode-1 radial profile generated at this order and \(Q\) for the mode-1 profile carrying the derivative in the Bessel order, whose boundary value is \(Q(1)=-\rho d_*\), and let \(\mu=R_*^2R''(0)/2\) be the coefficient with which the order moves along the branch. The condition reads \(V_1(1)=\rho^2/4-S_2/2=\mu Q(1)\), a scalar equation whose solution is the exact curvature</p>
-            <div class="tex-display phase-tex boxed-equation">\[R''(0)=-\frac{\sqrt{\lambda_*}}{4R_*d_*}\left(2+\rho\frac{J'_{2R_*}(\rho)}{J_{2R_*}(\rho)}\right).\]</div>
-            <p>Both factors on the right have a definite sign: \(d_*&gt;0\) as noted, and the bracket is positive — at the crossing displayed below it equals \(27.1\) — so \(R''(0)&lt;0\) and the cone radius does decrease. For large \(R_*\), the order derivative and the mode-2 logarithmic derivative have Debye limits. Hence</p>
-            <div class="tex-display phase-tex">\[R''(0)=-\Gamma(\lambda_*)+O(R_*^{-1}),\qquad \Gamma(\lambda)=\frac{\sqrt{(\lambda-1)(4-\lambda)}}{4\arccos(\lambda^{-1/2})}>0.\]</div>
-            <p>Along this branch \(\rho\) is fixed, so the oscillatory Debye phase at the boundary is</p>
-            <div class="tex-display phase-tex">\[\xi(R;\rho)=\sqrt{\rho^2-R^2}-R\arccos\!\left(\frac R\rho\right)-\frac\pi4,\qquad \partial_R\xi=-\arccos\!\left(\frac R\rho\right).\]</div>
-            <p>Thus \(R\mapsto\xi\) is locally linear and invertible. The signed branch parameter enters through an even function,</p>
-            <div class="tex-display phase-tex">\[R(s)=R_*+\frac12R''(0)s^2+O(s^4).\]</div>
-            <p>The chain rule now gives the motion seen in the second graph:</p>
-            <div class="tex-display phase-tex boxed-equation">\[\Delta\xi(s)=-\frac12\arccos\!\left(\frac{R_*}{\rho}\right)R''(0)s^2+O(s^4).\]</div>
-            <p>Because both factors on the right are negative, \(\Delta\xi(s)>0\): the cone radius decreases while the local cylinder phase advances. There is a linear relation between phase and \(R-R_*\), and a quadratic relation between either of them and \(s\).</p>
-        </div>
-        <div class="motion-split paper-copy" aria-label="Linear boundary motion versus quadratic radius motion">
-          <p>The visible boundary wave moves at first order:</p>
-          <div class="tex-display">\[r_{\partial}(\psi;s)=R(s)-s\cos\psi+O(s^2).\]</div>
-          <p>The opposite points \(\psi=0,\pi\) move in opposite directions at speed one. The cosine has zero average, however, so the mean radius moves only at second order:</p>
-          <div class="tex-display">\[\frac1{2\pi}\int_0^{2\pi}r_{\partial}(\psi;s)\,d\psi=R_*+\frac12R''(0)s^2+O(s^4).\]</div>
-          <p>Thus the first nonzero variation of the cone parameter \(R\) is the negative quadratic term computed above.</p>
-        </div>
-          </div>
-        </details>
-        <article class="math-statement planar-landing-theorem" data-kind="corollary" data-label="planar-landing">
-          <header class="math-statement-header"><span>Conclusion</span><small>planar landing</small></header>
-          <div class="math-statement-body">
-            <p>For arbitrarily large integers \(N\), a noncircular \(D_N\)-symmetric planar Schiffer domain exists.</p>
-          </div>
-        </article>
-        <div class="paper-copy">
-          <p><em>Proof.</em> Choose, by <a class="xref" data-ref="near-integer-crossings" href="#statement-near-integer-crossings">the near-integer crossing theorem</a>, a crossing \(R_*=N+\delta\) with \(0&lt;\delta&lt;\eta_*\). The uniform-decrease corollary gives \(R(0)=R_*&gt;N\) and \(R(s_*)\le R_* -\eta_*&lt;N\). Continuity supplies \(s_N\in(0,s_*)\) with \(R(s_N)=N\). At this nonzero parameter the cone unfolds into a noncircular \(D_N\)-symmetric planar domain. <span class="qed" aria-label="end of proof">□</span></p>
-        </div>
-      </section>
 
 
       <section id="cone-experiment" class="experiment cone-experiment" hidden aria-hidden="true">
@@ -3194,69 +3181,80 @@
         <header class="section-heading" data-title="Integer landing and planar lift" data-toc="proof-subsection">
           <h3>Integer landing and planar lift</h3>
         </header>
+        <article id="statement-near-integer-crossings" class="math-statement near-integer-theorem" data-kind="theorem" data-label="near-integer-crossings">
+          <header class="math-statement-header"><span>Theorem</span><small>near-integer crossings</small></header>
+          <div class="math-statement-body">
+            <p>For every \(\delta&gt;0\) and every lower threshold \(N_{\min}\), there are an integer \(N\ge N_{\min}\), a real order \(R_*\), and a frequency \(\rho&gt;0\) such that</p>
+            <div class="tex-display">
+              \[
+              \begin{gathered}
+              N&lt;R_*&lt;N+\delta,\\
+              J_1(\rho)=J_{R_*}(\rho)=0,\\
+              2&lt;\dfrac{\rho^2}{R_*^2}&lt;3.
+              \end{gathered}
+              \]
+            </div>
+            <p>The scatter plot below is a finite numerical sample of these coincidences. The theorem itself comes from aligning the fixed-order McMahon phase and the large-order Debye phase.</p>
+          </div>
+        </article>
+        <div class="intro-copy intro-copy-wide abundance-examples-host">
+        <label for="abundance-examples-note" class="margin-toggle" aria-label="Show five particularly close examples">&#8853;</label>
+        <input type="checkbox" id="abundance-examples-note" class="margin-toggle">
+        <aside class="marginnote abundance-examples abundance-examples-margin" aria-labelledby="abundanceExamplesTitle">
+          <h3 id="abundanceExamplesTitle">Five particularly close examples.</h3>
+          <div class="abundance-examples-table-wrap">
+            <table class="abundance-examples-table">
+              <caption class="visually-hidden">Five particularly close near-integer common Bessel-zero crossings</caption>
+              <thead><tr><th scope="col">integer \(N\)</th><th scope="col">crossing order \(R\)</th><th scope="col">gap \(R-N\)</th></tr></thead>
+              <tbody id="abundanceExamplesBody">
+                <tr data-radius="34.066215102"><th scope="row" data-label="integer N">34</th><td data-label="crossing order R">34.066215102</td><td data-label="gap R − N">0.066215</td></tr>
+                <tr data-radius="47.007880084"><th scope="row" data-label="integer N">47</th><td data-label="crossing order R">47.007880084</td><td data-label="gap R − N">0.00788</td></tr>
+                <tr data-radius="152.000973398"><th scope="row" data-label="integer N">152</th><td data-label="crossing order R">152.000973398</td><td data-label="gap R − N">9.73 × 10⁻⁴</td></tr>
+                <tr data-radius="324.001338702"><th scope="row" data-label="integer N">324</th><td data-label="crossing order R">324.001338702</td><td data-label="gap R − N">0.001339</td></tr>
+                <tr data-radius="764.000063548"><th scope="row" data-label="integer N">764</th><td data-label="crossing order R">764.000063548</td><td data-label="gap R − N">6.35 × 10⁻⁵</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </aside>
+        </div>
+        <lean-statement data-statement="near-integer-crossings"></lean-statement>
+        <details class="abundance-proof-details proof-details">
+          <summary><span>Proof sketch of <a class="xref" data-ref="near-integer-crossings" href="#statement-near-integer-crossings">the near-integer crossing theorem</a></span><i>expand +</i></summary>
+          <div class="proof-argument abundance-proof-argument">
+            <p><em>Proof sketch.</em> Put</p>
+            <div class="tex-display">
+              \[
+              \Phi(q)=\sqrt{q^2-1}-\arccos(q^{-1}),
+              \qquad \sqrt2&lt;q&lt;\sqrt3.
+              \]
+            </div>
+            <p>The fixed-order McMahon expansion and the large-order Debye expansion give, in the relevant range,</p>
+            <div class="tex-display">
+              \[
+              \begin{aligned}
+              j_{1,n}&amp;=\pi\left(n+\frac14\right)+o(1),\\
+              N\Phi\!\left(\frac{j_{N,m}}N\right)
+              &amp;=\pi\left(m-\frac14\right)+o(1).
+              \end{aligned}
+              \]
+            </div>
+            <p>Choose \(q_*\in(\sqrt2,\sqrt3)\) such that \(1\), \(q_*/\pi\), and \(\Phi(q_*)/\pi\) are linearly independent over \(\mathbb Q\). Kronecker's theorem makes the orbit</p>
+            <div class="tex-display">
+              \[
+              N\longmapsto
+              \left(N\frac{q_*}{\pi},
+              N\frac{\Phi(q_*)}{\pi}\right)
+              \pmod{\mathbb Z^2}
+              \]
+            </div>
+            <p>equidistributed in the two-torus. Hence, for arbitrarily large integers \(N\), the two phases can be chosen simultaneously so that a zero \(j_{1,n}\) lies just above \(Nq_*\), while a zero \(j_{N,m}\) lies just below it. The errors in the two asymptotic formulae tend to zero, so their gap can be made arbitrarily small.</p>
+            <p>For fixed \(m\), the map \(\nu\mapsto j_{\nu,m}\) is strictly increasing. Increasing the order continuously from \(N\) therefore produces a unique \(R_*&gt;N\) for which \(j_{R_*,m}=j_{1,n}=:\rho\). Uniform control of the order derivative in this compact \(q\)-window converts the small zero gap into \(0&lt;R_*-N&lt;\delta\); and \(\rho/R_*\to q_*\in(\sqrt2,\sqrt3)\), which gives \(2&lt;\rho^2/R_*^2&lt;3\) for sufficiently large \(N\). <span class="qed" aria-label="end of proof sketch">□</span></p>
+          </div>
+        </details>
         <div class="modes-lead paper-copy">
           <p>Choose the gap in <a class="xref" data-ref="near-integer-crossings" href="#statement-near-integer-crossings">the near-integer crossing theorem</a> smaller than the uniform decrease \(\eta_*\) supplied by <a class="xref" data-ref="uniform-cone-decrease" href="#statement-uniform-cone-decrease">the uniform-decrease corollary</a>. The corresponding branch begins at \(R(0)=R_*&gt;N\) and reaches a value below \(N\). Continuity therefore gives a nonzero parameter \(s_N\) with \(R(s_N)=N\). At this integer order the cone unfolds into a noncircular \(N\)-fold planar domain, proving <a class="xref" data-ref="main-result" href="#statement-main-result">the main theorem</a>.</p>
         </div>
 
-        <figure class="modes-laboratory interactive-plate figure-band" data-apparatus="visual-aside" data-figure="global-collar-zoom" data-evidence="numerical">
-          <section class="modes-plot-panel apparatus-visual" aria-label="Global 28-sector field and one-wavelength collar zoom">
-            <div class="passive-script-targets" hidden aria-hidden="true"><strong id="modesPlotState">28 copies · one wavelength selected</strong></div>
-            <div id="modesCanvasWrap" class="modes-canvas-wrap">
-              <canvas id="modesCanvas" role="img" aria-label="A 28-fold global domain and an isotropically enlarged boundary-collar zoom"></canvas>
-            </div>
-          </section>
-
-          <aside class="modes-controls apparatus-controls light-controls paper-demo-controls" aria-label="Cone branch controls">
-            <div class="control-heading" hidden aria-hidden="true">
-              <button id="modesResetButton" type="button" hidden aria-hidden="true">Reset</button>
-            </div>
-
-            <div class="modes-control-block apparatus-control">
-              <div class="control-label"><label for="modesTransferRange">cone order</label><output id="modesTransferValue">\(R=28.016\)</output></div>
-              <input id="modesTransferRange" type="range" min="0" max="1" value="0.62" step="0.002">
-              <div class="range-scale"><span>\(R_*\) / open seam</span><span>\(N=28\) / closed</span></div>
-              <div class="parameter-pair" hidden aria-hidden="true">
-                <div><span>real order \(R\)</span><strong id="modesOrderValue">28.016…</strong></div>
-                <div><span>boundary amplitude \(s\)</span><strong id="modesAmplitudeValue">0.2228</strong></div>
-              </div>
-            </div>
-
-            <div class="modes-control-block" hidden aria-hidden="true">
-              <div class="control-label"><span>one-wavelength crop</span><output id="modesCropValue">centred on seam</output></div>
-              <div class="fixed-zoom-pair">
-                <div><span>angular position</span><strong>seam · \(0^\circ\)</strong></div>
-                <div><span>radial crop depth</span><strong id="modesDepthValue">5 units</strong></div>
-              </div>
-              <p>The crop spans one full angular wavelength and five radial units. These scales are fixed so the mismatch is always visible in the large flat zoom.</p>
-            </div>
-
-            <div class="modes-control-block phase-control-block" hidden aria-hidden="true">
-              <div class="control-label"><span>\(R\)-problem \(\longrightarrow\) cylinder phase</span><output id="modesPhaseValue">\(\Delta\xi=0.543^\circ\)</output></div>
-              <div class="problem-map" aria-label="The Bessel radial problem becomes a sine-cosine problem on a flat collar">
-                <div><span>cone · regular at the cone point</span><strong>\(B_R=J_R\)</strong></div>
-                <i aria-hidden="true">→</i>
-                <div><span>Debye collar</span><strong>\(A\cos(\omega x+\xi_R)\)</strong></div>
-              </div>
-              <div id="modesPhaseTrack" class="phase-track" role="img" aria-label="Local cylinder phase along the branch">
-                <span id="modesPhaseFill"></span>
-                <i id="modesPhaseMarker"></i>
-              </div>
-              <div class="range-scale"><span>\(R_*\) · pure sine</span><span>\(N=28\) · \(\Delta\xi_N\)</span></div>
-              <div class="phase-law"><span>\(\xi'(R)=-\arccos(R/\rho)\)</span><span>\(\Delta\xi(s)\sim R(s)-R_*\sim s^2\)</span></div>
-              <div class="phase-agreement"><span>exact boundary Cauchy phase</span><strong id="modesExactPhaseValue">\(\delta=0.543^\circ\)</strong></div>
-            </div>
-
-            <button id="modesPlayButton" class="play-button modes-play-button" type="button" aria-pressed="false"><span id="modesPlayIcon">▶</span><span id="modesPlayLabel">Animate</span></button>
-
-            <div class="modes-status" hidden aria-hidden="true">
-              <div><span>28-copy seam</span><strong id="modesGapValue">0.20°</strong></div>
-              <div><span>one angular wavelength</span><strong id="modesWavelengthValue">6.283 units</strong></div>
-              <div><span>local curvature</span><strong id="modesCurvatureValue">\(1/28.016\)</strong></div>
-            </div>
-          </aside>
-
-          <figcaption><span class="figure-caption-summary">The same continued \(D_{28}\) field is shown globally and in collar coordinates.</span><span class="figure-caption-note">The animation follows the numerically continued branch from the noninteger crossing \(R_*=28.026\ldots\) to \(R=28\). This numerical illustration lies outside the proof window and is not the branch selected by the nonexplicit existence argument. The crop box and its connector lines identify the same boundary collar in the global and local views. The enlargement is isotropic: equal lengths in \(x\) and \(\psi\) have equal lengths on the page. The missing angular sector is slightly exaggerated so that its closure remains legible.</span></figcaption>
-        </figure>
 
       </section>
       </section>
@@ -3377,7 +3375,7 @@
       <p>The final scatter plot filters the saved common-zero data to <span class="formula">\(N\le200\)</span> and uses a logarithmic horizontal <span class="formula">\(R\)</span>-axis. The small table lists five particularly close examples from separated order ranges in the full search through <span class="formula">\(R\approx841\)</span>. The proof uses simultaneous McMahon and Debye phase alignment through Kronecker's theorem. The finite data illustrate the resulting distribution of crossings.</p>
     </dialog>
 
-    <script defer src="document-structure.js?v=20260831.9"></script>
+    <script defer src="document-structure.js?v=20260831.13"></script>
     <script defer src="cone-data.js"></script>
     <script defer src="debye-data.js?v=20260828.1"></script>
     <script defer src="abundance-data.js"></script>
@@ -3390,7 +3388,7 @@
     <script defer src="applet-layout.js?v=20260831.6"></script>
     <script defer src="certificate-checker.js?v=20260831.8"></script>
     <script defer src="research-guide.js?v=20260831.9"></script>
-    <script defer src="scholarly-tools.js?v=20260831.6"></script>
-    <script defer src="tufte/layout-contract.js?v=20260831.8"></script>
+    <script defer src="scholarly-tools.js?v=20260831.11"></script>
+    <script defer src="tufte/layout-contract.js?v=20260831.13"></script>
   </body>
 </html>
