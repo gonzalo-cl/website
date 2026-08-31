@@ -1189,12 +1189,12 @@
     "h and w give the collar of the cone.",
     "The interior is completed by solving the Dirichlet problem.",
   ];
-  const ENCODING_FORMULAS = [
-    "v(0,\\cdot)=0,\\qquad \\partial_yv(0,\\cdot)=\\lambda h_v",
-    "h_v(\\psi)=\\lambda^{-1}\\partial_yv(0,\\cdot),\\qquad w_1=v+\\chi\\,\\partial_yw_0\\,h_v",
-    "w=w_0+w_1",
-    "\\Omega=\\{\\,r<R-h_v(R\\varphi)\\,\\}",
-    "(\\Delta+\\lambda)u=0\\ \\text{ in }\\Omega,\\qquad u=1,\\ \\partial_\\nu u=0\\ \\text{ on }\\partial\\Omega",
+  const ENCODING_NOTES = [
+    "A Dirichlet function \\(v:\\mathcal{C}\\to\\mathbb{R}\\), encoding both the boundary perturbation and the eigenfunction perturbation.",
+    "We read the boundary perturbation \\(h_v=\\lambda^{-1}\\partial_yv(0,\\cdot)\\) and the eigenfunction perturbation \\(w_1=v+\\chi\\,\\partial_yw_0\\,h_v\\). Although \\(v\\) is only Dirichlet at \\(y=0\\), \\(w_1\\) is both Dirichlet and Neumann there.",
+    "We add the radial solution \\(w_0(y)=J_0\\bigl(\\sqrt\\lambda\\,(R-y)\\bigr)/J_0(\\rho)\\), giving \\(w=w_0+w_1\\).",
+    "We use \\(h_v\\) to transfer \\(w\\) onto the exterior part of the cone, obtaining \\(u\\) on \\(r>R-L\\). The cut at \\(R-L\\) is round; only the outer boundary carries the profile.",
+    "We solve the Dirichlet problem to complete \\(u\\) for \\(r<R-L\\). It is regular across the transition exactly when its Neumann data on the inner circle agrees with the Dirichlet-to-Neumann operator applied to its Dirichlet data.",
   ];
   const ENCODING_LAMBDA = 3.317, ENCODING_L = .4, ENCODING_H = .05;
   const ENCODING_MODE = 3, ENCODING_COLLAR = .2;
@@ -1240,7 +1240,10 @@
      which is twenty times the depth of the rim ellipse in this projection, and
      the rim crossed itself into a bow tie. */
   function encodingCone(box, fraction, psi) {
-    const wall = 1 - .11 * (encodingProfile(psi) / ENCODING_H);
+    // the perturbation lives on the collar only, so the cut at R - L stays round
+    const t = Math.max(0, Math.min(1, (fraction - (1 - ENCODING_COLLAR)) / ENCODING_COLLAR));
+    const taper = t * t * (3 - 2 * t);
+    const wall = 1 - .13 * (encodingProfile(psi) / ENCODING_H) * taper;
     return {
       x: box.apex + fraction * (box.length + box.depth * Math.cos(psi) * wall),
       y: box.cy + fraction * box.half * Math.sin(psi) * wall,
@@ -1275,8 +1278,8 @@
       ? parseFloat(getComputedStyle(laboratory).getPropertyValue("--geometry-key-width")) / 100
       : 0;
     const inset = width * (Number.isFinite(token) ? Math.max(0, Math.min(.45, token)) : 0) + 26;
-    const plotHeight = 76;
-    const bodyHeight = height - plotHeight - 50;
+    const plotHeight = stage >= 3 ? 0 : 76;
+    const bodyHeight = height - plotHeight - (stage >= 3 ? 34 : 50);
 
     const cols = 240, rows = stage >= 3 ? 72 : 40;
     let low = Infinity, high = -Infinity;
@@ -1397,15 +1400,16 @@
       }
       context.font = visualTheme.labelFont; context.fillStyle = colors.faint;
       context.textAlign = "center"; context.textBaseline = "top";
-      context.fillText("r = R", box.apex + box.length + 14, box.cy + box.half + 10);
-      if (stage === 3) context.fillText("R \u2212 L", box.apex + box.length * (1 - ENCODING_COLLAR), box.cy + box.half * (1 - ENCODING_COLLAR) + 10);
+      if (stage === 3) context.fillText("R \u2212 L", box.apex + box.length * (1 - ENCODING_COLLAR), box.cy + box.half * (1 - ENCODING_COLLAR) + 12);
     }
 
     const top = bodyHeight + 22, mid = top + plotHeight / 2;
-    context.beginPath();
-    context.moveTo(inset, mid); context.lineTo(width - 20, mid);
-    context.strokeStyle = colors.grid; context.lineWidth = 1; context.stroke();
-    if (stage >= 1) {
+    if (stage < 3) {
+      context.beginPath();
+      context.moveTo(inset, mid); context.lineTo(width - 20, mid);
+      context.strokeStyle = colors.grid; context.lineWidth = 1; context.stroke();
+    }
+    if (stage >= 1 && stage < 3) {
       context.beginPath();
       for (let i = 0; i <= 480; i++) {
         const psi = TAU * i / 480;
@@ -1421,16 +1425,18 @@
       context.fillText("2\u03c0", width - 20, mid + 6);
     }
 
-    context.font = visualTheme.labelFont; context.fillStyle = colors.faint;
-    context.textAlign = "left"; context.textBaseline = "bottom";
-    context.fillText(ENCODING_CAPTIONS[stage], inset, height - 6);
+    // the stage prose lives in the margin note, not on the canvas
 
     document.querySelectorAll("[data-encoding-stage]").forEach((button, index) => {
       button.classList.toggle("active", index === stage);
     });
-    const formula = select("#encodingFormula");
-    if (formula && window.SchifferMath?.render) {
-      window.SchifferMath.render(formula, ENCODING_FORMULAS[stage], { displayMode: true });
+    const note = select("#encodingNote");
+    if (note) {
+      if (window.SchifferMath?.renderInlineContent) {
+        window.SchifferMath.renderInlineContent(note, ENCODING_NOTES[stage]);
+      } else {
+        note.textContent = ENCODING_NOTES[stage];
+      }
     }
     canvas.setAttribute("aria-label", `Stage ${stage + 1} of 5: ${ENCODING_CAPTIONS[stage]}`);
   }
