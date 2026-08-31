@@ -1538,3 +1538,20 @@ body.tufte-site main .intro-route-overview p,
 
 .fixed-collar-figure .geometry-canvas-wrap, .fixed-collar-figure .figure-canvas-wrap { height: 240px; }
 .fixed-collar-figure figcaption { font-size: var(--type-caption); line-height: 1.5; }
+
+/* The margin copies keep every class the wide figures had, so their SVG fills
+   and palettes still apply; these undo the parts of the laboratory layout that
+   only make sense at reading width. */
+body.tufte-site main .cone-fold-figure.marginnote,
+.cone-fold-figure.marginnote { display: block; min-height: 0; height: auto; }
+body.tufte-site main .cone-fold-figure.marginnote .geometry-canvas-panel,
+.cone-fold-figure.marginnote .geometry-canvas-panel { width: 100%; margin: 0; }
+body.tufte-site main .cone-fold-figure .geometry-scrub,
+.cone-fold-figure .geometry-scrub { display: none; }
+.cone-fold-figure .geometry-controls { border: 0; padding: 0; margin: 0 0 8px; min-height: 0; }
+.cone-fold-figure .geometry-canvas-wrap { height: 300px; }
+body.tufte-site main :is(.cone-fold-figure, .fixed-collar-figure) .figure-evidence,
+body.tufte-site main :is(.cone-fold-figure, .fixed-collar-figure) .figure-tools,
+:is(.cone-fold-figure, .fixed-collar-figure) .figure-evidence,
+:is(.cone-fold-figure, .fixed-collar-figure) .figure-tools { display: none; }
+:is(.cone-fold-figure, .fixed-collar-figure) figcaption { font-size: var(--type-caption); line-height: 1.5; }

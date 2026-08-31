@@ -2129,7 +2129,7 @@
         <div class="intro-copy intro-copy-wide cone-fold-host">
           <label for="cone-fold-note" class="margin-toggle" aria-label="Show the cone folding figure">&#8853;</label>
           <input type="checkbox" id="cone-fold-note" class="margin-toggle">
-          <figure class="marginnote side-figure cone-fold-figure" data-figure="cone-unfolding-apparatus" data-evidence="schematic">
+          <figure class="geometry-laboratory interactive-plate annotated-plate marginnote side-figure cone-fold-figure" data-figure="cone-unfolding-apparatus" data-evidence="schematic">
           <aside class="geometry-controls paper-demo-controls">
             <div class="geometry-scrub"><div class="control-label"><label for="coneFoldRange">fold</label><output id="coneFoldValue">stage 1</output></div><input id="coneFoldRange" type="range" min="0" max="1" value="0" step="0.001"></div>
             <button id="coneFoldPlayButton" class="play-button" type="button" aria-pressed="false"><span id="coneFoldPlayIcon">&#9654;</span><span id="coneFoldPlayLabel">Fold</span></button>
@@ -2250,15 +2250,6 @@
           <figcaption><span class="figure-caption-summary">The same continued \(D_{28}\) field is shown globally and in collar coordinates.</span><span class="figure-caption-note">The animation follows the numerically continued branch from the noninteger crossing \(R_*=28.026\ldots\) to \(R=28\). This numerical illustration lies outside the proof window and is not the branch selected by the nonexplicit existence argument. The crop box and its connector lines identify the same boundary collar in the global and local views. The enlargement is isotropic: equal lengths in \(x\) and \(\psi\) have equal lengths on the page. The missing angular sector is slightly exaggerated so that its closure remains legible.</span></figcaption>
         </figure>
       </section>
-          <article id="statement-main-question" class="math-statement math-statement-question" data-kind="main question" data-label="main-question" aria-labelledby="mainQuestionTitle">
-            <header class="math-statement-header"><span>Main question</span><small>uniform continuation target</small></header>
-            <div class="math-statement-body">
-              <p id="mainQuestionTitle">Does the agreement of Dirichlet and Neumann eigenvalues from <a class="xref" data-ref="near-integer-crossings" href="#statement-near-integer-crossings">the near-integer crossing theorem</a> permit a cone of radius \(R_\star\in(N,N+\delta)\) to be perturbed to radius \(N\in\mathbb{N}\), where it becomes a Schiffer solution?</p>
-            </div>
-          </article>
-          <div class="intro-copy intro-copy-wide">
-          <p>Since <a class="xref" data-ref="near-integer-crossings" href="#statement-near-integer-crossings">the near-integer crossing theorem</a> makes \(\delta\) arbitrarily small, it remains to prove a <strong>uniform perturbation</strong>: there is an \(\varepsilon&gt;0\) such that every sufficiently large \(R_\star\) can be perturbed by at least \(\varepsilon\).</p>
-          </div>
 
         <section id="phase-story" class="phase-story">
         <header class="section-heading" data-title="Exploring the cone bifurcation" data-toc="proof-subsection">
@@ -2857,7 +2848,7 @@
         <p>where \(\chi\) is a cut-off equal to \(1\) on the lower face of the cylinder, which corresponds to the outer part of the cone, and to \(0\) on the upper face, which corresponds to the inner cut at \(r=R-L\).</p>
         <label for="fixed-collar-note" class="margin-toggle" aria-label="Show the fixed collar figure">&#8853;</label>
         <input type="checkbox" id="fixed-collar-note" class="margin-toggle">
-        <figure class="marginnote side-figure fixed-collar-figure" data-figure="fixed-collar" data-evidence="exact">
+        <figure class="cone-remap-figure marginnote side-figure fixed-collar-figure" data-figure="fixed-collar" data-evidence="exact">
           <svg viewBox="0 0 760 250" role="img" aria-labelledby="fixedCollarTitle fixedCollarDesc">
             <title id="fixedCollarTitle">The fixed cylinder and the collar it parametrizes</title>
             <desc id="fixedCollarDesc">On the left, the fixed cylinder T times the interval from 0 to L, shaded throughout, with its upper face at y equals L hatched in red. An arrow labelled Phi superscript h runs to the right, where the cone is drawn in perspective. Its cut at distance R minus L from the apex is an exact circle, hatched in red where it is seen directly through the mouth of the cone and shaded where the collar surface passes in front of it. Its outer cut is the boundary r equals R minus h, carrying three periods of the profile, so it is visibly not a circle. The surface between the two cuts is shaded.</desc>
@@ -3048,7 +3039,7 @@
         </header>
         <div class="intro-copy intro-copy-wide">
           <p>The equation \(\mathcal{G}(R,v)=0\) gives a rigorous formulation of the problem and yields Schiffer solutions whenever \(R\) is an integer. The trivial solution \(v=0\) exists for every \(R\) and corresponds to the balls. The required branch \(R(s),v(s)\) starts at \(R(0)=R_\star\) near an integer and must reach that integer at a nonzero value of \(s\).</p>
-          <p>The standard tool is the classical Crandall&ndash;Rabinowitz theorem. Its conclusion permits the branch size to deteriorate with \(R_\star\), whereas the <a class="xref" data-ref="main-question"></a> requires a lower bound uniform as \(R_\star\to\infty\). The comparison below places the classical \(C^4\) statement beside the uniform version used here.</p>
+          <p>The standard tool is the classical Crandall&ndash;Rabinowitz theorem. Its conclusion permits the branch size to deteriorate with \(R_\star\), whereas we need a lower bound uniform as \(R_\star\to\infty\). The comparison below places the classical \(C^4\) statement beside the uniform version used here.</p>
           <label for="branch-scale-note" class="margin-toggle" aria-label="Show the branch-size figure">&#8853;</label>
           <input type="checkbox" id="branch-scale-note" class="margin-toggle">
           <figure class="marginnote branch-scale-figure" data-figure="branch-scale" data-evidence="schematic" data-evidence-detail="Crossing locations and quadratic curvatures use saved and asymptotic data. The shrinking classical amplitudes are deliberately illustrative because the classical theorem supplies no uniform lower bound.">
