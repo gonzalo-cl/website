@@ -1216,7 +1216,7 @@
     "The interior is completed by solving the Dirichlet problem.",
   ];
   const ENCODING_NOTES = [
-    "A Dirichlet function \\(v:\\mathcal{C}\\to\\mathbb{R}\\), encoding both the boundary perturbation and the eigenfunction perturbation.",
+    "",
     "The boundary perturbation is \\(h_v=\\lambda^{-1}\\partial_yv(0,\\cdot)\\), and the eigenfunction perturbation is \\(w_1=v+\\chi\\,\\partial_yw_0\\,h_v\\). Although \\(v\\) has only Dirichlet data at \\(y=0\\), \\(w_1\\) has both Dirichlet and Neumann data there.",
     "Adding the radial solution \\(w_0(y)=J_0\\bigl(\\sqrt\\lambda\\,(R-y)\\bigr)/J_0(\\rho)\\) gives \\(w=w_0+w_1\\).",
     "The pair \\(h_v,w\\) transfers to the exterior cone and gives \\(u\\) on \\(r>R-L\\). The cut at \\(R-L\\) is round; only the outer boundary carries the profile.",
@@ -1469,6 +1469,9 @@
     });
     const note = select("#encodingNote");
     if (note) {
+      /* An empty entry means the stage carries no commentary; hide the note so
+         no empty margin box floats beside the figure. */
+      note.hidden = !ENCODING_NOTES[stage];
       if (window.SchifferMath?.renderInlineContent) {
         window.SchifferMath.renderInlineContent(note, ENCODING_NOTES[stage]);
       } else {
