@@ -1879,17 +1879,83 @@
             \[ J_1(\rho)=0 \qquad\text{and}\qquad J_R(\rho)=0. \]
           </div>
           <p>When \(R\) is a natural number this is impossible: by <a class="xref" data-ref="bourget-siegel"></a>, two Bessel functions of distinct integer order share no positive zero. That single fact is what has protected the disk from every bifurcation argument. The cone interpretation, however, allows us to take \(R\) that are not integers, and in that case we do have solutions to the equation above.</p>
-          <article class="math-statement math-statement-lemma" data-kind="lemma" data-label="noninteger-crossing" aria-labelledby="nonintegerCrossingTitle">
-            <header class="math-statement-header"><span>Lemma</span><small>crossings at real order</small></header>
-            <div class="math-statement-body">
-              <p id="nonintegerCrossingTitle">There exist \(\rho>0\) and \(R>0\) such that</p>
-              <div class="tex-display">
-                \[ J_1(\rho)=0 \qquad\text{and}\qquad J_R(\rho)=0. \]
-              </div>
-              <p>Moreover \(\lambda:=\rho^2/R^2\) lies in \([2,3]\), and \(R-\lfloor R\rfloor\) can be taken as small as we wish.</p>
+        </div>
+<section id="abundance-experiment" class="abundance-experiment">
+        <article class="math-statement near-integer-theorem" data-kind="theorem" data-label="near-integer-crossings">
+          <header class="math-statement-header"><span>Theorem</span><small>near-integer crossings</small></header>
+          <div class="math-statement-body">
+            <p>For every \(\delta&gt;0\) and every lower threshold \(N_{\min}\), there are an integer \(N\ge N_{\min}\), a real order \(R_*\), and a frequency \(\rho&gt;0\) such that</p>
+            <div class="tex-display">
+              \[
+              \begin{gathered}
+              N&lt;R_*&lt;N+\delta,\\
+              J_1(\rho)=J_{R_*}(\rho)=0,\\
+              2&lt;\dfrac{\rho^2}{R_*^2}&lt;3.
+              \end{gathered}
+              \]
             </div>
-          </article>
-          <p>Such crossings are abundant, and how abundant is the subject of <a class="xref" data-ref="near-integer-crossings"></a>. For a concrete numerical illustration outside the proof window \(2\le\lambda\le3\), take \(\rho=j_{1,16}=51.0435\ldots\) and solve \(J_R(\rho)=0\): this gives \(R_\star=28.0264\ldots\) and \(\lambda_\star=3.3170\ldots\). The proof instead selects sufficiently large near-integer crossings inside the stated window. In either case, a noninteger crossing is not yet a planar counterexample; the rigorous task is to show that a uniformly controlled branch bends far enough to meet an integer.</p>
+            <p>The scatter plot below is a finite numerical sample of these coincidences. The theorem itself comes from aligning the fixed-order McMahon phase and the large-order Debye phase.</p>
+          </div>
+        </article>
+        <lean-statement data-statement="near-integer-crossings"></lean-statement>
+        <details class="abundance-proof-details proof-details">
+          <summary><span>Proof sketch of <a class="xref" data-ref="near-integer-crossings"></a></span><i>expand +</i></summary>
+          <div class="proof-argument abundance-proof-argument">
+            <p><em>Proof sketch.</em> Put</p>
+            <div class="tex-display">
+              \[
+              \Phi(q)=\sqrt{q^2-1}-\arccos(q^{-1}),
+              \qquad \sqrt2&lt;q&lt;\sqrt3.
+              \]
+            </div>
+            <p>The fixed-order McMahon expansion and the large-order Debye expansion give, in the relevant range,</p>
+            <div class="tex-display">
+              \[
+              \begin{aligned}
+              j_{1,n}&amp;=\pi\left(n+\frac14\right)+o(1),\\
+              N\Phi\!\left(\frac{j_{N,m}}N\right)
+              &amp;=\pi\left(m-\frac14\right)+o(1).
+              \end{aligned}
+              \]
+            </div>
+            <p>Choose \(q_*\in(\sqrt2,\sqrt3)\) such that \(1\), \(q_*/\pi\), and \(\Phi(q_*)/\pi\) are linearly independent over \(\mathbb Q\). Kronecker's theorem makes the orbit</p>
+            <div class="tex-display">
+              \[
+              N\longmapsto
+              \left(N\frac{q_*}{\pi},
+              N\frac{\Phi(q_*)}{\pi}\right)
+              \pmod{\mathbb Z^2}
+              \]
+            </div>
+            <p>equidistributed in the two-torus. Hence, for arbitrarily large integers \(N\), the two phases can be chosen simultaneously so that a zero \(j_{1,n}\) lies just above \(Nq_*\), while a zero \(j_{N,m}\) lies just below it. The errors in the two asymptotic formulae tend to zero, so their gap can be made arbitrarily small.</p>
+            <p>For fixed \(m\), the map \(\nu\mapsto j_{\nu,m}\) is strictly increasing. Increasing the order continuously from \(N\) therefore produces a unique \(R_*&gt;N\) for which \(j_{R_*,m}=j_{1,n}=:\rho\). Uniform control of the order derivative in this compact \(q\)-window converts the small zero gap into \(0&lt;R_*-N&lt;\delta\); and \(\rho/R_*\to q_*\in(\sqrt2,\sqrt3)\), which gives \(2&lt;\rho^2/R_*^2&lt;3\) for sufficiently large \(N\). <span class="qed" aria-label="end of proof sketch">□</span></p>
+          </div>
+        </details>
+        <figure class="abundance-laboratory reading-figure" data-figure="near-integer-crossing-sample" data-evidence="Numerical sample">
+          <section class="abundance-plot-panel" aria-label="Finite modulo-one sample of near-integer common Bessel zero crossings">
+            <div class="passive-script-targets" hidden aria-hidden="true">
+              <strong id="abundancePlotState">common-zero crossing sample</strong>
+              <strong id="abundanceCountValue"></strong>
+              <strong id="abundanceBestValue"></strong>
+            </div>
+            <div id="abundanceCanvasWrap" class="abundance-canvas-wrap"><canvas id="abundanceCanvas" role="img" aria-label="Modulo-one plot of real Bessel crossing orders"></canvas></div>
+          </section>
+          <figcaption>Each point has horizontal coordinate \(\log R\) and vertical coordinate \(\{R\}\). Points near the baseline are crossings whose real order lies close to an integer.</figcaption>
+        </figure>
+        <section class="abundance-examples data-table" aria-labelledby="abundanceExamplesTitle">
+          <header>
+            <h3 id="abundanceExamplesTitle">Five particularly close examples.</h3>
+          </header>
+          <div class="abundance-examples-table-wrap">
+            <table class="abundance-examples-table">
+              <thead><tr><th scope="col">integer \(N\)</th><th scope="col">crossing order \(R\)</th><th scope="col">gap \(R-N\)</th></tr></thead>
+              <tbody id="abundanceExamplesBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+        <div class="intro-copy intro-copy-wide">
+          <p>For a concrete numerical illustration outside the proof window \(2\le\lambda\le3\), take \(\rho=j_{1,16}=51.0435\ldots\) and solve \(J_R(\rho)=0\): this gives \(R_\star=28.0264\ldots\) and \(\lambda_\star=3.3170\ldots\). The proof instead selects sufficiently large near-integer crossings inside the stated window. In either case, a noninteger crossing is not yet a planar counterexample; the rigorous task is to show that a uniformly controlled branch bends far enough to meet an integer.</p>
         </div>
 
 <header id="fixed-domain" class="section-heading proof-strategy-subheading" data-title="Expressing the problem on a fixed domain" data-toc="proof-subsection">
@@ -2529,7 +2595,7 @@
           <figcaption id="phaseFamilyTitle"><strong>The quadratic approximation predicts a decrease in \(R\) at every displayed crossing.</strong> The points are crossings with \(6\le R_*\le30\) and \(2\le\lambda_*\le3\); each curve is the local two-jet \(R(s)=R_*-\tfrac12\Gamma(\lambda_*)s^2\). The curves are drawn well past the amplitudes for which that jet is accurate, so they show the direction of the prediction rather than the extent of it. The second-variation formula used here is proved in <a class="xref" data-ref="cone-second-variation"></a> below.</figcaption>
         </figure>
         <div class="phase-observations paper-copy">
-          <p>The plot suggests two facts. First, the fractional parts of the crossing orders have no visible pattern; <a class="xref" data-ref="abundance-experiment"></a> identifies an equidistributed phase mechanism and, in particular, produces crossings arbitrarily close to an integer. Second, every branch is tangent to the line \(s=0\) and bends to the left by nearly the same amount. The theorem below makes that second observation uniform.</p>
+          <p>The plot suggests two facts. First, the fractional parts of the crossing orders have no visible pattern; the equidistributed phase mechanism behind <a class="xref" data-ref="near-integer-crossings"></a> explains that, and in particular produces crossings arbitrarily close to an integer. Second, every branch is tangent to the line \(s=0\) and bends to the left by nearly the same amount. The theorem below makes that second observation uniform.</p>
           <p>A cone solution at, say, \(R_*=28.026\ldots\) cannot be unfolded into a planar solution: twenty-eight copies leave a seam. If its branch reaches \(R=28\), the copies close exactly and the cone solution becomes a \(D_{28}\)-symmetric planar solution.</p>
         </div>
         <article class="math-statement second-variation-theorem" data-kind="theorem" data-label="cone-second-variation">
@@ -2615,87 +2681,6 @@
         </div>
       </section>
 
-      <section id="abundance-experiment" class="abundance-experiment">
-        <header class="section-heading experiment-header abundance-header" data-title="Equidistributed phases supply near-integer crossing orders" data-toc="proof-subsection">
-          <h3>Equidistributed phases supply near-integer crossing orders</h3>
-        </header>
-        <div class="abundance-lead paper-copy">
-          <p><strong>The spectral coincidence.</strong> The condition \(J_1(\rho)=0\) gives the radial Schiffer solution on the undeformed cone, for the reason met in <a class="xref" data-ref="introduction"></a>: the radial profile is \(J_0(\sqrt\lambda\,r)\), constant on the boundary because it is radial, and \(J_0'=-J_1\) makes its boundary normal derivative a multiple of \(J_1(\rho)\). The second condition \(J_R(\rho)=0\) says that the first nonradial angular channel is also Dirichlet at the same frequency. Their coincidence gives the one-dimensional kernel from which the cone branch bifurcates.</p>
-          <p><strong>The role of integrality.</strong> The cone branch exists for real \(R\). Its planar \(N\)-fold lift occurs when \(R=N\in\mathbb N\). <a class="xref" data-ref="phase-story"></a> supplies a uniform decrease \(\eta_*\) in the value of \(R\). We must therefore find a crossing \(R_*=N+\delta\) with \(0&lt;\delta&lt;\eta_*\).</p>
-        </div>
-        <article class="math-statement near-integer-theorem" data-kind="theorem" data-label="near-integer-crossings">
-          <header class="math-statement-header"><span>Theorem</span><small>near-integer crossings</small></header>
-          <div class="math-statement-body">
-            <p>For every \(\delta&gt;0\) and every lower threshold \(N_{\min}\), there are an integer \(N\ge N_{\min}\), a real order \(R_*\), and a frequency \(\rho&gt;0\) such that</p>
-            <div class="tex-display">
-              \[
-              \begin{gathered}
-              N&lt;R_*&lt;N+\delta,\\
-              J_1(\rho)=J_{R_*}(\rho)=0,\\
-              2&lt;\dfrac{\rho^2}{R_*^2}&lt;3.
-              \end{gathered}
-              \]
-            </div>
-            <p>The scatter plot below is a finite numerical sample of these coincidences. The theorem itself comes from aligning the fixed-order McMahon phase and the large-order Debye phase.</p>
-          </div>
-        </article>
-        <lean-statement data-statement="near-integer-crossings"></lean-statement>
-        <details class="abundance-proof-details proof-details">
-          <summary><span>Proof sketch of <a class="xref" data-ref="near-integer-crossings"></a></span><i>expand +</i></summary>
-          <div class="proof-argument abundance-proof-argument">
-            <p><em>Proof sketch.</em> Put</p>
-            <div class="tex-display">
-              \[
-              \Phi(q)=\sqrt{q^2-1}-\arccos(q^{-1}),
-              \qquad \sqrt2&lt;q&lt;\sqrt3.
-              \]
-            </div>
-            <p>The fixed-order McMahon expansion and the large-order Debye expansion give, in the relevant range,</p>
-            <div class="tex-display">
-              \[
-              \begin{aligned}
-              j_{1,n}&amp;=\pi\left(n+\frac14\right)+o(1),\\
-              N\Phi\!\left(\frac{j_{N,m}}N\right)
-              &amp;=\pi\left(m-\frac14\right)+o(1).
-              \end{aligned}
-              \]
-            </div>
-            <p>Choose \(q_*\in(\sqrt2,\sqrt3)\) such that \(1\), \(q_*/\pi\), and \(\Phi(q_*)/\pi\) are linearly independent over \(\mathbb Q\). Kronecker's theorem makes the orbit</p>
-            <div class="tex-display">
-              \[
-              N\longmapsto
-              \left(N\frac{q_*}{\pi},
-              N\frac{\Phi(q_*)}{\pi}\right)
-              \pmod{\mathbb Z^2}
-              \]
-            </div>
-            <p>equidistributed in the two-torus. Hence, for arbitrarily large integers \(N\), the two phases can be chosen simultaneously so that a zero \(j_{1,n}\) lies just above \(Nq_*\), while a zero \(j_{N,m}\) lies just below it. The errors in the two asymptotic formulae tend to zero, so their gap can be made arbitrarily small.</p>
-            <p>For fixed \(m\), the map \(\nu\mapsto j_{\nu,m}\) is strictly increasing. Increasing the order continuously from \(N\) therefore produces a unique \(R_*&gt;N\) for which \(j_{R_*,m}=j_{1,n}=:\rho\). Uniform control of the order derivative in this compact \(q\)-window converts the small zero gap into \(0&lt;R_*-N&lt;\delta\); and \(\rho/R_*\to q_*\in(\sqrt2,\sqrt3)\), which gives \(2&lt;\rho^2/R_*^2&lt;3\) for sufficiently large \(N\). <span class="qed" aria-label="end of proof sketch">□</span></p>
-          </div>
-        </details>
-        <figure class="abundance-laboratory reading-figure" data-figure="near-integer-crossing-sample" data-evidence="Numerical sample">
-          <section class="abundance-plot-panel" aria-label="Finite modulo-one sample of near-integer common Bessel zero crossings">
-            <div class="passive-script-targets" hidden aria-hidden="true">
-              <strong id="abundancePlotState">common-zero crossing sample</strong>
-              <strong id="abundanceCountValue"></strong>
-              <strong id="abundanceBestValue"></strong>
-            </div>
-            <div id="abundanceCanvasWrap" class="abundance-canvas-wrap"><canvas id="abundanceCanvas" role="img" aria-label="Modulo-one plot of real Bessel crossing orders"></canvas></div>
-          </section>
-          <figcaption>Each point has horizontal coordinate \(\log R\) and vertical coordinate \(\{R\}\). Points near the baseline are crossings whose real order lies close to an integer.</figcaption>
-        </figure>
-        <section class="abundance-examples data-table" aria-labelledby="abundanceExamplesTitle">
-          <header>
-            <h3 id="abundanceExamplesTitle">Five particularly close examples.</h3>
-          </header>
-          <div class="abundance-examples-table-wrap">
-            <table class="abundance-examples-table">
-              <thead><tr><th scope="col">integer \(N\)</th><th scope="col">crossing order \(R\)</th><th scope="col">gap \(R-N\)</th></tr></thead>
-              <tbody id="abundanceExamplesBody"></tbody>
-            </table>
-          </div>
-        </section>
-      </section>
 
       <section id="cone-experiment" class="experiment cone-experiment" hidden aria-hidden="true">
         <header class="experiment-header cone-header">
