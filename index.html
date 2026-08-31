@@ -2186,9 +2186,10 @@
           <p>The strategy is to take one of the \(R_\star\) from the claim, generate a perturbation branch \(R(s)\), and show that it reaches an integer. There are three steps.</p>
           <ol class="strategy-steps">
             <li>Compute the first coefficients \(R'(0)\) and \(R''(0)\) of a branch, to show that \(R(s)\) bends uniformly in \(R\). This is done in <a class="xref" data-ref="phase-story"></a>.</li>
-            <li>Show that the bifurcation exists in a uniform window, with uniform bounds on \(|R'''|\), however large \(R_\star\) is. The intuition is in <a class="xref" data-ref="half-cylinder-strategy"></a>, which does the limiting case of a cylinder; the rigorous version is in <a class="xref" data-ref="fixed-domain"></a> and <a class="xref" data-ref="bifurcation-setting"></a>.</li>
+            <li>Show that the bifurcation exists in a uniform window, with uniform bounds on \(|R'''|\), however large \(R_\star\) is. This is done in <a class="xref" data-ref="fixed-domain"></a> and <a class="xref" data-ref="bifurcation-setting"></a>.</li>
             <li>Prove the claim, in a refined form. This is done in <a class="xref" data-ref="modes-experiment"></a>.</li>
           </ol>
+          <p>Before treating any of those ingredients, we consider the problem on the limiting cylinder, in <a class="xref" data-ref="half-cylinder-strategy"></a>. That will build the intuition for why the perturbation branch is uniform.</p>
         </div>
         <figure class="modes-laboratory interactive-plate figure-band" data-apparatus="visual-aside" data-figure="global-collar-zoom" data-evidence="numerical">
           <section class="modes-plot-panel apparatus-visual" aria-label="Global 28-sector field and one-wavelength collar zoom">
@@ -2251,103 +2252,6 @@
         </figure>
       </section>
 
-        <section id="phase-story" class="phase-story">
-        <header class="section-heading" data-title="Exploring the cone bifurcation" data-toc="proof-subsection">
-          <h3>Exploring the cone bifurcation</h3>
-        </header>
-        <div class="phase-story-lead paper-copy">
-          <p>Each point in the plot below is a noninteger order \(R_*\) at which the cone problem bifurcates. The curve issuing from it is the predicted two-jet of the corresponding branch, \(R(s)=R_*+\tfrac12R''(0)s^2\). This puts the two ingredients of the planar construction in one picture.</p>
-        </div>
-        <figure class="phase-family reading-figure" data-figure="cone-branch-curvature" data-evidence="asymptotic" aria-labelledby="phaseFamilyTitle">
-          <div id="phaseFamilyCanvasWrap" class="phase-family-canvas-wrap"><canvas id="phaseFamilyCanvas" role="img" aria-label="Real Bessel crossing orders and their predicted decreasing quadratic branch curves"></canvas></div>
-          <figcaption id="phaseFamilyTitle"><span class="figure-caption-summary">The quadratic approximation predicts a decrease in \(R\) at every displayed crossing. The points are crossings with \(6\le R_*\le30\).</span></figcaption>
-        </figure>
-        <div class="phase-observations paper-copy">
-          <p>The plot suggests two facts. First, the fractional parts of the crossing orders have no visible pattern; the equidistributed phase mechanism behind <a class="xref" data-ref="near-integer-crossings" href="#statement-near-integer-crossings">the near-integer crossing theorem</a> explains that, and in particular produces crossings arbitrarily close to an integer. Second, every branch is tangent to the line \(s=0\) and bends to the left by nearly the same amount. The theorem below makes that second observation uniform.</p>
-          <p>A cone solution at, say, \(R_*=28.026\ldots\) cannot be unfolded into a planar solution: twenty-eight copies leave a seam. If its branch reaches \(R=28\), the copies close exactly and the cone solution becomes a \(D_{28}\)-symmetric planar solution.</p>
-        </div>
-        <article id="statement-cone-second-variation" class="math-statement second-variation-theorem" data-kind="theorem" data-label="cone-second-variation">
-          <header class="math-statement-header"><span>Theorem</span><small>second variation of the cone order</small></header>
-          <div class="math-statement-body">
-            <p>At every sufficiently large crossing in \(2\le\lambda_*\le3\), the cone branch is even in \(s\) and</p>
-            <div class="tex-display">
-              \[
-              \begin{aligned}
-              R'(0)&amp;=0,\\
-              R''(0)&amp;=-\frac{\sqrt{\lambda_*}}{4R_*d_*}
-              \left(2+\rho\frac{J'_{2R_*}(\rho)}{J_{2R_*}(\rho)}\right),\\
-              R''(0)&amp;=-\Gamma(\lambda_*)+O(R_*^{-1}),
-              \end{aligned}
-              \]
-            </div>
-            <p>where \(d_*=(\partial_\nu j_{\nu,m})|_{\nu=R_*}&gt;0\) and</p>
-            <div class="tex-display">
-              \[
-              \Gamma(\lambda)=
-              \frac{\sqrt{(\lambda-1)(4-\lambda)}}
-              {4\arccos(\lambda^{-1/2})}&gt;0.
-              \]
-            </div>
-          </div>
-        </article>
-        <article id="statement-uniform-cone-decrease" class="math-statement uniform-drop-theorem" data-kind="corollary" data-label="uniform-cone-decrease">
-          <header class="math-statement-header"><span>Corollary</span><small>uniform decrease of \(R\)</small></header>
-          <div class="math-statement-body">
-            <p>There are constants \(R_{\mathrm{drop}},s_*,\eta_*&gt;0\), independent of the crossing, such that every crossing with</p>
-            <div class="tex-display">
-              \[
-              \begin{gathered}
-              R_*\ge R_{\mathrm{drop}},\qquad J_1(\rho)=J_{R_*}(\rho)=0,\\
-              2\le\dfrac{\rho^2}{R_*^2}\le3,
-              \end{gathered}
-              \]
-            </div>
-            <p>has a cone branch defined through \(s=s_*\) for which</p>
-            <div class="tex-display uniform-drop-result">
-              \[
-              R(0)=R_*,\qquad R(s_*)\le R_*-\eta_*.
-              \]
-            </div>
-            <p>The number \(\eta_*\) may be small, but it is independent of \(R_*\) for all sufficiently large crossings. This is the estimate needed to reach an integer value of \(R\).</p>
-          </div>
-        </article>
-        <details class="proof-details second-variation-proof">
-          <summary><span>Derivation of the second variation and the uniform decrease</span><i>expand +</i></summary>
-          <div class="proof-details-body">
-        <div class="phase-derivation paper-copy">
-            <p>Half-turn symmetry gives \(R(-s)=R(s)\), so \(R'(0)=0\) and the first variation of \(R\) is quadratic in \(s\). The product \(\cos^2\theta=\tfrac12(1+\cos2\theta)\) leaves only the modes \(0\) and \(2\), so the second harmonic decides the sign. Here \(t=r/R_*\in[0,1]\) is the radius normalized to the boundary, so that \(\sqrt{\lambda_*}\,r=\rho t\); and \(j_{\nu,m}\) is the \(m\)-th positive zero of \(J_\nu\), with \(d_*=(\partial_\nu j_{\nu,m})|_{\nu=R_*}\) its derivative in the order. Zeros of \(J_\nu\) increase with \(\nu\), so \(d_*&gt;0\). The regular second harmonic and its boundary slope are</p>
-            <div class="tex-display phase-tex">\[W_2(t)=-\frac{\rho^2}{4}\frac{J_{2R_*}(\rho t)}{J_{2R_*}(\rho)},\qquad S_2=W_2'(1)=-\frac{\rho^3}{4}\frac{J'_{2R_*}(\rho)}{J_{2R_*}(\rho)}.\]</div>
-            <p>At cubic order the mode-1 component has to be solvable again, and that forces a single scalar condition. Write \(V_1\) for the mode-1 radial profile generated at this order and \(Q\) for the mode-1 profile carrying the derivative in the Bessel order, whose boundary value is \(Q(1)=-\rho d_*\), and let \(\mu=R_*^2R''(0)/2\) be the coefficient with which the order moves along the branch. The condition reads \(V_1(1)=\rho^2/4-S_2/2=\mu Q(1)\), a scalar equation whose solution is the exact curvature</p>
-            <div class="tex-display phase-tex boxed-equation">\[R''(0)=-\frac{\sqrt{\lambda_*}}{4R_*d_*}\left(2+\rho\frac{J'_{2R_*}(\rho)}{J_{2R_*}(\rho)}\right).\]</div>
-            <p>Both factors on the right have a definite sign: \(d_*&gt;0\) as noted, and the bracket is positive — at the crossing displayed below it equals \(27.1\) — so \(R''(0)&lt;0\) and the cone radius does decrease. For large \(R_*\), the order derivative and the mode-2 logarithmic derivative have Debye limits. Hence</p>
-            <div class="tex-display phase-tex">\[R''(0)=-\Gamma(\lambda_*)+O(R_*^{-1}),\qquad \Gamma(\lambda)=\frac{\sqrt{(\lambda-1)(4-\lambda)}}{4\arccos(\lambda^{-1/2})}>0.\]</div>
-            <p>Along this branch \(\rho\) is fixed, so the oscillatory Debye phase at the boundary is</p>
-            <div class="tex-display phase-tex">\[\xi(R;\rho)=\sqrt{\rho^2-R^2}-R\arccos\!\left(\frac R\rho\right)-\frac\pi4,\qquad \partial_R\xi=-\arccos\!\left(\frac R\rho\right).\]</div>
-            <p>Thus \(R\mapsto\xi\) is locally linear and invertible. The signed branch parameter enters through an even function,</p>
-            <div class="tex-display phase-tex">\[R(s)=R_*+\frac12R''(0)s^2+O(s^4).\]</div>
-            <p>The chain rule now gives the motion seen in the second graph:</p>
-            <div class="tex-display phase-tex boxed-equation">\[\Delta\xi(s)=-\frac12\arccos\!\left(\frac{R_*}{\rho}\right)R''(0)s^2+O(s^4).\]</div>
-            <p>Because both factors on the right are negative, \(\Delta\xi(s)>0\): the cone radius decreases while the local cylinder phase advances. There is a linear relation between phase and \(R-R_*\), and a quadratic relation between either of them and \(s\).</p>
-        </div>
-        <div class="motion-split paper-copy" aria-label="Linear boundary motion versus quadratic radius motion">
-          <p>The visible boundary wave moves at first order:</p>
-          <div class="tex-display">\[r_{\partial}(\psi;s)=R(s)-s\cos\psi+O(s^2).\]</div>
-          <p>The opposite points \(\psi=0,\pi\) move in opposite directions at speed one. The cosine has zero average, however, so the mean radius moves only at second order:</p>
-          <div class="tex-display">\[\frac1{2\pi}\int_0^{2\pi}r_{\partial}(\psi;s)\,d\psi=R_*+\frac12R''(0)s^2+O(s^4).\]</div>
-          <p>Thus the first nonzero variation of the cone parameter \(R\) is the negative quadratic term computed above.</p>
-        </div>
-          </div>
-        </details>
-        <article class="math-statement planar-landing-theorem" data-kind="corollary" data-label="planar-landing">
-          <header class="math-statement-header"><span>Conclusion</span><small>planar landing</small></header>
-          <div class="math-statement-body">
-            <p>For arbitrarily large integers \(N\), a noncircular \(D_N\)-symmetric planar Schiffer domain exists.</p>
-          </div>
-        </article>
-        <div class="paper-copy">
-          <p><em>Proof.</em> Choose, by <a class="xref" data-ref="near-integer-crossings" href="#statement-near-integer-crossings">the near-integer crossing theorem</a>, a crossing \(R_*=N+\delta\) with \(0&lt;\delta&lt;\eta_*\). The uniform-decrease corollary gives \(R(0)=R_*&gt;N\) and \(R(s_*)\le R_* -\eta_*&lt;N\). Continuity supplies \(s_N\in(0,s_*)\) with \(R(s_N)=N\). At this nonzero parameter the cone unfolds into a noncircular \(D_N\)-symmetric planar domain. <span class="qed" aria-label="end of proof">□</span></p>
-        </div>
-        </section>
         <header id="half-cylinder-strategy" class="section-heading proof-strategy-subheading" data-title="A motivation for uniformity: the cylinder" data-toc="proof-subsection">
           <h3>A motivation for uniformity: the cylinder</h3>
         </header>
@@ -2836,6 +2740,103 @@
         </details>
       </section>
 
+        <section id="phase-story" class="phase-story">
+        <header class="section-heading" data-title="Exploring the cone bifurcation" data-toc="proof-subsection">
+          <h3>Exploring the cone bifurcation</h3>
+        </header>
+        <div class="phase-story-lead paper-copy">
+          <p>Each point in the plot below is a noninteger order \(R_*\) at which the cone problem bifurcates. The curve issuing from it is the predicted two-jet of the corresponding branch, \(R(s)=R_*+\tfrac12R''(0)s^2\). This puts the two ingredients of the planar construction in one picture.</p>
+        </div>
+        <figure class="phase-family reading-figure" data-figure="cone-branch-curvature" data-evidence="asymptotic" aria-labelledby="phaseFamilyTitle">
+          <div id="phaseFamilyCanvasWrap" class="phase-family-canvas-wrap"><canvas id="phaseFamilyCanvas" role="img" aria-label="Real Bessel crossing orders and their predicted decreasing quadratic branch curves"></canvas></div>
+          <figcaption id="phaseFamilyTitle"><span class="figure-caption-summary">The quadratic approximation predicts a decrease in \(R\) at every displayed crossing. The points are crossings with \(6\le R_*\le30\).</span></figcaption>
+        </figure>
+        <div class="phase-observations paper-copy">
+          <p>The plot suggests two facts. First, the fractional parts of the crossing orders have no visible pattern; the equidistributed phase mechanism behind <a class="xref" data-ref="near-integer-crossings" href="#statement-near-integer-crossings">the near-integer crossing theorem</a> explains that, and in particular produces crossings arbitrarily close to an integer. Second, every branch is tangent to the line \(s=0\) and bends to the left by nearly the same amount. The theorem below makes that second observation uniform.</p>
+          <p>A cone solution at, say, \(R_*=28.026\ldots\) cannot be unfolded into a planar solution: twenty-eight copies leave a seam. If its branch reaches \(R=28\), the copies close exactly and the cone solution becomes a \(D_{28}\)-symmetric planar solution.</p>
+        </div>
+        <article id="statement-cone-second-variation" class="math-statement second-variation-theorem" data-kind="theorem" data-label="cone-second-variation">
+          <header class="math-statement-header"><span>Theorem</span><small>second variation of the cone order</small></header>
+          <div class="math-statement-body">
+            <p>At every sufficiently large crossing in \(2\le\lambda_*\le3\), the cone branch is even in \(s\) and</p>
+            <div class="tex-display">
+              \[
+              \begin{aligned}
+              R'(0)&amp;=0,\\
+              R''(0)&amp;=-\frac{\sqrt{\lambda_*}}{4R_*d_*}
+              \left(2+\rho\frac{J'_{2R_*}(\rho)}{J_{2R_*}(\rho)}\right),\\
+              R''(0)&amp;=-\Gamma(\lambda_*)+O(R_*^{-1}),
+              \end{aligned}
+              \]
+            </div>
+            <p>where \(d_*=(\partial_\nu j_{\nu,m})|_{\nu=R_*}&gt;0\) and</p>
+            <div class="tex-display">
+              \[
+              \Gamma(\lambda)=
+              \frac{\sqrt{(\lambda-1)(4-\lambda)}}
+              {4\arccos(\lambda^{-1/2})}&gt;0.
+              \]
+            </div>
+          </div>
+        </article>
+        <article id="statement-uniform-cone-decrease" class="math-statement uniform-drop-theorem" data-kind="corollary" data-label="uniform-cone-decrease">
+          <header class="math-statement-header"><span>Corollary</span><small>uniform decrease of \(R\)</small></header>
+          <div class="math-statement-body">
+            <p>There are constants \(R_{\mathrm{drop}},s_*,\eta_*&gt;0\), independent of the crossing, such that every crossing with</p>
+            <div class="tex-display">
+              \[
+              \begin{gathered}
+              R_*\ge R_{\mathrm{drop}},\qquad J_1(\rho)=J_{R_*}(\rho)=0,\\
+              2\le\dfrac{\rho^2}{R_*^2}\le3,
+              \end{gathered}
+              \]
+            </div>
+            <p>has a cone branch defined through \(s=s_*\) for which</p>
+            <div class="tex-display uniform-drop-result">
+              \[
+              R(0)=R_*,\qquad R(s_*)\le R_*-\eta_*.
+              \]
+            </div>
+            <p>The number \(\eta_*\) may be small, but it is independent of \(R_*\) for all sufficiently large crossings. This is the estimate needed to reach an integer value of \(R\).</p>
+          </div>
+        </article>
+        <details class="proof-details second-variation-proof">
+          <summary><span>Derivation of the second variation and the uniform decrease</span><i>expand +</i></summary>
+          <div class="proof-details-body">
+        <div class="phase-derivation paper-copy">
+            <p>Half-turn symmetry gives \(R(-s)=R(s)\), so \(R'(0)=0\) and the first variation of \(R\) is quadratic in \(s\). The product \(\cos^2\theta=\tfrac12(1+\cos2\theta)\) leaves only the modes \(0\) and \(2\), so the second harmonic decides the sign. Here \(t=r/R_*\in[0,1]\) is the radius normalized to the boundary, so that \(\sqrt{\lambda_*}\,r=\rho t\); and \(j_{\nu,m}\) is the \(m\)-th positive zero of \(J_\nu\), with \(d_*=(\partial_\nu j_{\nu,m})|_{\nu=R_*}\) its derivative in the order. Zeros of \(J_\nu\) increase with \(\nu\), so \(d_*&gt;0\). The regular second harmonic and its boundary slope are</p>
+            <div class="tex-display phase-tex">\[W_2(t)=-\frac{\rho^2}{4}\frac{J_{2R_*}(\rho t)}{J_{2R_*}(\rho)},\qquad S_2=W_2'(1)=-\frac{\rho^3}{4}\frac{J'_{2R_*}(\rho)}{J_{2R_*}(\rho)}.\]</div>
+            <p>At cubic order the mode-1 component has to be solvable again, and that forces a single scalar condition. Write \(V_1\) for the mode-1 radial profile generated at this order and \(Q\) for the mode-1 profile carrying the derivative in the Bessel order, whose boundary value is \(Q(1)=-\rho d_*\), and let \(\mu=R_*^2R''(0)/2\) be the coefficient with which the order moves along the branch. The condition reads \(V_1(1)=\rho^2/4-S_2/2=\mu Q(1)\), a scalar equation whose solution is the exact curvature</p>
+            <div class="tex-display phase-tex boxed-equation">\[R''(0)=-\frac{\sqrt{\lambda_*}}{4R_*d_*}\left(2+\rho\frac{J'_{2R_*}(\rho)}{J_{2R_*}(\rho)}\right).\]</div>
+            <p>Both factors on the right have a definite sign: \(d_*&gt;0\) as noted, and the bracket is positive — at the crossing displayed below it equals \(27.1\) — so \(R''(0)&lt;0\) and the cone radius does decrease. For large \(R_*\), the order derivative and the mode-2 logarithmic derivative have Debye limits. Hence</p>
+            <div class="tex-display phase-tex">\[R''(0)=-\Gamma(\lambda_*)+O(R_*^{-1}),\qquad \Gamma(\lambda)=\frac{\sqrt{(\lambda-1)(4-\lambda)}}{4\arccos(\lambda^{-1/2})}>0.\]</div>
+            <p>Along this branch \(\rho\) is fixed, so the oscillatory Debye phase at the boundary is</p>
+            <div class="tex-display phase-tex">\[\xi(R;\rho)=\sqrt{\rho^2-R^2}-R\arccos\!\left(\frac R\rho\right)-\frac\pi4,\qquad \partial_R\xi=-\arccos\!\left(\frac R\rho\right).\]</div>
+            <p>Thus \(R\mapsto\xi\) is locally linear and invertible. The signed branch parameter enters through an even function,</p>
+            <div class="tex-display phase-tex">\[R(s)=R_*+\frac12R''(0)s^2+O(s^4).\]</div>
+            <p>The chain rule now gives the motion seen in the second graph:</p>
+            <div class="tex-display phase-tex boxed-equation">\[\Delta\xi(s)=-\frac12\arccos\!\left(\frac{R_*}{\rho}\right)R''(0)s^2+O(s^4).\]</div>
+            <p>Because both factors on the right are negative, \(\Delta\xi(s)>0\): the cone radius decreases while the local cylinder phase advances. There is a linear relation between phase and \(R-R_*\), and a quadratic relation between either of them and \(s\).</p>
+        </div>
+        <div class="motion-split paper-copy" aria-label="Linear boundary motion versus quadratic radius motion">
+          <p>The visible boundary wave moves at first order:</p>
+          <div class="tex-display">\[r_{\partial}(\psi;s)=R(s)-s\cos\psi+O(s^2).\]</div>
+          <p>The opposite points \(\psi=0,\pi\) move in opposite directions at speed one. The cosine has zero average, however, so the mean radius moves only at second order:</p>
+          <div class="tex-display">\[\frac1{2\pi}\int_0^{2\pi}r_{\partial}(\psi;s)\,d\psi=R_*+\frac12R''(0)s^2+O(s^4).\]</div>
+          <p>Thus the first nonzero variation of the cone parameter \(R\) is the negative quadratic term computed above.</p>
+        </div>
+          </div>
+        </details>
+        <article class="math-statement planar-landing-theorem" data-kind="corollary" data-label="planar-landing">
+          <header class="math-statement-header"><span>Conclusion</span><small>planar landing</small></header>
+          <div class="math-statement-body">
+            <p>For arbitrarily large integers \(N\), a noncircular \(D_N\)-symmetric planar Schiffer domain exists.</p>
+          </div>
+        </article>
+        <div class="paper-copy">
+          <p><em>Proof.</em> Choose, by <a class="xref" data-ref="near-integer-crossings" href="#statement-near-integer-crossings">the near-integer crossing theorem</a>, a crossing \(R_*=N+\delta\) with \(0&lt;\delta&lt;\eta_*\). The uniform-decrease corollary gives \(R(0)=R_*&gt;N\) and \(R(s_*)\le R_* -\eta_*&lt;N\). Continuity supplies \(s_N\in(0,s_*)\) with \(R(s_N)=N\). At this nonzero parameter the cone unfolds into a noncircular \(D_N\)-symmetric planar domain. <span class="qed" aria-label="end of proof">□</span></p>
+        </div>
+        </section>
 <header id="fixed-domain" class="section-heading proof-strategy-subheading" data-title="The fixed-collar formulation" data-toc="proof-subsection">
           <h3>The fixed-collar formulation</h3>
         </header>
