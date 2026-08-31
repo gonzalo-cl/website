@@ -2155,7 +2155,7 @@
           </div>
           <p>where \(J\) denotes the Bessel functions. When \(R\) is an integer these are just Bessel functions whose index is a multiple of \(R\). The fundamental point, however, is that the problem on the cone makes sense even when \(R\notin\mathbb{N}\), and the Bessel functions are defined for every \(R\in\mathbb{R}_+\) all the same.</p>
           <p>The finite-\(R\) problem also carries the appropriate regularity condition at \(r=0\). Its radial solutions are Bessel functions of order \(0\), and the first nonradial angular mode brings in Bessel functions of order \(R\). By the criterion of <a class="xref" data-ref="linearized-schiffer-criterion" href="#statement-linearized-schiffer-criterion">the linearized Schiffer criterion</a>, a bifurcation needs the radial Neumann condition and a nonradial Dirichlet condition to hold at the same radius, which is to say a \(\rho\) with</p>
-          <div class="tex-display">
+          <div id="equation-crossing-conditions" class="tex-display" data-equation="crossing-conditions">
             \[ J_1(\rho)=0 \qquad\text{and}\qquad J_R(\rho)=0. \]
           </div>
           <p>When \(R\) is a natural number this is impossible: by <a class="xref" data-ref="bourget-siegel" href="#statement-bourget-siegel">the Bourget–Siegel theorem</a>, two Bessel functions of distinct integer order share no positive zero. That single fact is what has protected the disk from every bifurcation argument. The cone interpretation, however, allows us to take \(R\) that are not integers, and in that case we do have solutions to the equation above.</p>
@@ -2164,9 +2164,31 @@
         <article class="math-statement" data-kind="claim" data-label="near-integer-claim" aria-labelledby="nearIntegerClaimTitle">
           <header class="math-statement-header"><span>Claim</span><small id="nearIntegerClaimTitle">crossings arbitrarily close to an integer</small></header>
           <div class="math-statement-body">
-            <p>There exist solutions to <a class="xref" data-ref="crossing-conditions"></a> with \(R_\star\) as close to a natural number as we want. See <a class="xref" data-ref="near-integer-crossings"></a> for details.</p>
+            <p>There exist solutions to <a class="xref" data-ref="crossing-conditions" data-ref-short href="#equation-crossing-conditions"></a> with \(R_\star\) as close to a natural number as we want. See <a class="xref" data-ref="near-integer-crossings"></a> for details.</p>
           </div>
         </article>
+        <div class="intro-copy intro-copy-wide">
+          <p>One particularly close solution is to take the sixteenth zero of \(J_1\), namely \(\rho=51.043535\ldots\), for which \(J_R(\rho)=0\) at \(R=28.026397\ldots\)</p>
+        </div>
+        <figure class="abundance-laboratory reading-figure" data-figure="near-integer-crossing-sample" data-evidence="numerical">
+          <section class="abundance-plot-panel" aria-label="Finite modulo-one sample of near-integer common Bessel zero crossings">
+            <div class="passive-script-targets" hidden aria-hidden="true">
+              <strong id="abundancePlotState">common-zero crossing sample</strong>
+              <strong id="abundanceCountValue"></strong>
+              <strong id="abundanceBestValue"></strong>
+            </div>
+            <div id="abundanceCanvasWrap" class="abundance-canvas-wrap"><canvas id="abundanceCanvas" tabindex="0" role="img" aria-label="Modulo-one plot of real Bessel crossing orders" aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown Home End"></canvas></div>
+          </section>
+          <figcaption>Each point has horizontal coordinate \(\log R\) and vertical coordinate \(\{R\}\). Points near the baseline are crossings whose real order lies close to an integer. Keyboard: focus the plot and use the arrow keys to move between points; Home and End move to the first and last displayed points.</figcaption>
+        </figure>
+        <div class="intro-copy intro-copy-wide">
+          <p>The strategy is to take one of the \(R_\star\) from the claim, generate a perturbation branch \(R(s)\), and show that it reaches an integer. There are three steps.</p>
+          <ol class="strategy-steps">
+            <li>Compute the first coefficients \(R'(0)\) and \(R''(0)\) of a branch, to show that \(R(s)\) bends uniformly in \(R\). This is done in <a class="xref" data-ref="phase-story"></a>.</li>
+            <li>Show that the bifurcation exists in a uniform window, with uniform bounds on \(|R'''|\), however large \(R_\star\) is. The intuition is in <a class="xref" data-ref="half-cylinder-strategy"></a>, which does the limiting case of a cylinder; the rigorous version is in <a class="xref" data-ref="fixed-domain"></a> and <a class="xref" data-ref="bifurcation-setting"></a>.</li>
+            <li>Prove the claim, in a refined form. This is done in <a class="xref" data-ref="modes-experiment"></a>.</li>
+          </ol>
+        </div>
         <figure class="modes-laboratory interactive-plate figure-band" data-apparatus="visual-aside" data-figure="global-collar-zoom" data-evidence="numerical">
           <section class="modes-plot-panel apparatus-visual" aria-label="Global 28-sector field and one-wavelength collar zoom">
             <div class="passive-script-targets" hidden aria-hidden="true"><strong id="modesPlotState">28 copies · one wavelength selected</strong></div>
@@ -2225,25 +2247,6 @@
           </aside>
 
           <figcaption><span class="figure-caption-summary">The same continued \(D_{28}\) field is shown globally and in collar coordinates.</span><span class="figure-caption-note"><strong>What to notice.</strong> The animation follows the numerically continued branch from the noninteger crossing \(R_*=28.026\ldots\) to \(R=28\). This is an illustration outside the proof window, not the branch selected by the nonexplicit existence argument. The crop box and its connector lines identify the same boundary collar in the global and local views. The enlargement is isotropic: equal lengths in \(x\) and \(\psi\) have equal lengths on the page. The missing angular sector is slightly exaggerated so that its closure remains legible.</span></figcaption>
-        </figure>
-        <div class="intro-copy intro-copy-wide">
-          <p>The strategy is to take one of the \(R_\star\) from the claim, generate a perturbation branch \(R(s)\), and show that it reaches an integer. There are three steps.</p>
-          <ol class="strategy-steps">
-            <li>Compute the first coefficients \(R'(0)\) and \(R''(0)\) of a branch, to show that \(R(s)\) bends uniformly in \(R\). This is done in <a class="xref" data-ref="phase-story"></a>.</li>
-            <li>Show that the bifurcation exists in a uniform window, with uniform bounds on \(|R'''|\), however large \(R_\star\) is. The intuition is in <a class="xref" data-ref="half-cylinder-strategy"></a>, which does the limiting case of a cylinder; the rigorous version is in <a class="xref" data-ref="fixed-domain"></a> and <a class="xref" data-ref="bifurcation-setting"></a>.</li>
-            <li>Prove the claim, in a refined form. This is done in <a class="xref" data-ref="modes-experiment"></a>.</li>
-          </ol>
-        </div>
-        <figure class="abundance-laboratory reading-figure" data-figure="near-integer-crossing-sample" data-evidence="numerical">
-          <section class="abundance-plot-panel" aria-label="Finite modulo-one sample of near-integer common Bessel zero crossings">
-            <div class="passive-script-targets" hidden aria-hidden="true">
-              <strong id="abundancePlotState">common-zero crossing sample</strong>
-              <strong id="abundanceCountValue"></strong>
-              <strong id="abundanceBestValue"></strong>
-            </div>
-            <div id="abundanceCanvasWrap" class="abundance-canvas-wrap"><canvas id="abundanceCanvas" tabindex="0" role="img" aria-label="Modulo-one plot of real Bessel crossing orders" aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown Home End"></canvas></div>
-          </section>
-          <figcaption>Each point has horizontal coordinate \(\log R\) and vertical coordinate \(\{R\}\). Points near the baseline are crossings whose real order lies close to an integer. Keyboard: focus the plot and use the arrow keys to move between points; Home and End move to the first and last displayed points.</figcaption>
         </figure>
       </section>
           <article id="statement-main-question" class="math-statement math-statement-question" data-kind="main question" data-label="main-question" aria-labelledby="mainQuestionTitle">
