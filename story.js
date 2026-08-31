@@ -1079,6 +1079,142 @@
 
   bindCrandallRabinowitz();
 
+  /* The interior matching figure for 4.3.  The reader sets the boundary value
+     on the circle r = R - L; the interior solution of (Delta + lambda)u = 0 is
+     then determined, and so is its normal derivative.  G_2 = 0 says that the
+     derivative the interior produces is the one the collar needs, and the two
+     traces below the disc are exactly those.  Radial profiles and the two
+     multipliers are precomputed in dtn-data.js: they are Bessel functions of
+     order kR at real R, which is not worth evaluating in the browser. */
+  const interiorMatch = { amplitude: .2 };
+
+  function interiorField(radial, angular, amplitude, data) {
+    const grid = data.profiles[0].length - 1;
+    const at = (profile) => {
+      const t = Math.max(0, Math.min(1, radial)) * grid;
+      const i = Math.min(grid - 1, Math.floor(t));
+      return profile[i] + (profile[i + 1] - profile[i]) * (t - i);
+    };
+    return .745 * at(data.profiles[0]) + amplitude * at(data.profiles[1]) * Math.cos(angular);
+  }
+
+  function interiorColor(value) {
+    const t = Math.max(-1, Math.min(1, value / 4));
+    if (t >= 0) return [Math.round(255 - 175 * t), Math.round(255 - 118 * t), Math.round(248 - 120 * t)];
+    return [Math.round(255 + 87 * t), Math.round(255 + 177 * t), Math.round(248 + 182 * t)];
+  }
+
+  /* putImageData ignores the canvas transform, so the field is painted into an
+     offscreen buffer at its own scale and composited with drawImage, which does
+     respect it.  Painting straight onto the figure put the disc in the corner at
+     half size. */
+  function drawInteriorDisc(context, size, originX, originY, amplitude, data) {
+    const buffer = document.createElement("canvas");
+    buffer.width = size; buffer.height = size;
+    const paint = buffer.getContext("2d");
+    if (!paint) return;
+    const width = size, height = size;
+    const cx = width / 2, cy = height / 2, radius = Math.min(width, height) / 2 - 2;
+    const image = paint.createImageData(width, height);
+    const pixels = image.data;
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const dx = x - cx, dy = y - cy;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        const o = (y * width + x) * 4;
+        if (d > radius) { pixels[o + 3] = 0; continue; }
+        const [r, g, b] = interiorColor(interiorField(d / radius, Math.atan2(dy, dx), amplitude, data));
+        pixels[o] = r; pixels[o + 1] = g; pixels[o + 2] = b; pixels[o + 3] = 255;
+      }
+    }
+    paint.putImageData(image, 0, 0);
+    context.drawImage(buffer, originX, originY, size, size);
+    context.beginPath();
+    context.arc(originX + cx, originY + cy, radius, 0, TAU);
+    context.strokeStyle = colors.paper; context.lineWidth = 1.6; context.stroke();
+  }
+
+  function drawTrace(context, box, series, label) {
+    const { x, y, w, h } = box;
+    let span = .0001;
+    series.forEach((entry) => entry.values.forEach((v) => { span = Math.max(span, Math.abs(v)); }));
+    span *= 1.25;
+    const px = (i, n) => x + i / n * w;
+    const py = (v) => y + h / 2 - v / span * (h / 2);
+    context.beginPath(); context.moveTo(x, py(0)); context.lineTo(x + w, py(0));
+    context.strokeStyle = colors.grid; context.lineWidth = 1; context.stroke();
+    series.forEach((entry) => {
+      context.beginPath();
+      entry.values.forEach((v, i) => {
+        const a = px(i, entry.values.length - 1), b = py(v);
+        if (!i) context.moveTo(a, b); else context.lineTo(a, b);
+      });
+      context.strokeStyle = entry.color;
+      context.lineWidth = entry.width || 2;
+      if (entry.dash) context.setLineDash(entry.dash); else context.setLineDash([]);
+      context.stroke(); context.setLineDash([]);
+    });
+    context.fillStyle = colors.faint;
+    context.font = visualTheme.labelFont;
+    context.textAlign = "left"; context.textBaseline = "bottom";
+    context.fillText(label, x, y - 4);
+  }
+
+  function renderInteriorMatch() {
+    const data = window.DTN_INTERIOR;
+    if (!data || !select("#interiorMatchCanvasWrap")) return;
+    const { canvas, context, width, height } = canvasMetrics("#interiorMatchCanvas", "#interiorMatchCanvasWrap", 430);
+    context.clearRect(0, 0, width, height);
+    context.fillStyle = colors.ink; context.fillRect(0, 0, width, height);
+
+    const amplitude = interiorMatch.amplitude;
+    const target = data.targetAmplitude;
+    const discSize = Math.round(Math.min(width * .74, height * .42));
+    drawInteriorDisc(context, discSize, Math.round((width - discSize) / 2), 0, amplitude, data);
+
+    const samples = 121;
+    const psi = (i) => i / (samples - 1) * TAU;
+    const dirichlet = [], produced = [], required = [];
+    for (let i = 0; i < samples; i++) {
+      dirichlet.push(.745 + amplitude * Math.cos(psi(i)));
+      produced.push(data.tau[0] * .745 + data.tau[1] * amplitude * Math.cos(psi(i)));
+      required.push(data.tau[0] * .745 + data.tau[1] * target * Math.cos(psi(i)));
+    }
+    const left = 10, plotWidth = width - 20;
+    const top = discSize + 26, plotHeight = (height - top - 34) / 2;
+    drawTrace(context, { x: left, y: top, w: plotWidth, h: plotHeight },
+      [{ values: dirichlet, color: colors.cyan }], "u on the circle");
+    drawTrace(context, { x: left, y: top + plotHeight + 24, w: plotWidth, h: plotHeight },
+      [{ values: required, color: colors.faint, width: 1.6, dash: [5, 4] },
+       { values: produced, color: colors.orange }], "normal derivative: produced, required");
+
+    const gap = Math.abs(amplitude - target) * Math.abs(data.tau[1]);
+    const matched = gap < .04;
+    context.fillStyle = matched ? colors.cyan : colors.orange;
+    context.font = visualTheme.labelFont;
+    context.textAlign = "left"; context.textBaseline = "bottom";
+    context.fillText(matched
+      ? "matches: the solution continues across"
+      : `mismatch ${gap.toFixed(2)}: no continuation`, left, height - 6);
+
+    const value = select("#interiorMatchValue");
+    if (value) value.textContent = amplitude.toFixed(2);
+    canvas.setAttribute("aria-label",
+      `Interior solution with boundary amplitude ${amplitude.toFixed(2)}; the normal derivative it produces ${matched ? "matches" : "does not match"} the one the collar requires.`);
+  }
+
+  function bindInteriorMatch() {
+    const range = select("#interiorMatchRange");
+    if (!range) return;
+    range.addEventListener("input", () => {
+      interiorMatch.amplitude = Number(range.value);
+      renderInteriorMatch();
+    });
+    renderInteriorMatch();
+  }
+
+  bindInteriorMatch();
+
   function renderConeFold() {
     if (!select("#coneFoldCanvasWrap")) return;
     const { canvas, context, width, height } = canvasMetrics("#coneFoldCanvas", "#coneFoldCanvasWrap", 420);

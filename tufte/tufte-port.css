@@ -4826,3 +4826,10 @@ body.tufte-site main .intro-route-overview p,
 .fact-list li { margin: 0 0 14px; }
 .fact-list li:last-child { margin-bottom: 0; }
 .fact-list .tex-display { margin: 14px 0 4px; }
+
+.interior-match-canvas-wrap { position: relative; width: 100%; height: 430px; }
+.interior-match-canvas-wrap canvas { display: block; width: 100%; height: 100%; }
+.interior-match-control { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 4px 10px; margin-top: 10px; }
+.interior-match-control label { font-size: var(--type-label); color: var(--muted); }
+.interior-match-control output { font-family: var(--mono); font-size: var(--type-label); color: var(--ink); }
+.interior-match-control input[type="range"] { grid-column: 1 / -1; }

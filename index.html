@@ -2572,6 +2572,19 @@
         <div class="tex-display">
           \[ \mathcal{G}_1(R,v):=\big(L^{h_v}_R+\lambda\big)w^v=0. \]
         </div>
+        <label for="interior-match-note" class="margin-toggle" aria-label="Show the interior matching figure">&#8853;</label>
+        <input type="checkbox" id="interior-match-note" class="margin-toggle">
+        <figure class="marginnote side-figure interior-match-figure" data-figure="interior-matching">
+          <div id="interiorMatchCanvasWrap" class="interior-match-canvas-wrap">
+            <canvas id="interiorMatchCanvas" role="img" aria-label="Interior solution on the disc, with its boundary value and normal derivative plotted below"></canvas>
+          </div>
+          <div class="interior-match-control">
+            <label for="interiorMatchRange">boundary amplitude</label>
+            <output id="interiorMatchValue" for="interiorMatchRange">0.20</output>
+            <input id="interiorMatchRange" type="range" min="-1" max="1" step="0.01" value="0.2" aria-label="Amplitude of the first angular mode of the boundary value">
+          </div>
+          <figcaption>Set the boundary value on \(r=R-L\); the interior solution is then determined, and so is its normal derivative. Only at one amplitude does that derivative agree with the one the collar supplies, which is what \(\mathcal{G}_2=0\) asks. Drawn in the quotient angle \(\psi\); at integer \(R\) it unfolds to \(B(0,R-L)\).</figcaption>
+        </figure>
         <p>We are left with the edge \(\{y=L\}\), where the collar meets the part of the cone we set aside. There we can simply solve the Dirichlet problem \((\Delta+\lambda)u=0\) inside \(\{r&lt;R-L\}\) with the boundary data our collar solution supplies, which is \(w_0(L)+v(L,\cdot)\), since \(\chi\) vanishes near \(y=L\). But for the two pieces to fit together into one solution of the equation, the normal derivatives must agree as well. That is what a Dirichlet-to-Neumann map records: \(D_R\) is the Fourier multiplier</p>
         <div class="tex-display">
           \[ D_R\big[\cos k\psi\big]=\tau_k(R)\cos k\psi,\qquad
@@ -3019,6 +3032,7 @@
     <script defer src="cone-data.js"></script>
     <script defer src="debye-data.js?v=20260828.1"></script>
     <script defer src="abundance-data.js"></script>
+    <script defer src="dtn-data.js?v=20260831.1"></script>
     <script defer src="app.js?v=20260830.6"></script>
     <script defer src="story.js?v=20260830.6"></script>
     <script defer src="abundance.js?v=20260830.1"></script>
