@@ -1874,10 +1874,6 @@
             \[ J_{kR}(\sqrt\lambda\,r)\cos(k\psi), \qquad k=0,1,2,\ldots, \]
           </div>
           <p>where \(J\) denotes the Bessel functions. When \(R\) is an integer these are just Bessel functions whose index is a multiple of \(R\). The fundamental point, however, is that the problem on the cone makes sense even when \(R\notin\mathbb{N}\), and the Bessel functions are defined for every \(R\in\mathbb{R}_+\) all the same.</p>
-          <p>A second point, which we take up later, is what happens near the outer edge. Take the neighbourhood of width \(L\) at the exterior of the cone, \(r&gt;R-L\). As \(R\to\infty\) its geometry converges to that of a cylinder, and since \(r\approx R\) there, the operator above converges to</p>
-          <div class="tex-display">
-            \[ \partial_r^2+\partial_\psi^2+\lambda. \]
-          </div>
           <p>The finite-\(R\) problem also carries the appropriate regularity condition at \(r=0\). Its radial solutions are Bessel functions of order \(0\), and the first nonradial angular mode brings in Bessel functions of order \(R\). By the criterion of <a class="xref" data-ref="linearized-schiffer-criterion"></a>, a bifurcation needs the radial Neumann condition and a nonradial Dirichlet condition to hold at the same radius, which is to say a \(\rho\) with</p>
           <div class="tex-display">
             \[ J_1(\rho)=0 \qquad\text{and}\qquad J_R(\rho)=0. \]
@@ -1965,9 +1961,15 @@
         <p>Second, the extra term is not a trick but the leading correction. Pulling \(w_0\) back through \(\Phi^{h}_R\) rather than evaluating it on the unperturbed cone produces exactly \(\chi\,\partial_yw_0\,h\) at first order in \(h\); we are simply carrying that term along explicitly. And it is what repairs the boundary conditions: since \(\chi(0)=1\) and \(\chi'(0)=0\), the normalization of \(w_0\) gives \(w_1^v(0,\cdot)=0\) together with \(\partial_yw_1^v(0,\cdot)=\partial_yv(0,\cdot)-\lambda h_v=0\). So a merely Dirichlet \(v\) produces a \(w^v\) satisfying both conditions, which is the cancellation that makes the whole scheme work.</p>
         <p>Third, the spaces must be anisotropic. Since \(h_v\) is a Neumann trace of \(v\), it has one derivative less than \(v\), while the coefficients of \(L^h_R\) involve \(h''\). The saving observation is that \(h''\) never multiplies \(\partial_y^2\): it appears only in the coefficient of \(\partial_y\). Measuring \(v\) in a space with one more derivative in \(y\) than in \(\psi\) therefore makes \(L^{h_v}_R w^v\) lose exactly two derivatives and no more, and the loss that would otherwise defeat the argument disappears.</p>
         </div>
-        <header id="half-cylinder-strategy" class="section-heading proof-strategy-subheading" data-title="The half-cylinder as a uniform limiting model" data-toc="proof-subsection">
-          <h3>The half-cylinder as a uniform limiting model</h3>
+        <header id="half-cylinder-strategy" class="section-heading proof-strategy-subheading" data-title="A motivation for uniformity: the cylinder" data-toc="proof-subsection">
+          <h3>A motivation for uniformity: the cylinder</h3>
         </header>
+        <div class="intro-copy intro-copy-wide">
+          <p>What happens near the outer edge motivates everything in this subsection. Take the neighbourhood of width \(L\) at the exterior of the cone, \(r&gt;R-L\). As \(R\to\infty\) its geometry converges to that of a cylinder, and since \(r\approx R\) there, the operator of <a class="xref" data-ref="cone-remap"></a> converges to</p>
+          <div class="tex-display">
+            \[ \partial_r^2+\partial_\psi^2+\lambda. \]
+          </div>
+        </div>
 
         <div class="half-cylinder-introduction">
           <label for="half-cylinder-applet-note" class="margin-toggle" aria-label="Show the half-cylinder bifurcation applet">&#8853;</label>
@@ -2247,10 +2249,6 @@
         </div>
 
       <section id="debye-experiment" class="debye-experiment">
-        <header class="section-heading experiment-header debye-header" data-title="Uniform collar comparison for large cones" data-toc="proof-subsection">
-          <h3>Uniform collar comparison for large cones</h3>
-        </header>
-
         <div class="debye-lead paper-copy">
           <label for="cone-cylinder-note" class="margin-toggle" aria-label="Show the long-cone and cylinder comparison">&#8853;</label>
           <input type="checkbox" id="cone-cylinder-note" class="margin-toggle">
