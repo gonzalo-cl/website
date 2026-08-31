@@ -63,6 +63,22 @@
           <p>In the conformal fixed-disc route, a higher tenfold Wronskian crossing supplies a linearized kernel direction for a numerical search in the relaxed constant-flux problem. Numerical continuation follows a computed noncircular branch to zero flux and encodes the endpoint by a conformal map from the unit disk; a computer-assisted contraction, independent of the search path, then proves that an exact solution lies near that numerical centre. The two constructions are built quite differently.</p>
           <p>A different route considers the problem under \(N\)-fold symmetry, for \(N\) sufficiently large, and relaxes it so that \(N\) can take decimal values. The problem is thus formulated over a cone of angle \(2\pi/R\), which converges to a cylinder as \(R\to\infty\). Rigorous bifurcation theory, with uniform bounds in \(R\), then allows one to conclude that the bifurcation reaches integer values of \(R\).</p>
         </div>
+        <figure class="geometry-laboratory interactive-plate annotated-plate reading-figure probe-figure" data-figure="pompeiu-probe">
+          <aside class="geometry-controls paper-demo-controls">
+            <div class="geometry-stages" aria-label="Choose a domain">
+              <button type="button" data-probe-domain="0"><span>01</span><strong>disc</strong></button>
+              <button type="button" data-probe-domain="1"><span>02</span><strong>N = 28</strong></button>
+              <button type="button" data-probe-domain="2"><span>03</span><strong>square</strong></button>
+            </div>
+            <div class="geometry-scrub"><div class="control-label"><label for="probeAngle">rotate</label><output id="probeDomainName">disc, radius j&#8321;,&#8321;</output></div><input id="probeAngle" type="range" min="0" max="6.2832" step="0.001" value="0"></div>
+          </aside>
+          <section class="geometry-canvas-panel" aria-label="A domain moved over the plane wave cosine of x one">
+            <div id="probeCanvasWrap" class="geometry-canvas-wrap probe-canvas-wrap">
+              <canvas id="probeCanvas" role="img" aria-label="A domain moved over the plane wave cosine of x one, with its integral plotted below"></canvas>
+            </div>
+          </section>
+          <figcaption><span class="figure-caption-summary">Drag the domain across \(\cos(x_1)\); the trace below is its integral against the shift.</span><span class="figure-caption-note"><strong>What to notice.</strong> For the disc and for the \(N=28\) domain the integral is zero wherever you put them and however you turn them, which is exactly the failure of the Pompeiu property. For the square it is not. Each domain is rescaled so that its own frequency becomes \(1\), which is why the \(N=28\) one is so much the largest; its boundary is the landing record of the proof, not a sketch.</span></figcaption>
+        </figure>
       </section>
 
       <section id="introduction" class="story-intro">

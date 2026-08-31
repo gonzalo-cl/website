@@ -1331,6 +1331,213 @@
 
   bindEncoding();
 
+  /* Move a domain over cos(x_1) and watch its integral.  For a Schiffer domain
+     the integral vanishes for every rigid motion, which is the Pompeiu failure
+     itself.  Each domain is rescaled so that its own frequency becomes 1, which
+     is why the N = 28 one is so much larger than the disc: its k is 1.822983
+     against the disc's 1/j_{1,1}. */
+  const PROBE = { domain: 0, t1: 0, angle: 0, dragging: false };
+
+  function probeDomains() {
+    const list = [];
+    const j11 = 3.8317059702;
+    list.push({
+      name: "disc, radius j\u2081,\u2081",
+      note: "the classical Pompeiu failure",
+      vanishes: true,
+      radius: () => j11,
+      extent: j11 * 1.35,
+    });
+    const data = window.CONE_NUMERICS;
+    if (data && data.records) {
+      const record = data.records.reduce((best, row) =>
+        Math.abs(row.s - data.landingS) < Math.abs(best.s - data.landingS) ? row : best);
+      const scale = Math.sqrt(record.lambda), order = record.R, h = record.h;
+      list.push({
+        name: `N = ${order}, this proof`,
+        note: "boundary from the landing record",
+        vanishes: true,
+        radius: (theta) => {
+          let sum = 0;
+          for (let j = 0; j < h.length; j++) sum += h[j] * Math.cos(j * order * theta);
+          return scale * (order - sum);
+        },
+        extent: scale * order * 1.12,
+      });
+    }
+    const side = 2 * j11;
+    list.push({
+      name: "square",
+      note: "has the Pompeiu property",
+      vanishes: false,
+      radius: (theta) => (side / 2) / Math.max(Math.abs(Math.cos(theta)), Math.abs(Math.sin(theta))),
+      extent: side * .95,
+    });
+    return list;
+  }
+
+  /* The integral reduces to one angular quadrature: the radial part of
+     int e^{i y_1} dy has a closed form on every ray. */
+  function probeAmplitude(domain, angle, samples = 2000) {
+    let re = 0, im = 0;
+    for (let i = 0; i < samples; i++) {
+      const theta = TAU * (i + .5) / samples;
+      const radius = domain.radius(theta - angle);
+      const c = Math.cos(theta);
+      if (Math.abs(c) < 1e-7) {
+        re += radius * radius / 2;
+        im += c * radius * radius * radius / 3;
+      } else {
+        const t = c * radius;
+        re += (Math.cos(t) + Math.sin(t) * t - 1) / (c * c);
+        im += (Math.sin(t) - t * Math.cos(t)) / (c * c);
+      }
+    }
+    const weight = TAU / samples;
+    return { re: re * weight, im: im * weight };
+  }
+
+  function probeIntegral(domain, shift, angle) {
+    const a = probeAmplitude(domain, angle);
+    return Math.cos(shift) * a.re - Math.sin(shift) * a.im;
+  }
+
+  function renderPompeiuProbe() {
+    if (!select("#probeCanvasWrap")) return;
+    const { canvas, context, width, height } = canvasMetrics("#probeCanvas", "#probeCanvasWrap", 420);
+    const domains = probeDomains();
+    const domain = domains[Math.min(PROBE.domain, domains.length - 1)];
+    context.clearRect(0, 0, width, height);
+
+    const plotHeight = 96;
+    const viewHeight = height - plotHeight - 62;
+    const scale = Math.min(width / (2.4 * domain.extent), viewHeight / (2.2 * domain.extent));
+    const cx = width / 2, cy = viewHeight / 2;
+    const toX = (x) => cx + x * scale;
+    const toY = (y) => cy - y * scale;
+
+    // the wave, at its true period
+    const image = context.createImageData(Math.round(width), Math.round(viewHeight));
+    const pixels = image.data;
+    for (let px = 0; px < image.width; px++) {
+      const value = Math.cos((px - cx) / scale);
+      const t = (value + 1) / 2;
+      const r = Math.round(255 - 78 * t), g = Math.round(255 - 24 * t), b = Math.round(248 - 8 * t);
+      const rr = Math.round(232 + 23 * t), gg = Math.round(238 - 60 * t), bb = Math.round(236 - 80 * t);
+      for (let py = 0; py < image.height; py++) {
+        const o = (py * image.width + px) * 4;
+        pixels[o] = value >= 0 ? rr : r;
+        pixels[o + 1] = value >= 0 ? gg : g;
+        pixels[o + 2] = value >= 0 ? bb : b;
+        pixels[o + 3] = 255;
+      }
+    }
+    const buffer = document.createElement("canvas");
+    buffer.width = image.width; buffer.height = image.height;
+    buffer.getContext("2d").putImageData(image, 0, 0);
+    context.drawImage(buffer, 0, 0, width, viewHeight);
+
+    context.beginPath();
+    for (let i = 0; i <= 720; i++) {
+      const theta = TAU * i / 720;
+      const radius = domain.radius(theta - PROBE.angle);
+      const x = toX(PROBE.t1 + radius * Math.cos(theta));
+      const y = toY(radius * Math.sin(theta));
+      if (!i) context.moveTo(x, y); else context.lineTo(x, y);
+    }
+    context.closePath();
+    context.fillStyle = "rgba(7,87,96,.16)";
+    context.fill();
+    context.strokeStyle = colors.paper; context.lineWidth = 2; context.stroke();
+
+    const value = probeIntegral(domain, PROBE.t1, PROBE.angle);
+    const trace = [];
+    let peak = 1e-9;
+    const base = probeAmplitude(domain, PROBE.angle);
+    for (let i = 0; i <= 160; i++) {
+      const shift = -Math.PI + TAU * i / 160;
+      const v = Math.cos(shift) * base.re - Math.sin(shift) * base.im;
+      trace.push(v); peak = Math.max(peak, Math.abs(v));
+    }
+    const top = viewHeight + 16, mid = top + plotHeight / 2;
+    context.beginPath();
+    context.moveTo(14, mid); context.lineTo(width - 14, mid);
+    context.strokeStyle = colors.grid; context.lineWidth = 1; context.stroke();
+    const span = domain.vanishes ? Math.max(peak, 1e-9) * 40 : peak * 1.2;
+    context.beginPath();
+    trace.forEach((v, i) => {
+      const x = 14 + i / (trace.length - 1) * (width - 28);
+      const y = mid - v / span * (plotHeight / 2 - 8);
+      if (!i) context.moveTo(x, y); else context.lineTo(x, y);
+    });
+    context.strokeStyle = domain.vanishes ? colors.cyan : colors.orange;
+    context.lineWidth = 2; context.stroke();
+
+    context.font = visualTheme.labelFont;
+    context.textAlign = "left"; context.textBaseline = "top";
+    context.fillStyle = colors.faint;
+    context.fillText("integral against the shift t\u2081", 14, top - 14);
+    context.fillStyle = domain.vanishes ? colors.cyan : colors.orange;
+    context.fillText(`\u222b cos(x\u2081) = ${value.toExponential(2)}`, 14, top + plotHeight + 2);
+    context.fillStyle = colors.faint;
+    context.fillText(domain.vanishes
+      ? "zero for every position and angle"
+      : "changes with position", 14, top + plotHeight + 16);
+
+    document.querySelectorAll("[data-probe-domain]").forEach((button, index) => {
+      button.classList.toggle("active", index === PROBE.domain);
+    });
+    const label = select("#probeDomainName");
+    if (label) label.textContent = domain.name;
+    canvas.setAttribute("aria-label",
+      `${domain.name} over the plane wave cosine x one; the integral is ${value.toExponential(2)}.`);
+    PROBE.geometry = { toX, toY, scale, cx, cy, viewHeight };
+  }
+
+  function bindPompeiuProbe() {
+    const canvas = select("#probeCanvas");
+    if (!canvas) return;
+    const setFromPointer = (event) => {
+      const geometry = PROBE.geometry;
+      if (!geometry) return;
+      const box = canvas.getBoundingClientRect();
+      if (!box.width) return;
+      const x = (event.clientX - box.left) / box.width * (canvas.width / (window.devicePixelRatio || 1));
+      PROBE.t1 = (x - geometry.cx) / geometry.scale;
+      renderPompeiuProbe();
+    };
+    canvas.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
+      canvas.setPointerCapture(event.pointerId);
+      PROBE.dragging = true;
+      setFromPointer(event);
+    });
+    canvas.addEventListener("pointermove", (event) => {
+      if (PROBE.dragging) setFromPointer(event);
+    });
+    canvas.addEventListener("pointerup", (event) => {
+      PROBE.dragging = false;
+      canvas.releasePointerCapture(event.pointerId);
+    });
+    const angle = select("#probeAngle");
+    if (angle) {
+      angle.addEventListener("input", () => {
+        PROBE.angle = Number(angle.value);
+        renderPompeiuProbe();
+      });
+    }
+    document.querySelectorAll("[data-probe-domain]").forEach((button, index) => {
+      button.addEventListener("click", () => {
+        PROBE.domain = index;
+        PROBE.t1 = 0;
+        renderPompeiuProbe();
+      });
+    });
+    renderPompeiuProbe();
+  }
+
+  bindPompeiuProbe();
+
   function bindCrandallRabinowitz() {
     document.querySelectorAll(".cr-statement").forEach((statement) => {
       const buttons = statement.querySelectorAll("[data-cr-variant]");

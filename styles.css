@@ -1592,3 +1592,5 @@ body.tufte-site main .intro-route-overview p,
 .branch-scale-canvas-wrap canvas { display: block; width: 100%; height: 100%; }
 
 .encoding-figure .geometry-canvas-wrap { height: 380px; }
+
+.probe-figure .geometry-canvas-wrap { height: 420px; cursor: ew-resize; }
