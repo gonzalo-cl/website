@@ -1575,3 +1575,8 @@ body.tufte-site main .intro-route-overview p,
   line-height: 1.43;
   color: var(--ink);
 }
+
+.fact-list { margin: 14px 0; padding-left: 22px; list-style: disc; }
+.fact-list li { margin: 0 0 14px; }
+.fact-list li:last-child { margin-bottom: 0; }
+.fact-list .tex-display { margin: 14px 0 4px; }
