@@ -880,10 +880,10 @@
      the cone is perturbed exactly where the domain is. */
   const coneFoldState = { progress: 0, playing: false, frame: null };
   const coneFoldCaptions = [
-    "The perturbed domain, with its R-fold symmetry.",
-    "The copies close up around one sector.",
-    "The two straight edges meet.",
-    "The perturbed cone.",
+    "One flat sector, with its mode-one boundary.",
+    "The sector rolls up.",
+    "The two straight edges come together.",
+    "The tilted cone.",
   ];
 
   /* The 4.1 figure: a cone opens into the flat sector it is isometric to, and
@@ -895,75 +895,125 @@
   function drawConeUnfold(context, width, height, amount) {
     const t = Math.max(0, Math.min(1, amount));
     const open = ease(t);
-    const cx = width * .5;
-    const cy = height * .52;
-    // Fill the canvas: the unfolded sector is the wide state, so size the slant
-    // from the width, and only fall back to the height when it is the binder.
-    const slant = Math.min(width * .62, height * .92);
-    const order = 28;
-    /* The true sector for R = 28 has opening pi/28, about four degrees: drawn
-       to scale the unfolded state is a sliver a few pixels tall and the figure
-       reads as broken.  The displayed opening is enlarged so the unfolding is
-       legible; the order is stated in the caption, and the picture claims only
-       that a cone is isometric to a flat sector, not that this is its angle. */
-    const halfSector = 0.62;
-    // Mode one: the rim radius varies as cos(psi), a rigid tilt of the base,
-    // so the axis no longer meets the base circle at its centre.
-    const tiltAmplitude = .15;
+    const cy = height * .53;
+    /* The legend sits over the left of the canvas.  Section 2 clears it with the
+       --geometry-key-width token; read it from this figure's own laboratory
+       rather than the first one in the document, which is what put the apex
+       underneath the legend. */
+    const laboratory = select("#coneFoldCanvasWrap")?.closest(".geometry-laboratory");
+    const keyToken = laboratory
+      ? parseFloat(getComputedStyle(laboratory).getPropertyValue("--geometry-key-width")) / 100
+      : 0;
+    const keyFraction = Number.isFinite(keyToken) ? Math.max(0, Math.min(.45, keyToken)) : 0;
+    const left = width * keyFraction + 18;
+    const slant = Math.min((width - left) * .88, height * .98);
+    const apexX = left;
+    // The true sector for R = 28 has opening pi/28, about four degrees; drawn to
+    // scale the unfolded state is a sliver a few pixels tall.  The displayed
+    // opening is enlarged so the unfolding is legible.
+    const halfSector = .44;
+    /* Mode one: the rim radius varies as cos(psi), a rigid tilt of the base, so
+       the axis does not meet the base circle at its centre.  One full period of
+       that cosine runs across the sector, because closing the sector up is what
+       identifies its two edges; the amplitude is small enough that the flat
+       state still reads as a sector with a wavy edge. */
+    const tiltAmplitude = .085;
     const rimDepth = Math.max(11, slant * .085);
     const coneHalf = slant * .42;
 
-    // Material coordinates: radial in [0,1] along the generator, angular in
-    // [-1,1] around the sector.  Folded, the sector closes into the cone.
-    const point = (radial, angular) => {
+    const point = (radial, angular, deformed = true) => {
       const theta = Math.PI * angular;
-      const tilt = 1 + tiltAmplitude * Math.cos(theta);
+      const tilt = deformed ? 1 + tiltAmplitude * Math.cos(theta) : 1;
+      const reach = radial * tilt;
       const flatAngle = halfSector * angular;
-      const flatX = cx - slant * .52 + radial * tilt * slant * Math.cos(flatAngle);
-      const flatY = cy + radial * tilt * slant * Math.sin(flatAngle);
-      const coneX = cx - slant * .56 + radial * tilt * (slant + rimDepth * Math.cos(theta));
-      const coneY = cy + radial * tilt * coneHalf * Math.sin(theta);
+      const flatX = apexX + reach * slant * Math.cos(flatAngle);
+      const flatY = cy + reach * slant * Math.sin(flatAngle);
+      const coneX = apexX + reach * (slant + rimDepth * Math.cos(theta));
+      const coneY = cy + reach * coneHalf * Math.sin(theta);
       return { x: lerp(flatX, coneX, 1 - open), y: lerp(flatY, coneY, 1 - open) };
     };
 
-    const steps = 96;
-    // Surface, shaded by depth so the folded state reads as a solid.
-    for (let band = 0; band < steps; band++) {
-      const a0 = -1 + 2 * band / steps;
-      const a1 = -1 + 2 * (band + 1) / steps;
-      const depth = (Math.cos(Math.PI * (a0 + a1) / 2) + 1) / 2;
-      const shade = .30 + .55 * (1 - open) * depth + .30 * open * depth;
+    const fold = 1 - open;
+    const strips = [];
+    const stripCount = 48;
+    for (let i = 0; i < stripCount; i++) {
+      const a0 = -1 + 2 * i / stripCount;
+      const a1 = -1 + 2 * (i + 1) / stripCount;
+      strips.push({ a0, a1, depth: Math.cos(Math.PI * (a0 + a1) / 2) });
+    }
+    // Painter's algorithm: the far side of the cone has to go down first or the
+    // folded state reads as a flat blob rather than a surface.
+    strips.sort((left, right) => left.depth - right.depth);
+
+    strips.forEach((strip) => {
+      const p00 = point(0, strip.a0), p10 = point(1, strip.a0);
+      const p11 = point(1, strip.a1), p01 = point(0, strip.a1);
       context.beginPath();
-      const p00 = point(0, a0), p10 = point(1, a0), p11 = point(1, a1), p01 = point(0, a1);
-      context.moveTo(p00.x, p00.y);
-      context.lineTo(p10.x, p10.y);
-      context.lineTo(p11.x, p11.y);
-      context.lineTo(p01.x, p01.y);
+      context.moveTo(p00.x, p00.y); context.lineTo(p10.x, p10.y);
+      context.lineTo(p11.x, p11.y); context.lineTo(p01.x, p01.y);
       context.closePath();
-      context.fillStyle = `rgba(226, 138, 95, ${(.30 + .52 * shade).toFixed(3)})`;
+      /* One surface tone, shaded by depth.  Section 2's two-tone strips encode
+         the sign of the boundary profile, which is not what this figure is
+         about; here they only split the cone into a teal half and a red half
+         with a seam down the middle. */
+      const lit = .16 + .17 * (1 - fold) + .17 * fold * (1 - strip.depth) / 2;
+      context.fillStyle = `rgba(7,87,96,${lit.toFixed(3)})`;
       context.fill();
+    });
+
+    for (let i = 1; i < 12; i++) {
+      const angular = -1 + 2 * i / 12;
+      const a = point(0, angular), b = point(1, angular);
+      context.beginPath(); context.moveTo(a.x, a.y); context.lineTo(b.x, b.y);
+      context.strokeStyle = colors.grid;
+      context.lineWidth = .7; context.stroke();
     }
 
-    // Rim.
+    for (let ring = 1; ring <= 6; ring++) {
+      const radial = ring / 6;
+      context.beginPath();
+      for (let i = 0; i <= 160; i++) {
+        const q = point(radial, -1 + 2 * i / 160);
+        if (!i) context.moveTo(q.x, q.y); else context.lineTo(q.x, q.y);
+      }
+      context.strokeStyle = colors.grid;
+      context.lineWidth = .7; context.stroke();
+    }
+
+    // The unperturbed rim, dashed, so the mode-one tilt reads as a departure
+    // from a circle rather than as the shape of the cone itself.
     context.beginPath();
-    for (let i = 0; i <= steps; i++) {
-      const p = point(1, -1 + 2 * i / steps);
-      if (i === 0) context.moveTo(p.x, p.y); else context.lineTo(p.x, p.y);
+    for (let i = 0; i <= 240; i++) {
+      const q = point(1, -1 + 2 * i / 240, false);
+      if (!i) context.moveTo(q.x, q.y); else context.lineTo(q.x, q.y);
     }
-    context.strokeStyle = "rgba(247, 232, 214, .92)";
-    context.lineWidth = 2;
-    context.stroke();
+    context.strokeStyle = "rgba(7,87,96,.65)";
+    context.setLineDash([4, 5]); context.lineWidth = 1.2; context.stroke(); context.setLineDash([]);
 
-    // The two generators that become the seam when the sector closes up.
+    context.beginPath();
+    for (let i = 0; i <= 400; i++) {
+      const q = point(1, -1 + 2 * i / 400);
+      if (!i) context.moveTo(q.x, q.y); else context.lineTo(q.x, q.y);
+    }
+    context.strokeStyle = colors.paper; context.lineWidth = 2.4;
+    context.shadowColor = colors.orange; context.shadowBlur = 7;
+    context.stroke(); context.shadowBlur = 0;
+
+    // The two edges that become the seam once the sector closes up.
     [-1, 1].forEach((angular) => {
       const a = point(0, angular), b = point(1, angular);
-      context.beginPath();
-      context.moveTo(a.x, a.y);
-      context.lineTo(b.x, b.y);
-      context.strokeStyle = `rgba(247, 232, 214, ${(.32 + .5 * open).toFixed(3)})`;
-      context.lineWidth = 1.3;
-      context.stroke();
+      context.beginPath(); context.moveTo(a.x, a.y); context.lineTo(b.x, b.y);
+      context.strokeStyle = colors.paper;
+      // Folded, this edge is the seam on the far side of the cone, so it should
+      // recede rather than cut the silhouette in half.
+      context.globalAlpha = .10 + .70 * open;
+      context.lineWidth = 1.6; context.stroke();
+      context.globalAlpha = 1;
     });
+
+    context.beginPath();
+    context.arc(apexX, cy, 3, 0, TAU);
+    context.fillStyle = colors.paper; context.fill();
   }
 
   function renderConeFold() {
