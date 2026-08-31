@@ -2719,22 +2719,13 @@
           <p>The five constants measure, in order, the size of the interval in \(R\), the size of the ball in \(X\), the derivatives of \(\mathcal{G}\) up to fourth order, the linear inverse together with the kernel and cokernel vectors in norm, and the transversality. In the paper they are written \(c_1,c_2,C_1,C_2,c_3\). Applied to the collar problem, all five can be bounded uniformly over large crossings, which gives the following.</p>
         </div>
         <article id="uniformConeBifurcation" class="math-statement" data-kind="theorem" data-label="uniform-cone-bifurcation" aria-labelledby="uniformConeBifurcationTitle">
-          <header class="math-statement-header"><span>Theorem</span><small id="uniformConeBifurcationTitle">uniform branch on large cones</small></header>
+          <header class="math-statement-header"><span>Theorem</span><small id="uniformConeBifurcationTitle">the hypotheses hold uniformly</small></header>
           <div class="math-statement-body">
-            <p>There are \(R_{\mathrm{unif}},s_*,C&gt;0\) such that every crossing with</p>
+            <p>There is \(R_{\mathrm{unif}}\) such that every crossing</p>
             <div class="tex-display">
-              \[
-              \begin{gathered}
-              R_*\ge R_{\mathrm{unif}},\qquad J_1(\rho)=J_{R_*}(\rho)=0,\\
-              2\le\lambda_*:=\dfrac{\rho^2}{R_*^2}\le3
-              \end{gathered}
-              \]
+              \[ R_*\ge R_{\mathrm{unif}},\qquad J_1(\rho)=J_{R_*}(\rho)=0,\qquad 2\le\lambda_*:=\frac{\rho^2}{R_*^2}\le3 \]
             </div>
-            <p>satisfies the hypotheses of <a class="xref" data-ref="crandall-rabinowitz"></a> with \(C_1,\ldots,C_5\) independent of the crossing. On the cone, this gives a branch \(s\mapsto\big(R(s),h_s(\psi),w_s\big)\) defined on the whole of \(|s|\le s_*\), with</p>
-            <div class="tex-display">
-              \[ R(0)=R_*,\qquad h_s(\psi)=s\cos\psi+O(s^2), \]
-            </div>
-            <p>where \(R\) is of class \(C^3\) and \(\bigl|R^{(j)}(s)\bigr|\le C\) for \(j\le3\).</p>
+            <p>satisfies the hypotheses of <a class="xref" data-ref="crandall-rabinowitz"></a> with \(C_1,\ldots,C_5\) independent of the crossing.</p>
           </div>
         </article>
         <lean-statement data-statement="uniform-cone-bifurcation"></lean-statement>
