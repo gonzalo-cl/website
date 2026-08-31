@@ -480,6 +480,13 @@
     const ratio = Math.min(window.devicePixelRatio || 1, 2);
     canvas.width = Math.round(width * ratio);
     canvas.height = Math.round(height * ratio);
+    /* Pin the CSS box to the measured size.  Without it a canvas lays out at its
+       backing-store size, so on a 2x display the box is twice the wrapper and
+       the drawing, which is done in CSS pixels, fills only the top-left quarter.
+       Three figures were doing exactly that; the ones that looked right had a
+       width and height rule of their own. */
+    canvas.style.width = width + "px";
+    canvas.style.height = height + "px";
     const context = canvas.getContext("2d");
     context.setTransform(ratio, 0, 0, ratio, 0, 0);
     return { canvas, context, width, height };
