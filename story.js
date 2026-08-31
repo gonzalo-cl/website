@@ -1634,7 +1634,12 @@
       context.fillText("COMMON-ZERO CROSSINGS AT THE BRANCH ORIGIN", plot.left + 8, zeroY - 29);
       context.fillStyle = colors.faint;
       context.fillText("each quadratic jet opens toward decreasing R", plot.left + 8, plot.top + 10);
-      context.fillText("white rings mark a two-jet reaching an integer within |s| ≤ 1", plot.left + 8, plot.top + 26);
+      /* The jet is a local model.  Saying only that a ring is where it reaches
+         an integer invites reading each ring as a counterexample; the rings are
+         where the quadratic would land, which is what the proof then has to
+         establish for genuinely small amplitude. */
+      context.fillText("white rings mark where the quadratic model would reach an integer", plot.left + 8, plot.top + 26);
+      context.fillText("extrapolated to |s| ≤ 1; the jet is only a small-amplitude approximation", plot.left + 8, plot.top + 42);
     }
 
     if (!paperEdition && activeIndex >= 0 && pointGeometry[activeIndex]) {
