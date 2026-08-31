@@ -1564,3 +1564,14 @@ body.tufte-site main .cr-statement .cr-variant-button[data-cr-variant="uniform"]
 .abundance-examples-margin .abundance-examples-table th,
 .abundance-examples-margin .abundance-examples-table td { padding: 7px 8px; }
 .abundance-examples-margin .abundance-examples-table { table-layout: auto; }
+
+/* The route overview inherited the .intro-bottom register, 21px and muted, from
+   the block it shares a wrapper with.  It reads as body prose, so it takes the
+   same size, leading and colour as the introduction's own paragraphs. */
+body.tufte-site main .intro-route-overview p,
+.intro-route-overview p {
+  /* the .intro-bottom family rule carries !important, so this has to as well */
+  font-size: var(--type-proof) !important;
+  line-height: 1.43;
+  color: var(--ink);
+}
