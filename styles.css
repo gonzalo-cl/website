@@ -1495,6 +1495,7 @@ body > footer { padding-inline: var(--layout-gutter); }
 .cr-variant-button[aria-pressed="true"] { border-color: var(--teal, #287b7b); color: var(--teal, #287b7b); }
 .cr-statement .cr-quant { color: var(--teal, #287b7b); }
 .cr-statement[data-variant="classical"] .cr-quant { display: none; }
+.cr-statement[data-variant="uniform"] .cr-classical { display: none; }
 .cr-statement[data-variant="classical"] li.cr-quant { display: none; }
 .cr-hypotheses { margin: 12px 0; padding-left: 22px; }
 .cr-hypotheses li { margin: 0 0 10px; }
