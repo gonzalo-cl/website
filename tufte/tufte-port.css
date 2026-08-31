@@ -4222,6 +4222,11 @@ body.tufte-site main .geometry-laboratory .geometry-stages button {
   padding: .28rem 0;
 }
 body.tufte-site main .geometry-laboratory .geometry-scrub { display: none; }
+/* The labs that predate these two drive themselves from stage buttons, so their
+   scrub rows are hidden.  The probe and the encoding figure carry their only
+   continuous control there, and hiding it left the rotation unreachable. */
+body.tufte-site main :is(.probe-figure, .encoding-figure) .geometry-scrub { display: grid; }
+body.tufte-site main :is(.probe-figure, .encoding-figure) .geometry-scrub output { display: block; }
 body.tufte-site main .geometry-laboratory .play-button { margin-top: .3rem; }
 body.tufte-site main .geometry-laboratory > figcaption {
   grid-area: caption;

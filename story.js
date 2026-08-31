@@ -1370,7 +1370,7 @@
      itself.  Each domain is rescaled so that its own frequency becomes 1, which
      is why the N = 28 one is so much larger than the disc: its k is 1.822983
      against the disc's 1/j_{1,1}. */
-  const PROBE = { domain: 0, t1: 0, angle: 0, dragging: false };
+  const PROBE = { domain: 0, t1: 0, angle: 0, dragging: false, grabAngle: 0, grabY: 0 };
 
   function probeDomains() {
     const list = [];
@@ -1531,23 +1531,35 @@
   function bindPompeiuProbe() {
     const canvas = select("#probeCanvas");
     if (!canvas) return;
-    const setFromPointer = (event) => {
+    /* Sideways drags carry the domain across the wave; vertical drags turn it.
+       Rotation is relative, so grabbing the domain anywhere does not make it
+       jump to an angle read off the cursor's height. */
+    const setFromPointer = (event, initial) => {
       const geometry = PROBE.geometry;
       if (!geometry) return;
       const box = canvas.getBoundingClientRect();
       if (!box.width) return;
-      const x = (event.clientX - box.left) / box.width * (canvas.width / (window.devicePixelRatio || 1));
+      const ratio = window.devicePixelRatio || 1;
+      const x = (event.clientX - box.left) / box.width * (canvas.width / ratio);
+      const y = (event.clientY - box.top) / box.height * (canvas.height / ratio);
+      if (initial) { PROBE.grabAngle = PROBE.angle; PROBE.grabY = y; }
       PROBE.t1 = (x - geometry.cx) / geometry.scale;
+      PROBE.angle = PROBE.grabAngle + (y - PROBE.grabY) / 140 * TAU;
+      const slider = select("#probeAngle");
+      if (slider) {
+        const wrapped = ((PROBE.angle % TAU) + TAU) % TAU;
+        slider.value = String(wrapped);
+      }
       renderPompeiuProbe();
     };
     canvas.addEventListener("pointerdown", (event) => {
       event.preventDefault();
       canvas.setPointerCapture(event.pointerId);
       PROBE.dragging = true;
-      setFromPointer(event);
+      setFromPointer(event, true);
     });
     canvas.addEventListener("pointermove", (event) => {
-      if (PROBE.dragging) setFromPointer(event);
+      if (PROBE.dragging) setFromPointer(event, false);
     });
     canvas.addEventListener("pointerup", (event) => {
       PROBE.dragging = false;
