@@ -2559,6 +2559,25 @@
         <div class="tex-display">
           \[ w^v=w_0+\underbrace{\chi(y)\,\partial_yw_0(y)\,h_v+v}_{w_1^v}. \]
         </div>
+        </div>
+        <figure class="geometry-laboratory interactive-plate annotated-plate reading-figure encoding-figure" data-figure="single-unknown-encoding">
+          <aside class="geometry-controls paper-demo-controls">
+            <div class="geometry-stages" aria-label="Four stages from v to the cone">
+              <button type="button" data-encoding-stage="0"><span>01</span><strong>v on the cylinder</strong></button>
+              <button type="button" data-encoding-stage="0.333333"><span>02</span><strong>read h, complete w&#8321;</strong></button>
+              <button type="button" data-encoding-stage="0.666667"><span>03</span><strong>add w&#8320;</strong></button>
+              <button type="button" data-encoding-stage="1"><span>04</span><strong>map to the cone</strong></button>
+            </div>
+            <div class="geometry-scrub"><div class="control-label"><label for="encodingRange">stage</label></div><input id="encodingRange" type="range" min="0" max="1" value="0" step="0.001"></div>
+          </aside>
+          <section class="geometry-canvas-panel" aria-label="From the single unknown v to the collar of the cone">
+            <div id="encodingCanvasWrap" class="geometry-canvas-wrap">
+              <canvas id="encodingCanvas" role="img" aria-label="Four stages from v on the cylinder to the collar of the cone"></canvas>
+            </div>
+          </section>
+          <figcaption><span class="figure-caption-summary">From the single unknown to the domain and the field.</span><span class="figure-caption-note"><strong>What to notice.</strong> The boundary \(y=0\) is the top edge, and the dashed curve on it is \(h\). At the first stage \(v\) vanishes there but leaves with a nonzero slope; adding the dragging term flattens it without disturbing the value. Each stage is scaled to its own range, so the third looks different in kind: \(w_0\) is of size one while the perturbation is of size \(h\).</span></figcaption>
+        </figure>
+        <div class="intro-copy intro-copy-wide">
         <p>Two facts make this work.</p>
         <ul class="fact-list">
           <li>\(w_0+\chi\,\partial_yw_0\,h_v\) is an \(O(h^2)\) approximation of \(w_0\circ\Phi^{h_v}\): the added term is exactly the linear dragging term produced by pulling \(w_0\) back through the map.</li>

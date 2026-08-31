@@ -1145,6 +1145,164 @@
     }
   }
 
+  /* Four stages from the single unknown to the cone.  v is only Dirichlet; its
+     Neumann trace gives h; adding the dragging term makes w_1 satisfy both
+     conditions; adding the ground state gives w; and h and w together map onto
+     the collar of the cone.  Near the boundary w_0 = 1 - lambda y^2 / 2 to one
+     per cent over the collar, which is what is drawn. */
+  const ENCODING = { progress: 0, playing: false, frame: 0 };
+  const ENCODING_CAPTIONS = [
+    "v on the cylinder, Dirichlet at y = 0.",
+    "h read off the Neumann trace; the dragging term completes w\u2081.",
+    "The ground state w\u2080 is added, giving w.",
+    "h and w map onto the collar of the cone.",
+  ];
+  const ENCODING_LAMBDA = 3.317, ENCODING_L = .4, ENCODING_H = .05;
+
+  function encodingCutoff(y) {
+    const t = Math.max(0, Math.min(1, (y / ENCODING_L - 1 / 3) / (1 / 3)));
+    return 1 - (3 * t * t - 2 * t * t * t);
+  }
+
+  function encodingField(y, psi, stage) {
+    const h = ENCODING_H * Math.cos(psi);
+    const v = ENCODING_LAMBDA * h * y * (1 - y / (2 * ENCODING_L));
+    if (stage < 1) return v;
+    const w1 = v - encodingCutoff(y) * ENCODING_LAMBDA * y * h;
+    if (stage < 2) return w1;
+    return 1 - ENCODING_LAMBDA * y * y / 2 + w1;
+  }
+
+  function encodingPoint(u, t, morph, box) {
+    const flatX = box.left + u * box.width;
+    const flatY = box.top + t * box.height;
+    const angle = TAU * u - Math.PI / 2;
+    const outer = box.radius * (1 - .16 * Math.cos(TAU * u));
+    const ring = outer - t * box.collar;
+    return {
+      x: lerp(flatX, box.cx + ring * Math.cos(angle), morph),
+      y: lerp(flatY, box.cy + ring * Math.sin(angle), morph),
+    };
+  }
+
+  function renderEncoding() {
+    if (!select("#encodingCanvasWrap")) return;
+    const { canvas, context, width, height } = canvasMetrics("#encodingCanvas", "#encodingCanvasWrap", 380);
+    context.clearRect(0, 0, width, height);
+    context.fillStyle = colors.ink; context.fillRect(0, 0, width, height);
+
+    const p = Math.max(0, Math.min(1, ENCODING.progress)) * 3;
+    const stage = Math.min(2, Math.floor(p + .5));
+    const morph = ease(Math.max(0, Math.min(1, p - 2)));
+    /* Clear the legend, as section 2 does with --geometry-key-width, read from
+       this figure's own laboratory rather than the first in the document. */
+    const laboratory = select("#encodingCanvasWrap")?.closest(".geometry-laboratory");
+    const token = laboratory
+      ? parseFloat(getComputedStyle(laboratory).getPropertyValue("--geometry-key-width")) / 100
+      : 0;
+    const key = Number.isFinite(token) ? Math.max(0, Math.min(.45, token)) : 0;
+    const inset = width * key + 24;
+    const box = {
+      left: inset, top: 34, width: width - inset - 30, height: height - 96,
+      cx: inset + (width - inset - 30) / 2, cy: height / 2 - 8,
+      radius: Math.min(width - inset, height) * .40, collar: Math.min(width - inset, height) * .13,
+    };
+
+    const cols = 96, rows = 26;
+    let low = Infinity, high = -Infinity;
+    const grid = [];
+    for (let j = 0; j < rows; j++) {
+      const row = [];
+      for (let i = 0; i < cols; i++) {
+        const value = encodingField((j + .5) / rows * ENCODING_L, (i + .5) / cols * TAU, stage);
+        low = Math.min(low, value); high = Math.max(high, value);
+        row.push(value);
+      }
+      grid.push(row);
+    }
+    for (let j = 0; j < rows; j++) {
+      for (let i = 0; i < cols; i++) {
+        const a = encodingPoint(i / cols, j / rows, morph, box);
+        const b = encodingPoint((i + 1) / cols, j / rows, morph, box);
+        const c = encodingPoint((i + 1) / cols, (j + 1) / rows, morph, box);
+        const d = encodingPoint(i / cols, (j + 1) / rows, morph, box);
+        context.beginPath();
+        context.moveTo(a.x, a.y); context.lineTo(b.x, b.y);
+        context.lineTo(c.x, c.y); context.lineTo(d.x, d.y);
+        context.closePath();
+        // centred on the stage's own midrange, so the collar gradient of w_0 is
+        // as visible as the angular structure of v
+        const half = Math.max((high - low) / 2, 1e-6);
+        const t = Math.max(-1, Math.min(1, (grid[j][i] - (low + high) / 2) / half));
+        context.fillStyle = t >= 0
+          ? `rgba(7,87,96,${(.10 + .62 * t).toFixed(3)})`
+          : `rgba(168,78,66,${(.10 - .62 * t).toFixed(3)})`;
+        context.fill();
+      }
+    }
+
+    context.beginPath();
+    for (let i = 0; i <= 240; i++) {
+      const q = encodingPoint(i / 240, 0, morph, box);
+      if (!i) context.moveTo(q.x, q.y); else context.lineTo(q.x, q.y);
+    }
+    context.strokeStyle = colors.paper; context.lineWidth = 2.2; context.stroke();
+
+    if (morph > .01) {
+      // the unperturbed rim, so the mode-one profile reads as a departure from it
+      context.beginPath();
+      for (let i = 0; i <= 240; i++) {
+        const angle = TAU * (i / 240) - Math.PI / 2;
+        context.lineTo(box.cx + box.radius * Math.cos(angle), box.cy + box.radius * Math.sin(angle));
+      }
+      context.closePath();
+      context.strokeStyle = `rgba(7,87,96,${(.55 * morph).toFixed(2)})`;
+      context.setLineDash([4, 5]); context.lineWidth = 1.2; context.stroke(); context.setLineDash([]);
+    }
+
+    if (stage >= 1) {
+      context.beginPath();
+      for (let i = 0; i <= 240; i++) {
+        const u = i / 240;
+        const q = encodingPoint(u, 0, morph, box);
+        const lift = Math.cos(TAU * u) * 16 * (1 - morph);
+        if (!i) context.moveTo(q.x, q.y - lift); else context.lineTo(q.x, q.y - lift);
+      }
+      context.strokeStyle = colors.orange; context.lineWidth = 1.6;
+      context.setLineDash([4, 4]); context.stroke(); context.setLineDash([]);
+    }
+
+    context.fillStyle = colors.faint;
+    context.font = visualTheme.labelFont;
+    context.textAlign = "left"; context.textBaseline = "top";
+    context.fillText(ENCODING_CAPTIONS[Math.min(3, morph > .5 ? 3 : stage)], 12, height - 22);
+
+    const active = Math.min(3, morph > .5 ? 3 : stage);
+    document.querySelectorAll("[data-encoding-stage]").forEach((button, index) => {
+      button.classList.toggle("active", index === active);
+    });
+    canvas.setAttribute("aria-label", `Stage ${active + 1} of 4: ${ENCODING_CAPTIONS[active]}`);
+  }
+
+  function bindEncoding() {
+    const range = select("#encodingRange");
+    if (!range) return;
+    range.addEventListener("input", () => {
+      ENCODING.progress = Number(range.value);
+      renderEncoding();
+    });
+    document.querySelectorAll("[data-encoding-stage]").forEach((button) => {
+      button.addEventListener("click", () => {
+        ENCODING.progress = Number(button.dataset.encodingStage);
+        range.value = String(ENCODING.progress);
+        renderEncoding();
+      });
+    });
+    renderEncoding();
+  }
+
+  bindEncoding();
+
   function bindCrandallRabinowitz() {
     document.querySelectorAll(".cr-statement").forEach((statement) => {
       const buttons = statement.querySelectorAll("[data-cr-variant]");
