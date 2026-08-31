@@ -4782,3 +4782,23 @@ input[type="range"].branch-range-hidden {
   pointer-events: none;
 }
 .branch-hint { margin: 10px 0 0; font-size: var(--type-caption); line-height: 1.5; }
+
+/* Classical-only text is what the uniform reading replaces, so it is marked in
+   a soft red against the teal of the quantitative clauses, and each button
+   takes the colour of the form it selects. */
+body.tufte-site main .cr-statement .cr-classical,
+body.tufte-site main .cr-statement .cr-classical p,
+body.tufte-site main .cr-statement li.cr-classical,
+body.tufte-site main .cr-statement p > span.cr-classical,
+body.tufte-site main .cr-statement small > span.cr-classical,
+.cr-statement .cr-classical { color: #c07a6d; }
+body.tufte-site main .cr-statement .cr-variant-button[data-cr-variant="classical"][aria-pressed="true"],
+.experiment .cr-statement .cr-variant-button[data-cr-variant="classical"][aria-pressed="true"] {
+  border-color: #c07a6d;
+  color: #c07a6d;
+}
+body.tufte-site main .cr-statement .cr-variant-button[data-cr-variant="uniform"][aria-pressed="true"],
+.experiment .cr-statement .cr-variant-button[data-cr-variant="uniform"][aria-pressed="true"] {
+  border-color: var(--teal, #287b7b);
+  color: var(--teal, #287b7b);
+}
