@@ -2596,6 +2596,18 @@
             <p>The crucial observation is where \(h''\) actually appears. Of the four coefficients, it enters only \(a_y\), the coefficient of \(\partial_y\), and it carries no angular derivative there at all: \(a_{yy}\), \(a_{y\psi}\) and \(a_{\psi\psi}\) involve only \(h\) and \(h'\). So the worst term is \(h''\,\partial_yw^v\). In an anisotropic space the extra \(\partial_y\) derivative controls that factor, while \(\partial_y\) never touches \(h''\), since \(h\) is a function of \(\psi\) alone.</p>
             <p>A second and separate strengthening is imposed at the inner edge: the space also asks that the trace \(v(L,\cdot)\) lie in \(C^{3,\alpha}(\mathbb{T})\), one angular derivative better than \(v\) carries in the interior. This is what the matching condition costs. The multiplier \(D_R\) is of first order — its symbol \(\tau_k(R)\) grows linearly in \(k\), and with \(\lambda\) dropped it is exactly \(\tfrac{R}{R-L}\lvert D_\psi\rvert\) — so it spends one angular derivative. For \(\mathcal{G}_2=D_R[v(L,\cdot)]+\partial_yv(L,\cdot)\) to land in \(C^{2,\alpha}(\mathbb{T})\) next to \(\partial_yv\in C^{2,\alpha}\), the inner trace has to be one degree better than that.</p>
             <p>The same extra derivative is spent once more, on the first component. The trace of \(\mathcal{G}_1\) at \(\{y=L\}\) contains the term \(\tfrac{R^2}{(R-L)^2}\,\partial_\psi^2w^v(L,\cdot)\), and since \(\chi\) vanishes there, \(w^v(L,\cdot)=w_0(L)+v(L,\cdot)\). It is exactly the \(C^{3,\alpha}\) trace that makes this \(C^{1,\alpha}\), which is what the codomain asks for.</p>
+            <p>Collecting all of it, \(\mathcal{G}(R,\cdot)=(\mathcal{G}_1,\mathcal{G}_2)\) is taken between</p>
+            <div class="tex-display">
+              \[
+              \begin{aligned}
+              X^{k,\alpha}&amp;=\big\{v\in C^{k,\alpha}_{\mathrm e}(\mathcal{C}):\ \partial_yv\in C^{k,\alpha}_{\mathrm e}(\mathcal{C})\big\},\\[4pt]
+              X&amp;=\big\{v\in X^{2,\alpha}:\ v(0,\cdot)=0,\ \ v(L,\cdot)\in C^{3,\alpha}_{\mathrm e}(\mathbb{T})\big\},\\[4pt]
+              Y&amp;=Y_1\times C^{2,\alpha}_{\mathrm e}(\mathbb{T}),\\[4pt]
+              Y_1&amp;=\big\{f\in X^{0,\alpha}(\mathcal{C}):\ f(0,\cdot),\,f(L,\cdot)\in C^{1,\alpha}_{\mathrm e}(\mathbb{T})\big\},
+              \end{aligned}
+              \]
+            </div>
+            <p>with \(\lVert v\rVert_X=\lVert v\rVert_{X^{2,\alpha}}+\lVert v(L,\cdot)\rVert_{C^{3,\alpha}(\mathbb{T})}\), the second term being the strengthened trace just discussed. The subscript \(\mathrm e\) restricts to functions even in \(\psi\), which the construction preserves. The anisotropy is the pair of conditions in the first line, counting \(v\) and \(\partial_yv\) separately rather than asking for one extra derivative in every direction.</p>
           </div>
         </details>
 
