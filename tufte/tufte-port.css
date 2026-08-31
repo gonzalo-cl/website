@@ -80,13 +80,6 @@
   --font-code: var(--mono);
   --weight-regular: 400;
   --weight-emphasis: 500;
-  /* Epistemic colours carry meaning and always appear with a text label. */
-  --status-exact: var(--orange);
-  --status-certified: var(--teal);
-  --status-numerical: #7c4e00;
-  --status-asymptotic: #6b4a86;
-  --status-schematic: var(--orange);
-  --status-context: var(--muted);
   --layout-max: 1400px;
   --layout-gutter: 0px;
   --layout-indent: 0px;
@@ -213,34 +206,13 @@ body.tufte-site main a.xref:hover { color: var(--orange); }
   font-size: var(--type-note);
   text-decoration: none;
 }
-.figure-caption-metadata {
-  display: inline-flex;
-  align-items: baseline;
-  gap: .45rem;
-  margin-right: .45rem;
-  color: inherit;
-  font: inherit;
-  font-style: normal;
-  white-space: nowrap;
-}
 .figure-label {
+  display: inline-block;
+  margin-right: .45rem;
   color: inherit;
   font: inherit;
   font-style: normal;
   font-variant: small-caps;
-}
-.figure-evidence-label {
-  display: inline-block;
-  margin-left: .45rem;
-  margin-right: .45rem;
-  padding-left: .45rem;
-  color: var(--orange);
-  border-left: 1px solid var(--line);
-  font-family: var(--mono);
-  font-size: var(--type-label);
-  font-style: normal;
-  font-variant: small-caps;
-  letter-spacing: .03em;
 }
 .figure-caption-summary {
   display: block;
@@ -1328,7 +1300,7 @@ body.tufte-site main .marginnote {
   font-size: var(--type-caption) !important;
   line-height: 1.4 !important;
 }
-body.tufte-site main .marginnote p:not(:where(.figure-evidence > p)) {
+body.tufte-site main .marginnote p {
   width: 100%;
   max-width: 100%;
   margin: .65rem 0 0;
@@ -1387,13 +1359,13 @@ body.tufte-site main .proof-details-body > :is(.paper-copy, .math-statement, .da
 /* Every details element in the article is a prose disclosure unless it lives
    inside an apparatus. The content layer supplies only native semantics; this
    presentation layer owns the measure and rules automatically. */
-body.tufte-site main details:not(.secondary-controls, .figure-evidence, .certificate-provenance-index) {
+body.tufte-site main details:not(.secondary-controls, .certificate-provenance-index) {
   box-sizing: border-box;
   width: var(--measure-figure);
   max-width: var(--measure-figure);
   border: 0;
 }
-body.tufte-site main details:not(.secondary-controls, .figure-evidence, .certificate-provenance-index) > summary {
+body.tufte-site main details:not(.secondary-controls, .certificate-provenance-index) > summary {
   box-sizing: border-box;
   width: var(--measure-reading-in-figure);
   max-width: var(--measure-reading-in-figure);
@@ -1404,7 +1376,7 @@ body.tufte-site main details:not(.secondary-controls, .figure-evidence, .certifi
   font-variant: small-caps;
   text-transform: none;
 }
-body.tufte-site main details:not(.secondary-controls, .figure-evidence, .certificate-provenance-index)[open] > summary { border-bottom: 1px solid var(--line); }
+body.tufte-site main details:not(.secondary-controls, .certificate-provenance-index)[open] > summary { border-bottom: 1px solid var(--line); }
 
 /* Formalization disclosures have one component-owned reading measure.  `cqw`
    is relative to the page frame, while `min(100%, ...)` lets the same element
@@ -2154,7 +2126,7 @@ body.tufte-site main .paper-copy > span:first-child {
 
 body.tufte-site main .paper-copy > div { min-width: 0; width: 100%; max-width: 100%; }
 body.tufte-site main .paper-copy h3 { margin: 0 0 1.25rem; }
-body.tufte-site main .paper-copy p:not(.eyebrow):not(:where(.figure-evidence > p)) {
+body.tufte-site main .paper-copy p:not(.eyebrow) {
   width: 100%;
   max-width: 100%;
   margin: 0 0 1rem;
@@ -2176,7 +2148,7 @@ body.tufte-site main :is(
   .phase-story-lead,
   .debye-lead,
   .abundance-lead
-).paper-copy p:not(.eyebrow):not(:where(.figure-evidence > p)) {
+).paper-copy p:not(.eyebrow) {
   font-size: var(--type-body) !important;
   line-height: var(--leading-body);
 }
@@ -3994,7 +3966,7 @@ body > footer {
   }
   body.tufte-site main :is(.modes-lead, .abundance-lead) { display: block; }
   body.tufte-site main .math-statement .math-statement-body p,
-  body.tufte-site main .paper-copy:not(.phase-story-lead):not(.debye-lead):not(.abundance-lead) p:not(.eyebrow):not(:where(.figure-evidence > p)) {
+  body.tufte-site main .paper-copy:not(.phase-story-lead):not(.debye-lead):not(.abundance-lead) p:not(.eyebrow) {
     font-size: var(--type-proof) !important;
     line-height: var(--leading-proof);
   }
@@ -5069,64 +5041,6 @@ body.tufte-site main .research-entry-heading > p:last-child {
 .math-statement-header > .object-permalink { margin-left: auto; }
 .figure-label { text-decoration: none; }
 
-.figure-evidence {
-  position: relative;
-  display: inline-flex;
-  margin: 0;
-  color: inherit;
-  font: inherit;
-  font-style: normal;
-}
-.figure-evidence > summary {
-  display: inline-flex;
-  align-items: center;
-  min-height: 0;
-  padding: 0;
-  color: var(--status-schematic);
-  border: 0;
-  border-bottom: 1px dotted currentColor;
-  cursor: pointer;
-  font: inherit;
-  font-style: normal;
-  font-variant: small-caps;
-  letter-spacing: .02em;
-  line-height: inherit;
-  list-style: none;
-}
-body.tufte-site main figure.side-figure > figcaption .figure-evidence > p,
-body.tufte-site main figure.marginnote > figcaption .figure-evidence > p {
-  right: 0;
-  left: auto;
-}
-.figure-evidence > summary::-webkit-details-marker { display: none; }
-.figure-evidence > summary::after { content: " +"; }
-.figure-evidence[open] > summary::after { content: " −"; }
-body.tufte-site main figure > figcaption .figure-evidence > p {
-  position: absolute;
-  z-index: 12;
-  top: calc(100% + .4rem);
-  left: 0;
-  width: min(23rem, calc(100vw - 2rem));
-  margin: 0;
-  padding: .75rem .85rem;
-  color: var(--ink) !important;
-  border: 1px solid var(--ink);
-  background: var(--paper);
-  box-shadow: 0 .8rem 2rem rgba(19, 33, 38, .16);
-  font-family: var(--font-prose);
-  font-size: var(--type-note) !important;
-  font-style: normal;
-  font-weight: var(--weight-regular);
-  font-variant: normal;
-  line-height: 1.5 !important;
-}
-body.tufte-site main .figure-evidence-exact > summary { color: var(--status-exact); }
-body.tufte-site main .figure-evidence-certified > summary { color: var(--status-certified); }
-body.tufte-site main .figure-evidence-numerical > summary { color: var(--status-numerical); }
-body.tufte-site main .figure-evidence-asymptotic > summary { color: var(--status-asymptotic); }
-body.tufte-site main .figure-evidence-schematic > summary { color: var(--status-schematic); }
-body.tufte-site main .figure-evidence-context > summary { color: var(--status-context); }
-
 .route-comparison-controls {
   display: flex;
   flex-wrap: wrap;
@@ -5169,8 +5083,8 @@ body.tufte-site main .figure-evidence-context > summary { color: var(--status-co
 .route-comparison-continuations a { color: var(--ink); }
 
 .proof-atlas {
-  width: var(--measure-figure);
-  max-width: 100%;
+  width: var(--measure-reading);
+  max-width: var(--measure-reading);
   container: proof-atlas / inline-size;
   margin: 4.25rem 0 5rem;
   padding: 1.4rem 0 0;
@@ -5208,7 +5122,7 @@ body.tufte-site main .proof-atlas-heading > p:last-child {
   border-bottom: 1px solid var(--line);
 }
 .proof-atlas-common {
-  width: min(100%, var(--measure-reading));
+  width: 100%;
   margin: 0 auto 1.25rem;
   text-align: center;
 }
@@ -5232,9 +5146,9 @@ body.tufte-site main .proof-atlas-heading > p:last-child {
 .proof-atlas-lane { min-width: 0; padding: 1.2rem; }
 .proof-atlas-lane + .proof-atlas-lane { border-left: 1px solid var(--line); }
 
-/* Two lanes are useful only while each retains a genuine reading measure.
-   The component responds to its own width, independent of page breakpoints. */
-@container proof-atlas (max-width: 64rem) {
+/* The lanes share the prose measure and collapse when the component itself
+   no longer has room for two compact dependency columns. */
+@container proof-atlas (max-width: 40rem) {
   .proof-atlas-lanes { grid-template-columns: minmax(0, 1fr); }
   .proof-atlas-lane + .proof-atlas-lane {
     border-top: 1px solid var(--ink);
@@ -5360,7 +5274,7 @@ body.tufte-site main .proof-atlas-lane > header h4 {
   line-height: 1.45 !important;
 }
 .proof-atlas-detail {
-  width: min(100%, var(--measure-reading));
+  width: 100%;
   min-height: 10rem;
   margin: 1.25rem auto;
   padding: 1rem 1.15rem;
@@ -5391,7 +5305,7 @@ body.tufte-site main .proof-atlas-detail p {
 .proof-atlas-endpoint a,
 .proof-atlas-companion { font-size: var(--type-note); }
 .proof-atlas-companion {
-  width: min(100%, var(--measure-reading));
+  width: 100%;
   margin: 0 auto 1.25rem !important;
   color: var(--muted) !important;
 }
@@ -5713,18 +5627,6 @@ html:not(.js) .measurement-panel { grid-template-columns: minmax(0, 1fr) !import
   font-size: var(--type-note) !important;
   line-height: 1.55 !important;
 }
-html:not(.js) figure[data-evidence]::after {
-  content: "Epistemic status: " attr(data-evidence);
-  display: block;
-  margin-top: .5rem;
-  color: var(--muted);
-  font-family: var(--font-caption);
-  font-size: var(--type-caption);
-  font-style: normal;
-  font-weight: var(--weight-regular);
-  font-variant: small-caps;
-  line-height: var(--leading-caption);
-}
 html:not(.js) .proof-node-select { cursor: default; }
 
 .panel-evidence {
@@ -5746,7 +5648,6 @@ html:not(.js) .proof-node-select { cursor: default; }
 .panel-evidence-context { color: var(--muted); }
 
 @media (pointer: coarse) {
-  .figure-evidence > summary,
   .object-permalink {
     min-width: 44px;
     min-height: 44px;
@@ -5829,14 +5730,6 @@ html:not(.js) .proof-node-select { cursor: default; }
   .proof-atlas-lane { padding: .85rem .5rem; }
   .certificate-exact-results dl > div { grid-template-columns: minmax(0, 1fr); gap: .25rem; }
   .certificate-explorer-actions :is(button, a) { width: 100%; justify-content: center; }
-  body.tufte-site main figure > figcaption .figure-evidence > p {
-    position: fixed;
-    top: auto;
-    right: 1rem;
-    bottom: 1rem;
-    left: 1rem;
-    width: auto;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -5859,11 +5752,6 @@ html:not(.js) .proof-node-select { cursor: default; }
   .proof-atlas-lanes { display: block; }
   .proof-atlas-lane + .proof-atlas-lane { border-top: 1px solid #000; border-left: 0; }
   .proof-node-card > .proof-node-select { display: block !important; }
-  body.tufte-site main figure > figcaption .figure-evidence > p {
-    position: static;
-    width: auto;
-    box-shadow: none;
-  }
 }
 
 /* The cone fold sits in the margin now, so it takes the note measure and its
@@ -5871,12 +5759,6 @@ html:not(.js) .proof-node-select { cursor: default; }
 .cone-fold-figure .geometry-canvas-wrap { height: 300px; }
 .cone-fold-figure .geometry-controls { display: none; }
 
-/* In the margin the figure has no room for the epistemic badge or the share
-   panel that the wide plates carry. */
-body.tufte-site main .cone-fold-figure .figure-evidence,
-body.tufte-site main .cone-fold-figure .figure-tools,
-.cone-fold-figure .figure-evidence,
-.cone-fold-figure .figure-tools { display: none; }
 .cone-fold-figure figcaption { font-size: var(--type-caption); line-height: 1.5; }
 
 .strategy-steps { margin: 14px 0 0; padding-left: 22px; }
@@ -5884,8 +5766,4 @@ body.tufte-site main .cone-fold-figure .figure-tools,
 .strategy-steps li:last-child { margin-bottom: 0; }
 
 .fixed-collar-figure .geometry-canvas-wrap, .fixed-collar-figure .figure-canvas-wrap { height: 240px; }
-body.tufte-site main .fixed-collar-figure .figure-evidence,
-body.tufte-site main .fixed-collar-figure .figure-tools,
-.fixed-collar-figure .figure-evidence,
-.fixed-collar-figure .figure-tools { display: none; }
 .fixed-collar-figure figcaption { font-size: var(--type-caption); line-height: 1.5; }

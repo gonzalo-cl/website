@@ -1530,12 +1530,6 @@ body.tufte-site main .intro-route-overview p,
 .cone-fold-figure .geometry-canvas-wrap { height: 300px; }
 .cone-fold-figure .geometry-controls { display: none; }
 
-/* In the margin the figure has no room for the epistemic badge or the share
-   panel that the wide plates carry. */
-body.tufte-site main .cone-fold-figure .figure-evidence,
-body.tufte-site main .cone-fold-figure .figure-tools,
-.cone-fold-figure .figure-evidence,
-.cone-fold-figure .figure-tools { display: none; }
 .cone-fold-figure figcaption { font-size: var(--type-caption); line-height: 1.5; }
 
 .strategy-steps { margin: 14px 0 0; padding-left: 22px; }
@@ -1543,8 +1537,4 @@ body.tufte-site main .cone-fold-figure .figure-tools,
 .strategy-steps li:last-child { margin-bottom: 0; }
 
 .fixed-collar-figure .geometry-canvas-wrap, .fixed-collar-figure .figure-canvas-wrap { height: 240px; }
-body.tufte-site main .fixed-collar-figure .figure-evidence,
-body.tufte-site main .fixed-collar-figure .figure-tools,
-.fixed-collar-figure .figure-evidence,
-.fixed-collar-figure .figure-tools { display: none; }
 .fixed-collar-figure figcaption { font-size: var(--type-caption); line-height: 1.5; }

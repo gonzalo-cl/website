@@ -49,7 +49,7 @@
 
   const rounded = (value) => Math.round(value * 10) / 10;
   const marginSelector = "body.tufte-site main .marginnote";
-  const disclosureSelector = "body.tufte-site main details:not(.secondary-controls, .mobile-apparatus-disclosure, .figure-evidence, .certificate-provenance-index)";
+  const disclosureSelector = "body.tufte-site main details:not(.secondary-controls, .mobile-apparatus-disclosure, .certificate-provenance-index)";
   const roleSelector = ".paper-copy, .math-statement, .lean-statement, .small-multiples, .figure-band, .reading-figure, .margin-figure-sequence, .data-table";
 
   function runLayoutContract() {
@@ -199,8 +199,8 @@
       "schiffer-property",
       "schiffer-pompeiu-equivalence",
       "pompeiu-star-shaped",
-      "near-integer-crossings",
       "uniform-cone-bifurcation",
+      "near-integer-crossings",
     ];
     const actualLeanStatements = Array.from(document.querySelectorAll("details.lean-statement"), (statement) => statement.dataset.statement);
     if (actualLeanStatements.length !== expectedLeanStatements.length
@@ -268,18 +268,18 @@
     }
     const expectedProofSectionOrder = [
       // The near-integer material now sits inside 4.1, so abundance-experiment
-      // comes first and carries no heading of its own; the collar comparison
-      // lost its heading when 4.3 and 4.4 merged.
+      // comes first and carries no heading of its own. The branch curvature
+      // then motivates the uniform cylinder and finite-order arguments.
       "abundance-experiment",
+      "phase-story",
       "debye-experiment",
       "bifurcation-setting",
-      "phase-story",
       "modes-experiment",
     ];
     const actualProofSectionOrder = Array.from(document.querySelectorAll("#experiment > section[id]:not([hidden])"), (section) => section.id);
     if (actualProofSectionOrder.length !== expectedProofSectionOrder.length
         || expectedProofSectionOrder.some((id, index) => actualProofSectionOrder[index] !== id)) {
-      errors.push("Section V proof subsections do not follow source reading order");
+      errors.push("bifurcation proof subsections do not follow source reading order");
     }
     const transferSection = document.querySelector("#debye-experiment");
     const finiteOrderSection = document.querySelector("#bifurcation-setting");
@@ -299,8 +299,9 @@
     const nearIntegerTheorem = document.querySelector("[data-label='near-integer-crossings']");
     const nearIntegerLean = document.querySelector(".lean-statement[data-statement='near-integer-crossings']");
     if (!nearIntegerTheorem || !nearIntegerLean
-        || nearIntegerTheorem.nextElementSibling !== nearIntegerLean) {
-      errors.push("Theorem 5.10 is missing its adjacent Lean counterpart");
+        || nearIntegerTheorem.closest("section") !== nearIntegerLean.closest("section")
+        || !(nearIntegerTheorem.compareDocumentPosition(nearIntegerLean) & Node.DOCUMENT_POSITION_FOLLOWING)) {
+      errors.push("the near-integer theorem does not precede its Lean counterpart in the same subsection");
     }
 
     const expectedHeadingContract = [
@@ -324,10 +325,10 @@
       ["3.8", "Local boundary data versus global solvability", "#computer-local-global", "proof-subsection"],
       ["4", "The bifurcation proof", "#experiment", "section"],
       ["4.1", "Remapping the problem to a cone", "#cone-remap", "proof-subsection"],
-      ["4.2", "A motivation for uniformity: the cylinder", "#half-cylinder-strategy", "proof-subsection"],
-      ["4.3", "Expressing the problem on a fixed domain", "#fixed-domain", "proof-subsection"],
-      ["4.4", "The bifurcation setting: a collar problem for every real order", "#bifurcation-setting", "proof-subsection"],
-      ["4.5", "Exploring the cone bifurcation", "#phase-story", "proof-subsection"],
+      ["4.2", "Exploring the cone bifurcation", "#phase-story", "proof-subsection"],
+      ["4.3", "A motivation for uniformity: the cylinder", "#half-cylinder-strategy", "proof-subsection"],
+      ["4.4", "Expressing the problem on a fixed domain", "#fixed-domain", "proof-subsection"],
+      ["4.5", "The bifurcation setting: a collar problem for every real order", "#bifurcation-setting", "proof-subsection"],
       ["4.6", "Closing the argument", "#modes-experiment", "proof-subsection"],
       ["", "References", "#references", "section"],
       ["", "Acknowledgements", "#acknowledgements", "section"],
@@ -518,14 +519,13 @@
       document.querySelector("#experiment [aria-labelledby='cylinderExpansionTitle']"),
       document.querySelector("#experiment .cylinder-jet-proof"),
       document.querySelector("#experiment .cylinder-uniform-lead"),
-      document.querySelector("#experiment [aria-labelledby='uniformCylinderBranchTitle']"),
       document.querySelector("#experiment .cylinder-uniform-proof"),
     ];
     if (halfCylinderSequence.some((node) => !node) || halfCylinderSequence.some((node, index) => {
       if (!index) return false;
       return !(halfCylinderSequence[index - 1].compareDocumentPosition(node) & Node.DOCUMENT_POSITION_FOLLOWING);
     })) {
-      errors.push("Subsection 5.3 does not follow theorem and three-lemma order");
+      errors.push("the cylinder subsection does not follow its theorem, expansion, and uniformity order");
     }
 
     document.querySelectorAll(marginSelector).forEach((aside, index) => {
@@ -781,6 +781,19 @@
       if (Math.abs(box.width - expectedWidth) > 2) errors.push(`data table ${index + 1} is outside the reading measure`);
     });
 
+    const proofAtlas = document.querySelector("body.tufte-site main .proof-atlas");
+    if (visible(proofAtlas)) {
+      const box = proofAtlas.getBoundingClientRect();
+      const sectionBox = proofAtlas.closest("main > section")?.getBoundingClientRect();
+      const expectedWidth = sectionMeasure(proofAtlas, narrow ? 1 : reading);
+      if (Math.abs(box.width - expectedWidth) > 2) {
+        errors.push("proof atlas is outside the reading measure");
+      }
+      if (sectionBox && Math.abs(box.left - sectionBox.left) > 1) {
+        errors.push("proof atlas is not aligned with the reading measure");
+      }
+    }
+
     document.querySelectorAll("body.tufte-site main .figure-band").forEach((band, index) => {
       if (!band.getClientRects().length) return;
       const box = band.getBoundingClientRect();
@@ -938,7 +951,7 @@
       "caption",
     );
     checkTypography(
-      "body.tufte-site main figure > figcaption > :is(.figure-caption-metadata, .figure-caption-summary, .figure-caption-note, p:not(.eyebrow))",
+      "body.tufte-site main figure > figcaption > :is(.figure-caption-summary, .figure-caption-note, p:not(.eyebrow))",
       {
         family: serifFamily,
         size: typeCaption,
@@ -948,29 +961,6 @@
         lineHeight: typeCaption * leadingCaption,
       },
       "caption content",
-    );
-    checkTypography(
-      "body.tufte-site main .figure-evidence > summary",
-      {
-        family: serifFamily,
-        size: typeCaption,
-        weight: regularWeight,
-        style: "normal",
-        lineHeight: typeCaption * leadingCaption,
-      },
-      "figure evidence label",
-    );
-    checkTypography(
-      "body.tufte-site main figure > figcaption .figure-evidence > p",
-      {
-        family: serifFamily,
-        size: parseFloat(rootStyle.getPropertyValue("--type-note")) * parseFloat(rootStyle.fontSize),
-        weight: regularWeight,
-        style: "normal",
-        color: inkColor,
-        lineHeight: parseFloat(rootStyle.getPropertyValue("--type-note")) * parseFloat(rootStyle.fontSize) * 1.5,
-      },
-      "figure evidence explanation",
     );
     checkTypography(
       "body.tufte-site main .section-heading > h2",
