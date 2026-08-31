@@ -1060,17 +1060,35 @@
      quantitative one; the quantitative clauses are the same DOM, shown or
      hidden.  Null-guarded: story.js is shared with the paper edition, which
      does not carry this markup. */
-  /* The figure beside the Crandall-Rabinowitz box, switching with it.  Each
-     crossing sits a little above an integer and carries its branch, drawn as
-     the two-jet R(s) = R_star - Gamma s^2 / 2, so the branch reaches the integer
-     line exactly when Gamma s_star^2 / 2 clears that gap.  Classically s_star
-     may shrink with R_star and the reach fails; uniformly it does not.
-     Schematic: the true reach is a fraction of a percent of R and would be one
-     pixel, so the curvature and the gap are enlarged together. */
-  const BRANCH_SCALE = {
-    first: 15, last: 30, gamma: 1.67, gap: .25, uniform: .85,
-    classical: (N) => .85 * Math.pow(15 / N, 1.6),
-  };
+  /* The figure beside the Crandall-Rabinowitz box, switching with it.  The
+     crossings and their curvatures are the real ones: the same rows Figure 4.7
+     plots, restricted to 15 <= R <= 30, with gamma from the cylinder limit.  A
+     branch reaches the integer below its crossing when gamma s^2 / 2 clears the
+     fractional part of R.  What is illustrative is the classical amplitude:
+     classical Crandall-Rabinowitz gives no lower bound on it at all, so the
+     shrinking profile stands in for "could be anything, and nothing stops it
+     going to zero". */
+  const BRANCH_SCALE = { first: 15, last: 30, uniform: 1, classical: (R) => Math.pow(15 / R, 1.6) };
+
+  /* The same filter phaseFamilyRows applies, read straight off the crossing
+     data.  Calling that function here would touch phaseFamilyRMin, a const
+     declared several hundred lines below this binding, and throw on load. */
+  function branchScaleRows() {
+    if (!crossingData || !crossingData.columns) return [];
+    const columns = crossingData.columns;
+    const rows = [];
+    for (let index = 0; index < columns.R.length; index += 1) {
+      const R = columns.R[index];
+      if (R < BRANCH_SCALE.first) continue;
+      if (R > BRANCH_SCALE.last) break;
+      const rho = columns.rho[index];
+      const lambda = (rho / R) ** 2;
+      if (lambda < 2 || lambda > 3) continue;
+      rows.push({ R, rho, lambda, gamma: cylinderLimitGamma(lambda) });
+    }
+    rows.sort((left, right) => left.R - right.R);
+    return rows;
+  }
 
   function renderBranchScale(variant) {
     if (!select("#branchScaleCanvasWrap")) return;
@@ -1078,65 +1096,75 @@
     context.clearRect(0, 0, width, height);
     context.fillStyle = colors.ink; context.fillRect(0, 0, width, height);
 
-    const { first, last, gamma, gap, uniform, classical } = BRANCH_SCALE;
+    const rows = branchScaleRows();
+    const { first, last, uniform, classical } = BRANCH_SCALE;
     const uniformMode = variant === "uniform";
     const tint = uniformMode ? colors.cyan : "#c07a6d";
-    const left = 26, right = width - 12, top = 20, bottom = height - 44;
-    const xOf = (R) => left + (R - first + .5) / (last - first + 1.6) * (right - left);
-    const yOf = (s) => (top + bottom) / 2 - s / .98 * (bottom - top) / 2;
+    const left = 30, right = width - 14, top = 22, bottom = height - 60;
+    const xOf = (R) => left + (R - first) / (last - first) * (right - left);
+    const yOf = (s) => (top + bottom) / 2 - s / 1.12 * (bottom - top) / 2;
 
     context.strokeStyle = colors.grid; context.lineWidth = 1;
     for (let N = first; N <= last; N++) {
-      context.beginPath();
-      context.moveTo(xOf(N), top); context.lineTo(xOf(N), bottom);
-      context.stroke();
+      context.beginPath(); context.moveTo(xOf(N), top); context.lineTo(xOf(N), bottom); context.stroke();
     }
     context.beginPath();
     context.moveTo(left, yOf(0)); context.lineTo(right, yOf(0));
     context.strokeStyle = colors.faint; context.stroke();
 
-    let reached = 0;
-    for (let N = first; N <= last; N++) {
-      const amplitude = uniformMode ? uniform : classical(N);
-      const origin = N + gap;
+    /* The real reach is at most a fifth of a unit in R, four pixels here, so
+       the distance from each crossing to the integer below it is magnified.
+       Every crossing keeps its own integer, and a branch tip lands exactly on
+       that integer's line when its reach equals the fractional part. */
+    const zoom = 15;
+    let reached = 0, smallest = Infinity;
+    rows.forEach((row) => {
+      const amplitude = uniformMode ? uniform : uniform * classical(row.R);
+      const reach = row.gamma * amplitude * amplitude / 2;
+      const gap = row.R - Math.floor(row.R);
+      smallest = Math.min(smallest, reach);
+      const base = xOf(Math.floor(row.R));
       context.beginPath();
       for (let i = 0; i <= 60; i++) {
         const s = -amplitude + 2 * amplitude * i / 60;
-        const x = xOf(origin - gamma * s * s / 2), y = yOf(s);
-        if (!i) context.moveTo(x, y); else context.lineTo(x, y);
+        const drop = row.gamma * s * s / 2;
+        const shown = base + (gap - drop) * zoom;
+        if (!i) context.moveTo(shown, yOf(s)); else context.lineTo(shown, yOf(s));
       }
       context.strokeStyle = tint; context.lineWidth = 1.6; context.stroke();
 
       context.beginPath();
-      context.arc(xOf(origin), yOf(0), 2.2, 0, TAU);
+      context.arc(base + gap * zoom, yOf(0), 2.4, 0, TAU);
       context.fillStyle = colors.faint; context.fill();
 
-      if (gamma * amplitude * amplitude / 2 >= gap) {
+      if (reach >= gap) {
         reached += 1;
-        const s = Math.sqrt(2 * gap / gamma);
+        const s = Math.sqrt(2 * gap / row.gamma);
         [-s, s].forEach((value) => {
           context.beginPath();
-          context.arc(xOf(N), yOf(value), 3, 0, TAU);
+          context.arc(base, yOf(value), 3, 0, TAU);
           context.fillStyle = tint; context.fill();
           context.strokeStyle = colors.ink; context.lineWidth = 1; context.stroke();
         });
       }
-    }
+    });
 
     context.fillStyle = colors.faint;
     context.font = visualTheme.labelFont;
     context.textAlign = "left"; context.textBaseline = "top";
-    context.fillText("s", 8, top - 4);
+    context.fillText("s", 10, top - 4);
     context.textAlign = "center";
     context.fillText(String(first), xOf(first), bottom + 8);
     context.fillText(String(last), xOf(last), bottom + 8);
     context.textAlign = "left";
     context.fillStyle = tint;
-    context.fillText(`${reached} of ${last - first + 1} branches reach an integer`, left, bottom + 24);
+    context.fillText(`${rows.length} real crossings; ${reached} reach an integer`, left, bottom + 24);
+    context.fillStyle = colors.faint;
+    context.fillText(`smallest reach ${smallest.toFixed(3)} in R`, left, bottom + 38);
 
     canvas.setAttribute("aria-label", uniformMode
-      ? `Uniform branches, all of the same height; ${reached} of ${last - first + 1} reach an integer order.`
-      : `Classical branches, shrinking as the order grows; only ${reached} of ${last - first + 1} reach an integer order.`);
+      ? `Uniform branches at ${rows.length} real crossings, all of the same amplitude; ${reached} reach an integer order.`
+      : `Classical branches at ${rows.length} real crossings, shrinking as the order grows; ${reached} reach an integer order.`);
     const note = select("#branchScaleNote");
     if (note) {
       note.textContent = uniformMode
@@ -1144,164 +1172,6 @@
         : "Bifurcation branches get smaller for higher R\u2605, so no intersection with R \u2208 \u2115 can be guaranteed. Click Uniform to see how to solve it.";
     }
   }
-
-  /* Four stages from the single unknown to the cone.  v is only Dirichlet; its
-     Neumann trace gives h; adding the dragging term makes w_1 satisfy both
-     conditions; adding the ground state gives w; and h and w together map onto
-     the collar of the cone.  Near the boundary w_0 = 1 - lambda y^2 / 2 to one
-     per cent over the collar, which is what is drawn. */
-  const ENCODING = { progress: 0, playing: false, frame: 0 };
-  const ENCODING_CAPTIONS = [
-    "v on the cylinder, Dirichlet at y = 0.",
-    "h read off the Neumann trace; the dragging term completes w\u2081.",
-    "The ground state w\u2080 is added, giving w.",
-    "h and w map onto the collar of the cone.",
-  ];
-  const ENCODING_LAMBDA = 3.317, ENCODING_L = .4, ENCODING_H = .05;
-
-  function encodingCutoff(y) {
-    const t = Math.max(0, Math.min(1, (y / ENCODING_L - 1 / 3) / (1 / 3)));
-    return 1 - (3 * t * t - 2 * t * t * t);
-  }
-
-  function encodingField(y, psi, stage) {
-    const h = ENCODING_H * Math.cos(psi);
-    const v = ENCODING_LAMBDA * h * y * (1 - y / (2 * ENCODING_L));
-    if (stage < 1) return v;
-    const w1 = v - encodingCutoff(y) * ENCODING_LAMBDA * y * h;
-    if (stage < 2) return w1;
-    return 1 - ENCODING_LAMBDA * y * y / 2 + w1;
-  }
-
-  function encodingPoint(u, t, morph, box) {
-    const flatX = box.left + u * box.width;
-    const flatY = box.top + t * box.height;
-    const angle = TAU * u - Math.PI / 2;
-    const outer = box.radius * (1 - .16 * Math.cos(TAU * u));
-    const ring = outer - t * box.collar;
-    return {
-      x: lerp(flatX, box.cx + ring * Math.cos(angle), morph),
-      y: lerp(flatY, box.cy + ring * Math.sin(angle), morph),
-    };
-  }
-
-  function renderEncoding() {
-    if (!select("#encodingCanvasWrap")) return;
-    const { canvas, context, width, height } = canvasMetrics("#encodingCanvas", "#encodingCanvasWrap", 380);
-    context.clearRect(0, 0, width, height);
-    context.fillStyle = colors.ink; context.fillRect(0, 0, width, height);
-
-    const p = Math.max(0, Math.min(1, ENCODING.progress)) * 3;
-    const stage = Math.min(2, Math.floor(p + .5));
-    const morph = ease(Math.max(0, Math.min(1, p - 2)));
-    /* Clear the legend, as section 2 does with --geometry-key-width, read from
-       this figure's own laboratory rather than the first in the document. */
-    const laboratory = select("#encodingCanvasWrap")?.closest(".geometry-laboratory");
-    const token = laboratory
-      ? parseFloat(getComputedStyle(laboratory).getPropertyValue("--geometry-key-width")) / 100
-      : 0;
-    const key = Number.isFinite(token) ? Math.max(0, Math.min(.45, token)) : 0;
-    const inset = width * key + 24;
-    const box = {
-      left: inset, top: 34, width: width - inset - 30, height: height - 96,
-      cx: inset + (width - inset - 30) / 2, cy: height / 2 - 8,
-      radius: Math.min(width - inset, height) * .40, collar: Math.min(width - inset, height) * .13,
-    };
-
-    const cols = 96, rows = 26;
-    let low = Infinity, high = -Infinity;
-    const grid = [];
-    for (let j = 0; j < rows; j++) {
-      const row = [];
-      for (let i = 0; i < cols; i++) {
-        const value = encodingField((j + .5) / rows * ENCODING_L, (i + .5) / cols * TAU, stage);
-        low = Math.min(low, value); high = Math.max(high, value);
-        row.push(value);
-      }
-      grid.push(row);
-    }
-    for (let j = 0; j < rows; j++) {
-      for (let i = 0; i < cols; i++) {
-        const a = encodingPoint(i / cols, j / rows, morph, box);
-        const b = encodingPoint((i + 1) / cols, j / rows, morph, box);
-        const c = encodingPoint((i + 1) / cols, (j + 1) / rows, morph, box);
-        const d = encodingPoint(i / cols, (j + 1) / rows, morph, box);
-        context.beginPath();
-        context.moveTo(a.x, a.y); context.lineTo(b.x, b.y);
-        context.lineTo(c.x, c.y); context.lineTo(d.x, d.y);
-        context.closePath();
-        // centred on the stage's own midrange, so the collar gradient of w_0 is
-        // as visible as the angular structure of v
-        const half = Math.max((high - low) / 2, 1e-6);
-        const t = Math.max(-1, Math.min(1, (grid[j][i] - (low + high) / 2) / half));
-        context.fillStyle = t >= 0
-          ? `rgba(7,87,96,${(.10 + .62 * t).toFixed(3)})`
-          : `rgba(168,78,66,${(.10 - .62 * t).toFixed(3)})`;
-        context.fill();
-      }
-    }
-
-    context.beginPath();
-    for (let i = 0; i <= 240; i++) {
-      const q = encodingPoint(i / 240, 0, morph, box);
-      if (!i) context.moveTo(q.x, q.y); else context.lineTo(q.x, q.y);
-    }
-    context.strokeStyle = colors.paper; context.lineWidth = 2.2; context.stroke();
-
-    if (morph > .01) {
-      // the unperturbed rim, so the mode-one profile reads as a departure from it
-      context.beginPath();
-      for (let i = 0; i <= 240; i++) {
-        const angle = TAU * (i / 240) - Math.PI / 2;
-        context.lineTo(box.cx + box.radius * Math.cos(angle), box.cy + box.radius * Math.sin(angle));
-      }
-      context.closePath();
-      context.strokeStyle = `rgba(7,87,96,${(.55 * morph).toFixed(2)})`;
-      context.setLineDash([4, 5]); context.lineWidth = 1.2; context.stroke(); context.setLineDash([]);
-    }
-
-    if (stage >= 1) {
-      context.beginPath();
-      for (let i = 0; i <= 240; i++) {
-        const u = i / 240;
-        const q = encodingPoint(u, 0, morph, box);
-        const lift = Math.cos(TAU * u) * 16 * (1 - morph);
-        if (!i) context.moveTo(q.x, q.y - lift); else context.lineTo(q.x, q.y - lift);
-      }
-      context.strokeStyle = colors.orange; context.lineWidth = 1.6;
-      context.setLineDash([4, 4]); context.stroke(); context.setLineDash([]);
-    }
-
-    context.fillStyle = colors.faint;
-    context.font = visualTheme.labelFont;
-    context.textAlign = "left"; context.textBaseline = "top";
-    context.fillText(ENCODING_CAPTIONS[Math.min(3, morph > .5 ? 3 : stage)], 12, height - 22);
-
-    const active = Math.min(3, morph > .5 ? 3 : stage);
-    document.querySelectorAll("[data-encoding-stage]").forEach((button, index) => {
-      button.classList.toggle("active", index === active);
-    });
-    canvas.setAttribute("aria-label", `Stage ${active + 1} of 4: ${ENCODING_CAPTIONS[active]}`);
-  }
-
-  function bindEncoding() {
-    const range = select("#encodingRange");
-    if (!range) return;
-    range.addEventListener("input", () => {
-      ENCODING.progress = Number(range.value);
-      renderEncoding();
-    });
-    document.querySelectorAll("[data-encoding-stage]").forEach((button) => {
-      button.addEventListener("click", () => {
-        ENCODING.progress = Number(button.dataset.encodingStage);
-        range.value = String(ENCODING.progress);
-        renderEncoding();
-      });
-    });
-    renderEncoding();
-  }
-
-  bindEncoding();
 
   function bindCrandallRabinowitz() {
     document.querySelectorAll(".cr-statement").forEach((statement) => {
