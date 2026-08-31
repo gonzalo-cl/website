@@ -1160,12 +1160,12 @@ body.tufte-site main .margin-figure-row > .side-figure {
 /* The two boundary values are the content of this card, not a legend. */
 .world-cards .world-sketch .annulus-value-label {
   fill: var(--ink);
-  font: 400 12px/1 var(--serif);
+  font: 400 30px/1 var(--serif);
   font-style: italic;
 }
 .world-cards .world-sketch .annulus-value-label-note {
   fill: var(--muted);
-  font-size: 10.5px;
+  font-size: 26px;
   font-style: normal;
 }
 .world-cards .world-sketch .annulus-leader {
