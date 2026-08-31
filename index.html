@@ -1145,13 +1145,13 @@
           <aside class="geometry-controls paper-demo-controls">
             <div class="control-heading control-heading-reset" hidden aria-hidden="true"><button id="storyGeometryResetButton" type="button" hidden aria-hidden="true">Reset</button></div>
             <div class="geometry-stages" aria-label="Seven stages of the quotient construction">
-              <button type="button" data-story-stage="0"><span>01</span><strong>\(N\)-fold symmetry</strong></button>
-              <button type="button" data-story-stage="0.166667"><span>02</span><strong>Choose a sector</strong></button>
-              <button type="button" data-story-stage="0.333333"><span>03</span><strong>Identify sides</strong></button>
-              <button type="button" data-story-stage="0.5"><span>04</span><strong>Limiting model</strong></button>
-              <button type="button" data-story-stage="0.666667"><span>05</span><strong>Perturb the cylinder</strong></button>
-              <button type="button" data-story-stage="0.833333"><span>06</span><strong>Return to finite \(R\)</strong></button>
-              <button type="button" data-story-stage="1"><span>07</span><strong>Close at integer \(R\)</strong></button>
+              <button type="button" data-story-stage="0"><span>01</span><strong>Select a sector</strong></button>
+              <button type="button" data-story-stage="0.166667"><span>02</span><strong>Fold the selected sector</strong></button>
+              <button type="button" data-story-stage="0.333333"><span>03</span><strong>Send the cone point to infinity</strong></button>
+              <button type="button" data-story-stage="0.5"><span>04</span><strong>Perturb the cylinder</strong></button>
+              <button type="button" data-story-stage="0.666667"><span>05</span><strong>Use cylinder non-rigidity</strong></button>
+              <button type="button" data-story-stage="0.833333"><span>06</span><strong>Transfer to finite \(R\)</strong></button>
+              <button type="button" data-story-stage="1"><span>07</span><strong>Unfold at integer \(R\)</strong></button>
             </div>
             <p id="storyGeometryState" class="geometry-stage-note" hidden aria-hidden="true">The same angular profile repeats \(N\) times.</p>
             <div class="geometry-scrub"><div class="control-label"><label for="storyGeometryRange">construction</label><output id="storyGeometryValue">stage 1</output></div><input id="storyGeometryRange" type="range" min="0" max="1" value="0" step="0.001"></div>
@@ -1168,7 +1168,7 @@
               <noscript><p class="no-js-figure-description">Static proof map: take one sector of an N-fold domain, identify its sides to obtain a cone, formulate the problem for real order R on a fixed boundary collar, construct and bend a branch at finite R, then reach an integer R = N where the quotient seam closes and the domain unfolds into the plane.</p></noscript>
             </div>
           </section>
-          <figcaption>The half-cylinder stage is a limiting picture of the local mechanism, not the logical starting point of the planar proof. The proof works on the finite-\(R\) collar, continues until \(R\) is an integer, and then lifts the quotient to the plane.</figcaption>
+          <figcaption>The half-cylinder stage is a limiting picture of the local mechanism, not the logical starting point of the planar proof. The proof works on the finite-\(R\) collar, continues until \(R\) is an integer, and then lifts the quotient to the plane. Boundary displacement is enlarged uniformly throughout the animation so that the perturbation remains visible.</figcaption>
         </figure>
       </section>
 

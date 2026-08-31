@@ -36,11 +36,21 @@
   };
   const TAU = Math.PI * 2;
   const GEOMETRY_PROFILE_PHASE = -Math.PI / 2;
+  // The continuation data records the physical displacement in radial units.
+  // At text-column scale that displacement is only a few pixels, so the
+  // construction uses one shared optical gain from the cylinder through the
+  // final planar lift.  Keeping the gain here (rather than in individual
+  // scenes) guarantees that the material boundary cannot jump at a handoff.
+  const GEOMETRY_BOUNDARY_DISPLAY_GAIN = 1.65;
+  const GEOMETRY_SEGMENTS = 6;
   const GEOMETRY_TRAJECTORY = Object.freeze({
     coneTip: .16,
     coneRight: .84,
     cylinderLeft: -.62,
-    cylinderRight: .97,
+    // Leave enough room for the visibly amplified boundary graph at x = 0.
+    // The cylinder still runs behind the stage key on the left, but its moving
+    // rim remains fully inside the text-width viewport on the right.
+    cylinderRight: .92,
   });
   const visualTheme = window.SCHIFFER_VISUAL_THEME || {
     paperEdition: false,
@@ -612,6 +622,10 @@
     return value;
   }
 
+  function geometryBoundaryDisplacement(psi) {
+    return GEOMETRY_BOUNDARY_DISPLAY_GAIN * landingWall(psi);
+  }
+
   function lerp(left, right, amount) { return left + (right - left) * amount; }
   function ease(amount) {
     const clamped = Math.max(0, Math.min(1, amount));
@@ -648,7 +662,7 @@
       const middle = (a0 + a1) / 2;
       const psi = copies * middle + GEOMETRY_PROFILE_PHASE;
       const value = Math.cos(psi);
-      const localRadius = radius * (1 - wiggle * landingWall(psi) / 28);
+      const localRadius = radius * (1 - wiggle * geometryBoundaryDisplacement(psi) / 28);
       context.beginPath(); context.moveTo(cx, cy);
       context.lineTo(cx + localRadius * Math.cos(a0), cy + localRadius * Math.sin(a0));
       context.lineTo(cx + localRadius * Math.cos(a1), cy + localRadius * Math.sin(a1));
@@ -690,7 +704,7 @@
     context.beginPath();
     for (let index = 0; index <= 900; index++) {
       const angle = index / 900 * TAU;
-      const localRadius = radius * (1 - wiggle * landingWall(copies * angle + GEOMETRY_PROFILE_PHASE) / 28);
+      const localRadius = radius * (1 - wiggle * geometryBoundaryDisplacement(copies * angle + GEOMETRY_PROFILE_PHASE) / 28);
       const x = cx + localRadius * Math.cos(angle); const y = cy + localRadius * Math.sin(angle);
       if (!index) context.moveTo(x, y); else context.lineTo(x, y);
     }
@@ -739,7 +753,7 @@
 
   function geometrySheetPoint(sheet, radial, angular, deformed = true) {
     const theta = Math.PI * angular;
-    const wall = deformed ? sheet.wave * landingWall(theta + GEOMETRY_PROFILE_PHASE) : 0;
+    const wall = deformed ? sheet.wave * geometryBoundaryDisplacement(theta + GEOMETRY_PROFILE_PHASE) : 0;
     // h(psi) is a displacement in radial units.  Dividing by the current
     // order, rather than always by 28, keeps its displayed radial amplitude
     // fixed while the cone point recedes to the half-cylinder limit.
@@ -2090,7 +2104,7 @@
       for (let index = 0; index <= 1200; index++) {
         const angle = index / 1200 * TAU;
         const psi = copies * angle + GEOMETRY_PROFILE_PHASE;
-        const localRadius = radius * (1 - landingWall(psi) / 28);
+        const localRadius = radius * (1 - geometryBoundaryDisplacement(psi) / 28);
         const x = sheet.tip + localRadius * Math.cos(angle);
         const y = sheet.cy + localRadius * Math.sin(angle);
         if (!index) context.moveTo(x, y); else context.lineTo(x, y);
@@ -2129,20 +2143,53 @@
     else drawGeometrySheet(context, sheet);
   }
 
+  // Every consumer—canvas, formula layer, active stage, and accessibility
+  // text—reads the same state.  Previously each of them reconstructed the six
+  // intervals independently, which made it easy for the picture and its
+  // narration to disagree after an edit.
+  function geometryFrame(progress) {
+    const position = Math.max(0, Math.min(1, progress));
+    const scaled = position * GEOMETRY_SEGMENTS;
+    const segment = Math.min(GEOMETRY_SEGMENTS - 1, Math.floor(scaled));
+    const local = position >= 1 ? 1 : scaled - segment;
+    const motion = ease(local);
+    const active = position >= .999
+      ? GEOMETRY_SEGMENTS
+      : position <= .001
+        ? 0
+        : local < .01
+          ? segment
+          : Math.min(GEOMETRY_SEGMENTS, segment + 1);
+
+    return Object.freeze({
+      position,
+      segment,
+      local,
+      motion,
+      active,
+      cylinder: segment === 2 ? motion : segment === 3 ? 1 : segment === 4 ? 1 - motion : null,
+      wave: segment < 3 ? 0 : segment === 3 ? motion : 1,
+      returning: segment === 4,
+      unfolding: segment === 5 ? local : null,
+    });
+  }
+
   function drawGeometrySequence(context, width, height, progress) {
-    const scaled = Math.max(0, Math.min(1, progress)) * 6;
-    const segment = Math.min(5, Math.floor(scaled));
-    const local = scaled - segment;
-    if (segment === 0) drawNfoldDisk(context, width, height, { cx: geometryVisualCenter(width), selection: ease(local), divisions: 1, showCaption: false });
-    else if (segment === 1) drawFoldingSector(context, width, height, local);
-    else if (segment === 2) drawConeCylinder(context, width, height, local, 0);
-    // First perturb the limiting cylinder, then return that already-perturbed
-    // picture to finite order.  This is the intended visual sequence; the
-    // surrounding prose still makes clear that the proof is carried out by
-    // uniform estimates on the finite-R collar.
-    else if (segment === 3) drawConeCylinder(context, width, height, 1, ease(local));
-    else if (segment === 4) drawConeCylinder(context, width, height, 1 - ease(local), 1, true);
-    else drawUnfolding(context, width, height, local);
+    const frame = geometryFrame(progress);
+    if (frame.segment === 0) {
+      drawNfoldDisk(context, width, height, {
+        cx: geometryVisualCenter(width),
+        selection: frame.motion,
+        divisions: 1,
+        showCaption: false,
+      });
+    } else if (frame.segment === 1) {
+      drawFoldingSector(context, width, height, frame.local);
+    } else if (frame.segment >= 2 && frame.segment <= 4) {
+      drawConeCylinder(context, width, height, frame.cylinder, frame.wave, frame.returning);
+    } else {
+      drawUnfolding(context, width, height, frame.unfolding);
+    }
   }
 
   function drawCollarFrame(context, width, height, opacity) {
@@ -2194,7 +2241,7 @@
     for (let index = 0; index <= 1400; index++) {
       const angle = index / 1400 * TAU;
       const psi = 28 * angle;
-      const physicalRadius = radius * (1 - landingWall(psi + GEOMETRY_PROFILE_PHASE) / 28);
+      const physicalRadius = radius * (1 - geometryBoundaryDisplacement(psi + GEOMETRY_PROFILE_PHASE) / 28);
       const x = cx + physicalRadius * Math.cos(angle);
       const y = cy + physicalRadius * Math.sin(angle);
       if (index === 0) context.moveTo(x, y); else context.lineTo(x, y);
@@ -2208,9 +2255,8 @@
   }
 
   const geometryState = { progress: 0, playing: false, frame: null };
-  const geometryNames = ["start with rotational symmetry", "choose one fundamental sector", "identify the radial sides", "inspect the large-order limit", "perturb the limiting cylinder", "return to finite real order", "close at an integer and lift to the plane"];
-  const geometryStates = ["the field is repeated around the disk", "one fundamental sector in rescaled coordinates", "identifying the radial sides gives the cone quotient", "a fixed boundary collar converges to the half-cylinder", "the limiting cylinder carries the boundary deformation", "the perturbed cylinder returns to a finite real-order cone", "the sectors fit exactly in the plane"];
-  const geometryCaptions = ["the same angular profile repeats N times", "follow one material sector", "the radial sides meet along the quotient seam", "this is the limiting comparison, not a nonlinear transfer step", "the cylinder is perturbed before returning to finite order", "uniform finite-order estimates justify the nearby cone branch", "adjacent copies open in order; each boundary profile stays on its sector"];
+  const geometryStates = ["the field is repeated around the disk", "one material sector has been selected", "the selected sector is folded into a cone", "the cone point has receded to the limiting cylinder", "the limiting cylinder carries a nontrivial boundary deformation", "the same deformed material sector returns to a finite-order cone", "the sectors fit exactly in the plane"];
+  const geometryCaptions = ["select one of the repeated sectors", "follow the same sector as its radial sides are identified", "move the cone point to infinity on a fixed boundary collar", "introduce the cylinder bifurcation", "carry the non-rigid boundary profile on the limiting cylinder", "uniform estimates transfer that profile to finite R", "at integer R the copies close in the plane"];
 
   function drawGeometryNarrative() {}
 
@@ -2237,15 +2283,11 @@
       : 0;
     const keyFraction = Number.isFinite(keyToken) ? Math.max(0, Math.min(.45, keyToken)) : 0;
 
-    const scaled = Math.max(0, Math.min(1, progress)) * 6;
-    const segment = Math.min(5, Math.floor(scaled));
-    const local = scaled - segment;
-    let cylinderAmount = null;
-    let waveAmount = 0;
-    let returning = false;
-    if (segment === 2) cylinderAmount = local;
-    if (segment === 3) { cylinderAmount = 1; waveAmount = ease(local); }
-    if (segment === 4) { cylinderAmount = 1 - ease(local); waveAmount = 1; returning = true; }
+    const frame = geometryFrame(progress);
+    const { segment, local } = frame;
+    const cylinderAmount = frame.cylinder;
+    const waveAmount = frame.wave;
+    const returning = frame.returning;
 
     const overlayHalf = Math.min(118, height * .23);
     const unclampedOrderY = height * .54 - overlayHalf - (compact ? 62 : 41);
@@ -2288,16 +2330,8 @@
     drawGeometrySequence(context, width, height, geometryState.progress);
     drawGeometryNarrative(context, width, height, geometryState.progress);
     renderGeometryMath(width, height, geometryState.progress);
-    const scaled = Math.max(0, Math.min(1, geometryState.progress)) * 6;
-    const segment = Math.min(5, Math.floor(scaled));
-    const local = scaled - segment;
-    const active = geometryState.progress >= .999
-      ? 6
-      : geometryState.progress <= .001
-        ? 0
-        : local < .01
-          ? segment
-          : Math.min(6, segment + 1);
+    const frame = geometryFrame(geometryState.progress);
+    const active = frame.active;
     const stageValue = select("#storyGeometryValue");
     const stageNote = select("#storyGeometryState");
     const stageLabel = `stage ${active + 1}`;
