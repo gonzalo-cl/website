@@ -1041,12 +1041,6 @@ function updateReadouts() {
   $("#sValue").textContent = `${state.s >= 0 ? "+" : ""}${state.s.toFixed(3)}`;
   setMath("#phaseValue", `${(state.phase / Math.PI).toFixed(2)}\\pi`);
   setMath("#modeValue", `k\\le ${state.maxMode}`);
-  $("#interiorValue").textContent = "0 · analytic";
-  $("#wallMode2Value").textContent = state.solution.parameters.wallCoefficients[2].toExponential(2);
-  $("#wallMode3Value").textContent = state.solution.parameters.wallCoefficients[3].toExponential(2);
-  $("#dirichletValue").textContent = state.solution.dirichletL2.toExponential(2);
-  $("#neumannValue").textContent = state.solution.neumannL2.toExponential(2);
-  $("#decayValue").textContent = (1 / Math.sqrt(4 - state.lambda)).toFixed(2);
   $("#domainState").textContent = Math.abs(state.s) < .0025 ? "trivial cylinder at the branch origin" : "boundary and field solved simultaneously";
 }
 

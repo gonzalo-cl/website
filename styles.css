@@ -603,7 +603,7 @@ input[type="range"]::-moz-range-thumb { width: 9px; height: 9px; border: 3px sol
 .collar-field-panel > footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 0 13px; color: rgba(241,238,229,.32); border-top: 1px solid var(--line-light); font: 11px var(--mono); text-transform: uppercase; letter-spacing: .04em; }
 .collar-crop-key { display: flex; align-items: center; gap: 6px; }
 .collar-crop-key i { width: 13px; height: 8px; display: inline-block; border: 1px solid var(--teal); }
-.collar-field-caption { grid-column: 1/-1; margin: 0; padding: 19px 24px 21px; color: rgba(241,238,229,.43); border-top: 1px solid var(--line-light); font-size: 11px; line-height: 1.7; }
+.collar-field-caption { grid-column: 1/-1; margin: 0; padding: 19px 24px 21px; border-top: 1px solid var(--line-light); }
 .angular-quotient-note { display: grid; grid-template-columns: 220px minmax(0,1fr); gap: 40px; padding: 34px; border: 1px solid var(--line-light); border-bottom: 0; }
 .angular-quotient-note > span { color: var(--orange); font: 11px var(--mono); text-transform: uppercase; letter-spacing: .08em; }
 .angular-quotient-note > div { min-width: 0; }
@@ -1509,15 +1509,11 @@ body.tufte-site main .intro-route-overview p,
 .cone-fold-figure .geometry-canvas-wrap { height: 300px; }
 .cone-fold-figure .geometry-controls { display: none; }
 
-.cone-fold-figure figcaption { font-size: var(--type-caption); line-height: 1.5; }
-
 .strategy-steps { margin: 14px 0 0; padding-left: 22px; }
 .strategy-steps li { margin: 0 0 12px; }
 .strategy-steps li:last-child { margin-bottom: 0; }
 
 .fixed-collar-figure .geometry-canvas-wrap, .fixed-collar-figure .figure-canvas-wrap { height: 240px; }
-.fixed-collar-figure figcaption { font-size: var(--type-caption); line-height: 1.5; }
-
 /* The margin copies keep every class the wide figures had, so their SVG fills
    and palettes still apply; these undo the parts of the laboratory layout that
    only make sense at reading width. */
@@ -1534,8 +1530,3 @@ body.tufte-site main .cone-fold-figure .geometry-scrub,
 .cone-fold-figure .geometry-scrub { display: none; }
 .cone-fold-figure .geometry-controls { border: 0; padding: 0; margin: 0 0 8px; min-height: 0; }
 .cone-fold-figure .geometry-canvas-wrap { height: 300px; }
-body.tufte-site main :is(.cone-fold-figure, .fixed-collar-figure) .figure-evidence,
-body.tufte-site main :is(.cone-fold-figure, .fixed-collar-figure) .figure-tools,
-:is(.cone-fold-figure, .fixed-collar-figure) .figure-evidence,
-:is(.cone-fold-figure, .fixed-collar-figure) .figure-tools { display: none; }
-:is(.cone-fold-figure, .fixed-collar-figure) figcaption { font-size: var(--type-caption); line-height: 1.5; }

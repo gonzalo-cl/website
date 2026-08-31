@@ -17,11 +17,11 @@
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js" integrity="sha384-bjyGPfbij8/NDKJhSGZNP/khQVgtHUE5exjm4Ydllo42FwIgYsdLO2lXGmRBf5Mz" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.12.0/highlight.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/highlightjs-lean@1.2.0/dist/lean.min.js"></script>
-    <script defer src="lean-statements.js?v=20260828.6"></script>
+    <script defer src="lean-statements.js?v=20260831.8"></script>
     <script defer src="math.js?v=20260830.1"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tufte-css@1.9.0/tufte.min.css">
-    <link rel="stylesheet" href="styles.css?v=20260831.14">
-    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260831.14">
+    <link rel="stylesheet" href="styles.css?v=20260831.15">
+    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260831.16">
   </head>
   <body class="tufte-site">
     <a class="skip-link" href="#top">Skip to the exposition</a>
@@ -58,13 +58,13 @@
       <section class="intro">
         <h1>Constructing Noncircular Schiffer Domains</h1>
         <p class="intro-authors">Exposition by <a href="https://people.epfl.ch/gonzalo.caolabora" target="_blank" rel="noreferrer">Gonzalo Cao-Labora</a>, <a href="https://www.damtp.cam.ac.uk/user/mjc249/home.html" target="_blank" rel="noreferrer">Matthew J. Colbrook</a>, <a href="https://jaume.dedios.cat/" target="_blank" rel="noreferrer">Jaume de Dios Pont</a>, and <a href="https://georgestepaniants.com/" target="_blank" rel="noreferrer">George Stepaniants</a>.</p>
-        <p id="research-sources" class="intro-sources"><span>Based on</span> <a href="https://arxiv.org/abs/2608.01579" target="_blank" rel="noreferrer"><em>A computer-assisted counterexample to the planar Pompeiu and Schiffer conjectures</em></a>, <a href="https://arxiv.org/abs/2608.05114" target="_blank" rel="noreferrer"><em>Counterexamples to Schiffer’s Conjecture</em></a>, and <a href="https://arxiv.org/abs/2608.08953" target="_blank" rel="noreferrer"><em>A computer-assisted counterexample to the planar Berenstein conjecture</em></a>. <a class="intro-acknowledgements-link" href="#acknowledgements">Acknowledgements</a>.</p>
+        <p id="research-sources" class="intro-sources"><span>Based on</span> <a href="https://arxiv.org/abs/2608.01579" target="_blank" rel="noreferrer"><em>A computer-assisted counterexample to the planar Pompeiu and Schiffer conjectures</em></a>, <a href="https://arxiv.org/abs/2608.05114" target="_blank" rel="noreferrer"><em>Counterexamples to Schiffer’s Conjecture</em></a>, and <a href="https://arxiv.org/abs/2608.08953" target="_blank" rel="noreferrer"><em>A computer-assisted counterexample to the planar Berenstein conjecture</em></a>.</p>
         <div class="formal-statement-pair">
           <article id="statement-main-result" class="math-statement math-statement-theorem intro-main-result" data-kind="theorem" data-label="main-result" aria-labelledby="mainResultTitle">
             <header class="math-statement-header"><span>Theorem</span><small>Main result</small></header>
             <div class="math-statement-body">
-              <h2 id="mainResultTitle">A non-disk planar Schiffer domain exists.</h2>
-              <p>There is a bounded, smooth, simply connected planar domain, star-shaped with respect to the origin, which is not a disk and solves the Schiffer problem.</p>
+              <p id="mainResultTitle" class="math-statement-title">A non-disk planar Schiffer domain exists.</p>
+              <p>There is a <span data-lean-alignment="schiffer-star-shaped:bounded">bounded</span>, <span data-lean-alignment="schiffer-star-shaped:nonempty">nonempty</span>, <span data-lean-alignment="schiffer-star-shaped:regularity">smooth</span> planar domain, <span data-lean-alignment="schiffer-star-shaped:star-shaped">star-shaped with respect to the origin</span>, which is <span data-lean-alignment="schiffer-star-shaped:not-disk">not a disk</span> and <span data-lean-alignment="schiffer-star-shaped:schiffer">solves the Schiffer problem</span>.</p>
             </div>
           </article>
           <lean-statement data-statement="schiffer-star-shaped"></lean-statement>
@@ -113,7 +113,7 @@
           <p>In the conformal fixed-disk route, a higher tenfold Wronskian crossing supplies a linearized kernel direction for a numerical search in the relaxed constant-flux problem. Numerical continuation follows a computed noncircular branch to zero flux and encodes the endpoint by a conformal map from the unit disk; a computer-assisted contraction, independent of the search path, then proves that an exact solution lies near that numerical centre.</p>
           <p>A different route considers the problem under \(N\)-fold symmetry, for \(N\) sufficiently large, and relaxes it so that \(N\) can take decimal values. The problem is thus formulated over a cone of angle \(2\pi/R\), which converges to a cylinder as \(R\to\infty\). Rigorous bifurcation theory, with uniform bounds in \(R\), then allows one to conclude that the bifurcation reaches integer values of \(R\).</p>
         </div>
-        <figure class="geometry-laboratory interactive-plate annotated-plate reading-figure probe-figure" data-figure="pompeiu-probe" data-evidence="mixed" data-evidence-detail="The disk uses an exact Bessel zero. The N = 10 outline is the stored numerical centre enclosed by the computer-assisted proof; the exact boundary lies within 7.13 × 10⁻¹¹ of it. The N = 28 boundary is a numerical landing record. Displayed integrals use numerical quadrature, and the square is a contrasting reference shape.">
+        <figure class="geometry-laboratory interactive-plate annotated-plate reading-figure probe-figure" data-figure="pompeiu-probe">
           <aside class="geometry-controls paper-demo-controls">
             <div class="geometry-stages" role="group" aria-label="Choose a domain">
               <button type="button" data-probe-domain="0" aria-pressed="true"><span>01</span><strong>disk</strong></button>
@@ -128,7 +128,7 @@
               <canvas id="probeCanvas" tabindex="0" role="img" aria-label="A domain moved over the plane wave cosine of x one, with its integral plotted below" aria-describedby="pompeiuProbeOverviewCaption" aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown Shift+ArrowLeft Shift+ArrowRight Shift+ArrowUp Shift+ArrowDown [ ]"></canvas>
             </div>
           </section>
-          <figcaption id="pompeiuProbeOverviewCaption">Move each footprint over the plane wave \(\cos x_1\) to compare when its integral vanishes. The disk uses an exact Bessel-zero radius. The \(N=10\) outline is the frequency-rescaled numerical centre enclosed by the computer-assisted proof; its exact boundary is visually indistinguishable at this scale. The \(N=28\) profile is a saved numerical landing record, and the square is a comparison shape. Drag inside a footprint to translate it and outside to rotate it. When the canvas has focus, use the arrow keys to translate, Shift for larger steps, and the bracket keys to rotate.</figcaption>
+          <figcaption id="pompeiuProbeOverviewCaption">Move each footprint over the plane wave \(\cos x_1\) to compare its integral. The disk uses a Bessel-zero radius; the \(D_{10}\) and \(D_{28}\) outlines show the two constructed profiles, and the square is a comparison. Drag to translate or rotate; with the canvas focused, use the arrow, Shift, and bracket keys.</figcaption>
         </figure>
       </section>
 
@@ -156,7 +156,7 @@
             <article class="math-statement math-statement-definition" data-kind="definition" data-label="pompeiu-property-definition" aria-labelledby="pompeiuDefinitionTitle">
               <header class="math-statement-header"><span>Definition</span><small>Pompeiu property</small></header>
               <div class="math-statement-body">
-                <p id="pompeiuDefinitionTitle">A bounded set \(\Omega\) has the <em>Pompeiu property</em> when \(f\mapsto M_\Omega f\) is injective. Since \(M_\Omega\) is linear, this is equivalent to saying that, for every function \(f\),</p>
+                <p id="pompeiuDefinitionTitle">A bounded set \(\Omega\) has the <em>Pompeiu property</em> when <span data-lean-alignment="pompeiu-property:measurement-map">\(f\mapsto M_\Omega f\)</span> is <span data-lean-alignment="pompeiu-property:injective">injective</span>. Since \(M_\Omega\) is linear, this is equivalent to saying that, for every function \(f\),</p>
                 <div class="tex-display">
                   \[
                   \int_{E(\Omega)}f(x)\,dx=0
@@ -189,21 +189,18 @@
         <details class="disk-sidequest">
           <summary><span><small>Optional digression</small>The disk as a Pompeiu counterexample</span><i>expand +</i></summary>
           <div class="disk-sidequest-body">
-            <p class="applet-instruction">These figures are interactive: drag the highlighted set to move its centre, and use the slider to change its size.</p>
-            <figure class="fullwidth measurement-figure line-probe-figure" id="lineProbeFigure" data-figure="interval-probe-model" data-evidence="exact">
-              <figcaption class="measurement-caption">
-                <p class="eyebrow">A one-dimensional model</p>
-                <h3>The Pompeiu operator for an interval.</h3>
-                <p>Let \(I_L=[-L/2,L/2]\) and \(f(x)=\cos x\). For the translate \(I_L+t\), direct integration gives</p>
-                <div class="tex-display line-probe-computation">
-                  \[
-                  \int_{I_L+t}f(x)\,dx
-                  =\int_{t-L/2}^{t+L/2}\cos x\,dx
-                  =2\sin(L/2)\cos t.
-                  \]
-                </div>
-                <p>Hence \(I_{2\pi}\) fails the one-dimensional Pompeiu property: the nonzero function \(\cos x\) belongs to the kernel for every translation. The panel below plots this identity as \(t\) and \(L\) vary. Keyboard: focus the graph and use Left or Right to move the interval; hold Shift for a larger step.</p>
-              </figcaption>
+            <div class="intro-copy">
+              <p>For a one-dimensional model, let \(I_L=[-L/2,L/2]\) and \(f(x)=\cos x\). For the translate \(I_L+t\), direct integration gives</p>
+              <div class="tex-display line-probe-computation">
+                \[
+                \int_{I_L+t}f(x)\,dx
+                =\int_{t-L/2}^{t+L/2}\cos x\,dx
+                =2\sin(L/2)\cos t.
+                \]
+              </div>
+              <p>Thus \(I_{2\pi}\) fails the one-dimensional Pompeiu property: the nonzero function \(\cos x\) belongs to the kernel for every translation.</p>
+            </div>
+            <figure class="fullwidth measurement-figure line-probe-figure" id="lineProbeFigure" data-figure="interval-probe-model">
               <div class="measurement-panel line-probe-panel side-figure">
                 <canvas class="measurement-canvas" id="lineProbeCanvas" tabindex="0" role="img" aria-label="Graph of cosine x with a movable interval" aria-keyshortcuts="ArrowLeft ArrowRight Shift+ArrowLeft Shift+ArrowRight"></canvas>
                 <div class="measurement-side line-probe-side">
@@ -220,12 +217,13 @@
                   </div>
                 </div>
               </div>
+              <figcaption>The interval integral \(2\sin(L/2)\cos t\) as \(t\) and \(L\) vary. With the graph focused, use Left and Right to translate the interval; hold Shift for a larger step.</figcaption>
             </figure>
 
             <div class="intro-copy disk-proof-flow">
               <label for="pompeiu-model-note" class="margin-toggle" aria-label="Show the interactive disk probe">&#8853;</label>
               <input type="checkbox" id="pompeiu-model-note" class="margin-toggle">
-              <figure class="marginnote side-figure pompeiu-margin-figure" id="pompeiuFigure" data-figure="disk-probe-model" data-applet="disk-pompeiu-probe" data-evidence="exact" aria-label="Interactive disk probe for the function cosine of x one">
+              <figure class="marginnote side-figure pompeiu-margin-figure" id="pompeiuFigure" data-figure="disk-probe-model" data-applet="disk-pompeiu-probe" aria-label="Interactive disk probe for the function cosine of x one">
                 <div class="measurement-panel pompeiu-panel">
                   <canvas class="measurement-canvas" id="pompeiuCanvas" tabindex="0" role="img" aria-label="A disk moving over the field cosine of x one" aria-describedby="pompeiuProbeCaption" aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown Shift+ArrowLeft Shift+ArrowRight Shift+ArrowUp Shift+ArrowDown"></canvas>
                   <div class="measurement-side pompeiu-side">
@@ -255,7 +253,7 @@
                     </div>
                   </div>
                 </div>
-                <figcaption id="pompeiuProbeCaption">Moving the disk and varying its radius displays the exact factor \(2\pi rJ_1(r)\) in its Pompeiu measurement. Keyboard: focus the disk and use the arrow keys to move its centre; hold Shift for a larger step.</figcaption>
+                <figcaption id="pompeiuProbeCaption">Moving the disk and varying \(r\) displays the factor \(2\pi rJ_1(r)\), which vanishes at the first positive zero \(r=3.8317\ldots\). With the disk focused, use the arrow keys to move its centre; hold Shift for a larger step.</figcaption>
               </figure>
 
               <p class="eyebrow">A two-dimensional model</p>
@@ -263,7 +261,7 @@
                 <article class="math-statement math-statement-proposition" data-kind="proposition" data-label="disk-pompeiu-counterexample" aria-labelledby="diskPropositionTitle">
                   <header class="math-statement-header"><span>Proposition</span><small>disk counterexample</small></header>
                   <div class="math-statement-body">
-                    <h3 id="diskPropositionTitle">Every disk fails the Pompeiu property.</h3>
+                    <p id="diskPropositionTitle" class="math-statement-title">Every <span data-lean-alignment="disk-not-pompeiu:disk">disk</span> <span data-lean-alignment="disk-not-pompeiu:fails">fails the Pompeiu property</span>.</p>
                     <p>Let \(B_r\) be a disk of radius \(r\), and let \(\rho_\star&gt;0\) be a zero of \(J_1\). Then</p>
                     <div class="tex-display">
                       \[
@@ -275,8 +273,6 @@
                 </article>
                 <lean-statement data-statement="disk-not-pompeiu"></lean-statement>
               </div>
-              <p class="disk-model-note">The margin experiment fixes \(f(x)=\cos(x_1)\) and varies the disk around the first positive zero \(r=3.8317\ldots\) of \(J_1\).</p>
-
               <div class="disk-sidequest-proof">
                 <label for="bst-proof-note" class="margin-toggle" aria-label="Show the Brown, Schreiber and Taylor note">&#8853;</label>
                 <input type="checkbox" id="bst-proof-note" class="margin-toggle">
@@ -330,12 +326,12 @@
           </div>
           <label for="chladni-photo-note" class="margin-toggle" aria-label="Show the Chladni plate photograph">&#8853;</label>
           <input type="checkbox" id="chladni-photo-note" class="margin-toggle">
-          <figure class="marginnote chladni-photo-panel" data-figure="chladni-plate" data-evidence="context">
+          <figure class="marginnote chladni-photo-panel" data-figure="chladni-plate">
             <img src="assets/chladni-plate.jpg" width="1280" height="857" loading="lazy" decoding="async" alt="Sand gathered along circular nodal lines separating four radial nodal domains on a vibrating round Chladni plate">
             <figcaption>A vibrating Chladni plate. Sand migrates from the moving regions and settles along the circular nodal lines, where the plate remains still. <a href="https://commons.wikimedia.org/wiki/File:Round_Chladni_plate_with_4_circular_nodes.JPG" target="_blank" rel="noreferrer">Pieter Kuiper, public domain.</a></figcaption>
           </figure>
-          <p>A domain \(\Omega\) for which the system <a class="xref" data-ref="schiffer-system" data-ref-short href="#equation-schiffer-system">the displayed Schiffer system</a> has a solution is called a <em>Schiffer domain</em>. The disk is one: its radial modes are multiples of \(J_0(\sqrt\lambda\,r)\), and their normal derivative vanishes at the boundary precisely when \(\sqrt\lambda\,r\) is a zero of \(J_0'\) — equivalently of \(J_1\), since \(J_0'=-J_1\).</p>
-          <p>Equivalently, the boundary condition can be written as \(\nabla u=0\). Indeed, constancy of \(u\) along the boundary kills every tangential derivative, while \(\partial_\nu u=0\) kills the normal component. Together they make the full gradient vanish on \(\partial\Omega\). One may also normalize \(\lambda=1\): if \((u,\lambda)\) solves the system on \(\Omega\), then \(x\mapsto u(x/\sqrt\lambda)\) solves it with eigenvalue \(1\) on the rescaled domain \(\sqrt\lambda\,\Omega\). The equivalent convention used here fixes the domain and varies \(\lambda\).</p>
+          <p>A domain \(\Omega\) for which the system <a class="xref" data-ref="schiffer-system" data-ref-short href="#equation-schiffer-system"><span data-lean-alignment="schiffer-property:schiffer-system">the displayed Schiffer system</span></a> has a solution is called a <em>Schiffer domain</em>. The disk is one: its radial modes are multiples of \(J_0(\sqrt\lambda\,r)\), and their normal derivative vanishes at the boundary precisely when \(\sqrt\lambda\,r\) is a zero of \(J_0'\) — equivalently of \(J_1\), since \(J_0'=-J_1\).</p>
+          <p>Equivalently, the boundary condition can be written as <span data-lean-alignment="schiffer-property:gradient">\(\nabla u=0\)</span>. Indeed, constancy of \(u\) along the boundary kills every tangential derivative, while \(\partial_\nu u=0\) kills the normal component. Together they make the full gradient vanish on \(\partial\Omega\). One may also <span data-lean-alignment="schiffer-property:normalization">normalize \(\lambda=1\)</span>: if \((u,\lambda)\) solves the system on \(\Omega\), then \(x\mapsto u(x/\sqrt\lambda)\) solves it with eigenvalue \(1\) on the rescaled domain \(\sqrt\lambda\,\Omega\). The equivalent convention used here fixes the domain and varies \(\lambda\).</p>
           <lean-statement data-statement="schiffer-property"></lean-statement>
           <article class="math-statement math-statement-conjecture" data-kind="conjecture" data-label="schiffer-conjecture" aria-labelledby="schifferConjectureTitle">
             <header class="math-statement-header"><span>Conjecture</span><small>Schiffer</small></header>
@@ -343,10 +339,10 @@
           </article>
         </div>
 
-        <figure class="membrane-figure" id="schifferModeFigure" data-applet="radial-neumann-modes" data-figure="radial-neumann-modes" data-evidence="exact">
+        <figure class="membrane-figure" id="schifferModeFigure" data-applet="radial-neumann-modes" data-figure="radial-neumann-modes">
           <div class="schiffer-mode-panel">
             <div class="schiffer-mode-heading">
-              <div><p class="eyebrow">Radial Neumann eigenfunctions</p><h3>The profiles \(J_0(\rho_n r)\), where \(J_1(\rho_n)=0\).</h3></div>
+              <h4>Choose a radial Neumann mode</h4>
               <button type="button" id="schifferModePlay" class="mode-play" aria-pressed="false">pause</button>
             </div>
             <canvas id="schifferModeCanvas" role="img" aria-label="Shallow three-dimensional animation of a radial Neumann eigenmode on a disk"></canvas>
@@ -355,9 +351,8 @@
               <button type="button" data-radial-mode="2" aria-pressed="false">mode 2</button>
               <button type="button" data-radial-mode="3" aria-pressed="true">mode 3</button>
             </div>
-            <p class="membrane-model-note">The applet illustrates the corresponding radial nodal patterns. The shallow surface and radial trace evaluate the scalar membrane modes \(J_0(\rho_n r)\cos(\rho_n t)\) appearing in Schiffer's equation, with \(J_1(\rho_n)=0\).</p>
           </div>
-          <figcaption id="schifferModeCaption"><span class="figure-caption-summary">Radial Neumann modes meet the disk boundary with zero slope.</span><span class="figure-caption-note">The Bessel profile is exact; depth, lighting, and animation are visual aids for the radial mode.</span></figcaption>
+          <figcaption id="schifferModeCaption">The radial Neumann modes \(J_0(\rho_n r)\cos(\rho_n t)\), with \(J_1(\rho_n)=0\), meet the disk boundary with zero slope.</figcaption>
         </figure>
 
         <p>In both problems the disk produced the same arithmetic condition: the frequency times the radius must be a zero of \(J_1\). That coincidence is not an accident, and Williams made it precise.</p>
@@ -366,11 +361,11 @@
           <article id="statement-williams-equivalence" class="math-statement math-statement-theorem intro-theorem" data-kind="theorem" data-label="williams-equivalence" aria-labelledby="williamsTheoremTitle">
             <header class="math-statement-header"><span>Theorem</span><small>Williams · 1976</small></header>
             <div class="math-statement-body">
-              <h3 id="williamsTheoremTitle">The Pompeiu and Schiffer problems are equivalent.</h3>
-              <p>Let \(\Omega\subset\mathbb R^2\) be a bounded, simply connected domain with smooth boundary. Then the following statements are equivalent:</p>
+              <p id="williamsTheoremTitle" class="math-statement-title">The Pompeiu and Schiffer problems are equivalent.</p>
+              <p>Let \(\Omega\subset\mathbb R^2\) be a <span data-lean-alignment="schiffer-pompeiu-equivalence:bounded">bounded</span>, simply connected domain with <span data-lean-alignment="schiffer-pompeiu-equivalence:regularity">smooth boundary</span>. Then the following statements are equivalent:</p>
               <ol>
-                <li>There is a nonzero continuous function \(f\) such that \(\int_{E(\Omega)}f(x)\,dx=0\) for every rigid motion \(E\);</li>
-                <li>There are \(\lambda&gt;0\) and a nonconstant function \(u\) solving the Schiffer problem <a class="xref" data-ref="schiffer-system" data-ref-short href="#equation-schiffer-system">the displayed Schiffer system</a> on \(\Omega\).</li>
+                <li data-lean-alignment="schiffer-pompeiu-equivalence:pompeiu">There is a nonzero continuous function \(f\) such that \(\int_{E(\Omega)}f(x)\,dx=0\) for every rigid motion \(E\);</li>
+                <li data-lean-alignment="schiffer-pompeiu-equivalence:schiffer">There are \(\lambda&gt;0\) and a nonconstant function \(u\) solving the Schiffer problem <a class="xref" data-ref="schiffer-system" data-ref-short href="#equation-schiffer-system">the displayed Schiffer system</a> on \(\Omega\).</li>
               </ol>
               <p>Consequently, a smooth noncircular solution of the Schiffer problem also gives a smooth noncircular probe without the Pompeiu property.</p>
             </div>
@@ -413,7 +408,7 @@
         </details>
 
         <details class="optional-digression proof-details intro-proof">
-          <summary><span><small>Optional digression</small>Two further equivalences</span><i>expand +</i></summary>
+          <summary><span><small>Optional digression</small>Two further equivalences: Fourier vanishing and calculus of variations</span><i>expand +</i></summary>
           <div class="intro-proof-body">
             <p>Williams&rsquo; theorem lines up two conditions on \(\Omega\). Two more belong on the same list, one in harmonic analysis and one in shape optimization, so the disk question can be asked in four equivalent ways.</p>
             <p><em>A Fourier zero set.</em> Brown, Schreiber and Taylor <a class="history-citation" href="#ref-bst">[5]</a> reduced the Pompeiu property to a condition on a single function: \(\Omega\) fails it exactly when \(\widehat{\mathbf 1_\Omega}\) vanishes identically on some circle \(|\xi|=\sqrt\lambda\) centred at the origin. This condition already appeared in the proof above, where the rotation argument turned a Pompeiu counterexample into a circle of zeros of \(\widehat{\mathbf 1_\Omega}\); the converse runs the same computation backwards. Indeed, changing variables writes \(\int_{\sigma(\Omega)}\cos(\sqrt\lambda\,x_1)\,dx\) as an integral of \(\cos(\xi\cdot x+c)\) over \(\Omega\) itself, where \(\xi\) is the rotation of \(\sqrt\lambda\,e_1\) and \(c\) is a constant coming from the translation. Expanding the cosine, this is a combination of the real and imaginary parts of \(\widehat{\mathbf 1_\Omega}(\xi)\), so it vanishes for every rigid motion \(\sigma\) exactly when \(\widehat{\mathbf 1_\Omega}\) vanishes on the whole circle \(|\xi|=\sqrt\lambda\).</p>
@@ -464,7 +459,7 @@
 
           <label for="shape-variation-note" class="margin-toggle" aria-label="Show the normal-variation diagram">&#8853;</label>
           <input type="checkbox" id="shape-variation-note" class="margin-toggle">
-          <figure class="marginnote side-figure side-applet shape-variation-figure intro-variation-figure" id="shapeVariationFigure" data-figure="normal-variation" data-evidence="schematic">
+          <figure class="marginnote side-figure side-applet shape-variation-figure intro-variation-figure" id="shapeVariationFigure" data-figure="normal-variation">
             <section class="shape-variation-stage">
               <svg id="shapeVariationSvg" viewBox="0 0 620 390" role="img" aria-label="A reference domain, a moving normally perturbed boundary, and visible arrows for the normal velocity">
                 <defs><marker id="shapeVariationArrow" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" refX="8.5" refY="4" orient="auto"><path d="M0,0 L0,8 L9,4 z"/></marker></defs>
@@ -580,7 +575,7 @@
         </div>
         <div class="world-cards margin-figure-sequence">
           <article class="margin-figure-row">
-            <figure class="world-visual margin-figure side-figure" data-figure="cylinder-prior-bifurcation" data-evidence="schematic" aria-label="Interactive cylinder branch figure">
+            <figure class="world-visual margin-figure side-figure" data-figure="cylinder-prior-bifurcation" aria-label="Interactive cylinder branch figure">
             <div class="world-sketch realistic-world" role="img" aria-label="A compact domain on a three-dimensional flat cylinder whose two boundary loops are controlled by the bifurcation parameter s">
               <svg viewBox="0 0 520 300" aria-hidden="true">
                 <defs>
@@ -630,7 +625,7 @@
                 <text class="branch-axis-label" x="150" y="100" text-anchor="middle">a</text>
               </svg>
               <input id="cylinderBranchRange" type="range" min="-1" max="1" step="0.01" value="0" aria-label="Cylinder bifurcation parameter from minus epsilon to plus epsilon" class="branch-range-hidden" tabindex="-1">
-              <p class="branch-hint branch-keyboard-instruction" id="cylinderBranchKeyboard">Move along the blue line for the radially symmetric (trivial) examples, and along the red one for the new branch proved by Fall, Minlend and Weth. Keyboard: focus the diagram; arrow keys change \(s\), while Shift+Left or Shift+Right moves along the trivial family.</p>
+              <p class="branch-hint branch-keyboard-instruction" id="cylinderBranchKeyboard">With the diagram focused, arrow keys change \(s\); Shift+Left or Shift+Right moves along the trivial family.</p>
             </div>
             <figcaption>A bifurcating band on the flat cylinder.</figcaption>
             </figure>
@@ -648,7 +643,7 @@
             <a class="literature-link" href="https://ems.press/journals/jems/articles/14298635" target="_blank" rel="noreferrer">Fall–Minlend–Weth, JEMS (2025) ↗</a>
           </article>
           <article class="margin-figure-row">
-            <figure class="world-visual margin-figure side-figure" data-figure="annulus-prior-bifurcation" data-evidence="schematic" aria-label="Interactive planar annulus branch figure">
+            <figure class="world-visual margin-figure side-figure" data-figure="annulus-prior-bifurcation" aria-label="Interactive planar annulus branch figure">
             <div class="world-sketch realistic-world" role="img" aria-label="A doubly connected planar domain whose outer boundary carries a four-fold ripple controlled by the bifurcation parameter s">
               <svg viewBox="0 0 660 300" xmlns="http://www.w3.org/2000/svg">
                 <defs>
@@ -689,7 +684,7 @@
                 <text class="branch-axis-label" x="150" y="100" text-anchor="middle">a</text>
               </svg>
               <input id="annulusBranchRange" type="range" min="-1" max="1" step="0.01" value="0" aria-label="Annulus bifurcation parameter from minus epsilon to plus epsilon" class="branch-range-hidden" tabindex="-1">
-              <p class="branch-hint branch-keyboard-instruction" id="annulusBranchKeyboard">Move along the blue line for the radially symmetric (trivial) examples, and along the red one for the new branch proved by Enciso, Fern&aacute;ndez, Ruiz and Sicbaldi. Keyboard: focus the diagram; arrow keys change \(s\), while Shift+Left or Shift+Right moves along the trivial family.</p>
+              <p class="branch-hint branch-keyboard-instruction" id="annulusBranchKeyboard">With the diagram focused, arrow keys change \(s\); Shift+Left or Shift+Right moves along the trivial family.</p>
             </div>
             <figcaption>A bifurcating doubly connected planar domain.</figcaption>
             </figure>
@@ -699,7 +694,7 @@
             <a class="literature-link" href="https://doi.org/10.1215/00127094-2024-0054" target="_blank" rel="noreferrer">Enciso–Fernández–Ruiz–Sicbaldi, Duke (2025) ↗</a>
           </article>
           <article class="margin-figure-row">
-            <figure class="world-visual margin-figure side-figure" data-figure="sphere-prior-bifurcation" data-evidence="schematic" aria-label="Interactive spherical branch figure">
+            <figure class="world-visual margin-figure side-figure" data-figure="sphere-prior-bifurcation" aria-label="Interactive spherical branch figure">
             <div class="world-sketch realistic-world" role="img" aria-label="A contractible spherical cap contained in the northern hemisphere whose eightfold boundary is controlled by the bifurcation parameter s">
               <svg viewBox="0 0 520 300" aria-hidden="true">
                 <defs>
@@ -746,7 +741,7 @@
                 <text class="branch-axis-label" x="150" y="100" text-anchor="middle">θ</text>
               </svg>
               <input id="sphereBranchRange" type="range" min="-1" max="1" step="0.01" value="0" aria-label="Spherical bifurcation parameter from minus epsilon to plus epsilon" class="branch-range-hidden" tabindex="-1">
-              <p class="branch-hint branch-keyboard-instruction" id="sphereBranchKeyboard">Move along the blue line for the radially symmetric (trivial) examples, and along the red one for the new branch proved by Cao-Labora and Fern&aacute;ndez. Keyboard: focus the diagram; arrow keys change \(s\), while Shift+Left or Shift+Right moves along the trivial family.</p>
+              <p class="branch-hint branch-keyboard-instruction" id="sphereBranchKeyboard">With the diagram focused, arrow keys change \(s\); Shift+Left or Shift+Right moves along the trivial family.</p>
             </div>
             <figcaption>A bifurcating geodesic disk on the sphere.</figcaption>
             </figure>
@@ -754,7 +749,7 @@
             <a class="literature-link" href="https://arxiv.org/abs/2510.05732" target="_blank" rel="noreferrer">Cao-Labora–Fernández (2025) ↗</a>
           </article>
           <article class="margin-figure-row wheeler-prior-art">
-            <figure class="world-visual margin-figure side-figure" data-figure="constant-flux-prior-bifurcation" data-evidence="schematic" aria-label="Interactive planar constant-flux branch figure">
+            <figure class="world-visual margin-figure side-figure" data-figure="constant-flux-prior-bifurcation" aria-label="Interactive planar constant-flux branch figure">
               <div class="world-sketch realistic-world" role="img" aria-label="A disk deforming into a tenfold noncircular planar domain while equal outward arrows represent a constant nonzero normal derivative">
                 <svg viewBox="0 0 520 300" aria-hidden="true">
                   <defs>
@@ -801,28 +796,26 @@
         <div class="intro-copy intro-copy-wide construction-flow">
           <label for="construction-gallery-note" class="margin-toggle" aria-label="Show the shape comparison">&#8853;</label>
           <input type="checkbox" id="construction-gallery-note" class="margin-toggle">
-          <figure class="marginnote side-figure margin-gallery intro-shapes" data-figure="fluted-boundary-comparison" data-evidence="mixed" data-evidence-detail="The panels comprise a certified tenfold result, a numerical 28-fold illustration, and two contextual objects. Each panel carries its own status." aria-label="Four examples with periodically fluted boundaries">
+          <figure class="marginnote side-figure margin-gallery intro-shapes" data-figure="fluted-boundary-comparison" aria-label="Four examples with periodically fluted boundaries">
           <div class="intro-shapes-row">
             <div class="intro-shapes-examples">
               <div class="intro-shape intro-shape-result intro-shape-computer">
-                <span class="panel-evidence panel-evidence-certified">Certified result</span>
                 <div class="intro-shape-media intro-shape-domain">
                   <img src="assets/comparison-d10.webp" width="1000" height="1000" loading="lazy" decoding="async" alt="A tenfold-symmetric noncircular domain containing the blue and orange colour field and level curves of its Schiffer eigenfunction">
                 </div>
-                <p class="intro-shape-kicker">Conformal fixed-disk route</p>
-                <b>A \(D_{10}\)-symmetric example</b>
+                <p class="eyebrow">Conformal fixed-disk route</p>
+                <strong class="figure-panel-title">A \(D_{10}\)-symmetric example</strong>
                 <small>A higher-root tenfold kernel and numerical continuation produce the centre; a computer-assisted fixed-disk certificate proves the exact example.</small>
               </div>
               <div class="intro-shape intro-shape-result intro-shape-bifurcation">
-              <span class="panel-evidence panel-evidence-numerical">Numerical illustration</span>
               <div class="intro-shape-media intro-shape-domain">
                 <img src="assets/comparison-d28.webp" width="1000" height="1000" loading="lazy" decoding="async" alt="A numerically computed 28-fold field portrait illustrating the bifurcation mechanism">
               </div>
               <svg viewBox="0 0 180 180" role="img" aria-label="A nearly circular outline with twenty-eight very shallow ripples, drawn at true scale">
                 <path class="intro-shape-line" d="M155.1 90.0L155.2 89.0L155.5 87.9L155.8 86.8L156.1 85.8L156.3 84.7L156.4 83.6L156.4 82.5L156.2 81.5L155.8 80.4L155.4 79.4L154.8 78.4L154.3 77.5L153.8 76.5L153.4 75.5L153.3 74.5L153.3 73.4L153.4 72.3L153.5 71.2L153.5 70.0L153.3 69.0L153.0 67.9L152.6 67.0L152.1 66.0L151.4 65.1L150.7 64.3L149.9 63.5L149.2 62.7L148.6 61.8L148.3 60.8L148.1 59.7L147.9 58.6L147.7 57.5L147.4 56.4L147.0 55.4L146.5 54.5L145.9 53.6L145.2 52.8L144.3 52.1L143.4 51.5L142.5 50.8L141.6 50.2L140.9 49.4L140.3 48.5L139.9 47.6L139.5 46.5L139.0 45.5L138.5 44.5L137.9 43.6L137.2 42.8L136.4 42.1L135.5 41.5L134.5 41.0L133.5 40.5L132.4 40.1L131.5 39.7L130.6 39.1L129.8 38.4L129.2 37.5L128.5 36.6L127.9 35.7L127.2 34.8L126.4 34.1L125.5 33.5L124.6 33.0L123.6 32.6L122.5 32.3L121.4 32.1L120.3 31.9L119.2 31.7L118.2 31.4L117.3 30.8L116.5 30.1L115.7 29.3L114.9 28.6L114.0 27.9L113.0 27.4L112.1 27.0L111.0 26.7L110.0 26.5L108.8 26.5L107.7 26.6L106.6 26.7L105.5 26.7L104.5 26.6L103.5 26.2L102.5 25.7L101.6 25.2L100.6 24.6L99.6 24.2L98.5 23.8L97.5 23.6L96.4 23.6L95.3 23.7L94.2 23.9L93.2 24.2L92.1 24.5L91.0 24.8L90.0 24.9L89.0 24.8L87.9 24.5L86.8 24.2L85.8 23.9L84.7 23.7L83.6 23.6L82.5 23.6L81.5 23.8L80.4 24.2L79.4 24.6L78.4 25.2L77.5 25.7L76.5 26.2L75.5 26.6L74.5 26.7L73.4 26.7L72.3 26.6L71.2 26.5L70.0 26.5L69.0 26.7L67.9 27.0L67.0 27.4L66.0 27.9L65.1 28.6L64.3 29.3L63.5 30.1L62.7 30.8L61.8 31.4L60.8 31.7L59.7 31.9L58.6 32.1L57.5 32.3L56.4 32.6L55.4 33.0L54.5 33.5L53.6 34.1L52.8 34.8L52.1 35.7L51.5 36.6L50.8 37.5L50.2 38.4L49.4 39.1L48.5 39.7L47.6 40.1L46.5 40.5L45.5 41.0L44.5 41.5L43.6 42.1L42.8 42.8L42.1 43.6L41.5 44.5L41.0 45.5L40.5 46.5L40.1 47.6L39.7 48.5L39.1 49.4L38.4 50.2L37.5 50.8L36.6 51.5L35.7 52.1L34.8 52.8L34.1 53.6L33.5 54.5L33.0 55.4L32.6 56.4L32.3 57.5L32.1 58.6L31.9 59.7L31.7 60.8L31.4 61.8L30.8 62.7L30.1 63.5L29.3 64.3L28.6 65.1L27.9 66.0L27.4 67.0L27.0 67.9L26.7 69.0L26.5 70.0L26.5 71.2L26.6 72.3L26.7 73.4L26.7 74.5L26.6 75.5L26.2 76.5L25.7 77.5L25.2 78.4L24.6 79.4L24.2 80.4L23.8 81.5L23.6 82.5L23.6 83.6L23.7 84.7L23.9 85.8L24.2 86.8L24.5 87.9L24.8 89.0L24.9 90.0L24.8 91.0L24.5 92.1L24.2 93.2L23.9 94.2L23.7 95.3L23.6 96.4L23.6 97.5L23.8 98.5L24.2 99.6L24.6 100.6L25.2 101.6L25.7 102.5L26.2 103.5L26.6 104.5L26.7 105.5L26.7 106.6L26.6 107.7L26.5 108.8L26.5 110.0L26.7 111.0L27.0 112.1L27.4 113.0L27.9 114.0L28.6 114.9L29.3 115.7L30.1 116.5L30.8 117.3L31.4 118.2L31.7 119.2L31.9 120.3L32.1 121.4L32.3 122.5L32.6 123.6L33.0 124.6L33.5 125.5L34.1 126.4L34.8 127.2L35.7 127.9L36.6 128.5L37.5 129.2L38.4 129.8L39.1 130.6L39.7 131.5L40.1 132.4L40.5 133.5L41.0 134.5L41.5 135.5L42.1 136.4L42.8 137.2L43.6 137.9L44.5 138.5L45.5 139.0L46.5 139.5L47.6 139.9L48.5 140.3L49.4 140.9L50.2 141.6L50.8 142.5L51.5 143.4L52.1 144.3L52.8 145.2L53.6 145.9L54.5 146.5L55.4 147.0L56.4 147.4L57.5 147.7L58.6 147.9L59.7 148.1L60.8 148.3L61.8 148.6L62.7 149.2L63.5 149.9L64.3 150.7L65.1 151.4L66.0 152.1L67.0 152.6L67.9 153.0L69.0 153.3L70.0 153.5L71.2 153.5L72.3 153.4L73.4 153.3L74.5 153.3L75.5 153.4L76.5 153.8L77.5 154.3L78.4 154.8L79.4 155.4L80.4 155.8L81.5 156.2L82.5 156.4L83.6 156.4L84.7 156.3L85.8 156.1L86.8 155.8L87.9 155.5L89.0 155.2L90.0 155.1L91.0 155.2L92.1 155.5L93.2 155.8L94.2 156.1L95.3 156.3L96.4 156.4L97.5 156.4L98.5 156.2L99.6 155.8L100.6 155.4L101.6 154.8L102.5 154.3L103.5 153.8L104.5 153.4L105.5 153.3L106.6 153.3L107.7 153.4L108.8 153.5L110.0 153.5L111.0 153.3L112.1 153.0L113.0 152.6L114.0 152.1L114.9 151.4L115.7 150.7L116.5 149.9L117.3 149.2L118.2 148.6L119.2 148.3L120.3 148.1L121.4 147.9L122.5 147.7L123.6 147.4L124.6 147.0L125.5 146.5L126.4 145.9L127.2 145.2L127.9 144.3L128.5 143.4L129.2 142.5L129.8 141.6L130.6 140.9L131.5 140.3L132.4 139.9L133.5 139.5L134.5 139.0L135.5 138.5L136.4 137.9L137.2 137.2L137.9 136.4L138.5 135.5L139.0 134.5L139.5 133.5L139.9 132.4L140.3 131.5L140.9 130.6L141.6 129.8L142.5 129.2L143.4 128.5L144.3 127.9L145.2 127.2L145.9 126.4L146.5 125.5L147.0 124.6L147.4 123.6L147.7 122.5L147.9 121.4L148.1 120.3L148.3 119.2L148.6 118.2L149.2 117.3L149.9 116.5L150.7 115.7L151.4 114.9L152.1 114.0L152.6 113.0L153.0 112.1L153.3 111.0L153.5 110.0L153.5 108.8L153.4 107.7L153.3 106.6L153.3 105.5L153.4 104.5L153.8 103.5L154.3 102.5L154.8 101.6L155.4 100.6L155.8 99.6L156.2 98.5L156.4 97.5L156.4 96.4L156.3 95.3L156.1 94.2L155.8 93.2L155.5 92.1L155.2 91.0Z"></path>
               </svg>
-              <p class="intro-shape-kicker">Bifurcation route</p>
-              <b>A numerical \(D_{28}\) realisation</b>
+              <p class="eyebrow">Bifurcation route</p>
+              <strong class="figure-panel-title">A \(D_{28}\)-symmetric profile</strong>
               <small>An informal numerical illustration of the pattern predicted by the asymptotic proof.</small>
               </div>
             </div>
@@ -834,35 +827,33 @@
               </div>
               <div class="intro-shapes-objects">
             <div class="intro-shape intro-shape-object">
-              <span class="panel-evidence panel-evidence-context">Context only</span>
               <div class="intro-shape-media intro-shape-coin">
                 <img src="assets/comparison-hk-coin.webp" width="1000" height="1000" loading="lazy" decoding="async" alt="A Hong Kong two-dollar coin with twelve scallops around its boundary">
               </div>
               <svg viewBox="0 0 180 180" role="img" aria-label="A twelve-lobed scalloped outline, the shape of a Hong Kong two dollar coin">
                 <path class="intro-shape-line" d="M159.6 90.0L159.5 88.5L159.1 87.0L158.4 85.5L157.6 84.1L156.5 82.7L155.4 81.4L154.3 80.1L153.2 78.9L152.2 77.6L151.4 76.4L150.7 75.1L150.2 73.9L150.0 72.5L149.9 71.1L150.1 69.6L150.3 68.0L150.6 66.4L151.0 64.7L151.3 63.0L151.5 61.3L151.5 59.7L151.3 58.1L150.9 56.6L150.3 55.2L149.4 53.9L148.3 52.8L147.0 51.9L145.6 51.1L144.0 50.4L142.4 49.8L140.7 49.3L139.2 48.7L137.7 48.2L136.3 47.5L135.1 46.8L134.1 45.9L133.2 44.9L132.5 43.7L131.8 42.3L131.3 40.8L130.7 39.3L130.2 37.6L129.6 36.0L128.9 34.4L128.1 33.0L127.2 31.7L126.1 30.6L124.8 29.7L123.4 29.1L121.9 28.7L120.3 28.5L118.7 28.5L117.0 28.7L115.3 29.0L113.6 29.4L112.0 29.7L110.4 29.9L108.9 30.1L107.5 30.0L106.1 29.8L104.9 29.3L103.6 28.6L102.4 27.8L101.1 26.8L99.9 25.7L98.6 24.6L97.3 23.5L95.9 22.4L94.5 21.6L93.0 20.9L91.5 20.5L90.0 20.4L88.5 20.5L87.0 20.9L85.5 21.6L84.1 22.4L82.7 23.5L81.4 24.6L80.1 25.7L78.9 26.8L77.6 27.8L76.4 28.6L75.1 29.3L73.9 29.8L72.5 30.0L71.1 30.1L69.6 29.9L68.0 29.7L66.4 29.4L64.7 29.0L63.0 28.7L61.3 28.5L59.7 28.5L58.1 28.7L56.6 29.1L55.2 29.7L53.9 30.6L52.8 31.7L51.9 33.0L51.1 34.4L50.4 36.0L49.8 37.6L49.3 39.3L48.7 40.8L48.2 42.3L47.5 43.7L46.8 44.9L45.9 45.9L44.9 46.8L43.7 47.5L42.3 48.2L40.8 48.7L39.3 49.3L37.6 49.8L36.0 50.4L34.4 51.1L33.0 51.9L31.7 52.8L30.6 53.9L29.7 55.2L29.1 56.6L28.7 58.1L28.5 59.7L28.5 61.3L28.7 63.0L29.0 64.7L29.4 66.4L29.7 68.0L29.9 69.6L30.1 71.1L30.0 72.5L29.8 73.9L29.3 75.1L28.6 76.4L27.8 77.6L26.8 78.9L25.7 80.1L24.6 81.4L23.5 82.7L22.4 84.1L21.6 85.5L20.9 87.0L20.5 88.5L20.4 90.0L20.5 91.5L20.9 93.0L21.6 94.5L22.4 95.9L23.5 97.3L24.6 98.6L25.7 99.9L26.8 101.1L27.8 102.4L28.6 103.6L29.3 104.9L29.8 106.1L30.0 107.5L30.1 108.9L29.9 110.4L29.7 112.0L29.4 113.6L29.0 115.3L28.7 117.0L28.5 118.7L28.5 120.3L28.7 121.9L29.1 123.4L29.7 124.8L30.6 126.1L31.7 127.2L33.0 128.1L34.4 128.9L36.0 129.6L37.6 130.2L39.3 130.7L40.8 131.3L42.3 131.8L43.7 132.5L44.9 133.2L45.9 134.1L46.8 135.1L47.5 136.3L48.2 137.7L48.7 139.2L49.3 140.7L49.8 142.4L50.4 144.0L51.1 145.6L51.9 147.0L52.8 148.3L53.9 149.4L55.2 150.3L56.6 150.9L58.1 151.3L59.7 151.5L61.3 151.5L63.0 151.3L64.7 151.0L66.4 150.6L68.0 150.3L69.6 150.1L71.1 149.9L72.5 150.0L73.9 150.2L75.1 150.7L76.4 151.4L77.6 152.2L78.9 153.2L80.1 154.3L81.4 155.4L82.7 156.5L84.1 157.6L85.5 158.4L87.0 159.1L88.5 159.5L90.0 159.6L91.5 159.5L93.0 159.1L94.5 158.4L95.9 157.6L97.3 156.5L98.6 155.4L99.9 154.3L101.1 153.2L102.4 152.2L103.6 151.4L104.9 150.7L106.1 150.2L107.5 150.0L108.9 149.9L110.4 150.1L112.0 150.3L113.6 150.6L115.3 151.0L117.0 151.3L118.7 151.5L120.3 151.5L121.9 151.3L123.4 150.9L124.8 150.3L126.1 149.4L127.2 148.3L128.1 147.0L128.9 145.6L129.6 144.0L130.2 142.4L130.7 140.7L131.3 139.2L131.8 137.7L132.5 136.3L133.2 135.1L134.1 134.1L135.1 133.2L136.3 132.5L137.7 131.8L139.2 131.3L140.7 130.7L142.4 130.2L144.0 129.6L145.6 128.9L147.0 128.1L148.3 127.2L149.4 126.1L150.3 124.8L150.9 123.4L151.3 121.9L151.5 120.3L151.5 118.7L151.3 117.0L151.0 115.3L150.6 113.6L150.3 112.0L150.1 110.4L149.9 108.9L150.0 107.5L150.2 106.1L150.7 104.9L151.4 103.6L152.2 102.4L153.2 101.1L154.3 99.9L155.4 98.6L156.5 97.3L157.6 95.9L158.4 94.5L159.1 93.0L159.5 91.5Z"></path>
               </svg>
-              <b>A Hong Kong two-dollar coin</b>
+              <strong class="figure-panel-title">A Hong Kong two-dollar coin</strong>
               <small>A twelve-scalloped circulating coin, first issued in 1975.</small>
             </div>
             <div class="intro-shape intro-shape-object">
-              <span class="panel-evidence panel-evidence-context">Context only</span>
               <div class="intro-shape-media intro-shape-biscuit">
                 <img src="assets/comparison-cookie.webp" width="1000" height="1000" loading="lazy" decoding="async" alt="A round biscuit with a regularly fluted boundary">
               </div>
               <svg viewBox="0 0 180 180" role="img" aria-label="A circular outline with a finely fluted rim, the shape of a scalloped biscuit">
                 <path class="intro-shape-line" d="M157.6 90.0L157.4 88.9L156.8 87.8L155.9 86.8L155.1 85.7L154.4 84.7L154.1 83.7L154.2 82.6L154.7 81.5L155.3 80.3L155.9 79.1L156.3 77.9L156.3 76.8L155.9 75.8L155.0 74.8L154.0 74.0L153.0 73.1L152.1 72.3L151.6 71.3L151.5 70.2L151.7 69.0L152.1 67.8L152.5 66.5L152.7 65.2L152.4 64.1L151.8 63.2L150.8 62.4L149.7 61.8L148.5 61.2L147.5 60.5L146.8 59.6L146.5 58.6L146.5 57.4L146.6 56.1L146.7 54.7L146.6 53.5L146.2 52.5L145.4 51.7L144.3 51.1L143.0 50.7L141.7 50.3L140.6 49.8L139.8 49.1L139.3 48.2L139.0 47.0L138.9 45.7L138.7 44.3L138.4 43.1L137.8 42.2L136.9 41.6L135.7 41.3L134.3 41.1L133.0 41.0L131.8 40.7L130.9 40.2L130.2 39.4L129.7 38.3L129.3 37.0L128.9 35.7L128.3 34.6L127.5 33.8L126.5 33.4L125.3 33.3L123.9 33.4L122.6 33.5L121.4 33.5L120.4 33.2L119.5 32.5L118.8 31.5L118.2 30.3L117.6 29.2L116.8 28.2L115.9 27.6L114.8 27.3L113.5 27.5L112.2 27.9L111.0 28.3L109.8 28.5L108.7 28.4L107.7 27.9L106.9 27.0L106.0 26.0L105.2 25.0L104.2 24.1L103.2 23.7L102.1 23.7L100.9 24.1L99.7 24.7L98.5 25.3L97.4 25.8L96.3 25.9L95.3 25.6L94.3 24.9L93.2 24.1L92.2 23.2L91.1 22.6L90.0 22.4L88.9 22.6L87.8 23.2L86.8 24.1L85.7 24.9L84.7 25.6L83.7 25.9L82.6 25.8L81.5 25.3L80.3 24.7L79.1 24.1L77.9 23.7L76.8 23.7L75.8 24.1L74.8 25.0L74.0 26.0L73.1 27.0L72.3 27.9L71.3 28.4L70.2 28.5L69.0 28.3L67.8 27.9L66.5 27.5L65.2 27.3L64.1 27.6L63.2 28.2L62.4 29.2L61.8 30.3L61.2 31.5L60.5 32.5L59.6 33.2L58.6 33.5L57.4 33.5L56.1 33.4L54.7 33.3L53.5 33.4L52.5 33.8L51.7 34.6L51.1 35.7L50.7 37.0L50.3 38.3L49.8 39.4L49.1 40.2L48.2 40.7L47.0 41.0L45.7 41.1L44.3 41.3L43.1 41.6L42.2 42.2L41.6 43.1L41.3 44.3L41.1 45.7L41.0 47.0L40.7 48.2L40.2 49.1L39.4 49.8L38.3 50.3L37.0 50.7L35.7 51.1L34.6 51.7L33.8 52.5L33.4 53.5L33.3 54.7L33.4 56.1L33.5 57.4L33.5 58.6L33.2 59.6L32.5 60.5L31.5 61.2L30.3 61.8L29.2 62.4L28.2 63.2L27.6 64.1L27.3 65.2L27.5 66.5L27.9 67.8L28.3 69.0L28.5 70.2L28.4 71.3L27.9 72.3L27.0 73.1L26.0 74.0L25.0 74.8L24.1 75.8L23.7 76.8L23.7 77.9L24.1 79.1L24.7 80.3L25.3 81.5L25.8 82.6L25.9 83.7L25.6 84.7L24.9 85.7L24.1 86.8L23.2 87.8L22.6 88.9L22.4 90.0L22.6 91.1L23.2 92.2L24.1 93.2L24.9 94.3L25.6 95.3L25.9 96.3L25.8 97.4L25.3 98.5L24.7 99.7L24.1 100.9L23.7 102.1L23.7 103.2L24.1 104.2L25.0 105.2L26.0 106.0L27.0 106.9L27.9 107.7L28.4 108.7L28.5 109.8L28.3 111.0L27.9 112.2L27.5 113.5L27.3 114.8L27.6 115.9L28.2 116.8L29.2 117.6L30.3 118.2L31.5 118.8L32.5 119.5L33.2 120.4L33.5 121.4L33.5 122.6L33.4 123.9L33.3 125.3L33.4 126.5L33.8 127.5L34.6 128.3L35.7 128.9L37.0 129.3L38.3 129.7L39.4 130.2L40.2 130.9L40.7 131.8L41.0 133.0L41.1 134.3L41.3 135.7L41.6 136.9L42.2 137.8L43.1 138.4L44.3 138.7L45.7 138.9L47.0 139.0L48.2 139.3L49.1 139.8L49.8 140.6L50.3 141.7L50.7 143.0L51.1 144.3L51.7 145.4L52.5 146.2L53.5 146.6L54.7 146.7L56.1 146.6L57.4 146.5L58.6 146.5L59.6 146.8L60.5 147.5L61.2 148.5L61.8 149.7L62.4 150.8L63.2 151.8L64.1 152.4L65.2 152.7L66.5 152.5L67.8 152.1L69.0 151.7L70.2 151.5L71.3 151.6L72.3 152.1L73.1 153.0L74.0 154.0L74.8 155.0L75.8 155.9L76.8 156.3L77.9 156.3L79.1 155.9L80.3 155.3L81.5 154.7L82.6 154.2L83.7 154.1L84.7 154.4L85.7 155.1L86.8 155.9L87.8 156.8L88.9 157.4L90.0 157.6L91.1 157.4L92.2 156.8L93.2 155.9L94.3 155.1L95.3 154.4L96.3 154.1L97.4 154.2L98.5 154.7L99.7 155.3L100.9 155.9L102.1 156.3L103.2 156.3L104.2 155.9L105.2 155.0L106.0 154.0L106.9 153.0L107.7 152.1L108.7 151.6L109.8 151.5L111.0 151.7L112.2 152.1L113.5 152.5L114.8 152.7L115.9 152.4L116.8 151.8L117.6 150.8L118.2 149.7L118.8 148.5L119.5 147.5L120.4 146.8L121.4 146.5L122.6 146.5L123.9 146.6L125.3 146.7L126.5 146.6L127.5 146.2L128.3 145.4L128.9 144.3L129.3 143.0L129.7 141.7L130.2 140.6L130.9 139.8L131.8 139.3L133.0 139.0L134.3 138.9L135.7 138.7L136.9 138.4L137.8 137.8L138.4 136.9L138.7 135.7L138.9 134.3L139.0 133.0L139.3 131.8L139.8 130.9L140.6 130.2L141.7 129.7L143.0 129.3L144.3 128.9L145.4 128.3L146.2 127.5L146.6 126.5L146.7 125.3L146.6 123.9L146.5 122.6L146.5 121.4L146.8 120.4L147.5 119.5L148.5 118.8L149.7 118.2L150.8 117.6L151.8 116.8L152.4 115.9L152.7 114.8L152.5 113.5L152.1 112.2L151.7 111.0L151.5 109.8L151.6 108.7L152.1 107.7L153.0 106.9L154.0 106.0L155.0 105.2L155.9 104.2L156.3 103.2L156.3 102.1L155.9 100.9L155.3 99.7L154.7 98.5L154.2 97.4L154.1 96.3L154.4 95.3L155.1 94.3L155.9 93.2L156.8 92.2L157.4 91.1Z"></path>
               </svg>
-              <b>A fluted biscuit</b>
+              <strong class="figure-panel-title">A fluted biscuit</strong>
               <small>A similar periodic boundary profile, with a larger relative amplitude.</small>
             </div>
               </div>
             </div>
           </div>
-          <figcaption>The gallery shows the two constructed domains and two familiar fluted objects at a common visual scale. The first reconstruction is certified, the second is a numerical illustration, and the coin and biscuit provide visual context only.</figcaption>
+          <figcaption>Two constructed domains and two familiar periodically fluted objects, shown at a common visual scale.</figcaption>
         </figure>
 
           <p>The two planar constructions proceed differently. In the conformal fixed-disk construction, a bifurcating relaxed constant-flux family locates a precise zero-flux candidate; rigorous fixed-point bounds then prove that an exact solution lies nearby. In the bifurcation construction, the branch is the analytic existence mechanism: the moving-boundary problem is posed on a fixed collar, and a uniformly controlled branch bends from a noninteger Bessel crossing until its order reaches an integer.</p>
-          <p>The field at left depicts the certified \(D_{10}\)-symmetric solution obtained by the conformal fixed-disk construction. The field at right is a \(D_{28}\)-symmetric numerical realisation of the bifurcation mechanism. In both cases the picture is an illustration: the rigorous conclusions come from a validated coefficient-space contraction and from uniform analytic bifurcation with Bessel asymptotics, respectively. In both pictures the outer curve is \(\partial\Omega\), and the colour field is the corresponding solution \(u\). The coin and biscuit provide familiar examples of the same kind of periodically undulating boundary.</p>
+          <p>The left panel shows the \(D_{10}\)-symmetric solution from the conformal fixed-disk construction; the right shows the \(D_{28}\)-symmetric profile associated with the bifurcation mechanism. In both panels the outer curve is \(\partial\Omega\), and the colour field is \(u\). The coin and biscuit show familiar periodically fluted boundaries.</p>
           <p>The two papers, by <a href="https://arxiv.org/abs/2608.01579" target="_blank" rel="noreferrer">Colbrook–Stepaniants</a> and <a href="https://arxiv.org/abs/2608.05114" target="_blank" rel="noreferrer">Cao-Labora–de Dios Pont</a>, appeared in early August 2026. <a class="xref" data-ref="computer-assisted-proof" href="#computer-assisted-proof">The computer-assisted proof</a> and <a class="xref" data-ref="experiment" href="#experiment">the bifurcation proof</a> develop the two arguments.</p>
         </div>
         <div class="paper-copy pompeiu-corollary-intro">
@@ -872,20 +863,19 @@
           <article class="math-statement" data-kind="corollary" data-label="pompeiu-star-shaped" aria-labelledby="pompeiuCorollaryTitle">
             <header class="math-statement-header"><span>Corollary</span><small>planar Pompeiu counterexample</small></header>
             <div class="math-statement-body">
-              <p id="pompeiuCorollaryTitle">There is a bounded, nonempty planar domain with regular \(C^2\) boundary, star-shaped with respect to the origin, which is not a disk and does not have the Pompeiu property.</p>
+              <p id="pompeiuCorollaryTitle">There is a <span data-lean-alignment="pompeiu-star-shaped:bounded">bounded</span>, <span data-lean-alignment="pompeiu-star-shaped:nonempty">nonempty</span> planar domain with <span data-lean-alignment="pompeiu-star-shaped:regularity">regular \(C^2\) boundary</span>, <span data-lean-alignment="pompeiu-star-shaped:star-shaped">star-shaped with respect to the origin</span>, which is <span data-lean-alignment="pompeiu-star-shaped:not-disk">not a disk</span> and <span data-lean-alignment="pompeiu-star-shaped:pompeiu">does not have the Pompeiu property</span>.</p>
             </div>
           </article>
           <lean-statement data-statement="pompeiu-star-shaped"></lean-statement>
         </div>
-        <div class="paper-copy berenstein-companion" aria-labelledby="berensteinCompanionTitle">
+        <div class="intro-copy berenstein-companion" aria-labelledby="berensteinCompanionTitle">
           <label for="berenstein-companion-note" class="margin-toggle" aria-label="Show the Berenstein counterexample">&#8853;</label>
           <input type="checkbox" id="berenstein-companion-note" class="margin-toggle">
-          <figure id="figure-berenstein-counterexample" class="marginnote side-figure berenstein-result-aside" data-figure="berenstein-counterexample" data-evidence="certified">
+          <figure id="figure-berenstein-counterexample" class="marginnote side-figure berenstein-result-aside" data-figure="berenstein-counterexample">
             <img src="assets/berenstein-domain-solution.png" width="1890" height="1560" loading="lazy" decoding="async" alt="A thirteenfold-symmetric noncircular domain coloured by a sign-changing eigenfunction and its interior zero contours">
-            <figcaption>The certified \(D_{13}\)-symmetric Berenstein domain. The interior curves are zero level sets of its sign-changing eigenfunction.</figcaption>
+            <figcaption>A \(D_{13}\)-symmetric Berenstein domain; the interior curves are zero level sets of its sign-changing eigenfunction.</figcaption>
           </figure>
-          <p class="eyebrow">Companion result · Berenstein conjecture</p>
-          <h3 id="berensteinCompanionTitle">The switched conditions also allow a non-disk</h3>
+          <h3 id="berensteinCompanionTitle">Companion result: the Berenstein conjecture</h3>
           <p>A <a href="https://arxiv.org/abs/2608.08953" target="_blank" rel="noreferrer">companion conformal fixed-disk proof</a>, completed by computer-assisted validation, is due to Colbrook, Sadeghi and Stepaniants. It finds a non-disk with \(u=0\) on its boundary and a constant normal derivative different from zero. This disproves the unrestricted planar Berenstein conjecture. Its eigenfunction changes sign, so versions that assume one sign are not contradicted.</p>
         </div>
       </section>
@@ -904,7 +894,7 @@
         <section class="route-comparison data-table" aria-labelledby="routeComparisonTitle">
           <header>
             <span>Shared structure</span>
-            <h3 id="routeComparisonTitle">The two constructions have the same three structural levels.</h3>
+            <h3 id="routeComparisonTitle">The two constructions have the same three structural levels</h3>
           </header>
           <div class="route-comparison-controls" role="group" aria-label="Highlight one comparison level">
             <button type="button" data-route-level-control="mechanism" aria-pressed="true">Geometric mechanism</button>
@@ -913,7 +903,7 @@
           </div>
           <div class="route-comparison-table-wrap">
             <table class="route-comparison-table">
-              <caption>Both routes have a geometric mechanism, an analytic reduction, and a distinct rigorous closure.</caption>
+              <caption class="visually-hidden">Comparison of the two counterexample constructions.</caption>
               <thead>
                 <tr>
                   <th scope="col">Level</th>
@@ -935,7 +925,7 @@
                 <tr data-route-level="closure">
                   <th scope="row">Rigorous closure</th>
                   <td data-route="Conformal fixed-disk route">A validated contraction combines interval arithmetic on a finite block with analytic control of every tail coefficient.</td>
-                  <td data-route="Bifurcation route">Equidistribution of Bessel zeros; uniform bounds for \(\mathcal G\) and for the inverse of its linearization; uniform transversality; uniform control of the branch to second order.</td>
+                  <td data-route="Bifurcation route">Equidistribution finds near-integer crossings; uniform estimates, transversality, and second-order branch control then carry them to integer order.</td>
                 </tr>
               </tbody>
             </table>
@@ -951,7 +941,7 @@
           <header class="proof-atlas-heading">
             <p class="eyebrow">Logical dependencies</p>
             <h3 id="proofAtlasTitle">Two complete routes from disk rigidity to a noncircular planar domain</h3>
-            <p>The lanes are independent after the common obstruction. Each node records its role and dependencies; the filters emphasize one kind of reasoning without hiding the rest of the proof.</p>
+            <p>The lanes are independent after the common obstruction. Each node records its role and dependencies; the filters emphasise one kind of reasoning without hiding the rest of the proof.</p>
           </header>
 
           <div class="proof-atlas-filters" role="group" aria-label="Emphasize proof nodes by method">
@@ -979,18 +969,18 @@
                 <h4 id="fixedAtlasTitle">Search, encode, and certify</h4>
                 <a href="https://arxiv.org/abs/2608.01579" target="_blank" rel="noreferrer">Paper</a>
               </header>
-              <p class="proof-atlas-sequence-label">Discovery and centre provenance</p>
+              <p class="proof-atlas-sequence-label">Numerical search</p>
               <ol class="proof-atlas-discovery">
                 <li data-proof-tags="geometry bifurcation" data-proof-level="mechanism">
                   <div class="proof-node-card"><div class="proof-node-select" data-proof-node="fixed-crossing"><strong>Higher \(D_{10}\) relaxed-flux crossing</strong><small>A nontrivial kernel direction appears when \(\partial_\nu u=c\).</small></div><a href="#computer-search" aria-label="Open the higher tenfold crossing">↗</a></div>
                   <p class="proof-node-dependency">Depends on: disk rigidity and the relaxed constant-flux problem.</p>
                 </li>
                 <li data-proof-tags="bifurcation analysis" data-proof-level="mechanism">
-                  <div class="proof-node-card"><div class="proof-node-select" data-proof-node="fixed-continuation"><strong>Continue to \(c=0\)</strong><small>The computed endpoint is stored as the numerical centre \(x^\circ\).</small></div><a href="#computer-search" aria-label="Open numerical continuation to zero flux">↗</a></div>
+                  <div class="proof-node-card"><div class="proof-node-select" data-proof-node="fixed-continuation"><strong>Continue to \(c=0\)</strong><small>Numerical continuation reaches \(c=0\) and produces \(x^\circ\).</small></div><a href="#computer-search" aria-label="Open numerical continuation to zero flux">↗</a></div>
                   <p class="proof-node-dependency">Depends on: the higher \(D_{10}\) crossing.</p>
                 </li>
               </ol>
-              <p class="proof-atlas-lane-note">The continuation explains where the stored centre came from; the existence proof uses that centre only through the independently checked certificate below.</p>
+              <p class="proof-atlas-lane-note">Continuation produces \(x^\circ\); the existence proof begins with the bounds verified below.</p>
               <p class="proof-atlas-sequence-label">Deductive certificate</p>
               <ol class="proof-atlas-deduction">
                 <li data-proof-tags="geometry analysis" data-proof-level="reduction">
@@ -1003,7 +993,7 @@
                 </li>
                 <li data-proof-tags="analysis validation" data-proof-level="closure">
                   <div class="proof-node-card"><div class="proof-node-select" data-proof-node="fixed-tail"><strong>Finite core and every infinite tail</strong><small>Explicit interaction bands meet monotone remote estimates with no gap.</small></div><a href="#computer-finite-tail" aria-label="Open the finite and infinite-tail estimates">↗</a></div>
-                  <p class="proof-node-dependency">Depends on: the cubic equation and the released approximate centre and inverse, not on the path used to find them.</p>
+                  <p class="proof-node-dependency">Depends on: the cubic equation, approximate centre, and approximate inverse.</p>
                 </li>
                 <li data-proof-tags="analysis arithmetic validation" data-proof-level="closure">
                   <div class="proof-node-card"><div class="proof-node-select" data-proof-node="fixed-contraction"><strong>Self-map and contraction certificate</strong><small>Exact inequalities trap one true coefficient solution near \(x^\circ\).</small></div><a href="#certificate-explorer" aria-label="Open the exact certificate implication replay">↗</a></div>
@@ -1068,7 +1058,6 @@
             <strong>Either independent lane proves that a noncircular planar Schiffer domain exists.</strong>
             <a href="#statement-main-result">Return to Theorem A</a>
           </div>
-          <p class="proof-atlas-companion">The <a href="#computer-berenstein">Berenstein companion</a> uses a related fixed-disk validation for a different exchange of boundary data; it is not a dependency of these two Schiffer proofs.</p>
         </section>
 
         <header id="numerical-route" class="section-heading proof-strategy-subheading route-subheading" data-title="Fixed disk: search, encode, and certify" data-toc="proof-subsection">
@@ -1077,15 +1066,15 @@
         <div class="geometry-lead numerical-route-lead">
           <label for="numerical-route-note" class="margin-toggle" aria-label="Show the certified numerical domain">&#8853;</label>
           <input type="checkbox" id="numerical-route-note" class="margin-toggle">
-          <figure class="marginnote side-figure numerical-route-aside" data-figure="numerical-continuation-centre" data-evidence="numerical">
-            <img src="assets/computer-assisted-domain-solution.png" width="1152" height="1152" loading="lazy" decoding="async" alt="The certified tenfold-symmetric Schiffer domain, coloured by its eigenfunction and level curves">
-            <figcaption>The \(D_{10}\)-symmetric numerical centre obtained by continuing the bifurcation-seeded branch to zero flux, then enclosed by a rigorous certificate.</figcaption>
+          <figure class="marginnote side-figure numerical-route-aside" data-figure="numerical-continuation-centre">
+            <img src="assets/computer-assisted-domain-solution.png" width="1152" height="1152" loading="lazy" decoding="async" alt="The tenfold-symmetric numerical centre, coloured by its computed field and level curves">
+            <figcaption>The \(D_{10}\)-symmetric numerical centre at zero flux.</figcaption>
           </figure>
           <p>The disk has no nontrivial first-order Schiffer deformation at zero flux. The fixed-disk construction therefore relaxes the condition to \(\partial_\nu u=c\). At a higher tenfold Wronskian crossing, the relaxed linearization acquires a nontrivial kernel. That direction seeds numerical continuation of a computed noncircular branch from \(c\ne0\) to \(c=0\), producing the extremely accurate approximate Schiffer domain used as the numerical centre. Exact existence comes from the subsequent computer-assisted validation.</p>
           <p>The continuation produces an approximate solution of the boundary equations. <a class="xref" data-ref="computer-assisted-proof" href="#computer-assisted-proof">The computer-assisted proof</a> pulls the moving-domain problem back to the unit disk and builds a small ball around that approximation. A Newton-like iteration stays inside the ball and moves any two coefficient lists closer together, so it converges to one exact domain.</p>
         </div>
 
-        <figure id="figure-computer-proof-overview" class="geometry-laboratory computer-overview-laboratory interactive-plate annotated-plate reading-figure" data-figure="computer-proof-overview" data-evidence="schematic" aria-labelledby="computerOverviewFigureTitle">
+        <figure id="figure-computer-proof-overview" class="geometry-laboratory computer-overview-laboratory interactive-plate annotated-plate reading-figure" data-figure="computer-proof-overview" aria-labelledby="computerOverviewFigureTitle">
           <aside class="geometry-controls paper-demo-controls">
             <div class="computer-overview-stages geometry-stages" aria-label="Five stages of the conformal fixed-disk construction">
               <button type="button" data-computer-overview-stage="0" aria-pressed="true"><span>01</span><strong>Follow \(c\) to zero</strong></button>
@@ -1133,14 +1122,14 @@
               <noscript><p class="no-js-figure-description">Static proof map: a relaxed tenfold bifurcation is numerically continued until c = 0, its endpoint is pulled back to one disk and encoded by x = (g,p), finite and infinite coefficients are bounded, a contraction produces the exact x*, and a nonzero conformal coefficient proves that the reconstructed domain is not a disk.</p></noscript>
             </div>
           </section>
-          <figcaption id="computerOverviewFigureTitle"><span class="figure-caption-summary">The computer-assisted route treats \(x=(g,p)\) as one point in coefficient space.</span><span class="figure-caption-note">The component \(g\) controls the field and \(p\) controls the shape. The pictures of \(X\) are schematic; the numerical bounds and final coefficient test are certified.</span></figcaption>
+          <figcaption id="computerOverviewFigureTitle">The fixed-disk proof in coefficient space, with \(g\) encoding the field and \(p\) the shape.</figcaption>
         </figure>
 
         <header id="cone-route" class="section-heading proof-strategy-subheading route-subheading" data-title="Bifurcate, bend, and close" data-toc="proof-subsection">
           <h3>Bifurcate, bend, and close</h3>
         </header>
         <div class="geometry-lead"><p>An \(N\)-fold domain can be divided by its rotations and its angular coordinate rescaled to period \(2\pi\). The quotient is a cone with metric \(g_R=dr^2+(r^2/R^2)d\psi^2\), where the planar case requires \(R=N\). As \(R\to\infty\), every fixed boundary collar approaches a half-cylinder; this is the limiting model visualised in <a class="xref" data-ref="cone-quotient-construction" href="#figure-cone-quotient-construction">the cone-quotient construction</a>. The proof itself works directly on a finite collar for every large real \(R\): it bifurcates at a noninteger crossing, obtains estimates uniform in the crossing, bends the branch to an integer, and only then unfolds the quotient into the plane.</p></div>
-        <figure id="figure-cone-quotient-construction" class="geometry-laboratory interactive-plate annotated-plate reading-figure" data-figure="cone-quotient-construction" data-evidence="schematic">
+        <figure id="figure-cone-quotient-construction" class="geometry-laboratory interactive-plate annotated-plate reading-figure" data-figure="cone-quotient-construction">
           <aside class="geometry-controls paper-demo-controls">
             <div class="control-heading control-heading-reset" hidden aria-hidden="true"><button id="storyGeometryResetButton" type="button" hidden aria-hidden="true">Reset</button></div>
             <div class="geometry-stages" aria-label="Seven stages of the quotient construction">
@@ -1167,8 +1156,25 @@
               <noscript><p class="no-js-figure-description">Static proof map: take one sector of an N-fold domain, identify its sides to obtain a cone, formulate the problem for real R on a fixed boundary collar, construct and bend a branch at finite R, then reach an integer R = N where the quotient seam closes and the domain unfolds into the plane.</p></noscript>
             </div>
           </section>
-          <figcaption><span class="figure-caption-summary">A non-integer order opens a cone branch that closes into the plane at an integer.</span><span class="figure-caption-note">The half-cylinder stage is a limiting picture of the local mechanism, not the logical starting point of the planar proof. The proof works on the finite-\(R\) collar, continues until \(R\) is an integer, and then lifts the quotient to the plane. Boundary displacement is enlarged uniformly throughout the animation so that the perturbation remains visible.</span></figcaption>
+          <figcaption>From an \(N\)-fold planar domain to its cone quotient and back.</figcaption>
         </figure>
+
+        <nav class="proof-fork" aria-label="Choose which proof to read">
+          <svg class="proof-fork-mark" viewBox="0 0 600 120" role="img" aria-label="One path splitting into two proof routes">
+            <defs>
+              <marker id="proofForkArrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+                <path d="M0 0L10 5L0 10Z"></path>
+              </marker>
+            </defs>
+            <path d="M300 4V43"></path>
+            <path d="M300 43C300 71 150 71 150 112" marker-end="url(#proofForkArrow)"></path>
+            <path d="M300 43C300 71 450 71 450 112" marker-end="url(#proofForkArrow)"></path>
+          </svg>
+          <div class="proof-fork-options">
+            <a href="#computer-assisted-proof" data-proof-route="computer-assisted" data-proof-target="#computer-assisted-proof">The computer-assisted proof</a>
+            <a href="#experiment" data-proof-route="asymptotic" data-proof-target="#experiment">The asymptotic proof</a>
+          </div>
+        </nav>
       </section>
 
       
@@ -1220,7 +1226,7 @@
           <p>From that higher crossing, numerical continuation follows a computed noncircular branch. Along the branch it adjusts the shape, the field, the frequency, and \(c\), eventually reaching \(k\approx31.9670072772\) with computed \(c=0\). The endpoint gives \(x^\circ=(g^\circ,p^\circ)\). Only this stored endpoint enters the rigorous certificate; the continuation path itself is not used in the existence proof.</p>
         </div>
 
-        <figure class="computer-assisted-figure interactive-plate figure-band" data-apparatus="visual-aside" data-figure="computer-assisted-search" data-evidence="numerical" aria-labelledby="searchFigureTitle">
+        <figure class="computer-assisted-figure interactive-plate figure-band" data-apparatus="visual-aside" data-figure="computer-assisted-search" aria-labelledby="searchFigureTitle">
           <section class="computer-assisted-canvas-panel apparatus-visual">
             <svg id="searchCanvas" class="computer-assisted-vector" role="img" aria-label="Three-stage schematic of the numerical search, showing the tenfold boundary motion and the constant normal derivative shrinking to zero"><title>Numerical-search stages</title><desc>The selector moves from the tenfold disk direction to the zero-flux numerical centre.</desc></svg>
           </section>
@@ -1235,7 +1241,7 @@
             </div>
             <output id="searchStageStatus" class="computer-assisted-status" for="searchStage" aria-live="polite">At this disk frequency, the equations allow a ten-lobed first motion.</output>
           </aside>
-          <figcaption id="searchFigureTitle"><span class="figure-caption-summary">From a tenfold linearized seed to the zero-flux numerical centre.</span><span class="figure-caption-note">The faint outlines in the first view show the tenfold boundary motion available at the Wronskian crossing. The middle outline is a schematic interpolation, not recorded continuation data. The normal arrows have equal length because \(\partial_\nu u=c\) everywhere on the boundary; their drawn length is schematic. At the computed endpoint the arrows disappear, and only that endpoint \(x^\circ\) is passed to the rigorous certificate.</span></figcaption>
+          <figcaption id="searchFigureTitle">A numerical continuation follows a tenfold branch of the relaxed problem to the zero-flux centre \(x^\circ\); the intermediate outline is schematic.</figcaption>
         </figure>
 
         <div class="computer-assisted-copy paper-copy">
@@ -1249,10 +1255,10 @@
           </div>
           <p>The first few \(q_j^\circ\) create the visible tenfold bulges; later coefficients make much smaller corrections. The approximation can therefore look settled even though the proof must still control an infinite tail.</p>
         </div>
-        <figure class="computer-assisted-figure interactive-plate figure-band" data-apparatus="visual-aside" data-figure="computer-assisted-centre" data-evidence="numerical" aria-labelledby="boundaryFigureTitle">
+        <figure class="computer-assisted-figure interactive-plate figure-band" data-apparatus="visual-aside" data-figure="computer-assisted-centre" aria-labelledby="boundaryFigureTitle">
           <section class="computer-assisted-canvas-panel apparatus-visual">
             <svg id="boundaryCanvas" class="computer-assisted-vector" role="img" aria-label="Numerical tenfold conformal boundary compared with the unit circle, beside a graph of the thirty coefficient sizes"><title>Conformal coefficients build the boundary</title><desc>The slider chooses how many of the thirty stored coefficients are included.</desc></svg>
-            <div class="boundary-legend" aria-hidden="true">
+            <div class="boundary-legend apparatus-label" aria-hidden="true">
               <span><i class="boundary-legend-circle"></i>unit circle</span>
               <span><i class="boundary-legend-centre"></i>shape built so far</span>
             </div>
@@ -1261,10 +1267,10 @@
             <div class="computer-assisted-control apparatus-control">
               <label for="boundaryModes">Normalized coefficients \(q_j^\circ\) shown <output id="boundaryModesValue" for="boundaryModes">30 of 30</output></label>
               <input id="boundaryModes" type="range" min="1" max="30" step="1" value="30" aria-label="Number of printed conformal coefficients shown, from 1 to 30">
-              <div class="computer-assisted-range-scale" aria-hidden="true"><span>1</span><span>10</span><span>20</span><span>30</span></div>
+              <div class="computer-assisted-range-scale apparatus-label" aria-hidden="true"><span>1</span><span>10</span><span>20</span><span>30</span></div>
             </div>
           </aside>
-          <figcaption id="boundaryFigureTitle"><span class="figure-caption-summary">The computed centre is dominated by its first normalized conformal coefficient.</span><span class="figure-caption-note">The term \(q_1^\circ z^{11}\) creates the ten visible lobes. Coefficient \(q_j^\circ\) adds a finer \(10j\)-fold boundary correction, but the size plot shows that these corrections rapidly become microscopic. The 30-term curve is still the computed centre, not the exact boundary; the certificate places the exact map within \(7.13\times10^{-11}\) of it.</span></figcaption>
+          <figcaption id="boundaryFigureTitle">The first normalized conformal coefficient produces the ten visible lobes; the remaining stored coefficients supply successively smaller corrections.</figcaption>
         </figure>
 
         <header id="computer-fixed-disc" class="section-heading proof-strategy-subheading" data-title="The problem on one fixed disk" data-toc="proof-subsection">
@@ -1322,16 +1328,11 @@
           </div>
         </article>
 
-        <figure class="computer-assisted-figure interactive-plate figure-band" data-apparatus="visual-aside" data-figure="conformal-pullback" data-evidence="schematic" aria-labelledby="pullbackFigureTitle">
+        <figure class="computer-assisted-figure interactive-plate figure-band" data-apparatus="visual-aside" data-figure="conformal-pullback" aria-labelledby="pullbackFigureTitle">
           <section class="computer-assisted-canvas-panel apparatus-visual">
             <svg id="pullbackCanvas" class="computer-assisted-vector" role="img" aria-label="The fixed disk mapped to the physical domain, with one point and its field value carried across"><title>Conformal pullback to the fixed disk</title><desc>The same field is shown before and after the conformal change of coordinates.</desc></svg>
           </section>
-          <aside class="computer-assisted-controls apparatus-controls conformal-transfer-key">
-            <p class="eyebrow">Exact map · schematic field</p>
-            <p class="computer-assisted-status">The colours match point for point: if \(x=\phi_p(z)\), then \(U(z)=u(x)\).</p>
-            <p class="computer-assisted-status">The boundary motion reappears in the disk equation through \(|p|^2=k^2|\phi_p'|^2\).</p>
-          </aside>
-          <figcaption id="pullbackFigureTitle"><span class="figure-caption-summary">A conformal map moves the free boundary onto the fixed unit circle.</span><span class="figure-caption-note">\(\phi_p\) carries the fixed disk to the physical domain. The marked point and matching colour show the exact coordinate identity \(U(z)=u(\phi_p(z))\). The colours form an illustrative scalar field for the coordinate change; they are not the certified eigenfunction. The boundary is now fixed, while the shape enters the equation through \(|p|^2\).</span></figcaption>
+          <figcaption id="pullbackFigureTitle">The conformal map \(\phi_p\) transfers the free-boundary problem to the unit disk, where the shape enters through \(|p|^2\).</figcaption>
         </figure>
 
         <header id="computer-compatible-inverse" class="section-heading proof-strategy-subheading" data-title="Both boundary conditions in one equation" data-toc="proof-subsection">
@@ -1399,7 +1400,7 @@
           <p>The size estimate is exact too. For total degree \(D=10|\ell|+2s\), the three absolute coefficients add to \(1/[D(D+2)]\), at most \(1/8\). Higher-total-degree modes are therefore easier, not harder, to control.</p>
         </div>
 
-        <figure class="computer-assisted-figure interactive-plate figure-band" data-apparatus="visual-aside" data-figure="compatible-inverse-modes" data-evidence="exact" aria-labelledby="inverseFigureTitle">
+        <figure class="computer-assisted-figure interactive-plate figure-band" data-apparatus="visual-aside" data-figure="compatible-inverse-modes" aria-labelledby="inverseFigureTitle">
           <section class="computer-assisted-canvas-panel apparatus-visual">
             <svg id="inverseCanvas" class="computer-assisted-vector" role="img" aria-label="Three weighted radial profiles whose sum reaches zero with zero slope at the disk boundary"><title>Compatible inverse for one disk-polynomial mode</title><desc>The controls choose a mode; the three coloured neighbouring profiles add to the black boundary-compatible response.</desc></svg>
           </section>
@@ -1423,9 +1424,8 @@
               </select>
             </div>
             <output id="inverseStatus" class="computer-assisted-status" for="inverseAngularMode inverseRadialMode" aria-live="polite">The three weights cancel both the boundary value and its radial derivative.</output>
-            <p class="computer-assisted-status">The coloured curves are the three weighted neighbours. Their black sum hits zero at the boundary and arrives there flat.</p>
           </aside>
-          <figcaption id="inverseFigureTitle"><span class="figure-caption-summary">The compatible inverse builds both boundary conditions into each source mode.</span><span class="figure-caption-note">\(K\) replaces one source mode by three neighbouring radial profiles. Their black sum reaches the boundary at height zero with a horizontal tangent. These are exactly the two required conditions, \(v=0\) and \(\partial_rv=0\). The vertical scale is enlarged.</span></figcaption>
+          <figcaption id="inverseFigureTitle">The three neighbouring profiles in \(K\Phi_{\ell,s}\) sum to a function with zero boundary value and zero radial derivative.</figcaption>
         </figure>
 
         <div class="computer-assisted-copy paper-copy">
@@ -1438,30 +1438,18 @@
           <p>The term \(g\) is \(\Delta v\), while \(|p|^2(1+Kg)\) is \(|p|^2U\). Thus \(F=0\) is exactly the PDE, with both boundary conditions already built in. It is a cubic equation in the coefficient lists \(g\) and \(p\), so its derivatives and nonlinear error can be bounded explicitly.</p>
         </div>
 
-        <article class="shape-equation-mechanism" aria-labelledby="shapeEquationMechanismTitle">
-          <header>
-            <p class="eyebrow">Schematic mechanism in coefficient space</p>
-            <h4 id="shapeEquationMechanismTitle">Location of the shape equations</h4>
-          </header>
-          <div class="shape-equation-lanes">
-            <section>
-              <span class="shape-equation-index">output rows \(s\ge1\)</span>
-              <strong>Interior response</strong>
-              <p>The nonharmonic rows determine and update the source coefficients \(g_{\ell,s}\). Multiplication by \(|p|^2\) couples many indices, so this is a lane of equations rather than a one-row/one-variable matching.</p>
-            </section>
-            <section>
-              <span class="shape-equation-index">output rows \(s=0\)</span>
-              <strong>Frequency and shape</strong>
-              <p>There is no free source coordinate \(g_{\ell,0}\). The remaining compatibility conditions</p>
-              <div class="tex-display compact-definition-display">
-                \[
-                \Pi_{\ell,0}\!\left(|p|^2(1+Kg)\right)=0
-                \]
-              </div>
-              <p>select the frequency and conformal-shape coefficients in \(p\).</p>
-            </section>
+        <article class="math-statement" data-kind="remark" data-label="shape-equation-location" aria-labelledby="shapeEquationLocationTitle">
+          <header class="math-statement-header"><span id="shapeEquationLocationTitle">Remark</span></header>
+          <div class="math-statement-body">
+            <p><strong>Rows \(s\ge1\) describe the interior response.</strong> These nonharmonic rows determine the source coefficients \(g_{\ell,s}\). Multiplication by \(|p|^2\) couples many indices, so they form a system rather than a one-row/one-variable matching.</p>
+            <p><strong>Rows \(s=0\) determine frequency and shape.</strong> There is no free source coordinate \(g_{\ell,0}\). Instead, the compatibility conditions</p>
+            <div class="tex-display compact-definition-display">
+              \[
+              \Pi_{\ell,0}\!\left(|p|^2(1+Kg)\right)=0
+              \]
+            </div>
+            <p>select the frequency and conformal-shape coefficients in \(p\). Removing \(g_{\ell,0}\) from the source does not remove its equation: the harmonic rows remain in \(F=0\) as the free-boundary equations.</p>
           </div>
-          <p class="shape-equation-conclusion"><strong>All harmonic equations remain.</strong> Removing \(g_{\ell,0}\) from the source does not remove its equation: those rows remain in \(F=0\) and become the free-boundary equations.</p>
         </article>
 
         <header id="computer-finite-tail" class="section-heading proof-strategy-subheading" data-title="Finite coefficients and the infinite tail" data-toc="proof-subsection">
@@ -1486,7 +1474,7 @@
           <p>The figure keeps the two kinds of unknown separate: \(g\) is a two-dimensional array indexed by \((\ell,s)\), while \(p\) is a one-dimensional list indexed by \(j\). For each list, the explicitly checked nearby region meets the decreasing remote-tail estimate, leaving no unchecked gap.</p>
         </div>
 
-        <figure class="computer-assisted-figure interactive-plate figure-band" data-apparatus="visual-aside" data-figure="finite-tail-certificate" data-evidence="schematic" aria-labelledby="tailFigureTitle">
+        <figure class="computer-assisted-figure interactive-plate figure-band" data-apparatus="visual-aside" data-figure="finite-tail-certificate" aria-labelledby="tailFigureTitle">
           <section class="computer-assisted-canvas-panel apparatus-visual">
             <svg id="tailCanvas" class="computer-assisted-vector" role="img" aria-label="Five-part view showing how the finite core, nearby coefficients, and remote infinite tail are all bounded"><title>Finite core and infinite-tail bounds</title><desc>The selector moves through the stored coefficients, nearby checked coefficients, and remote analytic tail.</desc></svg>
           </section>
@@ -1503,7 +1491,7 @@
             </div>
             <output id="tailStatus" class="computer-assisted-status" for="tailStage" aria-live="polite">The finite matrix contains 2,440 field coefficients and 31 shape-and-frequency coefficients.</output>
           </aside>
-          <figcaption id="tailFigureTitle"><span class="figure-caption-summary">Finite blocks, checked interaction bands, and analytic tails cover every coefficient.</span><span class="figure-caption-note">The index-region diagram is schematic and not to scale. The stored \(g\)-array and \(p\)-list are different finite blocks. Explicit enumeration bridges each block to a remote estimate, so the decreasing tail bounds begin with no unchecked gap.</span></figcaption>
+          <figcaption id="tailFigureTitle">The finite coefficient blocks, explicitly checked interaction bands, and analytic tail bounds leave no unchecked indices.</figcaption>
         </figure>
 
         <details class="proof-details computer-assisted-details">
@@ -1654,7 +1642,7 @@
           <p>The chosen radius-\(10^{-6}\) ball is therefore a certified safe region; the actual solution is forced into a much smaller neighbourhood of its centre. The two-dimensional animation below is a schematic view of this infinite-dimensional coefficient space, but its displayed distance bounds are the certified ones.</p>
         </div>
 
-        <figure class="computer-assisted-figure interactive-plate figure-band" data-apparatus="visual-aside" data-figure="radii-polynomial-certificate" data-evidence="certified" aria-labelledby="certificateFigureTitle">
+        <figure class="computer-assisted-figure interactive-plate figure-band" data-apparatus="visual-aside" data-figure="radii-polynomial-certificate" aria-labelledby="certificateFigureTitle">
           <section class="computer-assisted-canvas-panel apparatus-visual">
             <svg id="certificateCanvas" class="computer-assisted-vector" role="img" aria-label="A Banach-space ball mapped inside itself, with fixed-point iterates converging to the exact zero"><title>Certified fixed-point iteration</title><desc>The two certified inequalities force every iterate to remain in the ball and move toward one fixed point.</desc></svg>
           </section>
@@ -1673,24 +1661,24 @@
             </button>
             <div class="certificate-readout" aria-live="polite">
               <div class="certificate-readout-row">
-                <span class="certificate-readout-label">Self-map</span>
+                <span class="certificate-readout-label apparatus-label">Self-map</span>
                 <strong id="certificateValue">&mdash;</strong>
               </div>
               <div class="certificate-readout-row">
-                <span class="certificate-readout-label">Contraction</span>
+                <span class="certificate-readout-label apparatus-label">Contraction</span>
                 <strong id="certificateDerivative">&mdash;</strong>
               </div>
               <div class="certificate-readout-row">
-                <span class="certificate-readout-label">Iteration</span>
+                <span class="certificate-readout-label apparatus-label">Iteration</span>
                 <strong id="certificateIteration">&mdash;</strong>
               </div>
               <div class="certificate-readout-verdict">
-                <span class="certificate-readout-label">Conclusion</span>
+                <span class="certificate-readout-label apparatus-label">Conclusion</span>
                 <strong id="certificateVerdict">&mdash;</strong>
               </div>
             </div>
           </aside>
-          <figcaption id="certificateFigureTitle"><span class="figure-caption-summary">Two strict inequalities trap one exact solution near the numerical centre.</span><span class="figure-caption-note">The first view shows where both radii tests are negative and marks the rigorous choice \(r=10^{-6}\). In the second, the teal disk is a certified enclosure <em>containing</em> all possible values \(T(x)\), not the literal set \(T(B_r)\). The actual enclosure for \(x^*\) about \(x^\circ\) is subpixel at this scale, so its inset and orbit are explicitly magnified schematics; only the bound \(q^n\) is certified.</span></figcaption>
+          <figcaption id="certificateFigureTitle">The radii inequalities make \(T\) a contraction on the radius-\(10^{-6}\) ball and force a unique exact solution there. The inset and orbit are magnified schematics.</figcaption>
         </figure>
 
         <section id="certificate-explorer" class="certificate-explorer" aria-labelledby="certificateExplorerTitle">
@@ -1811,7 +1799,7 @@
           </div>
         </article>
 
-        <figure class="computer-assisted-figure interactive-plate figure-band" data-apparatus="visual-aside" data-figure="computer-assisted-reconstruction" data-evidence="certified" aria-labelledby="reconstructionFigureTitle">
+        <figure class="computer-assisted-figure interactive-plate figure-band" data-apparatus="visual-aside" data-figure="computer-assisted-reconstruction" aria-labelledby="reconstructionFigureTitle">
           <section class="computer-assisted-canvas-panel apparatus-visual">
             <svg id="reconstructionCanvas" class="computer-assisted-vector" role="img" aria-label="Three direct geometric checks: the exact curve stays near the computed curve, the map does not fold, and a nonlinear term rules out a disk"><title>Reconstructing the final non-disk domain</title><desc>The selector shows a magnified boundary enclosure, a chord carried forward without folding, and the nonlinear term that produces the final non-disk boundary.</desc></svg>
           </section>
@@ -1826,7 +1814,7 @@
             </div>
             <output id="reconstructionStatus" class="computer-assisted-status" for="reconstructionStage" aria-live="polite">The exact boundary is uniformly within \(7.13\times10^{-11}\) of the printed centre.</output>
           </aside>
-          <figcaption id="reconstructionFigureTitle"><span class="figure-caption-summary">Coefficient bounds turn the exact solution into geometric control of the domain.</span><span class="figure-caption-note">The red outline shown throughout is the finite numerical centre. The exact boundary is trapped in a microscopic certified tube around it; the dashed candidate inside the enlarged inset is schematic. The positivity bound \(\operatorname{Re}\phi'&gt;0.35\) holds for every map in the coefficient ball, and the nonzero \(q_1^*z^{11}\) term rules out a disk. At the scale of the full outline, the exact boundary and the numerical centre are visually indistinguishable.</span></figcaption>
+          <figcaption id="reconstructionFigureTitle">The coefficient bounds keep the exact boundary within \(7.13\times10^{-11}\) of the numerical centre, prevent folding, and force a noncircular domain.</figcaption>
         </figure>
 
         <article class="math-statement" data-kind="corollary" data-label="computer-assisted-pompeiu">
@@ -1895,13 +1883,11 @@
           </div>
         </article>
 
-        <figure class="computer-assisted-figure interactive-plate figure-band berenstein-endpoint-comparison" data-apparatus="visual-aside" data-figure="berenstein-boundary-data" data-evidence="schematic" aria-labelledby="berensteinEndpointTitle">
+        <figure class="computer-assisted-figure interactive-plate figure-band berenstein-endpoint-comparison" data-apparatus="visual-aside" data-figure="berenstein-boundary-data" aria-labelledby="berensteinEndpointCaption">
           <section class="computer-assisted-canvas-panel apparatus-visual">
             <svg id="berensteinBoundaryCanvas" class="computer-assisted-vector" role="img" aria-label="Comparison of the Schiffer and Berenstein boundary data"><title>Boundary contact in the two problems</title><desc>The stage selector compares boundary height and outward slope for the Schiffer and Berenstein endpoints.</desc></svg>
           </section>
           <aside class="computer-assisted-controls paper-demo-controls apparatus-controls" aria-label="Explore the two boundary conditions">
-            <p class="eyebrow">Local normal-profile schematic</p>
-            <h4 id="berensteinEndpointTitle">Boundary contact and boundary crossing</h4>
             <div class="computer-assisted-control apparatus-control">
               <label for="berensteinEndpointStage">Boundary view <output id="berensteinEndpointStageValue" for="berensteinEndpointStage">compare endpoints</output></label>
               <select id="berensteinEndpointStage">
@@ -1912,11 +1898,11 @@
             </div>
             <output id="berensteinEndpointStatus" class="computer-assisted-status" for="berensteinEndpointStage" aria-live="polite">Schiffer reaches height one and becomes flat. Berenstein crosses height zero with unit outward slope.</output>
           </aside>
-          <figcaption><span class="figure-caption-summary">The two problems exchange boundary height and outward slope.</span><span class="figure-caption-note">These normalized local sketches use the signed normal coordinate: inside is \(s&lt;0\), the boundary is \(s=0\), and outside is \(s&gt;0\). They compare boundary value and outward derivative, not reconstructed eigenfunctions. The arrows around the domain glyph sample a condition imposed all along the boundary.</span></figcaption>
+          <figcaption id="berensteinEndpointCaption">Schiffer prescribes boundary height and slope \((1,0)\), whereas Berenstein prescribes \((0,1)\).</figcaption>
         </figure>
 
-        <figure class="computer-assisted-figure interactive-plate figure-band berenstein-field-comparison" data-apparatus="visual-aside" data-figure="berenstein-field-comparison" data-evidence="certified" aria-labelledby="berensteinFieldComparisonTitle">
-          <section class="computer-assisted-canvas-panel apparatus-visual berenstein-field-portrait" aria-label="Certified Berenstein field portrait">
+        <figure class="computer-assisted-figure interactive-plate figure-band berenstein-field-comparison" data-apparatus="visual-aside" data-figure="berenstein-field-comparison" aria-labelledby="berensteinFieldComparisonTitle">
+          <section class="computer-assisted-canvas-panel apparatus-visual berenstein-field-portrait" aria-label="Berenstein field portrait">
             <div id="berensteinFieldViewport" class="berenstein-field-viewport">
               <svg class="berenstein-field-image" data-export-primary viewBox="270 10 1348 1348" role="img" aria-labelledby="berensteinFieldImageTitle berensteinFieldImageDesc">
                 <title id="berensteinFieldImageTitle">Finite numerical centre of the Berenstein field</title>
@@ -1924,12 +1910,12 @@
                 <image href="assets/berenstein-domain-solution.png" width="1890" height="1560"></image>
               </svg>
             </div>
-            <div class="berenstein-field-legend" aria-label="Field colour key">
+            <div class="berenstein-field-legend apparatus-label" aria-label="Field colour key">
               <span><i class="berenstein-legend-positive"></i>positive \(u\)</span>
               <span><i class="berenstein-legend-negative"></i>negative \(u\)</span>
             </div>
           </section>
-          <aside class="computer-assisted-controls paper-demo-controls apparatus-controls berenstein-field-notes" aria-label="Explore the certified Berenstein field">
+          <aside class="computer-assisted-controls paper-demo-controls apparatus-controls berenstein-field-notes" aria-label="Explore the Berenstein field">
             <h4 id="berensteinFieldComparisonTitle">Signed regions from boundary to centre</h4>
             <div class="computer-assisted-control apparatus-control">
               <label for="berensteinFieldStage">Field structure <output id="berensteinFieldStageValue" for="berensteinFieldStage">signed regions</output></label>
@@ -1940,22 +1926,22 @@
                 <option value="symmetry">4 · symmetry</option>
               </select>
             </div>
-            <output id="berensteinFieldStatus" class="computer-assisted-status" for="berensteinFieldStage" aria-live="polite">The certified image remains unchanged; the guide shows nine alternating sign regions, with a negative centre and negative outer rim.</output>
+            <output id="berensteinFieldStatus" class="computer-assisted-status" for="berensteinFieldStage" aria-live="polite">The guide shows nine alternating sign regions, with a negative centre and negative outer rim.</output>
             <details class="mobile-apparatus-disclosure" data-mobile-disclosure open>
-              <summary>Field structure and certified bounds</summary>
+              <summary>Field structure and bounds</summary>
               <div class="mobile-apparatus-disclosure-body">
                 <div class="berenstein-field-guide-wrap">
-                  <span>schematic sign map</span>
+                  <span class="apparatus-label">schematic sign map</span>
                   <svg id="berensteinFieldGuide" class="berenstein-field-guide" viewBox="0 0 280 132" role="img" aria-label="Schematic signed-field map"></svg>
                 </div>
                 <dl class="berenstein-field-facts">
-                  <div><dt>symmetry</dt><dd>\(D_{13}\)-symmetric; the certificate also rules out central symmetry</dd></div>
-                  <div><dt>nodal set</dt><dd>eight interior zero curves, plus the physical boundary</dd></div>
+                  <div><dt class="apparatus-label">symmetry</dt><dd>\(D_{13}\)-symmetric; the certificate also rules out central symmetry</dd></div>
+                  <div><dt class="apparatus-label">nodal set</dt><dd>eight interior zero curves, plus the physical boundary</dd></div>
                 </dl>
               </div>
             </details>
           </aside>
-          <figcaption><span class="figure-caption-summary">The finite numerical centre displays nine alternating sign regions.</span><span class="figure-caption-note">The image is numerical data enclosed by the proof, not a substitute for proof. It remains fixed while the selector changes the schematic sign map. Eight plotted interior zero curves separate the nine sign regions; the certificate proves sign change and proximity, but does not claim that the exact nodal set has precisely this plotted topology. The exact boundary is within \(4.67\times10^{-10}\) of the plotted one and the pulled-back exact field is within \(2.5\times10^{-7}\) of the plotted field.</span></figcaption>
+          <figcaption>The computed \(D_{13}\)-symmetric eigenfunction has nine alternating sign regions separated by eight plotted zero curves.</figcaption>
         </figure>
 
         <div class="computer-assisted-copy paper-copy berenstein-fourier-copy">
@@ -2083,7 +2069,7 @@
           <p>Neither local picture guarantees that the collar solution extends regularly through the whole enclosed region. That is the global solvability problem. On the fixed disk it means that every interior equation, boundary equation, compatibility row, and infinite-tail equation must hold simultaneously.</p>
         </div>
 
-        <figure class="computer-assisted-figure interactive-plate figure-band local-global-figure" data-apparatus="visual-aside" data-figure="local-global-solvability" data-evidence="schematic" aria-labelledby="localGlobalFigureTitle">
+        <figure class="computer-assisted-figure interactive-plate figure-band local-global-figure" data-apparatus="visual-aside" data-figure="local-global-solvability" aria-labelledby="localGlobalFigureTitle">
           <section class="computer-assisted-canvas-panel apparatus-visual">
             <svg id="localGlobalCanvas" class="computer-assisted-vector" role="img" aria-label="Schematic comparison of locally prescribed boundary data with a globally solved field"><title>Local boundary data and global closure</title><desc>The controls compare Schiffer and Berenstein data first in a boundary collar and then across the full disk.</desc></svg>
           </section>
@@ -2104,7 +2090,7 @@
             </div>
             <output id="localGlobalStatus" class="computer-assisted-status" for="localGlobalProblem localGlobalScope" aria-live="polite">Local analytic Cauchy theory supplies a collar solution, but says nothing yet about regular closure through the interior.</output>
           </aside>
-          <figcaption id="localGlobalFigureTitle"><span class="figure-caption-summary">Local Cauchy data determine a boundary collar; the certificate supplies global closure.</span><span class="figure-caption-note">The unfilled centre in the collar view marks the information missing from local analytic Cauchy theory. In the global view, the fixed-disk equations and tail bounds fill the entire disk, after which the injective conformal map carries that solution to the plane. The drawing is a conceptual schematic, not a computed field.</span></figcaption>
+          <figcaption id="localGlobalFigureTitle">Local Cauchy data determine only a boundary collar; the validated disk equations supply the global solution.</figcaption>
         </figure>
 
         <div class="computer-assisted-copy paper-copy berenstein-close">
@@ -2127,7 +2113,7 @@
         <div class="intro-copy intro-copy-wide cone-fold-host">
           <label for="cone-fold-note" class="margin-toggle" aria-label="Show the cone folding figure">&#8853;</label>
           <input type="checkbox" id="cone-fold-note" class="margin-toggle">
-          <figure class="geometry-laboratory interactive-plate annotated-plate marginnote side-figure cone-fold-figure" data-figure="cone-unfolding-apparatus" data-evidence="schematic">
+          <figure class="geometry-laboratory interactive-plate annotated-plate marginnote side-figure cone-fold-figure" data-figure="cone-unfolding-apparatus">
           <aside class="geometry-controls paper-demo-controls">
             <div class="geometry-scrub"><div class="control-label"><label for="coneFoldRange">fold</label><output id="coneFoldValue">stage 1</output></div><input id="coneFoldRange" type="range" min="0" max="1" value="0" step="0.001"></div>
             <button id="coneFoldPlayButton" class="play-button" type="button" aria-pressed="false"><span id="coneFoldPlayIcon">&#9654;</span><span id="coneFoldPlayLabel">Fold</span></button>
@@ -2137,7 +2123,7 @@
               <canvas id="coneFoldCanvas" role="img" aria-label="Folding one sector of the R-fold domain into the cone, and unfolding it again"></canvas>
             </div>
           </section>
-          <figcaption><span class="figure-caption-summary">An \(R\)-fold symmetric domain reduces to one fundamental sector with its radial sides identified.</span><span class="figure-caption-note">The identified sector forms the quotient cone, and the boundary profile makes one period around it. The drawing represents this exact quotient geometry schematically; it is not a numerical reconstruction.</span></figcaption>
+          <figcaption>An \(R\)-fold symmetric domain reduces to one fundamental sector whose radial sides are identified to form the quotient cone.</figcaption>
           </figure>
         </div>
         <div class="intro-copy intro-copy-wide">
@@ -2169,7 +2155,7 @@
         <div class="intro-copy intro-copy-wide">
           <p>One particularly close solution is to take the sixteenth zero of \(J_1\), namely \(\rho=51.043535\ldots\), for which \(J_R(\rho)=0\) at \(R=28.026397\ldots\)</p>
         </div>
-        <figure class="abundance-laboratory reading-figure" data-figure="near-integer-crossing-sample" data-evidence="numerical">
+        <figure class="abundance-laboratory reading-figure" data-figure="near-integer-crossing-sample">
           <section class="abundance-plot-panel" aria-label="Finite modulo-one sample of near-integer common Bessel zero crossings">
             <div class="passive-script-targets" hidden aria-hidden="true">
               <strong id="abundancePlotState">common-zero crossing sample</strong>
@@ -2178,7 +2164,7 @@
             </div>
             <div id="abundanceCanvasWrap" class="abundance-canvas-wrap"><canvas id="abundanceCanvas" tabindex="0" role="img" aria-label="Modulo-one plot of real Bessel crossing orders" aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown Home End"></canvas></div>
           </section>
-          <figcaption><span class="figure-caption-summary">Near-integer crossings appear as points close to the baseline.</span><span class="figure-caption-note">Each point has horizontal coordinate \(\log R\) and vertical coordinate \(\{R\}\). Keyboard: focus the plot and use the arrow keys to move between points; Home and End move to the first and last displayed points.</span></figcaption>
+          <figcaption>Near-integer crossings plotted at \((\log R,\{R\})\); points nearest the baseline lie closest to integer order.</figcaption>
         </figure>
         <div class="intro-copy intro-copy-wide">
           <p>The strategy is to take one of the \(R_\star\) from the claim, generate a perturbation branch \(R(s)\), and show that it reaches an integer. There are three steps.</p>
@@ -2189,7 +2175,7 @@
           </ol>
           <p>Before treating any of those ingredients, we consider the problem on the limiting cylinder, in <a class="xref" data-ref="half-cylinder-strategy"></a>. That will build the intuition for why the perturbation branch is uniform.</p>
         </div>
-        <figure class="modes-laboratory interactive-plate figure-band" data-apparatus="visual-aside" data-figure="global-collar-zoom" data-evidence="numerical">
+        <figure class="modes-laboratory interactive-plate figure-band" data-apparatus="visual-aside" data-figure="global-collar-zoom">
           <section class="modes-plot-panel apparatus-visual" aria-label="Global 28-sector field and one-wavelength collar zoom">
             <div class="passive-script-targets" hidden aria-hidden="true"><strong id="modesPlotState">28 copies · one wavelength selected</strong></div>
             <div id="modesCanvasWrap" class="modes-canvas-wrap">
@@ -2246,7 +2232,7 @@
             </div>
           </aside>
 
-          <figcaption><span class="figure-caption-summary">The same continued \(D_{28}\) field is shown globally and in collar coordinates.</span><span class="figure-caption-note">The animation follows the numerically continued branch from the noninteger crossing \(R_*=28.026\ldots\) to \(R=28\). This numerical illustration lies outside the proof window and is not the branch selected by the nonexplicit existence argument. The crop box and its connector lines identify the same boundary collar in the global and local views. The enlargement is isotropic: equal lengths in \(x\) and \(\psi\) have equal lengths on the page. The missing angular sector is slightly exaggerated so that its closure remains legible.</span></figcaption>
+          <figcaption>The same \(D_{28}\) continuation in global and fixed-collar coordinates.</figcaption>
         </figure>
       </section>
 
@@ -2265,7 +2251,7 @@
         <div class="half-cylinder-introduction">
           <label for="half-cylinder-applet-note" class="margin-toggle" aria-label="Show the half-cylinder bifurcation applet">&#8853;</label>
           <input type="checkbox" id="half-cylinder-applet-note" class="margin-toggle">
-          <figure id="figure-half-cylinder-family" class="marginnote side-figure side-applet panoramic-applet laboratory cylinder-margin-applet" data-figure="half-cylinder-family" data-evidence="numerical">
+          <figure id="figure-half-cylinder-family" class="marginnote side-figure side-applet panoramic-applet laboratory cylinder-margin-applet" data-figure="half-cylinder-family">
             <section class="canvas-panel" aria-label="Half-cylinder free-boundary solve">
               <div class="passive-script-targets" hidden aria-hidden="true"><strong id="domainState">trivial cylinder at the branch origin</strong></div>
               <div id="canvasWrap" class="canvas-wrap">
@@ -2327,19 +2313,7 @@
               </details>
 
             </aside>
-            <figcaption>The two views show the same computed Helmholtz field on a bifurcating half-cylinder. The controls vary \(\lambda\) and move along the branch.
-              <details class="figure-data-disclosure">
-                <summary>Computed diagnostics</summary>
-                <div class="solver-readout">
-                  <div><span>interior PDE residual</span><strong id="interiorValue">—</strong></div>
-                  <div><span>boundary mode \(h_2\)</span><strong id="wallMode2Value">—</strong></div>
-                  <div><span>boundary mode \(h_3\)</span><strong id="wallMode3Value">—</strong></div>
-                  <div><span>Dirichlet normalized \(L^2\)</span><strong id="dirichletValue">—</strong></div>
-                  <div><span>Neumann normalized \(L^2\)</span><strong id="neumannValue">—</strong></div>
-                  <div><span>slowest decay length</span><strong id="decayValue">—</strong></div>
-                </div>
-              </details>
-            </figcaption>
+            <figcaption>The two views show the same computed Helmholtz field on a bifurcating half-cylinder. The controls vary \(\lambda\) and move along the branch.</figcaption>
           </figure>
 
           <p>The half-infinite cylinder is the large-\(R\) limit and supports the continuous two-parameter family visualised in <a class="xref" data-ref="half-cylinder-family" href="#figure-half-cylinder-family">the half-cylinder family figure</a>. Cao-Labora and de Dios Pont do not obtain the planar theorem by transferring this nonlinear family to cones: their proof constructs the required branches directly on finite real-\(R\) collars.</p>
@@ -2347,7 +2321,7 @@
         </div>
 
         <article class="math-statement math-statement-theorem cylinder-theorem" data-kind="theorem" data-label="half-cylinder-bifurcation" aria-labelledby="halfCylinderTheoremTitle">
-          <header class="math-statement-header"><span>Model theorem</span><small>supplementary half-cylinder statement</small></header>
+          <header class="math-statement-header"><span>Theorem</span><small>half-cylinder bifurcation</small></header>
           <div class="math-statement-body theorem-statement">
             <p id="halfCylinderTheoremTitle">Fix <span class="formula">\(0&lt;\alpha&lt;1\)</span> and write <span class="formula">\(\mathcal C_-=(-\infty,0)\times S^1\)</span>. There are <span class="formula">\(\varepsilon&gt;0\)</span> and a <span class="formula">\(C^3\)</span> family <span class="formula">\((\Omega_{\lambda,s},u_{\lambda,s})\)</span>, indexed by <span class="formula">\((\lambda,s)\in[2,3]\times(-\varepsilon,\varepsilon)\)</span>, such that</p>
             <div class="tex-display">
@@ -2541,7 +2515,7 @@
         <div class="debye-lead paper-copy">
           <label for="cone-cylinder-note" class="margin-toggle" aria-label="Show the long-cone and cylinder comparison">&#8853;</label>
           <input type="checkbox" id="cone-cylinder-note" class="margin-toggle">
-          <figure class="marginnote side-figure cone-cylinder-sketch" data-figure="cone-cylinder-collars" data-evidence="schematic" aria-labelledby="coneCylinderSketchCaption">
+          <figure class="marginnote side-figure cone-cylinder-sketch" data-figure="cone-cylinder-collars" aria-labelledby="coneCylinderSketchCaption">
             <svg viewBox="0 0 320 118" role="img" aria-labelledby="coneCylinderSketchTitle coneCylinderSketchDesc">
               <title id="coneCylinderSketchTitle">A half-cylinder and a long cone near their boundaries</title>
               <desc id="coneCylinderSketchDesc">The final fixed-depth collars of a cylinder and a long cone are highlighted; the two are drawn with the same rim radius, and near the rim the two geometries become indistinguishable.</desc>
@@ -2566,7 +2540,7 @@
           <p>On a cone, the corresponding regular modes are Bessel functions \(J_{kR}(\sqrt\lambda\,r)\). A long cone is nearly cylindrical near its rim: on every collar of fixed depth, the curvature tends to zero as \(R\to\infty\). Its Bessel modes consequently approach the cylinder modes. The applet below compares them on a fixed-width collar.</p>
         </div>
 
-        <figure class="collar-field-laboratory interactive-plate figure-band" data-apparatus="visual-aside" data-panel-grid="four" data-figure="collar-coordinate-comparison" data-evidence="numerical" aria-label="Two-dimensional cylinder and cone mode comparison">
+        <figure class="collar-field-laboratory interactive-plate figure-band" data-apparatus="visual-aside" data-panel-grid="four" data-figure="collar-coordinate-comparison" aria-label="Two-dimensional cylinder and cone mode comparison">
           <section class="collar-field-visual apparatus-visual" tabindex="0" role="region" aria-label="Mode comparison panels" aria-keyshortcuts="ArrowLeft ArrowRight Home End" aria-describedby="collarCoordinateCaption collarCarouselStatus">
             <article class="collar-field-panel apparatus-panel collar-global-panel" role="group" aria-label="Panel 1 of 4: complete disk">
               <header><span>complete disk</span><strong id="collarDiskTitle">angular order 28</strong></header>
@@ -2619,7 +2593,7 @@
               <div><span>spectral parameter</span><strong id="collarLambdaValue">\(\lambda_N=2.6042\)</strong></div>
             </div>
           </aside>
-          <figcaption class="collar-field-caption" id="collarCoordinateCaption"><span class="figure-caption-summary">The same mode is compared globally and on fixed-width collars.</span><span class="figure-caption-note">The disk and half-cylinder are shown at one geometric scale. Their outlined five-unit collars are magnified in the neighbouring views, using the same local coordinates and colour scale. On narrow screens, swipe or use the arrow keys to move between panels.</span></figcaption>
+          <figcaption id="collarCoordinateCaption">The disk and half-cylinder mode, globally and on fixed-width collars.</figcaption>
         </figure>
 
         <div class="debye-lead paper-copy">
@@ -2699,7 +2673,7 @@
             <div class="basis-limit-derivation paper-copy">
               <label for="debye-profile-note" class="margin-toggle" aria-label="Show the fixed-collar Bessel comparison">&#8853;</label>
               <input type="checkbox" id="debye-profile-note" class="margin-toggle">
-              <figure class="marginnote side-figure side-applet debye-laboratory" data-figure="fixed-collar-profiles" data-evidence="numerical" aria-labelledby="debyeProfileCaption">
+              <figure class="marginnote side-figure side-applet debye-laboratory" data-figure="fixed-collar-profiles" aria-labelledby="debyeProfileCaption">
                 <section class="debye-plot-panel stacked-plot" aria-label="Bessel and cylinder radial profile comparison">
                   <div class="passive-script-targets" hidden aria-hidden="true"><strong id="debyePlotState">two radial channels on \([R-5,R]\)</strong></div>
                   <div id="debyeCanvasWrap" class="debye-canvas-wrap">
@@ -2713,7 +2687,7 @@
                     <div class="range-scale"><span>\(k=2\)</span><span>\(k=3\)</span><span>\(k=4\)</span></div>
                   </div>
                 </aside>
-                <figcaption id="debyeProfileCaption">At \(R=28\), the exact regular Bessel profiles are solid and their half-cylinder limits are dashed on the fixed collar. The Neumann channel \(k=1\) is fixed above; choose an evanescent channel below.</figcaption>
+                <figcaption id="debyeProfileCaption">At \(R=28\), exact regular Bessel profiles are solid and their half-cylinder limits are dashed on the fixed collar.</figcaption>
               </figure>
               <div>
                 <p>Put \(q=\sqrt\lambda\), \(\omega=\sqrt{\lambda-1}\), and \(\Phi(q)=\sqrt{q^2-1}-\arccos(q^{-1})\). Debye's oscillatory large-order expansion, <a href="https://dlmf.nist.gov/10.19.E6" target="_blank" rel="noreferrer">DLMF (10.19.6) ↗</a>, gives on a fixed collar</p>
@@ -2745,9 +2719,9 @@
         <div class="phase-story-lead paper-copy">
           <p>Each point in the plot below is a noninteger order \(R_*\) at which the cone problem bifurcates. The curve issuing from it is the predicted two-jet of the corresponding branch, \(R(s)=R_*+\tfrac12R''(0)s^2\). This puts the two ingredients of the planar construction in one picture.</p>
         </div>
-        <figure class="phase-family reading-figure" data-figure="cone-branch-curvature" data-evidence="asymptotic" aria-labelledby="phaseFamilyTitle">
+        <figure class="phase-family reading-figure" data-figure="cone-branch-curvature" aria-labelledby="phaseFamilyTitle">
           <div id="phaseFamilyCanvasWrap" class="phase-family-canvas-wrap"><canvas id="phaseFamilyCanvas" role="img" aria-label="Real Bessel crossing orders and their predicted decreasing quadratic branch curves"></canvas></div>
-          <figcaption id="phaseFamilyTitle"><span class="figure-caption-summary">The quadratic approximation predicts a decrease in \(R\) at every displayed crossing. The points are crossings with \(6\le R_*\le30\).</span></figcaption>
+          <figcaption id="phaseFamilyTitle">The quadratic approximation predicts a decrease in \(R\) at every displayed crossing with \(6\le R_*\le30\).</figcaption>
         </figure>
         <div class="phase-observations paper-copy">
           <p>The plot suggests two facts. First, the fractional parts of the crossing orders have no visible pattern; the equidistributed phase mechanism behind <a class="xref" data-ref="near-integer-crossings" href="#statement-near-integer-crossings">the near-integer crossing theorem</a> explains that, and in particular produces crossings arbitrarily close to an integer. Second, every branch is tangent to the line \(s=0\) and bends to the left by nearly the same amount. The theorem below makes that second observation uniform.</p>
@@ -2826,7 +2800,7 @@
           </div>
         </details>
         <article class="math-statement planar-landing-theorem" data-kind="corollary" data-label="planar-landing">
-          <header class="math-statement-header"><span>Conclusion</span><small>planar landing</small></header>
+          <header class="math-statement-header"><span>Corollary</span><small>planar landing</small></header>
           <div class="math-statement-body">
             <p>For arbitrarily large integers \(N\), a noncircular \(D_N\)-symmetric planar Schiffer domain exists.</p>
           </div>
@@ -2847,7 +2821,7 @@
         <p>where \(\chi\) is a cut-off equal to \(1\) on the lower face of the cylinder, which corresponds to the outer part of the cone, and to \(0\) on the upper face, which corresponds to the inner cut at \(r=R-L\).</p>
         <label for="fixed-collar-note" class="margin-toggle" aria-label="Show the fixed collar figure">&#8853;</label>
         <input type="checkbox" id="fixed-collar-note" class="margin-toggle">
-        <figure class="cone-remap-figure marginnote side-figure fixed-collar-figure" data-figure="fixed-collar" data-evidence="exact">
+        <figure class="cone-remap-figure marginnote side-figure fixed-collar-figure" data-figure="fixed-collar">
           <svg viewBox="0 0 760 250" role="img" aria-labelledby="fixedCollarTitle fixedCollarDesc">
             <title id="fixedCollarTitle">The fixed cylinder and the collar it parametrizes</title>
             <desc id="fixedCollarDesc">On the left, the fixed cylinder T times the interval from 0 to L, shaded throughout, with its upper face at y equals L hatched in red. An arrow labelled Phi superscript h runs to the right, where the cone is drawn in perspective. Its cut at distance R minus L from the apex is an exact circle, hatched in red where it is seen directly through the mouth of the cone and shaded where the collar surface passes in front of it. Its outer cut is the boundary r equals R minus h, carrying three periods of the profile, so it is visibly not a circle. The surface between the two cuts is shaded.</desc>
@@ -2883,7 +2857,7 @@
               <path class="remap-outer" d="M614.5 28.4 L613.4 28.4 L612.3 28.5 L611.2 28.6 L610.1 28.7 L608.9 28.9 L607.6 29.2 L606.4 29.4 L605.1 29.7 L603.8 30.1 L602.5 30.5 L601.1 30.9 L599.8 31.4 L598.4 31.9 L597.0 32.4 L595.6 33.0 L594.1 33.6 L592.7 34.3 L591.2 34.9 L589.7 35.6 L588.3 36.4 L586.8 37.2 L585.3 38.0 L583.8 38.8 L582.3 39.7 L580.8 40.5 L579.3 41.5 L577.9 42.4 L576.4 43.3 L574.9 44.3 L573.5 45.3 L572.0 46.3 L570.6 47.4 L569.2 48.4 L567.8 49.5 L566.5 50.6 L565.1 51.7 L563.8 52.8 L562.5 54.0 L561.2 55.1 L560.0 56.3 L558.8 57.5 L557.6 58.6 L556.5 59.8 L555.3 61.0 L554.3 62.2 L553.2 63.5 L552.2 64.7 L551.2 65.9 L550.3 67.2 L549.4 68.4 L548.5 69.7 L547.7 70.9 L546.9 72.2 L546.2 73.5 L545.5 74.8 L544.8 76.1 L544.2 77.4 L543.6 78.7 L543.1 80.0 L542.6 81.3 L542.1 82.6 L541.7 84.0 L541.3 85.3 L541.0 86.6 L540.7 88.0 L540.5 89.4 L540.3 90.7 L540.1 92.1 L540.0 93.5 L539.9 94.9 L539.8 96.3 L539.8 97.7 L539.9 99.1 L539.9 100.6 L540.0 102.0 L540.1 103.5 L540.3 105.0 L540.5 106.4 L540.7 107.9 L541.0 109.4 L541.3 110.9 L541.6 112.5 L541.9 114.0 L542.3 115.5 L542.7 117.1 L543.1 118.6 L543.5 120.2 L544.0 121.8 L544.5 123.4 L545.0 125.0 L545.5 126.6 L546.0 128.2 L546.5 129.9 L547.1 131.5 L547.7 133.1 L548.3 134.8 L548.9 136.4 L549.5 138.1 L550.1 139.7 L550.7 141.4 L551.3 143.0 L551.9 144.7 L552.5 146.3 L553.2 148.0 L553.8 149.7 L554.4 151.3 L555.0 152.9 L555.7 154.6 L556.3 156.2 L556.9 157.8 L557.5 159.4 L558.1 161.0 L558.7 162.6 L559.3 164.2 L559.9 165.8 L560.5 167.3 L561.0 168.8 L561.6 170.3 L562.1 171.8 L562.6 173.3 L563.1 174.7 L563.7 176.2 L564.1 177.6 L564.6 179.0 L565.1 180.3 L565.5 181.6 L566.0 183.0 L566.4 184.2 L566.8 185.5 L567.2 186.7 L567.6 187.9 L568.0 189.1 L568.4 190.2 L568.7 191.3 L569.1 192.4 L569.4 193.4 L569.7 194.4 L570.1 195.4 L570.4 196.3 L570.7 197.2 L571.0 198.1 L571.3 199.0 L571.5 199.8 L571.8 200.6 L572.1 201.3 L572.4 202.1 L572.6 202.8 L572.9 203.4 L573.2 204.1 L573.5 204.7 L573.8 205.3 L574.1 205.8 L574.4 206.3 L574.7 206.8 L575.0 207.3 L575.3 207.7 L575.6 208.2 L576.0 208.6 L576.3 208.9 L576.7 209.3 L577.1 209.6 L577.5 209.9 L578.0 210.2 L578.4 210.5 L578.9 210.7 L579.4 211.0 L580.0 211.2 L580.5 211.3 L581.1 211.5 L581.7 211.7 L582.3 211.8 L583.0 211.9 L583.7 212.1 L584.4 212.1 L585.2 212.2 L586.0 212.3 L586.8 212.3 L587.7 212.4 L588.6 212.4 L589.5 212.4 L590.5 212.4 L591.5 212.4 L592.5 212.3 L593.6 212.3 L594.7 212.2 L595.8 212.1 L597.0 212.1 L598.2 211.9 L599.4 211.8 L600.7 211.7 L601.9 211.5 L603.3 211.3 L604.6 211.2 L606.0 211.0 L607.4 210.7 L608.8 210.5 L610.3 210.2 L611.8 209.9 L613.3 209.6 L614.8 209.3 L616.3 208.9 L617.8 208.6 L619.4 208.2 L621.0 207.7 L622.6 207.3 L624.1 206.8 L625.7 206.3 L627.3 205.8 L628.9 205.3 L630.5 204.7 L632.1 204.1 L633.7 203.4 L635.3 202.8 L636.8 202.1 L638.4 201.3 L639.9 200.6 L641.4 199.8 L642.9 199.0 L644.4 198.1 L645.8 197.2 L647.2 196.3 L648.6 195.4 L650.0 194.4 L651.3 193.4 L652.6 192.4 L653.8 191.3 L655.1 190.2 L656.2 189.1 L657.3 187.9 L658.4 186.7 L659.4 185.5 L660.4 184.2 L661.4 183.0 L662.2 181.6 L663.1 180.3 L663.8 179.0 L664.5 177.6 L665.2 176.2 L665.8 174.7 L666.4 173.3 L666.9 171.8 L667.3 170.3 L667.7 168.8 L668.0 167.3 L668.3 165.8 L668.5 164.2 L668.6 162.6 L668.7 161.0 L668.8 159.4 L668.7 157.8 L668.7 156.2 L668.6 154.6 L668.4 152.9 L668.2 151.3 L667.9 149.7 L667.6 148.0 L667.2 146.3 L666.8 144.7 L666.3 143.0 L665.8 141.4 L665.3 139.7 L664.7 138.1 L664.1 136.4 L663.5 134.8 L662.8 133.1 L662.1 131.5 L661.4 129.9 L660.6 128.2 L659.8 126.6 L659.0 125.0 L658.2 123.4 L657.4 121.8 L656.6 120.2 L655.7 118.6 L654.9 117.1 L654.0 115.5 L653.1 114.0 L652.3 112.5 L651.4 110.9 L650.5 109.4 L649.7 107.9 L648.8 106.4 L648.0 105.0 L647.1 103.5 L646.3 102.0 L645.5 100.6 L644.7 99.1 L643.9 97.7 L643.2 96.3 L642.5 94.9 L641.7 93.5 L641.1 92.1 L640.4 90.7 L639.7 89.4 L639.1 88.0 L638.5 86.6 L638.0 85.3 L637.4 84.0 L636.9 82.6 L636.4 81.3 L636.0 80.0 L635.5 78.7 L635.1 77.4 L634.7 76.1 L634.4 74.8 L634.1 73.5 L633.8 72.2 L633.5 70.9 L633.2 69.7 L633.0 68.4 L632.8 67.2 L632.6 65.9 L632.4 64.7 L632.2 63.5 L632.1 62.2 L631.9 61.0 L631.8 59.8 L631.7 58.6 L631.6 57.5 L631.5 56.3 L631.4 55.1 L631.3 54.0 L631.2 52.8 L631.1 51.7 L631.1 50.6 L631.0 49.5 L630.9 48.4 L630.8 47.4 L630.6 46.3 L630.5 45.3 L630.4 44.3 L630.2 43.3 L630.1 42.4 L629.9 41.5 L629.7 40.5 L629.4 39.7 L629.2 38.8 L628.9 38.0 L628.6 37.2 L628.2 36.4 L627.9 35.6 L627.5 34.9 L627.1 34.3 L626.6 33.6 L626.1 33.0 L625.6 32.4 L625.0 31.9 L624.5 31.4 L623.8 30.9 L623.2 30.5 L622.5 30.1 L621.7 29.7 L620.9 29.4 L620.1 29.2 L619.3 28.9 L618.4 28.7 L617.5 28.6 L616.5 28.5 L615.5 28.4 L614.5 28.4 Z" />
             </g>
           </svg>
-          <figcaption><span class="figure-caption-summary">The map \(\Phi^h\) carries one fixed cylinder onto the moving outer collar while leaving the inner cut fixed.</span></figcaption>
+          <figcaption>The map \(\Phi^h\) carries one fixed cylinder onto the moving outer collar while leaving the inner cut fixed.</figcaption>
         </figure>
         <p>Pulling the Laplacian back through \(\Phi^h\) gives a second-order operator \(L^h_R\), characterized by \((\Delta u)\circ\Phi^h=L^h_Rw\) whenever \(u\circ\Phi^h=w\). Thus \(w=u\circ\Phi^h:\mathcal{C}\to\mathbb{R}\) must solve</p>
         <div class="tex-display">
@@ -2944,7 +2918,7 @@
           <input type="checkbox" id="encoding-note-toggle" class="margin-toggle">
           <aside class="marginnote encoding-note" id="encodingNote" aria-live="polite"></aside>
         </div>
-        <figure class="geometry-laboratory interactive-plate annotated-plate reading-figure encoding-figure" data-figure="single-unknown-encoding" data-evidence="schematic" data-evidence-detail="The collar field is schematic and its width is enlarged. The final interior uses stored numerical k = 0 and k = 1 Bessel profiles to match the value at the cut; normal-derivative matching remains the separate condition G2 = 0.">
+        <figure class="geometry-laboratory interactive-plate annotated-plate reading-figure encoding-figure" data-figure="single-unknown-encoding">
           <aside class="geometry-controls paper-demo-controls">
             <div class="geometry-stages" role="group" aria-label="Five stages from v to the cone">
               <button type="button" data-encoding-stage="0" aria-pressed="true"><span>01</span><strong>v on the cylinder</strong></button>
@@ -2960,7 +2934,7 @@
               <canvas id="encodingCanvas" role="img" aria-label="Five stages from v on the cylinder to the completed cone" aria-describedby="encodingFigureCaption"></canvas>
             </div>
           </section>
-          <figcaption id="encodingFigureCaption"><span class="figure-caption-summary">The five stages follow the theorem&rsquo;s first angular mode from the cylinder to the completed cone.</span><span class="figure-caption-note">In the final stage, normalized order-zero and order-\(R\) Bessel profiles solve the interior Dirichlet problem and meet the collar value continuously at \(r=R-L\). Smooth matching additionally requires the normal-derivative condition \(\mathcal G_2=0\). The collar is enlarged from \(L/R\approx1/70\) to one fifth of the drawing.</span></figcaption>
+          <figcaption id="encodingFigureCaption">The five stages follow the theorem&rsquo;s first angular mode from the cylinder to the completed cone. Normalized order-zero and order-\(R\) Bessel profiles match the collar value at the cut; smooth matching additionally requires \(\mathcal G_2=0\).</figcaption>
         </figure>
         <div class="intro-copy intro-copy-wide">
         <p>Two facts make this work.</p>
@@ -3041,7 +3015,7 @@
           <p>The standard tool is the classical Crandall&ndash;Rabinowitz theorem. Its conclusion permits the branch size to deteriorate with \(R_\star\), whereas we need a lower bound uniform as \(R_\star\to\infty\). The comparison below places the classical \(C^4\) statement beside the uniform version used here.</p>
           <label for="branch-scale-note" class="margin-toggle" aria-label="Show the branch-size figure">&#8853;</label>
           <input type="checkbox" id="branch-scale-note" class="margin-toggle">
-          <figure class="marginnote branch-scale-figure" data-figure="branch-scale" data-evidence="schematic" data-evidence-detail="Crossing locations and quadratic curvatures use saved and asymptotic data. The shrinking classical amplitudes are deliberately illustrative because the classical theorem supplies no uniform lower bound.">
+          <figure class="marginnote branch-scale-figure" data-figure="branch-scale">
             <div id="branchScaleCanvasWrap" class="branch-scale-canvas-wrap">
               <canvas id="branchScaleCanvas" role="img" aria-label="Bifurcation branches at integer orders fifteen to thirty" aria-describedby="branchScaleNote"></canvas>
             </div>
@@ -3075,11 +3049,11 @@
         <article id="uniformConeBifurcation" class="math-statement" data-kind="theorem" data-label="uniform-cone-bifurcation" aria-labelledby="uniformConeBifurcationTitle">
           <header class="math-statement-header"><span>Theorem</span><small id="uniformConeBifurcationTitle">the hypotheses hold uniformly</small></header>
           <div class="math-statement-body">
-            <p>There is \(R_{\mathrm{unif}}\) such that every crossing</p>
+            <p>There is \(R_{\mathrm{unif}}\) such that <span data-lean-alignment="uniform-cone-bifurcation:crossing">every crossing</span></p>
             <div class="tex-display">
               \[ R_*\ge R_{\mathrm{unif}},\qquad J_1(\rho)=J_{R_*}(\rho)=0,\qquad 2\le\lambda_*:=\frac{\rho^2}{R_*^2}\le3 \]
             </div>
-            <p>satisfies the hypotheses of <a class="xref" data-ref="crandall-rabinowitz"></a> with \(C_1,\ldots,C_5\) independent of the crossing.</p>
+            <p>satisfies the hypotheses of <a class="xref" data-ref="crandall-rabinowitz"></a> with <span data-lean-alignment="uniform-cone-bifurcation:uniform-control">\(C_1,\ldots,C_5\) independent of the crossing</span>.</p>
           </div>
         </article>
         <lean-statement data-statement="uniform-cone-bifurcation"></lean-statement>
@@ -3110,7 +3084,7 @@
           <p>For the visualisation, choose the computed crossing <span class="formula">\(R_*=28.026397\ldots\)</span>, with <span class="formula">\(\rho_*=j_{1,16}\)</span> and <span class="formula">\(\lambda_*=3.317011\ldots\)</span>, outside the proof window \([2,3]\). At this value, twenty-eight copies leave a narrow angular gap. Finite-dimensional numerical continuation carries this illustrative branch to \(R=28\), producing the planar candidate shown in <a href="https://arxiv.org/abs/2608.05114" target="_blank" rel="noreferrer">Figure 1 of the paper</a>. The rigorous landing argument instead applies to sufficiently large crossings inside the stated spectral window.</p>
         </div>
 
-        <figure id="figure-cone-landing-visualization" class="laboratory cone-laboratory interactive-plate figure-band" data-applet="cone-landing-visualization" data-figure="cone-landing-visualization" data-evidence="numerical">
+        <figure id="figure-cone-landing-visualization" class="laboratory cone-laboratory interactive-plate figure-band" data-applet="cone-landing-visualization" data-figure="cone-landing-visualization">
           <aside class="controls paper-demo-controls" aria-label="Cone simulation controls">
             <div class="control-heading" hidden aria-hidden="true">
               <button id="coneResetButton" type="button" hidden aria-hidden="true">Reset</button>
@@ -3163,7 +3137,7 @@
             </div>
             <div class="passive-script-targets" hidden aria-hidden="true"><span id="coneAxisLeft">\(x=-5\)</span><span id="coneAxisDescription">\(\psi\in[-\pi,\pi]\)</span><span id="coneAxisRight">\(x=0\) (boundary)</span></div>
           </section>
-          <figcaption><span class="figure-caption-summary">One continuation is shown in collar, cone, and planar coordinates.</span><span class="figure-caption-note">The margin graph follows the computed continuation \(R(s)\) from the nonintegral crossing to \(R=N\). The boundary-collar view uses the quotient coordinates \(x=r-R\) and \(\psi\in[-\pi,\pi]\); the three-dimensional view shows the complete cone down to its point; and the planar view repeats its fundamental sector twenty-eight times, exposing the seam until \(R=28\).</span></figcaption>
+          <figcaption>One continuation shown in fixed-collar, quotient-cone, and planar coordinates.</figcaption>
         </figure>
       </section>
 
@@ -3174,8 +3148,8 @@
         <article id="statement-near-integer-crossings" class="math-statement near-integer-theorem" data-kind="theorem" data-label="near-integer-crossings">
           <header class="math-statement-header"><span>Theorem</span><small>near-integer crossings</small></header>
           <div class="math-statement-body">
-            <p>For every \(\delta&gt;0\) and every lower threshold \(N_{\min}\), there are an integer \(N\ge N_{\min}\), a real order \(R_*\), and a frequency \(\rho&gt;0\) such that</p>
-            <div class="tex-display">
+            <p>For every \(\delta&gt;0\) and every lower threshold \(N_{\min}\), there are <span data-lean-alignment="near-integer-crossings:parameters">an integer \(N\ge N_{\min}\), a real order \(R_*\), and a frequency \(\rho&gt;0\)</span> such that</p>
+            <div class="tex-display" data-lean-alignment="near-integer-crossings:gap near-integer-crossings:bessel near-integer-crossings:window">
               \[
               \begin{gathered}
               N&lt;R_*&lt;N+\delta,\\
@@ -3365,16 +3339,17 @@
       <p>The final scatter plot filters the saved common-zero data to <span class="formula">\(N\le200\)</span> and uses a logarithmic horizontal <span class="formula">\(R\)</span>-axis. The small table lists five particularly close examples from separated order ranges in the full search through <span class="formula">\(R\approx841\)</span>. The proof uses simultaneous McMahon and Debye phase alignment through Kronecker's theorem. The finite data illustrate the resulting distribution of crossings.</p>
     </dialog>
 
-    <script defer src="document-structure.js?v=20260831.14"></script>
+    <script defer src="document-structure.js?v=20260831.15"></script>
+    <script defer src="proof-route-selector.js?v=20260831.1"></script>
     <script defer src="cone-data.js"></script>
     <script defer src="debye-data.js?v=20260828.1"></script>
     <script defer src="abundance-data.js"></script>
     <script defer src="dtn-data.js?v=20260831.1"></script>
-    <script defer src="app.js?v=20260831.8"></script>
-    <script defer src="story.js?v=20260831.11"></script>
+    <script defer src="app.js?v=20260831.9"></script>
+    <script defer src="story.js?v=20260831.12"></script>
     <script defer src="abundance.js?v=20260831.9"></script>
     <script defer src="pompeiu.js?v=20260831.8"></script>
-    <script defer src="computer-assisted.js?v=20260831.8"></script>
+    <script defer src="computer-assisted.js?v=20260831.9"></script>
     <script defer src="applet-layout.js?v=20260831.6"></script>
     <script defer src="certificate-checker.js?v=20260831.8"></script>
     <script defer src="research-guide.js?v=20260831.9"></script>

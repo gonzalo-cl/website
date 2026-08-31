@@ -2458,7 +2458,7 @@
     const stage = reconstructionStages[selectedReconstructionStage];
     reconstructionCanvas.setAttribute(
       "aria-label",
-      `Certified reconstruction check ${selectedReconstructionStage + 1} of 3: ${stage.label}. The plotted outline is the finite numerical centre; the exact boundary lies inside the certified enclosure and is visually indistinguishable at this scale. ${stage.status}`,
+      `Geometric check ${selectedReconstructionStage + 1} of 3: ${stage.label}. ${stage.status}`,
     );
   };
 
@@ -2767,23 +2767,23 @@
   const berensteinFieldStages = Object.freeze({
     field: Object.freeze({
       label: "signed regions",
-      status: "The certified image remains unchanged; the guide shows nine alternating sign regions, beginning and ending negative.",
-      statusMath: "The certified image remains unchanged; the guide shows nine alternating sign regions of \\(u\\), beginning and ending negative.",
+      status: "The guide shows nine alternating sign regions, beginning and ending negative.",
+      statusMath: "The guide shows nine alternating sign regions of \\(u\\), beginning and ending negative.",
     }),
     nodal: Object.freeze({
       label: "interior zero curves",
-      status: "The certified image remains unchanged; the guide marks eight plotted interior zero curves, all strictly inside the physical boundary.",
-      statusMath: "The certified image remains unchanged; the guide marks eight plotted interior zero curves, all strictly inside the physical boundary.",
+      status: "The guide marks eight plotted interior zero curves, all strictly inside the physical boundary.",
+      statusMath: "The guide marks eight plotted interior zero curves, all strictly inside the physical boundary.",
     }),
     boundary: Object.freeze({
       label: "outer nodal boundary",
-      status: "The certified image remains unchanged; the heavy outer curve is the physical nodal boundary, outside all eight plotted interior curves.",
-      statusMath: "The certified image remains unchanged; the heavy outer curve is the physical nodal boundary, where \\(u=0\\) and \\(\\partial_\\nu u=1\\).",
+      status: "The heavy outer curve is the physical nodal boundary, outside all eight plotted interior curves.",
+      statusMath: "The heavy outer curve is the physical nodal boundary, where \\(u=0\\) and \\(\\partial_\\nu u=1\\).",
     }),
     symmetry: Object.freeze({
       label: "thirteenfold symmetry",
-      status: "The certified image remains unchanged; the guide shows thirteen equivalent sectors, while the certificate rules out central symmetry.",
-      statusMath: "The certified image remains unchanged; the guide shows thirteen equivalent sectors, while the certificate rules out central symmetry.",
+      status: "The guide shows thirteen equivalent sectors, while the certificate rules out central symmetry.",
+      statusMath: "The guide shows thirteen equivalent sectors, while the certificate rules out central symmetry.",
     }),
   });
 

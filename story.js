@@ -392,8 +392,11 @@
     wheelerBoundary.setAttribute("d", path);
 
     wheelerFluxArrows.textContent = "";
-    for (let index = 0; index < 12; index += 1) {
-      const theta = TAU * (index + .25) / 12;
+    // Sample one outward normal in each fundamental sector.  Deriving the
+    // count from the boundary mode keeps the arrow field equivariant under
+    // the same rotations as the displayed domain.
+    for (let index = 0; index < mode; index += 1) {
+      const theta = TAU * (index + .25) / mode;
       const point = boundaryPoint(theta);
       const tangentX = radius * (-Math.sin(theta)
         - displayedEpsilon * (mode + 1) * Math.sin((mode + 1) * theta));
