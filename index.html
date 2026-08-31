@@ -2576,17 +2576,17 @@
         <p>Only \(v\) appears, because \(w_0\) already extends: it is the restriction of a solution regular at the apex, so it satisfies the matching condition on its own.</p>
         <p>Writing \(\mathcal{G}=(\mathcal{G}_1,\mathcal{G}_2)\), a zero of \(\mathcal{G}\) at integer order is already a counterexample.</p>
         <article class="math-statement" data-kind="proposition" data-label="collar-to-counterexample" aria-labelledby="collarToCounterexampleTitle">
-          <header class="math-statement-header"><span>Proposition</span><small id="collarToCounterexampleTitle">a zero at integer order is a Schiffer domain</small></header>
+          <header class="math-statement-header"><span>Proposition</span><small id="collarToCounterexampleTitle"><a href="https://arxiv.org/abs/2608.05114" target="_blank" rel="noreferrer">Theorem 2.7 of the paper</a></small></header>
           <div class="math-statement-body">
             <p>Fix \(\rho\) with \(J_1(\rho)=0\), take \(R\in\mathbb{N}\) and \(\lambda=\rho^2/R^2\), and suppose \(v\) satisfies \(\mathcal{G}(R,v)=0\). Then</p>
             <div class="tex-display">
               \[ \Omega=\big\{(r,\varphi):0\le r&lt;R-h_v(R\varphi)\big\} \]
             </div>
-            <p>together with the field \(u\) given by \(w^v\) on the collar and by the interior Dirichlet solve inside \(B(0,R-L)\), solves the Schiffer problem: \((\Delta+\lambda)u=0\) in \(\Omega\), with \(u=1\) and \(\partial_\nu u=0\) on \(\partial\Omega\). Moreover \(\Omega\) is bounded, star-shaped, simply connected and invariant under rotation by \(2\pi/R\), its boundary is smooth, and \(u\in C^\infty(\overline\Omega)\).</p>
+            <p>admits a solution \(u\in C^\infty(\overline\Omega)\) of the Schiffer problem. Moreover, \(\Omega\) is smooth and \(R\)-fold symmetric.</p>
           </div>
         </article>
-        <p>The two components do exactly the two jobs the construction needs. \(\mathcal{G}_1=0\) makes \(u\) solve the equation on the collar, and unfolding turns \(L^{h_v}_R\) back into the Laplacian because \(R\) is an integer; \(\mathcal{G}_2=0\) makes the normal derivatives agree across \(\{r=R-L\}\), which is what lets the collar solution continue inward. The boundary conditions come for free from the construction of \(w^v\): \(w^v(0,\cdot)=1\) and \(\partial_yw^v(0,\cdot)=0\) are the two identities arranged above.</p>
-        <p>The statement here is informal, in that the function spaces are left out; it is Theorem 2.7 of <a href="https://arxiv.org/abs/2608.05114" target="_blank" rel="noreferrer">the paper</a>, where they are given. Note that the trivial zeros \(\mathcal{G}(R,0)=0\) recover the disks, with \(u=w_0\) and \(\Omega=B_R(0)\). The task is therefore to find a <em>nontrivial</em> zero at integer \(R\).</p>
+        <p>We notice that for every \(R\in\mathbb{R}_+\) we have the trivial solutions \(\mathcal{G}(R,0)=0\). For \(R\in\mathbb{N}\) the proposition above recovers the balls, which are \(R\)-fold symmetric for every \(R\in\mathbb{N}\).</p>
+        <p>We also point out that the statement above is informal, in the sense that the function spaces are left out. See the digression below for the exact choice of domain and codomain of \(\mathcal{G}\).</p>
         </div>
 
         <details class="optional-digression proof-details intro-proof">
