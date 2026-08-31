@@ -5865,3 +5865,16 @@ html:not(.js) .proof-node-select { cursor: default; }
     box-shadow: none;
   }
 }
+
+/* The cone fold sits in the margin now, so it takes the note measure and its
+   canvas follows the wrapper rather than the reading column. */
+.cone-fold-figure .geometry-canvas-wrap { height: 300px; }
+.cone-fold-figure .geometry-controls { display: none; }
+
+/* In the margin the figure has no room for the epistemic badge or the share
+   panel that the wide plates carry. */
+body.tufte-site main .cone-fold-figure .figure-evidence,
+body.tufte-site main .cone-fold-figure .figure-tools,
+.cone-fold-figure .figure-evidence,
+.cone-fold-figure .figure-tools { display: none; }
+.cone-fold-figure figcaption { font-size: var(--type-caption); line-height: 1.5; }

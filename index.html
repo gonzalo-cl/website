@@ -2125,14 +2125,11 @@
         <div class="intro-copy intro-copy-wide">
           <p>Work on a ball of radius \(R\) and impose \(R\)-fold symmetry. Suppose for a moment that \(R\) is a natural number. Then the symmetry has a fundamental domain, a single angular sector of opening \(2\pi/R\), and quotienting the ball by the symmetry gives a cone of length \(R\) and circumference \(2\pi\). An \(R\)-fold symmetric solution on the ball is the same thing as a solution on that cone.</p>
         </div>
-        <figure class="geometry-laboratory interactive-plate annotated-plate reading-figure cone-fold-figure" data-figure="cone-unfolding-apparatus" data-evidence="schematic">
+        <div class="intro-copy intro-copy-wide cone-fold-host">
+          <label for="cone-fold-note" class="margin-toggle" aria-label="Show the cone folding figure">&#8853;</label>
+          <input type="checkbox" id="cone-fold-note" class="margin-toggle">
+          <figure class="marginnote side-figure cone-fold-figure" data-figure="cone-unfolding-apparatus" data-evidence="schematic">
           <aside class="geometry-controls paper-demo-controls">
-            <div class="geometry-stages" aria-label="Four stages of the fold">
-              <button type="button" data-conefold-stage="0"><span>01</span><strong>The domain</strong></button>
-              <button type="button" data-conefold-stage="0.333333"><span>02</span><strong>One sector</strong></button>
-              <button type="button" data-conefold-stage="0.666667"><span>03</span><strong>Rolling up</strong></button>
-              <button type="button" data-conefold-stage="1"><span>04</span><strong>The cone</strong></button>
-            </div>
             <div class="geometry-scrub"><div class="control-label"><label for="coneFoldRange">fold</label><output id="coneFoldValue">stage 1</output></div><input id="coneFoldRange" type="range" min="0" max="1" value="0" step="0.001"></div>
             <button id="coneFoldPlayButton" class="play-button" type="button" aria-pressed="false"><span id="coneFoldPlayIcon">&#9654;</span><span id="coneFoldPlayLabel">Fold</span></button>
           </aside>
@@ -2141,8 +2138,9 @@
               <canvas id="coneFoldCanvas" role="img" aria-label="Folding one sector of the R-fold domain into the cone, and unfolding it again"></canvas>
             </div>
           </section>
-          <figcaption>An \(R\)-fold symmetric domain is reduced to one fundamental sector, whose radial sides are identified to form the quotient cone. The boundary profile makes one period around the cone. The drawing explains this exact quotient geometry schematically; it is not a numerical reconstruction.</figcaption>
-        </figure>
+          <figcaption>One sector of an \(R\)-fold domain, rolled into the quotient cone.</figcaption>
+          </figure>
+        </div>
         <div class="intro-copy intro-copy-wide">
           <p>In cone coordinates \((r,\psi)\), with \(\psi=R\varphi\), the equation becomes</p>
           <div class="tex-display">
@@ -2509,12 +2507,6 @@
           <p>The Crandall–Rabinowitz theorem turns this formal kernel direction into an actual local branch. To use the branch later on large cones, however, its size and estimates must be uniform as <span class="formula">\(\lambda\)</span> varies.</p>
         </div>
 
-        <article class="math-statement math-statement-lemma" data-kind="lemma" data-label="uniform-cylinder-branch" aria-labelledby="uniformCylinderBranchTitle">
-          <header class="math-statement-header"><span>Lemma</span><small>Uniform bifurcation</small></header>
-          <div class="math-statement-body">
-            <p id="uniformCylinderBranchTitle">The Crandall–Rabinowitz hypotheses hold at every <span class="formula">\((\lambda,0)\)</span> with <span class="formula">\(\lambda\in[2,3]\)</span>. The complementary inverse, the transversality constant, and the nonlinear estimates may all be bounded independently of <span class="formula">\(\lambda\)</span>. Consequently the local branches contain one common interval <span class="formula">\(|s|&lt;\varepsilon\)</span>.</p>
-          </div>
-        </article>
 
         <details class="proof-details cylinder-uniform-proof">
           <summary><span>Why the bifurcation is uniform in \(\lambda\)</span><i>expand +</i></summary>
@@ -2888,19 +2880,6 @@
         <div class="tex-display">
           \[ \mathcal{G}_1(R,v):=\big(L^{h_v}_R+\lambda\big)w^v=0. \]
         </div>
-        <label for="interior-match-note" class="margin-toggle" aria-label="Show the interior matching figure">&#8853;</label>
-        <input type="checkbox" id="interior-match-note" class="margin-toggle">
-        <figure class="marginnote side-figure interior-match-figure" data-figure="interior-matching" data-evidence="numerical" data-evidence-detail="Precomputed Bessel profiles and Dirichlet-to-Neumann multipliers illustrate the matching equation. The dashed collar-side trace is a prescribed pedagogical target, not a separately computed nonlinear collar solution.">
-          <div id="interiorMatchCanvasWrap" class="interior-match-canvas-wrap">
-            <canvas id="interiorMatchCanvas" role="img" aria-label="Interior solution on the disc, with its boundary value and normal derivative plotted below" aria-describedby="interiorMatchingCaption"></canvas>
-          </div>
-          <div class="interior-match-control">
-            <label for="interiorMatchRange">boundary amplitude</label>
-            <output id="interiorMatchValue" for="interiorMatchRange">0.20</output>
-            <input id="interiorMatchRange" type="range" min="-1" max="1" step="0.01" value="0.2" aria-label="Amplitude of the first angular mode of the boundary value" aria-describedby="interiorMatchingCaption">
-          </div>
-          <figcaption id="interiorMatchingCaption">Set the boundary value on \(r=R-L\); the interior solution and its normal derivative are then determined. The dashed curve is a prescribed collar-side target at amplitude \(0.55\), formed from the same saved Dirichlet-to-Neumann multipliers. Moving the slider shows when the interior-produced trace meets that target, illustrating the equation \(\mathcal{G}_2=0\) rather than computing the nonlinear collar solution. The picture uses the quotient angle \(\psi\); at integer \(R\) it unfolds to \(B(0,R-L)\).</figcaption>
-        </figure>
         <p>Regarding the upper end of the collar \(\{y=L\}\), we write a condition \(\mathcal{G}_2(R,v)=0\) that ensures the corresponding solution \(v\), when passed to the cone, can be extended regularly to a Schiffer solution on the full cone. This mapping is based on a Dirichlet-to-Neumann map; see below for more details.</p>
         </div>
 
