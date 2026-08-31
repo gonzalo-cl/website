@@ -558,8 +558,8 @@
                 <circle class="branch-marker" cx="150" cy="52" r="5"/>
                 <text class="branch-axis-label" x="150" y="100" text-anchor="middle">a</text>
               </svg>
-              <input id="cylinderBranchRange" type="range" min="-1" max="1" step="0.01" value="0" aria-label="Cylinder bifurcation parameter from minus epsilon to plus epsilon">
-              <div class="range-scale"><span>\(-\varepsilon\)</span><span>\(0\)</span><span>\(+\varepsilon\)</span></div>
+              <input id="cylinderBranchRange" type="range" min="-1" max="1" step="0.01" value="0" aria-label="Cylinder bifurcation parameter from minus epsilon to plus epsilon" class="branch-range-hidden" tabindex="-1">
+              <p class="branch-hint">Move along the blue line for the radially symmetric (trivial) examples, and along the red one for the new branch proved by Fall, Minlend and Weth.</p>
             </div>
             </aside>
             <span>flat cylinder</span><h3>A radial Neumann mode and a nonradial Dirichlet mode have the same eigenvalue.</h3>
@@ -616,8 +616,8 @@
                 <circle class="branch-marker" cx="150" cy="52" r="5"/>
                 <text class="branch-axis-label" x="150" y="100" text-anchor="middle">a</text>
               </svg>
-              <input id="annulusBranchRange" type="range" min="-1" max="1" step="0.01" value="0" aria-label="Annulus bifurcation parameter from minus epsilon to plus epsilon">
-              <div class="range-scale"><span>\(-\varepsilon\)</span><span>\(0\)</span><span>\(+\varepsilon\)</span></div>
+              <input id="annulusBranchRange" type="range" min="-1" max="1" step="0.01" value="0" aria-label="Annulus bifurcation parameter from minus epsilon to plus epsilon" class="branch-range-hidden" tabindex="-1">
+              <p class="branch-hint">Move along the blue line for the radially symmetric (trivial) examples, and along the red one for the new branch proved by Enciso, Fern&aacute;ndez, Ruiz and Sicbaldi.</p>
             </div>
             </aside>
             <span>planar annulus</span><h3>A Neumann eigenfunction of the Laplacian, locally constant on the boundary.</h3>
@@ -672,8 +672,8 @@
                 <circle class="branch-marker" cx="150" cy="52" r="5"/>
                 <text class="branch-axis-label" x="150" y="100" text-anchor="middle">θ</text>
               </svg>
-              <input id="sphereBranchRange" type="range" min="-1" max="1" step="0.01" value="0" aria-label="Spherical bifurcation parameter from minus epsilon to plus epsilon">
-              <div class="range-scale"><span>\(-\varepsilon\)</span><span>\(0\)</span><span>\(+\varepsilon\)</span></div>
+              <input id="sphereBranchRange" type="range" min="-1" max="1" step="0.01" value="0" aria-label="Spherical bifurcation parameter from minus epsilon to plus epsilon" class="branch-range-hidden" tabindex="-1">
+              <p class="branch-hint">Move along the blue line for the radially symmetric (trivial) examples, and along the red one for the new branch proved by Cao-Labora and Fern&aacute;ndez.</p>
             </div>
             </aside>
             <span>half-sphere</span><h3>A geodesic disk bifurcates in an eight-fold mode.</h3><p>Cao-Labora and Fernández bifurcate from the north-pole disk <span class="formula">\(\cos\theta&gt;a_*\)</span>, where <span class="formula">\(a_*\approx0.477\)</span>. Its boundary lies strictly north of the equator. The slider displays the expansion <span class="formula">\(\theta(\phi;s)=\arccos(a_*)+s b_*\cos(8\phi)+o(s)\)</span>; the amplitude is enlarged so that the eight-fold term is visible.</p>

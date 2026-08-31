@@ -1519,3 +1519,20 @@ body.tufte-site main .cr-statement .cr-variant-button[aria-pressed="true"],
 }
 
 .cr-source { margin-top: 20px; font-size: var(--type-caption); }
+
+/* The slider under each pitchfork is no longer the control: the diagram itself
+   is dragged, on the trivial line as well as up the branch.  It stays in the
+   DOM because it holds the branch parameter and is what the renderers listen
+   to, but it is out of the layout and out of the tab order. */
+input[type="range"].branch-range-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  clip-path: inset(50%);
+  overflow: hidden;
+  pointer-events: none;
+}
+.branch-hint { margin: 10px 0 0; font-size: var(--type-caption); line-height: 1.5; }
