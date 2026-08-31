@@ -2512,22 +2512,24 @@
         <details class="optional-digression proof-details intro-proof">
           <summary><span class="digression-title">The formula for \(L^h_R\)</span><i>expand +</i></summary>
           <div class="intro-proof-body">
-            <p>Write \(D=1+\chi'(y)h(\psi)\) and \(r=R-y-\chi(y)h(\psi)\) for the radius the point is carried to. Then</p>
+            <p>Abbreviating \(\chi=\chi(y)\) and \(h=h(\psi)\),</p>
             <div class="tex-display">
               \[ L^h_Rw=a_{yy}\,\partial_y^2w+a_{y\psi}\,\partial_y\partial_\psi w+a_{\psi\psi}\,\partial_\psi^2w+a_y\,\partial_yw, \]
             </div>
-            <p>with coefficients, abbreviating \(\chi=\chi(y)\) and \(h=h(\psi)\),</p>
+            <p>with coefficients</p>
             <div class="tex-display">
               \[
               \begin{aligned}
-              a_{yy}&amp;=\frac{1}{D^2}\Big(1+\frac{R^2\chi^2h'^2}{r^2}\Big),\\[3pt]
-              a_{y\psi}&amp;=-\frac{2R^2\chi h'}{r^2D},\qquad a_{\psi\psi}=\frac{R^2}{r^2},\\[3pt]
-              a_y&amp;=-\frac{1}{rD}-\frac{\chi''h}{D^3}\\[2pt]
-              &amp;\quad-\frac{R^2}{r^2}\cdot\frac{\chi^2\chi''h\,h'^2-2\chi\chi'D\,h'^2+\chi D^2h''}{D^3}.
+              a_{yy}&amp;=\frac{1}{(1+\chi'h)^2}\Big(1+\frac{R^2\chi^2h'^2}{(R-y-\chi h)^2}\Big),\\[5pt]
+              a_{y\psi}&amp;=-\frac{2R^2\chi h'}{(R-y-\chi h)^2(1+\chi'h)},\qquad
+              a_{\psi\psi}=\frac{R^2}{(R-y-\chi h)^2},\\[5pt]
+              a_y&amp;=-\frac{1}{(R-y-\chi h)(1+\chi'h)}-\frac{\chi''h}{(1+\chi'h)^3}\\[3pt]
+              &amp;\quad-\frac{R^2}{(R-y-\chi h)^2}\cdot
+              \frac{\chi^2\chi''h\,h'^2-2\chi\chi'(1+\chi'h)h'^2+\chi(1+\chi'h)^2h''}{(1+\chi'h)^3}.
               \end{aligned}
               \]
             </div>
-            <p>Every coefficient is a rational expression in \(\chi,\chi',\chi''\) and \(h,h',h''\), and none of them knows that \(R\) was meant to be an integer. Setting \(h=0\) gives \(D=1\) and \(r=R-y\), so \(a_{yy}=1\), \(a_{y\psi}=0\), and</p>
+            <p>Here \(R-y-\chi h\) is the radius the point is carried to. Every coefficient is a rational expression in \(\chi,\chi',\chi''\) and \(h,h',h''\), and none of them knows that \(R\) was meant to be an integer. Setting \(h=0\) gives \(a_{yy}=1\) and \(a_{y\psi}=0\), and leaves</p>
             <div class="tex-display">
               \[ L^0_R=\partial_y^2-\frac{1}{R-y}\,\partial_y+\frac{R^2}{(R-y)^2}\,\partial_\psi^2, \]
             </div>
