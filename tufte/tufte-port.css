@@ -4763,3 +4763,5 @@ body.tufte-site main .cr-statement .cr-variant-button[aria-pressed="true"],
   border-color: var(--teal, #287b7b);
   color: var(--teal, #287b7b);
 }
+
+.cr-source { margin-top: 20px; font-size: var(--type-caption); }
