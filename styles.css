@@ -1593,7 +1593,8 @@ body.tufte-site main .intro-route-overview p,
 
 .encoding-figure .geometry-canvas-wrap { height: 380px; }
 
-.probe-figure .geometry-canvas-wrap { height: 420px; cursor: ew-resize; }
+.probe-figure .geometry-canvas-wrap { height: 560px; cursor: grab; }
+.probe-figure .geometry-canvas-wrap:active { cursor: grabbing; }
 
 .encoding-note { font-size: var(--type-caption); line-height: 1.55; }
 .encoding-note-host { margin-bottom: 0; }

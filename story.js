@@ -1533,7 +1533,7 @@
 
   function renderPompeiuProbe() {
     if (!select("#probeCanvasWrap")) return;
-    const { canvas, context, width, height } = canvasMetrics("#probeCanvas", "#probeCanvasWrap", 420);
+    const { canvas, context, width, height } = canvasMetrics("#probeCanvas", "#probeCanvasWrap", 560);
     const domains = probeDomains();
     const domain = domains[Math.min(PROBE.domain, domains.length - 1)];
     context.clearRect(0, 0, width, height);
@@ -1544,6 +1544,16 @@
     const cx = width / 2, cy = viewHeight / 2;
     const toX = (x) => cx + x * scale;
     const toY = (y) => cy - y * scale;
+
+    /* The domain is held inside the frame before anything is drawn, so it is
+       the shape that stops at the edge rather than its centre, and no frame is
+       ever painted with it hanging over the side. */
+    let reach = 0;
+    for (let i = 0; i < 180; i++) reach = Math.max(reach, domain.radius(TAU * i / 180));
+    const limitX = Math.max(0, (width / 2 - 10) / scale - reach);
+    const limitY = Math.max(0, (viewHeight / 2 - 10) / scale - reach);
+    PROBE.t1 = Math.max(-limitX, Math.min(limitX, PROBE.t1));
+    PROBE.t2 = Math.max(-limitY, Math.min(limitY, PROBE.t2));
 
     // the wave, at its true period
     const image = context.createImageData(Math.round(width), Math.round(viewHeight));
@@ -1623,8 +1633,6 @@
     if (label) label.textContent = domain.name;
     canvas.setAttribute("aria-label",
       `${domain.name} over the plane wave cosine x one; the integral is ${value.toExponential(2)}.`);
-    const limit = (viewHeight / 2 - 6) / scale;
-    PROBE.t2 = Math.max(-limit, Math.min(limit, PROBE.t2));
     PROBE.geometry = { toX, toY, scale, cx, cy, viewHeight };
   }
 
