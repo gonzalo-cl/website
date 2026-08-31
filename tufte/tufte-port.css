@@ -808,6 +808,7 @@ body.tufte-site main .math-statement-body li {
   line-height: var(--leading-proof);
 }
 .math-statement-problem .math-statement-body p,
+.math-statement-question .math-statement-body p,
 .math-statement-conjecture .math-statement-body p { font-style: italic; font-size: var(--type-body) !important; }
 
 /* A prose theorem and its machine-readable counterpart are one editorial
