@@ -2754,7 +2754,7 @@ updateModesComparison();
 // ─────────────────────────────────────────────────────────────────────────────
 // Large-radius Bessel dictionary. This is an exact separated-mode experiment,
 // not the fixed-rho nonlinear continuation above.  The spectral scale q_R is
-// chosen so J_R'(q_R R)=0 along one real-order Neumann root branch. Exact
+// chosen so J_R'(q_R R)=0 along one Neumann root branch at real order. Exact
 // Bessel samples are precomputed for 26 <= R <= 30 and interpolated here.
 
 const debyeData = window.DEBYE_WIDE_DATA;

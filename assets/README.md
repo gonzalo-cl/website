@@ -10,6 +10,6 @@ an external image host at runtime.
 The first image illustrates the D₁₀ conformal construction, whose numerical
 centre is obtained from a bifurcation-seeded continuation and then enclosed by
 validated computation. The second is the numerical D₂₈ realization of the
-real-order cone-bifurcation mechanism; both are shown with their computed
+cone-bifurcation mechanism; both are shown with their computed
 eigenfunctions. The third contains the Hong Kong two-dollar coin and biscuit
 photographs used for the geometric comparison in the introduction.

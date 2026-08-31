@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="A visual mathematical account of the computer-assisted fixed-disk and real-order constructions of noncircular Schiffer domains, with a companion Berenstein counterexample.">
+    <meta name="description" content="A visual mathematical account of the computer-assisted fixed-disk and bifurcation constructions of noncircular Schiffer domains, with a companion Berenstein counterexample.">
     <script>document.documentElement.classList.add("js");</script>
     <link rel="canonical" href="https://pompeiu-schiffer.org/">
     <title>Constructing Noncircular Schiffer Domains · Interactive exposition</title>
@@ -42,7 +42,7 @@
           <li class="section-banner-item"><a class="section-banner-link" href="#introduction"><b>1</b><span>The problem</span></a></li>
           <li class="section-banner-item"><a class="section-banner-link" href="#geometric-escape"><b>2</b><span>Two routes to a counterexample</span></a></li>
           <li class="section-banner-item"><a class="section-banner-link" href="#computer-assisted-proof"><b>3</b><span>The computer-assisted proof</span></a></li>
-          <li class="section-banner-item"><a class="section-banner-link" href="#experiment"><b>4</b><span>The real-order proof</span></a></li>
+          <li class="section-banner-item"><a class="section-banner-link" href="#experiment"><b>4</b><span>The bifurcation proof</span></a></li>
           <li class="section-banner-item"><a class="section-banner-link" href="#references"><b aria-hidden="true"></b><span>References</span></a></li>
           <li class="section-banner-item"><a class="section-banner-link" href="#acknowledgements"><b aria-hidden="true"></b><span>Acknowledgements</span></a></li>
         </ol>
@@ -818,12 +818,12 @@
               <div class="intro-shape intro-shape-result intro-shape-bifurcation">
               <span class="panel-evidence panel-evidence-numerical">Numerical illustration</span>
               <div class="intro-shape-media intro-shape-domain">
-                <img src="assets/comparison-d28.webp" width="1000" height="1000" loading="lazy" decoding="async" alt="A numerically computed 28-fold field portrait illustrating the real-order bifurcation mechanism">
+                <img src="assets/comparison-d28.webp" width="1000" height="1000" loading="lazy" decoding="async" alt="A numerically computed 28-fold field portrait illustrating the bifurcation mechanism">
               </div>
               <svg viewBox="0 0 180 180" role="img" aria-label="A nearly circular outline with twenty-eight very shallow ripples, drawn at true scale">
                 <path class="intro-shape-line" d="M155.1 90.0L155.2 89.0L155.5 87.9L155.8 86.8L156.1 85.8L156.3 84.7L156.4 83.6L156.4 82.5L156.2 81.5L155.8 80.4L155.4 79.4L154.8 78.4L154.3 77.5L153.8 76.5L153.4 75.5L153.3 74.5L153.3 73.4L153.4 72.3L153.5 71.2L153.5 70.0L153.3 69.0L153.0 67.9L152.6 67.0L152.1 66.0L151.4 65.1L150.7 64.3L149.9 63.5L149.2 62.7L148.6 61.8L148.3 60.8L148.1 59.7L147.9 58.6L147.7 57.5L147.4 56.4L147.0 55.4L146.5 54.5L145.9 53.6L145.2 52.8L144.3 52.1L143.4 51.5L142.5 50.8L141.6 50.2L140.9 49.4L140.3 48.5L139.9 47.6L139.5 46.5L139.0 45.5L138.5 44.5L137.9 43.6L137.2 42.8L136.4 42.1L135.5 41.5L134.5 41.0L133.5 40.5L132.4 40.1L131.5 39.7L130.6 39.1L129.8 38.4L129.2 37.5L128.5 36.6L127.9 35.7L127.2 34.8L126.4 34.1L125.5 33.5L124.6 33.0L123.6 32.6L122.5 32.3L121.4 32.1L120.3 31.9L119.2 31.7L118.2 31.4L117.3 30.8L116.5 30.1L115.7 29.3L114.9 28.6L114.0 27.9L113.0 27.4L112.1 27.0L111.0 26.7L110.0 26.5L108.8 26.5L107.7 26.6L106.6 26.7L105.5 26.7L104.5 26.6L103.5 26.2L102.5 25.7L101.6 25.2L100.6 24.6L99.6 24.2L98.5 23.8L97.5 23.6L96.4 23.6L95.3 23.7L94.2 23.9L93.2 24.2L92.1 24.5L91.0 24.8L90.0 24.9L89.0 24.8L87.9 24.5L86.8 24.2L85.8 23.9L84.7 23.7L83.6 23.6L82.5 23.6L81.5 23.8L80.4 24.2L79.4 24.6L78.4 25.2L77.5 25.7L76.5 26.2L75.5 26.6L74.5 26.7L73.4 26.7L72.3 26.6L71.2 26.5L70.0 26.5L69.0 26.7L67.9 27.0L67.0 27.4L66.0 27.9L65.1 28.6L64.3 29.3L63.5 30.1L62.7 30.8L61.8 31.4L60.8 31.7L59.7 31.9L58.6 32.1L57.5 32.3L56.4 32.6L55.4 33.0L54.5 33.5L53.6 34.1L52.8 34.8L52.1 35.7L51.5 36.6L50.8 37.5L50.2 38.4L49.4 39.1L48.5 39.7L47.6 40.1L46.5 40.5L45.5 41.0L44.5 41.5L43.6 42.1L42.8 42.8L42.1 43.6L41.5 44.5L41.0 45.5L40.5 46.5L40.1 47.6L39.7 48.5L39.1 49.4L38.4 50.2L37.5 50.8L36.6 51.5L35.7 52.1L34.8 52.8L34.1 53.6L33.5 54.5L33.0 55.4L32.6 56.4L32.3 57.5L32.1 58.6L31.9 59.7L31.7 60.8L31.4 61.8L30.8 62.7L30.1 63.5L29.3 64.3L28.6 65.1L27.9 66.0L27.4 67.0L27.0 67.9L26.7 69.0L26.5 70.0L26.5 71.2L26.6 72.3L26.7 73.4L26.7 74.5L26.6 75.5L26.2 76.5L25.7 77.5L25.2 78.4L24.6 79.4L24.2 80.4L23.8 81.5L23.6 82.5L23.6 83.6L23.7 84.7L23.9 85.8L24.2 86.8L24.5 87.9L24.8 89.0L24.9 90.0L24.8 91.0L24.5 92.1L24.2 93.2L23.9 94.2L23.7 95.3L23.6 96.4L23.6 97.5L23.8 98.5L24.2 99.6L24.6 100.6L25.2 101.6L25.7 102.5L26.2 103.5L26.6 104.5L26.7 105.5L26.7 106.6L26.6 107.7L26.5 108.8L26.5 110.0L26.7 111.0L27.0 112.1L27.4 113.0L27.9 114.0L28.6 114.9L29.3 115.7L30.1 116.5L30.8 117.3L31.4 118.2L31.7 119.2L31.9 120.3L32.1 121.4L32.3 122.5L32.6 123.6L33.0 124.6L33.5 125.5L34.1 126.4L34.8 127.2L35.7 127.9L36.6 128.5L37.5 129.2L38.4 129.8L39.1 130.6L39.7 131.5L40.1 132.4L40.5 133.5L41.0 134.5L41.5 135.5L42.1 136.4L42.8 137.2L43.6 137.9L44.5 138.5L45.5 139.0L46.5 139.5L47.6 139.9L48.5 140.3L49.4 140.9L50.2 141.6L50.8 142.5L51.5 143.4L52.1 144.3L52.8 145.2L53.6 145.9L54.5 146.5L55.4 147.0L56.4 147.4L57.5 147.7L58.6 147.9L59.7 148.1L60.8 148.3L61.8 148.6L62.7 149.2L63.5 149.9L64.3 150.7L65.1 151.4L66.0 152.1L67.0 152.6L67.9 153.0L69.0 153.3L70.0 153.5L71.2 153.5L72.3 153.4L73.4 153.3L74.5 153.3L75.5 153.4L76.5 153.8L77.5 154.3L78.4 154.8L79.4 155.4L80.4 155.8L81.5 156.2L82.5 156.4L83.6 156.4L84.7 156.3L85.8 156.1L86.8 155.8L87.9 155.5L89.0 155.2L90.0 155.1L91.0 155.2L92.1 155.5L93.2 155.8L94.2 156.1L95.3 156.3L96.4 156.4L97.5 156.4L98.5 156.2L99.6 155.8L100.6 155.4L101.6 154.8L102.5 154.3L103.5 153.8L104.5 153.4L105.5 153.3L106.6 153.3L107.7 153.4L108.8 153.5L110.0 153.5L111.0 153.3L112.1 153.0L113.0 152.6L114.0 152.1L114.9 151.4L115.7 150.7L116.5 149.9L117.3 149.2L118.2 148.6L119.2 148.3L120.3 148.1L121.4 147.9L122.5 147.7L123.6 147.4L124.6 147.0L125.5 146.5L126.4 145.9L127.2 145.2L127.9 144.3L128.5 143.4L129.2 142.5L129.8 141.6L130.6 140.9L131.5 140.3L132.4 139.9L133.5 139.5L134.5 139.0L135.5 138.5L136.4 137.9L137.2 137.2L137.9 136.4L138.5 135.5L139.0 134.5L139.5 133.5L139.9 132.4L140.3 131.5L140.9 130.6L141.6 129.8L142.5 129.2L143.4 128.5L144.3 127.9L145.2 127.2L145.9 126.4L146.5 125.5L147.0 124.6L147.4 123.6L147.7 122.5L147.9 121.4L148.1 120.3L148.3 119.2L148.6 118.2L149.2 117.3L149.9 116.5L150.7 115.7L151.4 114.9L152.1 114.0L152.6 113.0L153.0 112.1L153.3 111.0L153.5 110.0L153.5 108.8L153.4 107.7L153.3 106.6L153.3 105.5L153.4 104.5L153.8 103.5L154.3 102.5L154.8 101.6L155.4 100.6L155.8 99.6L156.2 98.5L156.4 97.5L156.4 96.4L156.3 95.3L156.1 94.2L155.8 93.2L155.5 92.1L155.2 91.0Z"></path>
               </svg>
-              <p class="intro-shape-kicker">Real-order route</p>
+              <p class="intro-shape-kicker">Bifurcation route</p>
               <b>A numerical \(D_{28}\) realisation</b>
               <small>An informal numerical illustration of the pattern predicted by the asymptotic proof.</small>
               </div>
@@ -863,9 +863,9 @@
           <figcaption>The gallery shows the two constructed domains and two familiar fluted objects at a common visual scale. The first reconstruction is certified, the second is a numerical illustration, and the coin and biscuit provide visual context only.</figcaption>
         </figure>
 
-          <p>The two planar constructions proceed differently. In the conformal fixed-disk construction, a bifurcating relaxed constant-flux family locates a precise zero-flux candidate; rigorous fixed-point bounds then prove that an exact solution lies nearby. In the real-order construction, bifurcation is the analytic existence mechanism: the moving-boundary problem is posed on a fixed collar, and a uniformly controlled branch bends from a noninteger Bessel crossing until its order reaches an integer.</p>
-          <p>The field at left depicts the certified \(D_{10}\)-symmetric solution obtained by the conformal fixed-disk construction. The field at right is a \(D_{28}\)-symmetric numerical realisation of the real-order bifurcation mechanism. In both cases the picture is an illustration: the rigorous conclusions come from a validated coefficient-space contraction and from uniform analytic bifurcation with Bessel asymptotics, respectively. In both pictures the outer curve is \(\partial\Omega\), and the colour field is the corresponding solution \(u\). The coin and biscuit provide familiar examples of the same kind of periodically undulating boundary.</p>
-          <p>The two papers, by <a href="https://arxiv.org/abs/2608.01579" target="_blank" rel="noreferrer">Colbrook–Stepaniants</a> and <a href="https://arxiv.org/abs/2608.05114" target="_blank" rel="noreferrer">Cao-Labora–de Dios Pont</a>, appeared in early August 2026. <a class="xref" data-ref="computer-assisted-proof" href="#computer-assisted-proof">The computer-assisted proof</a> and <a class="xref" data-ref="experiment" href="#experiment">the real-order proof</a> develop the two arguments.</p>
+          <p>The two planar constructions proceed differently. In the conformal fixed-disk construction, a bifurcating relaxed constant-flux family locates a precise zero-flux candidate; rigorous fixed-point bounds then prove that an exact solution lies nearby. In the bifurcation construction, the branch is the analytic existence mechanism: the moving-boundary problem is posed on a fixed collar, and a uniformly controlled branch bends from a noninteger Bessel crossing until its order reaches an integer.</p>
+          <p>The field at left depicts the certified \(D_{10}\)-symmetric solution obtained by the conformal fixed-disk construction. The field at right is a \(D_{28}\)-symmetric numerical realisation of the bifurcation mechanism. In both cases the picture is an illustration: the rigorous conclusions come from a validated coefficient-space contraction and from uniform analytic bifurcation with Bessel asymptotics, respectively. In both pictures the outer curve is \(\partial\Omega\), and the colour field is the corresponding solution \(u\). The coin and biscuit provide familiar examples of the same kind of periodically undulating boundary.</p>
+          <p>The two papers, by <a href="https://arxiv.org/abs/2608.01579" target="_blank" rel="noreferrer">Colbrook–Stepaniants</a> and <a href="https://arxiv.org/abs/2608.05114" target="_blank" rel="noreferrer">Cao-Labora–de Dios Pont</a>, appeared in early August 2026. <a class="xref" data-ref="computer-assisted-proof" href="#computer-assisted-proof">The computer-assisted proof</a> and <a class="xref" data-ref="experiment" href="#experiment">the bifurcation proof</a> develop the two arguments.</p>
         </div>
         <div class="paper-copy pompeiu-corollary-intro">
           <p>Combining <a class="xref" data-ref="main-result" href="#statement-main-result">the main theorem</a> with the equivalence in <a class="xref" data-ref="williams-equivalence" href="#statement-williams-equivalence">Williams&rsquo; equivalence theorem</a> gives planar counterexamples to Pompeiu&rsquo;s problem.</p>
@@ -900,7 +900,7 @@
         </header>
 
         <div class="geometry-lead counterexample-routes-lead">
-          <p>Each route turns a geometric mechanism into an exact counterexample. In the conformal fixed-disk route, a Wronskian crossing and numerical continuation locate the centre; validated computation closes the existence argument. In the real-order route, quotient and collar geometry produce a bifurcation problem whose uniform analytic estimates carry the branch to an integer.</p>
+          <p>Each route turns a geometric mechanism into an exact counterexample. In the conformal fixed-disk route, a Wronskian crossing and numerical continuation locate the centre; validated computation closes the existence argument. In the bifurcation route, quotient and collar geometry produce a bifurcation problem whose uniform analytic estimates carry the branch to an integer.</p>
         </div>
 
         <section class="route-comparison data-table" aria-labelledby="routeComparisonTitle">
@@ -920,24 +920,24 @@
                 <tr>
                   <th scope="col">Level</th>
                   <th scope="col">Conformal fixed-disk route</th>
-                  <th scope="col">Real-order route</th>
+                  <th scope="col">Bifurcation route</th>
                 </tr>
               </thead>
               <tbody>
                 <tr data-route-level="mechanism" class="is-selected">
                   <th scope="row">Geometric mechanism</th>
                   <td data-route="Conformal fixed-disk route">A higher \(D_{10}\) Wronskian crossing supplies the numerical seed; a computed relaxed branch is continued to zero flux, and \(p=k\phi'\) encodes its endpoint.</td>
-                  <td data-route="Real-order route">An \(N\)-fold quotient is encoded on a fixed collar; real order lets a branch bend until the quotient closes at an integer.</td>
+                  <td data-route="Bifurcation route">An \(N\)-fold quotient is encoded on a fixed collar; real order lets a branch bend until the quotient closes at an integer.</td>
                 </tr>
                 <tr data-route-level="reduction">
                   <th scope="row">Analytic reduction</th>
                   <td data-route="Conformal fixed-disk route">A compatible inverse reduces the moving-domain problem to a cubic equation on the fixed disk.</td>
-                  <td data-route="Real-order route">The problem is pulled back to a cylinder, with an anisotropic \(v\) encoding both \(u\) and \(\Omega\). Combined with a DtN map, it reads \(\mathcal G(R,v)=0\).</td>
+                  <td data-route="Bifurcation route">The problem is pulled back to a cylinder, with an anisotropic \(v\) encoding both \(u\) and \(\Omega\). Combined with a DtN map, it reads \(\mathcal G(R,v)=0\).</td>
                 </tr>
                 <tr data-route-level="closure">
                   <th scope="row">Rigorous closure</th>
                   <td data-route="Conformal fixed-disk route">A validated contraction combines interval arithmetic on a finite block with analytic control of every tail coefficient.</td>
-                  <td data-route="Real-order route">Equidistribution of Bessel zeros; uniform bounds for \(\mathcal G\) and for the inverse of its linearization; uniform transversality; uniform control of the branch to second order.</td>
+                  <td data-route="Bifurcation route">Equidistribution of Bessel zeros; uniform bounds for \(\mathcal G\) and for the inverse of its linearization; uniform transversality; uniform control of the branch to second order.</td>
                 </tr>
               </tbody>
             </table>
@@ -945,7 +945,7 @@
           <nav class="route-comparison-continuations" aria-label="Continue from the selected comparison level">
             <span id="routeComparisonSelection" aria-live="polite">Geometric mechanism selected.</span>
             <a id="routeComparisonFixedLink" href="#computer-search">Continue in the fixed-disk proof <span aria-hidden="true">→</span></a>
-            <a id="routeComparisonRealLink" href="#cone-remap">Continue in the real-order proof <span aria-hidden="true">→</span></a>
+            <a id="routeComparisonRealLink" href="#cone-remap">Continue in the bifurcation proof <span aria-hidden="true">→</span></a>
           </nav>
         </section>
 
@@ -1020,7 +1020,7 @@
 
             <section class="proof-atlas-lane" aria-labelledby="realAtlasTitle">
               <header>
-                <span>Real-order lane</span>
+                <span>Bifurcation lane</span>
                 <h4 id="realAtlasTitle">Bifurcate, bend, and close</h4>
                 <a href="https://arxiv.org/abs/2608.05114" target="_blank" rel="noreferrer">Paper</a>
               </header>
@@ -1035,7 +1035,7 @@
                 </li>
                 <li data-proof-tags="geometry analysis" data-proof-level="reduction">
                   <div class="proof-node-card"><div class="proof-node-select" data-proof-node="real-collar"><strong>Move the boundary on one fixed collar</strong><small>A pullback replaces the moving cone boundary by a fixed strip.</small></div><a href="#fixed-domain" aria-label="Open the fixed-collar formulation">↗</a></div>
-                  <p class="proof-node-dependency">Depends on: the real-order cone and a collar of fixed width.</p>
+                  <p class="proof-node-dependency">Depends on: the cone at real order and a collar of fixed width.</p>
                 </li>
                 <li data-proof-tags="analysis bifurcation" data-proof-level="reduction">
                   <div class="proof-node-card"><div class="proof-node-select" data-proof-node="real-bifurcation"><strong>Uniform Crandall–Rabinowitz branch</strong><small>The estimates remain uniform as the crossing order grows.</small></div><a href="#bifurcation-setting" aria-label="Open the uniform bifurcation theorem">↗</a></div>
@@ -1138,8 +1138,8 @@
           <figcaption id="computerOverviewFigureTitle"><span class="figure-caption-summary">The computer-assisted route treats \(x=(g,p)\) as one point in coefficient space.</span><span class="figure-caption-note">The component \(g\) controls the field and \(p\) controls the shape. The pictures of \(X\) are schematic; the numerical bounds and final coefficient test are certified.</span></figcaption>
         </figure>
 
-        <header id="cone-route" class="section-heading proof-strategy-subheading route-subheading" data-title="Real order: bifurcate, bend, and close" data-toc="proof-subsection">
-          <h3>Real order: bifurcate, bend, and close</h3>
+        <header id="cone-route" class="section-heading proof-strategy-subheading route-subheading" data-title="Bifurcate, bend, and close" data-toc="proof-subsection">
+          <h3>Bifurcate, bend, and close</h3>
         </header>
         <div class="geometry-lead"><p>An \(N\)-fold domain can be divided by its rotations and its angular coordinate rescaled to period \(2\pi\). The quotient is a cone with metric \(g_R=dr^2+(r^2/R^2)d\psi^2\), where the planar case requires \(R=N\). As \(R\to\infty\), every fixed boundary collar approaches a half-cylinder; this is the limiting model visualised in <a class="xref" data-ref="cone-quotient-construction" href="#figure-cone-quotient-construction">the cone-quotient construction</a>. The proof itself works directly on a finite collar for every large real \(R\): it bifurcates at a noninteger crossing, obtains estimates uniform in the crossing, bends the branch to an integer, and only then unfolds the quotient into the plane.</p></div>
         <figure id="figure-cone-quotient-construction" class="geometry-laboratory interactive-plate annotated-plate reading-figure" data-figure="cone-quotient-construction" data-evidence="schematic">
@@ -1169,7 +1169,7 @@
               <noscript><p class="no-js-figure-description">Static proof map: take one sector of an N-fold domain, identify its sides to obtain a cone, formulate the problem for real order R on a fixed boundary collar, construct and bend a branch at finite R, then reach an integer R = N where the quotient seam closes and the domain unfolds into the plane.</p></noscript>
             </div>
           </section>
-          <figcaption><span class="figure-caption-summary">Real order opens a cone branch that closes into the plane at an integer.</span><span class="figure-caption-note">The half-cylinder stage is a limiting picture of the local mechanism, not the logical starting point of the planar proof. The proof works on the finite-\(R\) collar, continues until \(R\) is an integer, and then lifts the quotient to the plane. Boundary displacement is enlarged uniformly throughout the animation so that the perturbation remains visible.</span></figcaption>
+          <figcaption><span class="figure-caption-summary">A real order opens a cone branch that closes into the plane at an integer.</span><span class="figure-caption-note">The half-cylinder stage is a limiting picture of the local mechanism, not the logical starting point of the planar proof. The proof works on the finite-\(R\) collar, continues until \(R\) is an integer, and then lifts the quotient to the plane. Boundary displacement is enlarged uniformly throughout the animation so that the perturbation remains visible.</span></figcaption>
         </figure>
       </section>
 
@@ -1846,7 +1846,7 @@
 
         <div class="computer-assisted-copy paper-copy computer-assisted-close">
           <p>For the final implication, insert the plane wave \(e^{-ik\omega\cdot x}\) into Green's identity with \(u\). The two interior Helmholtz terms cancel. Since \(u=1\) and \(\partial_\nu u=0\) on the boundary, the remaining term is \(-k^2\int_\Omega e^{-ik\omega\cdot x}\,dx=0\), which is the displayed Fourier-transform identity.</p>
-          <p>The conformal reduction and computer-assisted contraction construct an exact noncircular Schiffer domain and show that the same domain also fails the Pompeiu property. The companion construction below switches which boundary datum vanishes; the real-order proof closes existence through uniform bifurcation estimates and integer landing.</p>
+          <p>The conformal reduction and computer-assisted contraction construct an exact noncircular Schiffer domain and show that the same domain also fails the Pompeiu property. The companion construction below switches which boundary datum vanishes; the bifurcation proof closes existence through uniform bifurcation estimates and integer landing.</p>
         </div>
 
         <details class="proof-details computer-assisted-details">
@@ -2110,17 +2110,17 @@
         </figure>
 
         <div class="computer-assisted-copy paper-copy berenstein-close">
-          <p>The validated contractions provide this global closure on \(\mathbb D\). Separate coefficient bounds prove that the conformal maps are one-to-one and carry the global fields to genuine planar domains. The real-order route couples a finite collar to its interior and continues the solution until the quotient closes at an integer order.</p>
+          <p>The validated contractions provide this global closure on \(\mathbb D\). Separate coefficient bounds prove that the conformal maps are one-to-one and carry the global fields to genuine planar domains. The bifurcation route couples a finite collar to its interior and continues the solution until the quotient closes at an integer order.</p>
         </div>
       </section>
 
       <section id="experiment" class="experiment">
-        <header class="section-heading experiment-header" data-title="The real-order proof" data-toc="section">
-          <h2>The real-order proof</h2>
+        <header class="section-heading experiment-header" data-title="The bifurcation proof" data-toc="section">
+          <h2>The bifurcation proof</h2>
         </header>
 
-        <header id="cone-remap" class="section-heading proof-strategy-subheading" data-title="The real-order cone quotient" data-toc="proof-subsection">
-          <h3>The real-order cone quotient</h3>
+        <header id="cone-remap" class="section-heading proof-strategy-subheading" data-title="The cone quotient" data-toc="proof-subsection">
+          <h3>The cone quotient</h3>
         </header>
 
         <div class="intro-copy intro-copy-wide">
@@ -2293,7 +2293,7 @@
         <article id="statement-uniform-cone-decrease" class="math-statement uniform-drop-theorem" data-kind="corollary" data-label="uniform-cone-decrease">
           <header class="math-statement-header"><span>Corollary</span><small>uniform decrease of \(R\)</small></header>
           <div class="math-statement-body">
-            <p>There are constants \(R_{\mathrm{drop}},s_*,\eta_*&gt;0\), independent of the crossing, such that every real-order crossing with</p>
+            <p>There are constants \(R_{\mathrm{drop}},s_*,\eta_*&gt;0\), independent of the crossing, such that every crossing with</p>
             <div class="tex-display">
               \[
               \begin{gathered}
@@ -3267,7 +3267,7 @@
           <li><span>[10]</span><p>M. M. Fall, I. A. Minlend and T. Weth, <a href="https://doi.org/10.4171/JEMS/1612" target="_blank" rel="noreferrer"><em>The Schiffer problem on the cylinder and on the 2-sphere</em></a>, <em>Journal of the European Mathematical Society</em> (2025).</p></li>
           <li id="ref-cao-fernandez"><span>[11]</span><p>G. Cao-Labora and A. J. Fern&aacute;ndez, <a href="https://arxiv.org/abs/2510.05732" target="_blank" rel="noreferrer"><em>A contractible Schiffer counterexample on the half-sphere</em></a>, arXiv:2510.05732 (2025).</p></li>
           <li id="ref-colbrook"><span>[12]</span><p>M. J. Colbrook and G. Stepaniants, <a href="https://arxiv.org/abs/2608.01579" target="_blank" rel="noreferrer"><em>A computer-assisted counterexample to the planar Pompeiu and Schiffer conjectures</em></a>, arXiv:2608.01579 (2026). The validated conformal-map construction expounded here.</p></li>
-          <li id="ref-cao-dedios"><span>[13]</span><p>G. Cao-Labora and J. de Dios Pont, <a href="https://arxiv.org/abs/2608.05114" target="_blank" rel="noreferrer"><em>Counterexamples to Schiffer's Conjecture</em></a>, arXiv:2608.05114 (2026). The real-order cone-bifurcation construction expounded here.</p></li>
+          <li id="ref-cao-dedios"><span>[13]</span><p>G. Cao-Labora and J. de Dios Pont, <a href="https://arxiv.org/abs/2608.05114" target="_blank" rel="noreferrer"><em>Counterexamples to Schiffer's Conjecture</em></a>, arXiv:2608.05114 (2026). The cone-bifurcation construction expounded here.</p></li>
           <li><span>[14]</span><p>F. W. J. Olver et al., editors, <a href="https://dlmf.nist.gov/10" target="_blank" rel="noreferrer"><em>NIST Digital Library of Mathematical Functions, Chapter 10: Bessel Functions</em></a>.</p></li>
           <li><span>[15]</span><p>C. L. Siegel, <em>Über einige Anwendungen diophantischer Approximationen</em>, <em>Abhandlungen der Preußischen Akademie der Wissenschaften, Physikalisch-Mathematische Klasse</em>, no. 1 (1929), 1–70. Bourget's hypothesis is a special case of Siegel's theorem on Bessel functions.</p></li>
           <li id="ref-berenstein"><span>[16]</span><p>Matthew J. Colbrook, Siavash Sadeghi and George Stepaniants, <a href="https://arxiv.org/abs/2608.08953" target="_blank" rel="noreferrer"><em>A computer-assisted counterexample to the planar Berenstein conjecture</em></a>, arXiv:2608.08953 (2026).</p></li>
@@ -3325,7 +3325,7 @@
 
     <footer>
       <span>Constructing Noncircular Schiffer Domains</span>
-      <span>computer-assisted fixed disk &nbsp;∥&nbsp; real-order cone</span>
+      <span>computer-assisted fixed disk &nbsp;∥&nbsp; cone bifurcation</span>
       <a href="#top">Back to top ↑</a>
     </footer>
 
@@ -3339,7 +3339,7 @@
       <p>The main finite calculation contains \(2471\) variables. Interval arithmetic bounds this core and every nearby coefficient that can interact with it; decreasing formulas cover all more distant coefficients. A separate exact-fraction checker combines the bounds, so rounded numbers do not decide the theorem.</p>
       <p>At \(r=10^{-6}\), the checker proves that \(T(x)=x-\mathcal AF(x)\) sends the ball into itself and shrinks distances by a factor at most \(0.621244000000036\). Banach's theorem therefore makes \(x_{n+1}=T(x_n)\) converge to the unique exact solution \(x^*\) <em>within that validated ball</em>, with \(\|x^*-x^\circ\|_X&lt;4.20\times10^{-10}\). Further bounds prove that the resulting map is one-to-one, nonlinear, and within \(7.13\times10^{-11}\) of the plotted boundary.</p>
       <hr>
-      <p class="eyebrow">Real-order route</p>
+      <p class="eyebrow">Bifurcation route</p>
       <p>The half-infinite cylinder <span class="formula">\(\Omega_{\lambda,s}=\{x&lt;h_{\lambda,s}(\theta)\}\)</span> is the limiting model solved by this visualisation. The planar existence proof is posed directly on a fixed finite collar for every large real \(R\); it uses the cylindrical profiles to guide uniform estimates rather than transferring this numerical nonlinear family to a cone.</p>
       <p>Set <span class="formula">\(\Gamma_s:x=h_s(\theta)=s\cos(\theta-\phi)+h_2\cos 2(\theta-\phi)+h_3\cos 3(\theta-\phi)\)</span>. The mean translation is fixed to zero and <span class="formula">\(h_1=s\)</span> is the amplitude gauge. The field is a truncated sum of separated solutions of <span class="formula">\((\Delta+\lambda)u=0\)</span> in the physical cylinder coordinates.</p>
       <p>The <span class="formula">\(k=0\)</span> and <span class="formula">\(k=1\)</span> radial factors are oscillatory. For <span class="formula">\(k\ge2\)</span> they are <span class="formula">\(e^{\sqrt{k^2-\lambda}\,x}\cos(k\theta)\)</span> and <span class="formula">\(e^{\sqrt{k^2-\lambda}\,x}\sin(k\theta)\)</span>, which decay as <span class="formula">\(x\to-\infty\)</span>. Consequently, the interior PDE residual is identically zero.</p>
@@ -3358,9 +3358,9 @@
       <p>The four-panel comparison displays one separated eigenfunction at a time, using the cosine representative of each nonradial angular mode. Its cone collar uses those same exact samples, while its whole-disk panel uses additional exact SciPy profiles at the integer orders <span class="formula">\(N=26,\ldots,30\)</span>. The heat maps, coordinate transformations, and crop geometry are all evaluated in the browser.</p>
       <p>For <span class="formula">\(k=0\)</span>, the browser phase-normalizes the radial profile by <span class="formula">\(\sigma_R=(J_0(\rho_R)^2+J_0'(\rho_R)^2)^{1/2}\)</span> and compares it with the oscillatory cylinder solution having the same value and derivative at the rim. For <span class="formula">\(k=1\)</span>, the Bessel trace satisfies <span class="formula">\(B_R(0)=1\)</span>, <span class="formula">\(B_R'(0)=0\)</span>; the cylinder curve is <span class="formula">\(\cos(\sqrt{\lambda_R-1}\,x)\)</span> with the same Neumann data. For <span class="formula">\(k=2,3\)</span>, the Bessel traces are normalized at the boundary and compared with <span class="formula">\(e^{\sqrt{k^2-\lambda_R}\,x}\)</span>. All vertical axes are linear; exact profiles are solid and limiting profiles are dashed.</p>
       <hr>
-      <p class="eyebrow">Real-order continuation and phase variation</p>
+      <p class="eyebrow">Continuation and phase variation</p>
       <p>The seven-stage disk–cone figure describes the quotient and limiting operations geometrically. PDE data enter in the final boundary, reconstructed from the stored coefficients at the computed endpoint <span class="formula">\(R=N=28\)</span>. In the order/phase graph, solid dark-teal curves interpolate the continuation records, and dashed dark-red curves show the quadratic approximation determined by <span class="formula">\(R''(0)\)</span>.</p>
-      <p>The real-order family panel filters the saved exhaustive crossing data to <span class="formula">\(6\le R_*\le30\)</span> and <span class="formula">\(2\le\lambda_*\le3\)</span>. It also includes the separately computed running example <span class="formula">\(R_*=28.026397\ldots\)</span>, whose spectral ratio is <span class="formula">\(\lambda_*=3.317011\ldots\)</span>. Its dark-teal curves are the asymptotic two-jets <span class="formula">\(R(s)=R_*-\Gamma(\lambda_*)s^2/2\)</span>, evaluated in the browser. White rings mark where that quadratic approximation would meet an integer, extrapolated across the plotted <span class="formula">\(|s|\le1\)</span> window. A two-jet is a small-amplitude model, and the theorem controls the branch only for amplitudes below a threshold far smaller than one. A ring therefore records the local model's prediction, not a proved counterexample.</p>
+      <p>The family panel filters the saved exhaustive crossing data to <span class="formula">\(6\le R_*\le30\)</span> and <span class="formula">\(2\le\lambda_*\le3\)</span>. It also includes the separately computed running example <span class="formula">\(R_*=28.026397\ldots\)</span>, whose spectral ratio is <span class="formula">\(\lambda_*=3.317011\ldots\)</span>. Its dark-teal curves are the asymptotic two-jets <span class="formula">\(R(s)=R_*-\Gamma(\lambda_*)s^2/2\)</span>, evaluated in the browser. White rings mark where that quadratic approximation would meet an integer, extrapolated across the plotted <span class="formula">\(|s|\le1\)</span> window. A two-jet is a small-amplitude model, and the theorem controls the branch only for amplitudes below a threshold far smaller than one. A ring therefore records the local model's prediction, not a proved counterexample.</p>
       <hr>
       <p class="eyebrow">Near-integer crossing search</p>
       <p>The final scatter plot filters the saved common-zero data to <span class="formula">\(N\le200\)</span> and uses a logarithmic horizontal <span class="formula">\(R\)</span>-axis. The small table lists five particularly close examples from separated order ranges in the full search through <span class="formula">\(R\approx841\)</span>. The proof uses simultaneous McMahon and Debye phase alignment through Kronecker's theorem. The finite data illustrate the resulting distribution of crossings.</p>

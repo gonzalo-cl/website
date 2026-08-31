@@ -2235,7 +2235,7 @@
   function drawCollarFrame(context, width, height, opacity) {
     context.save();
     context.globalAlpha = opacity;
-    drawFrameLabel(context, width, "03 / finite-R bifurcation", "Bifurcate on the finite real-order collar", "half-cylinder supplies the limiting comparison");
+    drawFrameLabel(context, width, "03 / finite-R bifurcation", "Bifurcate on the finite collar at real order", "half-cylinder supplies the limiting comparison");
     const plot = { left: width * .12, top: height * .22, width: width * .76, height: height * .6 };
     roundedPanel(context, plot.left, plot.top, plot.width, plot.height);
     context.fillStyle = visualTheme.backgroundAlt; context.fill();
@@ -2765,7 +2765,7 @@
     phaseFamilyState.geometry = { pointGeometry, width, height };
     const windowRows = rows.filter((row) => row.inProofWindow).length;
     const phaseFamilyLabel = paperEdition
-      ? "Real-order crossing plot with integer fold symmetries, common-zero crossings at the branch origin, and predicted quadratic branch jets bending toward smaller real order."
+      ? "Crossing plot with integer fold symmetries, common-zero crossings at the branch origin, and predicted quadratic branch jets bending toward smaller real order."
       : `${windowRows} computed crossings with real order between 6 and 30 and spectral ratio between 2 and 3, together with the separately computed running example at order 28.026397. Every displayed quadratic branch jet bends toward smaller real order as the magnitude of s increases. Tap a point, or use the left and right arrow keys after focusing the plot, to inspect exact values.`;
     if (canvas.getAttribute("aria-label") !== phaseFamilyLabel) canvas.setAttribute("aria-label", phaseFamilyLabel);
   }

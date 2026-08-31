@@ -553,21 +553,6 @@ input[type="range"]::-moz-range-thumb { width: 9px; height: 9px; border: 3px sol
 .debye-experiment { padding: 108px 4vw 0; color: var(--paper); background: var(--ink); }
 .debye-header { padding-bottom: 31px; }
 .debye-header .equations { max-width: 690px; justify-content: flex-end; }
-.real-order-bridge { margin: 0 0 38px 55px; border: 1px solid var(--line-light); border-top-color: var(--orange); }
-.real-order-bridge > header { display: grid; grid-template-columns: 220px minmax(0,1fr); gap: 40px; padding: 34px; }
-.real-order-bridge > header > span { color: var(--orange); font: 11px/1.55 var(--mono); text-transform: uppercase; letter-spacing: .08em; }
-.real-order-bridge > header > div { min-width: 0; }
-.real-order-bridge h3 { margin: 0 0 15px; color: var(--paper); font: 300 31px/1.04 var(--serif); letter-spacing: -.018em; }
-.real-order-bridge header p, .real-order-theorem p { max-width: 900px; margin: 0; color: rgba(241,238,229,.52); font-size: 11px; line-height: 1.76; }
-.real-order-theorem { display: grid; grid-template-columns: 220px minmax(0,1fr); gap: 40px; padding: 34px; border-top: 1px solid var(--line-light); background: rgba(255,255,255,.018); }
-.real-order-theorem > div { display: flex; flex-direction: column; gap: 8px; }
-.real-order-theorem > div > span { color: var(--orange); font: 11px var(--mono); text-transform: uppercase; letter-spacing: .1em; }
-.real-order-theorem > div > small { color: rgba(241,238,229,.4); font: 11px/1.55 var(--mono); text-transform: uppercase; letter-spacing: .07em; }
-.real-order-theorem article { min-width: 0; }
-.real-order-theorem article p { margin-bottom: 14px; }
-.real-order-theorem .tex-display { max-width: 780px; margin: 13px 0 16px; padding: 10px 14px; border-left: 2px solid var(--orange); background: rgba(160,0,0,.03); }
-.real-order-theorem .katex-display { text-align: left; }
-.real-order-theorem .real-order-result { color: #075760; border-left-color: var(--teal); background: rgba(40,123,123,.055); }
 .debye-lead { margin: 0 0 38px 55px; }
 .debye-lead p { max-width: 830px; margin: 0; color: rgba(241,238,229,.54); font-size: 14px; line-height: 1.75; }
 .paper-copy .katex { color: inherit; }
@@ -729,7 +714,7 @@ body > footer { color: var(--ink); background: var(--paper); }
 :is(.geometric-escape, .experiment, .debye-experiment, .abundance-experiment) :is(.play-button, button:not(.tab-button)) { color: var(--ink); border-color: var(--line); }
 :is(.geometric-escape, .experiment, .debye-experiment, .abundance-experiment) input[type="range"] { background: linear-gradient(90deg, var(--orange), rgba(19,33,38,.14)); }
 
-:is(.shape-variation-figure, .cylinder-theorem, .real-order-bridge, .debye-formula-grid, .basis-limit-derivation, .angular-quotient-note, .debye-conclusion, .near-integer-theorem, .abundance-conclusion, .abundance-examples) { background: rgba(255,255,255,.16); }
+:is(.shape-variation-figure, .cylinder-theorem, .debye-formula-grid, .basis-limit-derivation, .angular-quotient-note, .debye-conclusion, .near-integer-theorem, .abundance-conclusion, .abundance-examples) { background: rgba(255,255,255,.16); }
 
 .light-story-heading .section-number { color: var(--ink); border-color: var(--ink); }
 .story-intro .shape-variation-heading p,
@@ -738,7 +723,6 @@ body > footer { color: var(--ink); background: var(--paper); }
 .experiment-story-lead,
 .cylinder-spectral-seed,
 .debye-lead,
-.real-order-bridge p,
 .basis-limit-copy,
 .phase-story-lead,
 .abundance-lead,
@@ -763,7 +747,7 @@ body > footer { color: var(--ink); background: var(--paper); }
 .canvas-panel .view-button.active { color: var(--ink); }
 
 .debye-experiment .equations,
-.debye-experiment :is(.real-order-theorem > div small, .formula-display b, .formula-note) { color: var(--muted); }
+.formula-display b, .formula-note) { color: var(--muted); }
 .debye-experiment .formula-display i,
 .debye-experiment .debye-conclusion strong { color: var(--ink); }
 
@@ -823,7 +807,6 @@ dialog hr { height: 1px; margin: 32px 0; background: var(--line); border: 0; }
   .modes-laboratory { grid-template-columns: 300px minmax(0,1fr); }
   .modes-legend { display: none; }
   .debye-lead { margin-left: 0; }
-  .real-order-bridge { margin-left: 0; }
   .collar-field-laboratory { grid-template-columns: minmax(240px,.68fr) minmax(0,1.32fr); }
   .collar-field-controls { border-bottom: 1px solid var(--line-light); }
   .debye-laboratory { grid-template-columns: 1fr; }
@@ -945,9 +928,6 @@ dialog hr { height: 1px; margin: 32px 0; background: var(--line); border: 0; }
   .phase-family-note { padding: 23px 22px 27px; }
   .debye-experiment { padding: 84px 18px 0; }
   .debye-header .equations { justify-content: flex-start; }
-  .real-order-bridge > header, .real-order-theorem { grid-template-columns: minmax(0,1fr); gap: 18px; padding: 26px 21px; }
-  .real-order-bridge h3 { font-size: 28px; }
-  .real-order-theorem .katex { font-size: .8em; }
   .debye-formula-grid { grid-template-columns: 1fr; }
   .debye-formula-grid article { min-width: 0; min-height: 0; border-right: 0; border-bottom: 1px solid var(--line-light); }
   .debye-formula-grid article:last-child { border-bottom: 0; }
@@ -1303,7 +1283,6 @@ body > footer { padding-inline: var(--layout-gutter); }
   .cone-lead,
   .modes-lead,
   .phase-story-lead,
-  .real-order-bridge,
   .debye-lead,
   .abundance-lead,
   .near-integer-theorem,

@@ -61,7 +61,7 @@ Each speaker is responsible for the following part of the story:
 - **Gonzalo — Sections 1.1, 1.2, and 1.5:** build the intuition for Pompeiu’s moving probe; connect it to Schiffer’s vibration problem through Williams’ equivalence; use the Chladni photograph and animation; and end with the pictures of the $D_{10}$ counterexample and the $D_{28}$ numerical illustration. Skip the literature tour in Sections 1.3–1.4.
 - **Matt — Section 2.1, then Sections 3.1–3.3:** first run the complete fixed-disc overview animation. Then explain how the numerical search reaches zero flux, how the conformal map moves the problem to one disk, and how the compatible inverse packages the field and shape into $x=(g,p)$.
 - **George — Sections 3.4–3.7:** explain how the finite block, nearby coefficients, and infinite tail are bounded; spend most of the time on the radius test and fixed-point iteration in Section 3.5; then show reconstruction of the non-disk domain and the Berenstein companion.
-- **Jaume — Section 2.2, then Sections 4.1–4.8:** first run the complete real-order overview animation. Then explain the cone quotient, fixed collar, half-cylinder limit, uniform estimates, bifurcation and quadratic bending, near-integer crossings, and final planar landing. Move quickly through Sections 4.1–4.5 and slow down for Sections 4.6–4.8.
+- **Jaume — Section 2.2, then Sections 4.1–4.8:** first run the complete bifurcation overview animation. Then explain the cone quotient, fixed collar, half-cylinder limit, uniform estimates, bifurcation and quadratic bending, near-integer crossings, and final planar landing. Move quickly through Sections 4.1–4.5 and slow down for Sections 4.6–4.8.
 
 ## Script and shot list
 
@@ -123,15 +123,15 @@ Transition: From Section 3.3, use the top navigation to click Section 3.4 for Ge
 
 “In companion work with Siavash Sadeghi, the method also adapts to Berenstein’s switched boundary data. The Neumann trace becomes a separate equation; squaring loses its sign, and a certified sign gate recovers $\partial_\nu u=1$. The side-by-side view makes that structural change visible.”
 
-Transition: Cut from Section 3.7 to the first stage of the Section 2.2 real-order overview.
+Transition: Cut from Section 3.7 to the first stage of the Section 2.2 bifurcation overview.
 
 ### 2:20–3:58 — Jaume — Real order, quadratic bending, and integer landing
 
-#### Section 2.2 · Real-order overview animation
+#### Section 2.2 · Bifurcation overview animation
 
 *Screen: Use the top navigation to click Section 2.2, then click **Animate**. Let all seven stages run without clicking a stage or leaving the section. Hold the final frame until this blurb ends.*
 
-“The overview shows the complete real-order route. We quotient an $N$-fold domain to a cone, allow the order $R$ to vary continuously, bend a nontrivial branch toward an integer, and then unfold the closed cone back into the plane.”
+“The overview shows the complete bifurcation route. We quotient an $N$-fold domain to a cone, allow the order $R$ to vary continuously, bend a nontrivial branch toward an integer, and then unfold the closed cone back into the plane.”
 
 #### Sections 4.1–4.3 · Cone, fixed collar, and half-cylinder
 

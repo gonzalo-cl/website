@@ -37,11 +37,11 @@ The mathematical narrative is now:
 1. Pompeiu's measurement problem and Schiffer's spectral formulation;
 2. linear rigidity of the disk and bifurcation in other geometries;
 3. two routes to a counterexample: a bifurcation-seeded conformal fixed-disc
-   construction closed by computer-assisted validation, and a real-order
+   construction closed by computer-assisted validation, and a bifurcation
    cone-collar bifurcation construction;
 4. the conformal reduction and computer-assisted validation of the
    bifurcation-generated numerical centre;
-5. the real-order collar bifurcation, uniform estimates, near-integer landing
+5. the collar bifurcation, uniform estimates, near-integer landing
    and planar lift.
 
 The two proof tracks have parallel navigation and visual weight. The conformal
@@ -55,7 +55,7 @@ and contracts toward the locally unique exact solution in that validated
 ball. The companion Berenstein subsection explains its thirteenfold
 bifurcation seed, separate boundary-trace equation, sign gate and certified
 reconstruction; a final local-versus-global subsection distinguishes analytic
-collar data from global solvability. The real-order chapter poses
+collar data from global solvability. The bifurcation chapter poses
 the bifurcation problem directly on finite cone collars, uses the half-cylinder
 as its large-order limiting model, proves uniform estimates, computes the
 second variation, finds near-integer crossings and performs the planar lift.

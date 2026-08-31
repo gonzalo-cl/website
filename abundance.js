@@ -566,7 +566,7 @@
           "RUNNING EXAMPLE · SEPARATE REAL CROSSING",
           "order " + reference.R.toFixed(9) + "   fractional part " + reference.fractionalPart.toFixed(9),
           "common zero " + reference.rho.toFixed(9) + "   spectral value " + reference.lambda.toFixed(6),
-          "first-order zero 16 · real-order zero 6 · outside the displayed window",
+          "J₁ zero 16 · J_R zero 6 · outside the displayed window",
         ];
       }
       if (state.hoverKind === "search" && state.hoverIndex >= 0) {
