@@ -3078,7 +3078,8 @@
   const computerOverviewPlayLabel = document.getElementById("computerOverviewPlayLabel");
   const computerOverviewButtons = Array.from(document.querySelectorAll("[data-computer-overview-stage]"));
   const computerOverviewLabels = Array.from(document.querySelectorAll("#computerOverviewLabelLayer .computer-overview-label"));
-  const computerOverviewReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches || false;
+  const computerOverviewReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)") || null;
+  const computerOverviewPrefersReducedMotion = () => computerOverviewReducedMotion?.matches || false;
 
   const hideComputerOverviewLabels = () => {
     computerOverviewLabels.forEach((label) => label.classList.remove("is-visible"));
@@ -3606,7 +3607,7 @@
     hideComputerOverviewLabels();
     const stage = computerOverviewStages[stageIndex];
     const elapsed = Math.max(0, now - stageStarted);
-    const motion = computerOverviewReducedMotion ? 1 : clamp(elapsed / stage.animation, 0, 1);
+    const motion = computerOverviewPrefersReducedMotion() ? 1 : clamp(elapsed / stage.animation, 0, 1);
     const area = computerOverviewArea(width, height);
     computerOverviewDrawers[stageIndex](context, area, motion);
   };
@@ -3655,7 +3656,7 @@
 
   const computerOverviewNeedsFrame = (now) => {
     if (computerOverviewPlaying) return true;
-    return !computerOverviewReducedMotion
+    return !computerOverviewPrefersReducedMotion()
       && now - computerOverviewStageStarted < computerOverviewStages[computerOverviewStage].animation;
   };
 
@@ -3698,7 +3699,7 @@
       pauseComputerOverview();
       return;
     }
-    if (computerOverviewReducedMotion) {
+    if (computerOverviewPrefersReducedMotion()) {
       computerOverviewStage = computerOverviewStages.length - 1;
       computerOverviewStageStarted = now;
       renderComputerOverview(now);
@@ -3721,6 +3722,13 @@
     });
   });
   if (computerOverviewPlayButton) computerOverviewPlayButton.addEventListener("click", playComputerOverview);
+  computerOverviewReducedMotion?.addEventListener?.("change", (event) => {
+    if (!event.matches) return;
+    pauseComputerOverview();
+    computerOverviewStageStarted = performance.now()
+      - computerOverviewStages[computerOverviewStage].animation;
+    renderComputerOverview(performance.now());
+  });
   observeCanvas(computerOverviewCanvas, () => {
     renderComputerOverview(performance.now());
     scheduleComputerOverview();

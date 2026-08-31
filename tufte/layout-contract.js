@@ -146,8 +146,8 @@
       "schiffer-property",
       "schiffer-pompeiu-equivalence",
       "pompeiu-star-shaped",
-      "uniform-cone-bifurcation",
       "near-integer-crossings",
+      "uniform-cone-bifurcation",
     ];
     const actualLeanStatements = Array.from(document.querySelectorAll("details.lean-statement"), (statement) => statement.dataset.statement);
     if (actualLeanStatements.length !== expectedLeanStatements.length
@@ -329,13 +329,15 @@
       }
     });
     document.querySelectorAll("body.tufte-site main figure:has(> figcaption)").forEach((figure, index) => {
-      if (!figure.closest("[hidden], [aria-hidden='true']") && !figure.dataset.figure) {
+      if (!figure.closest("[hidden], [aria-hidden='true']")
+          && !figure.dataset.figure
+          && figure.dataset.figureUnnumbered !== "true") {
         errors.push(`captioned figure ${index + 1} has no stable semantic label`);
       }
     });
     document.querySelectorAll(".section-heading").forEach((heading) => {
       if (heading.querySelector(".eyebrow")) errors.push("section heading contains a redundant eyebrow");
-      if (heading.querySelector(":scope > :not(h2):not(h3)")) {
+      if (heading.querySelector(":scope > :not(h2):not(h3):not(a.object-permalink)")) {
         errors.push("section heading contains decoration in addition to its title");
       }
       heading.querySelectorAll(":scope > :is(span, small, p)").forEach((label) => {

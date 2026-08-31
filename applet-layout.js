@@ -71,6 +71,32 @@
 
   const preparePanelCarousels = () => {
     document.querySelectorAll(".collar-field-visual[tabindex]").forEach((carousel) => {
+      const panels = Array.from(carousel.querySelectorAll(".collar-field-panel"));
+      const liveStatus = carousel.querySelector("#collarCarouselStatus");
+      let statusFrame = 0;
+      const updatePanelStatus = () => {
+        statusFrame = 0;
+        if (!liveStatus || !panels.length) return;
+        if (carousel.scrollWidth <= carousel.clientWidth + 1) {
+          const message = `All ${panels.length} comparison panels are visible.`;
+          if (liveStatus.textContent !== message) liveStatus.textContent = message;
+          return;
+        }
+        const viewportCentre = carousel.scrollLeft + carousel.clientWidth / 2;
+        const activeIndex = panels.reduce((best, panel, index) => {
+          const panelCentre = panel.offsetLeft + panel.offsetWidth / 2;
+          const bestPanel = panels[best];
+          const bestCentre = bestPanel.offsetLeft + bestPanel.offsetWidth / 2;
+          return Math.abs(panelCentre - viewportCentre) < Math.abs(bestCentre - viewportCentre) ? index : best;
+        }, 0);
+        const message = panels[activeIndex].getAttribute("aria-label") || `Panel ${activeIndex + 1} of ${panels.length}`;
+        if (liveStatus.textContent !== message) liveStatus.textContent = message;
+      };
+      const schedulePanelStatus = () => {
+        cancelAnimationFrame(statusFrame);
+        statusFrame = requestAnimationFrame(updatePanelStatus);
+      };
+      carousel.addEventListener("scroll", schedulePanelStatus, { passive: true });
       carousel.addEventListener("keydown", (event) => {
         if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
         if (carousel.scrollWidth <= carousel.clientWidth + 1) return;
@@ -82,7 +108,10 @@
             ? carousel.scrollWidth
             : carousel.scrollLeft + (event.key === "ArrowRight" ? 1 : -1) * carousel.clientWidth * .88;
         carousel.scrollTo({ left, behavior: reducedMotion ? "auto" : "smooth" });
+        setTimeout(schedulePanelStatus, reducedMotion ? 0 : 300);
       });
+      window.addEventListener("resize", schedulePanelStatus);
+      updatePanelStatus();
     });
   };
 

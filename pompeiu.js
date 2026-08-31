@@ -395,6 +395,24 @@
 
   radiusInput.addEventListener("input", () => setRadius(Number(radiusInput.value)));
 
+  root.schifferStateAdapter = Object.freeze({
+    getState: () => ({
+      centre: {
+        x: Number(state.centre.x.toFixed(6)),
+        y: Number(state.centre.y.toFixed(6)),
+      },
+    }),
+    setState: (saved) => {
+      const x = Number(saved?.centre?.x);
+      const y = Number(saved?.centre?.y);
+      if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+      state.centre.x = x;
+      state.centre.y = y;
+      clampCentre();
+      draw();
+    },
+  });
+
   setRadius(FIRST_ZERO);
   const disclosure = root.closest("details");
   if (disclosure) disclosure.addEventListener("toggle", () => {
@@ -588,6 +606,16 @@
     event.preventDefault();
   });
   lengthInput.addEventListener("input", () => setLength(Number(lengthInput.value)));
+  root.schifferStateAdapter = Object.freeze({
+    getState: () => ({ centre: Number(state.centre.toFixed(6)) }),
+    setState: (saved) => {
+      const centre = Number(saved?.centre);
+      if (!Number.isFinite(centre)) return;
+      state.centre = centre;
+      clampCentre();
+      draw();
+    },
+  });
   const disclosure = root.closest("details");
   if (disclosure) disclosure.addEventListener("toggle", () => {
     if (disclosure.open) requestAnimationFrame(resize);
@@ -620,8 +648,8 @@
     { n: 2, rho: 7.0155866698, nodes: [2.4048255577, 5.5200781103] },
     { n: 3, rho: 10.1734681351, nodes: [2.4048255577, 5.5200781103, 8.6537279129] },
   ];
-  const reducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const state = { mode: MODES[2], running: !reducedMotion, visible: true, phase: 0, previous: 0, lastDraw: 0 };
+  const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)") || null;
+  const state = { mode: MODES[2], running: !reducedMotion?.matches, visible: true, phase: 0, previous: 0, lastDraw: 0 };
   let width = 0, height = 0, dpr = 1, frame = 0;
 
   function besselJ0(x) {
@@ -887,6 +915,13 @@
   }
 
   playButton.addEventListener("click", () => {
+    if (reducedMotion?.matches) {
+      state.running = false;
+      state.phase = 0;
+      syncPlayButton();
+      draw();
+      return;
+    }
     state.running = !state.running;
     state.previous = performance.now();
     syncPlayButton();
@@ -906,6 +941,13 @@
   if (window.ResizeObserver) new ResizeObserver(resize).observe(canvas);
   window.addEventListener("resize", resize);
   window.addEventListener("load", resize);
+  reducedMotion?.addEventListener?.("change", (event) => {
+    if (!event.matches) return;
+    state.running = false;
+    state.phase = 0;
+    syncPlayButton();
+    draw();
+  });
   syncPlayButton();
   resize();
   frame = requestAnimationFrame(animate);

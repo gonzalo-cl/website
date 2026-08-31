@@ -2,6 +2,9 @@ const SVG_NS = "http://www.w3.org/2000/svg";
 const $ = (selector) => document.querySelector(selector);
 const last = (items) => items[items.length - 1];
 const setMath = (elementOrSelector, source, options) => window.SchifferMath?.render(elementOrSelector, source, options);
+const prefersReducedMotion = () => (
+  window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches || false
+);
 
 /* Every renderer reads the same visual theme.  The content markup selects the
    edition once, on <body>; individual applets do not choose their own panel
@@ -163,6 +166,7 @@ const threeState = {
   group: null,
   pointer: null,
   zoom: THREE_ZOOM_MIN,
+  pendingView: null,
 };
 
 function boundary(theta, parameters = state) {
@@ -621,6 +625,39 @@ function renderThreeFrame() {
   }
 }
 
+function cylinderViewState() {
+  const fallback = threeState.pendingView || {
+    rotationX: -.18,
+    rotationY: -.16,
+    zoom: THREE_ZOOM_MIN,
+  };
+  return {
+    rotationX: threeState.group?.rotation.x ?? fallback.rotationX,
+    rotationY: threeState.group?.rotation.y ?? fallback.rotationY,
+    zoom: threeState.zoom ?? fallback.zoom,
+  };
+}
+
+function applyCylinderViewState(saved) {
+  const current = cylinderViewState();
+  const finiteOr = (value, fallback) => Number.isFinite(Number(value)) ? Number(value) : fallback;
+  const next = {
+    rotationX: Math.max(-Math.PI * 2, Math.min(Math.PI * 2, finiteOr(saved?.rotationX, current.rotationX))),
+    rotationY: Math.max(-Math.PI * 8, Math.min(Math.PI * 8, finiteOr(saved?.rotationY, current.rotationY))),
+    zoom: Math.max(THREE_ZOOM_MIN, Math.min(THREE_ZOOM_MAX, finiteOr(saved?.zoom, current.zoom))),
+  };
+  threeState.zoom = next.zoom;
+  if (!threeState.group) {
+    threeState.pendingView = next;
+    return;
+  }
+  threeState.group.rotation.x = next.rotationX;
+  threeState.group.rotation.y = next.rotationY;
+  threeState.pendingView = null;
+  resizeThreeRenderer();
+  renderThreeFrame();
+}
+
 function installThreeInteraction(canvas) {
   const wrap = $("#threeWrap");
   const status = ensureInteractionStatus(wrap, "threeInteractionStatus");
@@ -707,7 +744,11 @@ function setupThreeRenderer() {
   threeState.scene = new THREE.Scene();
   threeState.scene.background = new THREE.Color(SCHIFFER_VISUAL_THEME.backgroundHex);
   threeState.camera = new THREE.PerspectiveCamera(35, 1, .1, 100);
-  threeState.renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+  threeState.renderer = new THREE.WebGLRenderer({
+    antialias: true,
+    powerPreference: "high-performance",
+    preserveDrawingBuffer: true,
+  });
   threeState.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   wrap.insertBefore(threeState.renderer.domElement, $("#threeLoading"));
   threeState.group = new THREE.Group();
@@ -719,6 +760,7 @@ function setupThreeRenderer() {
   threeState.scene.add(threeState.group);
   resizeThreeRenderer();
   installThreeInteraction(threeState.renderer.domElement);
+  if (threeState.pendingView) applyCylinderViewState(threeState.pendingView);
 }
 
 function updateThreeMesh() {
@@ -1032,14 +1074,24 @@ function stopPlayback() {
   state.playFrame = null;
   $("#playIcon").textContent = "▶";
   $("#playLabel").textContent = "Animate";
+  $("#playButton").setAttribute("aria-pressed", "false");
 }
 
 function togglePlayback() {
   if (state.playing) { stopPlayback(); return; }
+  if (prefersReducedMotion()) {
+    state.s = .75;
+    $("#sRange").value = state.s;
+    setRangeFill($("#sRange"));
+    stopPlayback();
+    solveAndRender();
+    return;
+  }
   state.playing = true;
   state.lastPlaySolve = 0;
   $("#playIcon").textContent = "Ⅱ";
   $("#playLabel").textContent = "Pause";
+  $("#playButton").setAttribute("aria-pressed", "true");
   const start = performance.now() - Math.asin(Math.max(-1, Math.min(1, state.s / .75))) * 1450;
   const tick = (now) => {
     if (!state.playing) return;
@@ -1101,6 +1153,14 @@ window.addEventListener("resize", () => {
 solveAndRender();
 setView(state.view);
 
+const halfCylinderFigure = document.getElementById("figure-half-cylinder-family");
+if (halfCylinderFigure) {
+  halfCylinderFigure.schifferStateAdapter = Object.freeze({
+    getState: cylinderViewState,
+    setState: applyCylinderViewState,
+  });
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Finite-cone continuation. The nonlinear branch records and radial Bessel
 // tables are generated offline; all interpolation, geometry, and rendering run
@@ -1125,6 +1185,7 @@ const coneThreeState = {
   group: null,
   pointer: null,
   lastDepth: null,
+  pendingView: null,
 };
 
 function interpolateNumber(left, right, amount) {
@@ -1549,6 +1610,45 @@ function renderConeThreeFrame() {
   }
 }
 
+function defaultConeCameraDistance() {
+  const order = coneState.solution?.R || coneNumerics.RStar;
+  const span = 5 + Math.pow(CONE_MESH_DEPTH, 1.35) * (order - 5);
+  return Math.max(7.2, span * 1.35);
+}
+
+function coneViewState() {
+  const fallback = coneThreeState.pendingView || {
+    rotationX: -.22,
+    rotationY: -.12,
+    cameraDistance: defaultConeCameraDistance(),
+  };
+  return {
+    rotationX: coneThreeState.group?.rotation.x ?? fallback.rotationX,
+    rotationY: coneThreeState.group?.rotation.y ?? fallback.rotationY,
+    cameraDistance: coneThreeState.camera?.position.length() ?? fallback.cameraDistance,
+  };
+}
+
+function applyConeViewState(saved) {
+  const current = coneViewState();
+  const finiteOr = (value, fallback) => Number.isFinite(Number(value)) ? Number(value) : fallback;
+  const next = {
+    rotationX: Math.max(-Math.PI * 2, Math.min(Math.PI * 2, finiteOr(saved?.rotationX, current.rotationX))),
+    rotationY: Math.max(-Math.PI * 8, Math.min(Math.PI * 8, finiteOr(saved?.rotationY, current.rotationY))),
+    cameraDistance: Math.max(4.5, Math.min(55, finiteOr(saved?.cameraDistance, current.cameraDistance))),
+  };
+  if (!coneThreeState.group || !coneThreeState.camera) {
+    coneThreeState.pendingView = next;
+    return;
+  }
+  coneThreeState.group.rotation.x = next.rotationX;
+  coneThreeState.group.rotation.y = next.rotationY;
+  coneThreeState.camera.position.setLength(next.cameraDistance);
+  coneThreeState.camera.lookAt(0, 0, 0);
+  coneThreeState.pendingView = null;
+  renderConeThreeFrame();
+}
+
 function installConeThreeInteraction(canvas) {
   const wrap = $("#coneThreeWrap");
   const status = ensureInteractionStatus(wrap, "coneThreeInteractionStatus");
@@ -1633,7 +1733,11 @@ function setupConeThreeRenderer() {
   coneThreeState.scene = new THREE.Scene();
   coneThreeState.scene.background = new THREE.Color(SCHIFFER_VISUAL_THEME.backgroundHex);
   coneThreeState.camera = new THREE.PerspectiveCamera(38, 1, .1, 120);
-  coneThreeState.renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+  coneThreeState.renderer = new THREE.WebGLRenderer({
+    antialias: true,
+    powerPreference: "high-performance",
+    preserveDrawingBuffer: true,
+  });
   coneThreeState.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   wrap.insertBefore(coneThreeState.renderer.domElement, $("#coneThreeLoading"));
   coneThreeState.group = new THREE.Group();
@@ -1674,6 +1778,7 @@ function updateConeThreeMesh() {
   coneThreeState.group.add(threeLine(THREE, data.referenceRim, 0x7f9293, .45));
   coneThreeState.group.add(threeLine(THREE, data.rim, SCHIFFER_VISUAL_THEME.inkHex, 1));
   updateConeCamera(CONE_MESH_DEPTH);
+  if (coneThreeState.pendingView) applyConeViewState(coneThreeState.pendingView);
   $("#coneThreeLoading").hidden = true;
   renderConeThreeFrame();
 }
@@ -1767,14 +1872,24 @@ function stopConePlayback() {
   coneState.playFrame = null;
   $("#conePlayIcon").textContent = "▶";
   $("#conePlayLabel").textContent = coneState.progress > .999 ? "Repeat" : "Animate";
+  $("#conePlayButton").setAttribute("aria-pressed", "false");
 }
 
 function toggleConePlayback() {
   if (coneState.playing) { stopConePlayback(); return; }
   if (coneState.progress > .999) coneState.progress = 0;
+  if (prefersReducedMotion()) {
+    coneState.progress = 1;
+    $("#coneProgressRange").value = coneState.progress;
+    setRangeFill($("#coneProgressRange"));
+    stopConePlayback();
+    solveAndRenderCone();
+    return;
+  }
   coneState.playing = true;
   $("#conePlayIcon").textContent = "Ⅱ";
   $("#conePlayLabel").textContent = "Pause";
+  $("#conePlayButton").setAttribute("aria-pressed", "true");
   const startProgress = coneState.progress;
   const start = performance.now();
   const duration = Math.max(800, 5200 * (1 - startProgress));
@@ -1822,6 +1937,14 @@ window.addEventListener("resize", () => {
 });
 
 solveAndRenderCone();
+
+const coneLandingFigure = document.getElementById("figure-cone-landing-visualization");
+if (coneLandingFigure) {
+  coneLandingFigure.schifferStateAdapter = Object.freeze({
+    getState: coneViewState,
+    setState: applyConeViewState,
+  });
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Global-to-local angular zoom. All three scales use the same interpolated
@@ -2564,14 +2687,24 @@ function stopModesPlayback() {
   modesState.playFrame = null;
   $("#modesPlayIcon").textContent = "▶";
   $("#modesPlayLabel").textContent = modesState.progress > .999 ? "Repeat" : "Animate";
+  $("#modesPlayButton").setAttribute("aria-pressed", "false");
 }
 
 function toggleModesPlayback() {
   if (modesState.playing) { stopModesPlayback(); return; }
   if (modesState.progress > .999) modesState.progress = 0;
+  if (prefersReducedMotion()) {
+    modesState.progress = 1;
+    $("#modesTransferRange").value = modesState.progress;
+    setRangeFill($("#modesTransferRange"));
+    stopModesPlayback();
+    updateModesComparison();
+    return;
+  }
   modesState.playing = true;
   $("#modesPlayIcon").textContent = "Ⅱ";
   $("#modesPlayLabel").textContent = "Pause";
+  $("#modesPlayButton").setAttribute("aria-pressed", "true");
   const startProgress = modesState.progress;
   const start = performance.now();
   let lastRender = 0;
@@ -3302,6 +3435,7 @@ if (debyeData) {
     debyeState.playFrame = null;
     const playIcon = $("#debyePlayIcon");
     const playLabel = $("#debyePlayLabel");
+    $("#debyePlayButton")?.setAttribute("aria-pressed", "false");
     if (playIcon) playIcon.textContent = "▶";
     if (playLabel) {
       setMath(playLabel, debyeState.radius > debyeData.rMax - .01
@@ -3313,9 +3447,18 @@ if (debyeData) {
   function toggleDebyePlayback() {
     if (debyeState.playing) { stopDebyePlayback(); return; }
     if (debyeState.radius > debyeData.rMax - .01) debyeState.radius = debyeData.rMin;
+    if (prefersReducedMotion()) {
+      debyeState.radius = debyeData.rMax;
+      debyeOrderRange.value = debyeState.radius;
+      setRangeFill(debyeOrderRange);
+      stopDebyePlayback();
+      updateDebyeComparison();
+      return;
+    }
     debyeState.playing = true;
     $("#debyePlayIcon").textContent = "Ⅱ";
     $("#debyePlayLabel").textContent = "Pause";
+    $("#debyePlayButton")?.setAttribute("aria-pressed", "true");
     const startRadius = debyeState.radius;
     const start = performance.now();
     let lastRender = 0;

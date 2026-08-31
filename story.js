@@ -6,6 +6,9 @@
   const crossingData = window.SCHIFFER_ABUNDANCE_DATA;
   const select = (selector) => document.querySelector(selector);
   const last = (items) => items[items.length - 1];
+  const prefersReducedMotion = () => (
+    window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches || false
+  );
   const setMath = (elementOrSelector, source, options) => window.SchifferMath?.render(elementOrSelector, source, options);
   const setFormula = (element, source, options) => {
     if (!element || element.dataset.tex === source) return;
@@ -242,6 +245,20 @@
     });
     diagram.addEventListener("pointerup", (event) => diagram.releasePointerCapture(event.pointerId));
     diagram.addEventListener("keydown", (event) => {
+      if (onTrivial && event.shiftKey && (event.key === "ArrowLeft" || event.key === "ArrowRight")) {
+        event.preventDefault();
+        state.trivial = Math.max(
+          -1,
+          Math.min(1, state.trivial + (event.key === "ArrowRight" ? .05 : -.05)),
+        );
+        if (Number(range.value) !== 0) {
+          range.value = "0";
+          range.dispatchEvent(new Event("input", { bubbles: true }));
+        }
+        onTrivial(state.trivial);
+        renderBranchDiagram(diagram, 0, state.trivial);
+        return;
+      }
       const step = event.key === "ArrowUp" || event.key === "ArrowRight" ? .05
         : event.key === "ArrowDown" || event.key === "ArrowLeft" ? -.05 : 0;
       if (!step) return;
@@ -1153,23 +1170,22 @@
 
     canvas.setAttribute("aria-label", uniformMode
       ? `Uniform branches at ${rows.length} real crossings, all of the same amplitude; ${reached} reach an integer order.`
-      : `Classical branches at ${rows.length} real crossings, shrinking as the order grows; ${reached} reach an integer order.`);
+      : `Schematic classical branches at ${rows.length} real crossings, drawn with illustrative diminishing amplitudes; ${reached} reach an integer order.`);
     const note = select("[data-branch-scale-note]");
     if (note) {
       note.textContent = uniformMode
-        ? "Uniform bifurcation branches guarantee some intersection with R \u2208 \u2115. Click Classical to see the problem of using standard Crandall\u2013Rabinowitz in this argument."
-        : "Bifurcation branches get smaller for higher R\u2605, so no intersection with R \u2208 \u2115 can be guaranteed. Click Uniform to see how to solve it.";
+        ? "A uniform amplitude bound lets sufficiently near-integer branches reach an integer. The displayed bends use the crossing curvatures; select Classical to see what the standard theorem alone cannot guarantee."
+        : "Classical Crandall\u2013Rabinowitz supplies no uniform lower bound. The shrinking amplitudes drawn here are schematic, showing what the theorem does not rule out; select Uniform to see the consequence of an R-independent bound.";
     }
   }
 
-  /* Five stages from the single unknown to a Schiffer solution on the cone.
+  /* Five stages from the single unknown to the matching problem on the cone.
      The first three paint the field on a cylinder in the site's tube
      projection; the last two paint it on a cone, first the collar alone and
-     then the interior once the Dirichlet problem inside has been solved.
-     Two things are drawn larger than life and the caption says so: the profile
-     is mode three rather than the mode one the theorem produces, as in section
-     4.1, and the collar is drawn as the outer fifth of the cone where the true
-     ratio L/R is one part in seventy. */
+     then the interior Dirichlet solution.  The theorem's first angular mode is
+     used so the stored interior profile solves the correct radial equation.
+     The collar is drawn as the outer fifth of the cone where the true ratio
+     L/R is about one part in seventy. */
   const ENCODING = { progress: 0 };
   const ENCODING_CAPTIONS = [
     "v on the cylinder, Dirichlet at y = 0.",
@@ -1185,8 +1201,10 @@
     "We use \\(h_v\\) to transfer \\(w\\) onto the exterior part of the cone, obtaining \\(u\\) on \\(r>R-L\\). The cut at \\(R-L\\) is round; only the outer boundary carries the profile.",
     "We solve the Dirichlet problem to complete \\(u\\) for \\(r<R-L\\). It is regular across the transition exactly when its Neumann data on the inner circle agrees with the Dirichlet-to-Neumann operator applied to its Dirichlet data.",
   ];
-  const ENCODING_LAMBDA = 3.317, ENCODING_L = .4, ENCODING_H = .05;
-  const ENCODING_MODE = 3, ENCODING_COLLAR = .2;
+  const ENCODING_LAMBDA = Number(window.DTN_INTERIOR?.lambda) || 3.317011204;
+  const ENCODING_L = Number(window.DTN_INTERIOR?.L) || .4;
+  const ENCODING_H = .05;
+  const ENCODING_MODE = 1, ENCODING_COLLAR = .2;
 
   function encodingCutoff(y) {
     const t = Math.max(0, Math.min(1, (y / ENCODING_L - 1 / 3) / (1 / 3)));
@@ -1204,17 +1222,25 @@
     return 1 - ENCODING_LAMBDA * y * y / 2 + w1;
   }
 
-  /* Inside the collar the field is the interior Dirichlet solve, which is the
-     radial mode: the same profile dtn-data.js carries, normalized to meet the
-     collar value at the junction. */
-  function encodingInterior(fraction) {
+  /* Inside the collar the field is the interior Dirichlet solve.  The two
+     profiles in dtn-data.js are the radial and first angular modes, each
+     normalized to one at the junction.  Their coefficients are exactly the
+     radial and angular traces supplied by encodingField at y = L. */
+  function encodingInterior(fraction, psi) {
     const data = window.DTN_INTERIOR;
-    const edge = 1 - ENCODING_LAMBDA * ENCODING_L * ENCODING_L / 2;
-    if (!data || !data.profiles) return edge;
-    const profile = data.profiles[0];
-    const t = Math.max(0, Math.min(1, fraction)) * (profile.length - 1);
-    const index = Math.min(profile.length - 2, Math.floor(t));
-    return edge * (profile[index] + (profile[index + 1] - profile[index]) * (t - index));
+    const radialEdge = 1 - ENCODING_LAMBDA * ENCODING_L * ENCODING_L / 2;
+    const angularEdge = ENCODING_LAMBDA * ENCODING_H * ENCODING_L / 2;
+    if (!data || !Array.isArray(data.profiles) || data.profiles.length < 2) {
+      return radialEdge + angularEdge * Math.max(0, Math.min(1, fraction)) * Math.cos(psi);
+    }
+    const count = Math.min(data.profiles[0].length, data.profiles[1].length);
+    const t = Math.max(0, Math.min(1, fraction)) * (count - 1);
+    const index = Math.min(count - 2, Math.floor(t));
+    const sample = (profile) => {
+      return profile[index] + (profile[index + 1] - profile[index]) * (t - index);
+    };
+    return radialEdge * sample(data.profiles[0])
+      + angularEdge * sample(data.profiles[1]) * Math.cos(ENCODING_MODE * psi);
   }
 
   function encodingTube(box, y, psi) {
@@ -1283,7 +1309,7 @@
           const fraction = (j + .5) / rows;
           value = fraction > 1 - ENCODING_COLLAR
             ? encodingField((1 - fraction) / ENCODING_COLLAR * ENCODING_L, psi, 2)
-            : encodingInterior(fraction / (1 - ENCODING_COLLAR));
+            : encodingInterior(fraction / (1 - ENCODING_COLLAR), psi);
         }
         low = Math.min(low, value); high = Math.max(high, value);
         row.push(value);
@@ -1418,6 +1444,7 @@
 
     document.querySelectorAll("[data-encoding-stage]").forEach((button, index) => {
       button.classList.toggle("active", index === stage);
+      button.setAttribute("aria-pressed", String(index === stage));
     });
     const note = select("#encodingNote");
     if (note) {
@@ -1616,12 +1643,15 @@
 
     document.querySelectorAll("[data-probe-domain]").forEach((button, index) => {
       button.classList.toggle("active", index === PROBE.domain);
+      button.setAttribute("aria-pressed", String(index === PROBE.domain));
     });
     const label = select("#probeDomainName");
     if (label) label.textContent = domain.name;
+    const angle = select("#probeAngle");
+    if (angle) angle.setAttribute("aria-valuetext", `${(PROBE.angle * 180 / Math.PI).toFixed(1)} degrees`);
     canvas.setAttribute("aria-label",
       `${domain.name} over the plane wave cosine x one; the integral is ${value.toExponential(2)}.`);
-    PROBE.geometry = { toX, toY, scale, cx, cy, viewHeight };
+    PROBE.geometry = { toX, toY, scale, cx, cy, width, height, viewHeight };
   }
 
   function probeInside(domain, x, y) {
@@ -1643,9 +1673,8 @@
       const geometry = PROBE.geometry;
       const box = canvas.getBoundingClientRect();
       if (!geometry || !box.width || !box.height) return null;
-      const ratio = window.devicePixelRatio || 1;
-      const x = (event.clientX - box.left) / box.width * (canvas.width / ratio);
-      const y = (event.clientY - box.top) / box.height * (canvas.height / ratio);
+      const x = (event.clientX - box.left) / box.width * geometry.width;
+      const y = (event.clientY - box.top) / box.height * geometry.height;
       return { x: (x - geometry.cx) / geometry.scale, y: (geometry.cy - y) / geometry.scale };
     };
     const syncSlider = () => {
@@ -1720,6 +1749,31 @@
         renderPompeiuProbe();
       });
     });
+    const figure = canvas.closest("figure");
+    if (figure) {
+      figure.schifferStateAdapter = Object.freeze({
+        getState: () => ({
+          domain: PROBE.domain,
+          t1: Number(PROBE.t1.toFixed(6)),
+          t2: Number(PROBE.t2.toFixed(6)),
+          angle: Number(PROBE.angle.toFixed(6)),
+        }),
+        setState: (saved) => {
+          const domain = Number(saved?.domain);
+          const t1 = Number(saved?.t1);
+          const t2 = Number(saved?.t2);
+          const angleValue = Number(saved?.angle);
+          if (!Number.isInteger(domain) || domain < 0 || domain >= probeDomains().length
+              || !Number.isFinite(t1) || !Number.isFinite(t2) || !Number.isFinite(angleValue)) return;
+          PROBE.domain = domain;
+          PROBE.t1 = t1;
+          PROBE.t2 = t2;
+          PROBE.angle = angleValue;
+          syncSlider();
+          renderPompeiuProbe();
+        },
+      });
+    }
     renderPompeiuProbe();
   }
 
@@ -1739,6 +1793,15 @@
       buttons.forEach((button) => {
         button.addEventListener("click", () => choose(button.dataset.crVariant));
       });
+      const figure = select('figure[data-figure="branch-scale"]');
+      if (figure) {
+        figure.schifferStateAdapter = Object.freeze({
+          getState: () => ({ variant: statement.dataset.variant || "classical" }),
+          setState: (saved) => {
+            if (saved?.variant === "classical" || saved?.variant === "uniform") choose(saved.variant);
+          },
+        });
+      }
       choose(statement.dataset.variant || "classical");
     });
   }
@@ -1834,39 +1897,42 @@
     context.fillStyle = colors.ink; context.fillRect(0, 0, width, height);
 
     const amplitude = interiorMatch.amplitude;
-    const target = data.targetAmplitude;
+    const targetAmplitude = data.targetAmplitude;
     const discSize = Math.round(Math.min(width * .74, height * .42));
     drawInteriorDisc(context, discSize, Math.round((width - discSize) / 2), 0, amplitude, data);
 
     const samples = 121;
     const psi = (i) => i / (samples - 1) * TAU;
-    const dirichlet = [], produced = [], required = [];
+    const dirichlet = [], produced = [], prescribed = [];
     for (let i = 0; i < samples; i++) {
       dirichlet.push(.745 + amplitude * Math.cos(psi(i)));
       produced.push(data.tau[0] * .745 + data.tau[1] * amplitude * Math.cos(psi(i)));
-      required.push(data.tau[0] * .745 + data.tau[1] * target * Math.cos(psi(i)));
+      prescribed.push(data.tau[0] * .745 + data.tau[1] * targetAmplitude * Math.cos(psi(i)));
     }
     const left = 10, plotWidth = width - 20;
     const top = discSize + 26, plotHeight = (height - top - 34) / 2;
     drawTrace(context, { x: left, y: top, w: plotWidth, h: plotHeight },
       [{ values: dirichlet, color: colors.cyan }], "u on the circle");
     drawTrace(context, { x: left, y: top + plotHeight + 24, w: plotWidth, h: plotHeight },
-      [{ values: required, color: colors.faint, width: 1.6, dash: [5, 4] },
-       { values: produced, color: colors.orange }], "normal derivative: produced, required");
+      [{ values: prescribed, color: colors.faint, width: 1.6, dash: [5, 4] },
+       { values: produced, color: colors.orange }], "normal derivative: produced, prescribed target");
 
-    const gap = Math.abs(amplitude - target) * Math.abs(data.tau[1]);
+    const gap = Math.abs(amplitude - targetAmplitude) * Math.abs(data.tau[1]);
     const matched = gap < .04;
     context.fillStyle = matched ? colors.cyan : colors.orange;
     context.font = visualTheme.labelFont;
     context.textAlign = "left"; context.textBaseline = "bottom";
     context.fillText(matched
-      ? "matches: the solution continues across"
-      : `mismatch ${gap.toFixed(2)}: no continuation`, left, height - 6);
+      ? "matches prescribed trace: G\u2082 would vanish"
+      : `mismatch ${gap.toFixed(2)}: G\u2082 does not vanish`, left, height - 6);
 
     const value = select("#interiorMatchValue");
     if (value) value.textContent = amplitude.toFixed(2);
+    const range = select("#interiorMatchRange");
+    if (range) range.setAttribute("aria-valuetext",
+      `${amplitude.toFixed(2)}; normal derivatives ${matched ? "match" : "do not match"} the prescribed comparison trace`);
     canvas.setAttribute("aria-label",
-      `Interior solution with boundary amplitude ${amplitude.toFixed(2)}; the normal derivative it produces ${matched ? "matches" : "does not match"} the one the collar requires.`);
+      `Interior solution with boundary amplitude ${amplitude.toFixed(2)}; the normal derivative it produces ${matched ? "matches" : "does not match"} the prescribed comparison trace.`);
   }
 
   function bindInteriorMatch() {
@@ -1928,7 +1994,7 @@
     const range = select("#coneFoldRange");
     const startProgress = coneFoldState.progress;
     const distance = Math.abs(destination - startProgress);
-    if (distance < .0005) {
+    if (distance < .0005 || prefersReducedMotion()) {
       coneFoldState.progress = destination;
       if (range) { range.value = destination; fillRange(range); }
       renderConeFold();
@@ -2257,6 +2323,14 @@
   function playGeometryStory() {
     if (geometryState.playing) { stopGeometryPlayback(); return; }
     if (geometryState.progress > .999) geometryState.progress = 0;
+    if (prefersReducedMotion()) {
+      geometryState.progress = 1;
+      select("#storyGeometryRange").value = 1;
+      fillRange(select("#storyGeometryRange"));
+      stopGeometryPlayback();
+      renderGeometryStory();
+      return;
+    }
     geometryState.playing = true;
     select("#storyGeometryPlayIcon").textContent = "Ⅱ";
     select("#storyGeometryPlayLabel").textContent = "Pause";
@@ -2282,7 +2356,7 @@
     stopGeometryPlayback();
     const startProgress = geometryState.progress;
     const distance = Math.abs(destination - startProgress);
-    if (distance < .0005) {
+    if (distance < .0005 || prefersReducedMotion()) {
       geometryState.progress = destination;
       geometryRange.value = destination;
       fillRange(geometryRange);
@@ -2345,17 +2419,47 @@
   }
 
   function phaseFamilyRows() {
-    if (!crossingData || !crossingData.columns) return [];
     const rows = [];
-    const columns = crossingData.columns;
-    for (let index = 0; index < columns.R.length; index += 1) {
-      const R = columns.R[index];
-      if (R < phaseFamilyRMin) continue;
-      if (R > phaseFamilyRMax) break;
-      const rho = columns.rho[index];
-      const lambda = (rho / R) ** 2;
-      if (lambda < 2 || lambda > 3) continue;
-      rows.push({ index, R, rho, lambda, gamma: cylinderLimitGamma(lambda), reference: false });
+    const columns = crossingData?.columns;
+    if (columns) {
+      for (let index = 0; index < columns.R.length; index += 1) {
+        const R = columns.R[index];
+        if (R < phaseFamilyRMin) continue;
+        if (R > phaseFamilyRMax) break;
+        const rho = columns.rho[index];
+        const lambda = (rho / R) ** 2;
+        if (lambda < 2 || lambda > 3) continue;
+        rows.push({ index, R, rho, lambda, gamma: cylinderLimitGamma(lambda), reference: false, inProofWindow: true });
+      }
+    }
+
+    const referenceR = Number(data.RStar);
+    const referenceRho = Number(data.rho);
+    const referenceLambda = Number(data.lambdaStar ?? (referenceRho / referenceR) ** 2);
+    if (Number.isFinite(referenceR)
+        && Number.isFinite(referenceRho)
+        && Number.isFinite(referenceLambda)
+        && referenceR >= phaseFamilyRMin
+        && referenceR <= phaseFamilyRMax
+        && referenceLambda > 1
+        && referenceLambda < 4) {
+      const duplicate = rows.find((row) => (
+        Math.abs(row.R - referenceR) < 1e-9
+        && Math.abs(row.rho - referenceRho) < 1e-9
+      ));
+      if (duplicate) {
+        duplicate.reference = true;
+      } else {
+        rows.push({
+          index: -1,
+          R: referenceR,
+          rho: referenceRho,
+          lambda: referenceLambda,
+          gamma: cylinderLimitGamma(referenceLambda),
+          reference: true,
+          inProofWindow: false,
+        });
+      }
     }
     rows.sort((left, right) => left.R - right.R);
     return rows;
@@ -2585,7 +2689,7 @@
     context.restore();
 
     phaseFamilyState.geometry = { pointGeometry, width, height };
-    const windowRows = rows.filter((row) => !row.reference).length;
+    const windowRows = rows.filter((row) => row.inProofWindow).length;
     const phaseFamilyLabel = paperEdition
       ? "Real-order crossing plot with integer fold symmetries, common-zero crossings at the branch origin, and predicted quadratic branch jets bending toward smaller real order."
       : `${windowRows} computed crossings with real order between 6 and 30 and spectral ratio between 2 and 3, together with the separately computed running example at order 28.026397. Every displayed quadratic branch jet bends toward smaller real order as the magnitude of s increases. Tap a point, or use the left and right arrow keys after focusing the plot, to inspect exact values.`;
@@ -2732,6 +2836,26 @@
       }
     };
 
+    const phaseFamilyFigure = phaseFamilyCanvas.closest("figure");
+    if (phaseFamilyFigure) {
+      phaseFamilyFigure.schifferStateAdapter = Object.freeze({
+        getState: () => ({ selectedIndex: phaseFamilyState.selectedIndex }),
+        setState: (state) => {
+          const selectedIndex = state?.selectedIndex;
+          const rowCount = phaseFamilyRows().length;
+          if (!Number.isInteger(selectedIndex) || selectedIndex < -1 || selectedIndex >= rowCount) return;
+          if (selectedIndex >= 0) {
+            selectPhaseFamilyPoint(selectedIndex, true);
+            return;
+          }
+          phaseFamilyState.selectedIndex = -1;
+          phaseFamilyState.hoverIndex = -1;
+          renderPhaseFamily();
+          if (phaseFamilyStatus) phaseFamilyStatus.textContent = "No crossing is selected.";
+        },
+      });
+    }
+
     phaseFamilyCanvas.addEventListener("pointermove", (event) => {
       if (event.pointerType === "touch") {
         if (phaseFamilyTouch?.id === event.pointerId
@@ -2836,6 +2960,13 @@
     button.addEventListener("click", () => animateConeFoldTo(Number(button.dataset.conefoldStage)));
   });
 
+  const renderNewStoryFigures = () => {
+    renderEncoding();
+    renderPompeiuProbe();
+    renderInteriorMatch();
+    renderBranchScale(select(".cr-statement")?.dataset.variant || "classical");
+  };
+
   let resizeTimer;
   window.addEventListener("resize", () => {
     clearTimeout(resizeTimer);
@@ -2844,8 +2975,20 @@
       renderConeFold();
       if (phaseRange) renderPhaseStory();
       renderPhaseFamily();
+      renderNewStoryFigures();
     }, 140);
   });
+  if ("ResizeObserver" in window) {
+    let observedResizeTimer;
+    const observer = new ResizeObserver(() => {
+      clearTimeout(observedResizeTimer);
+      observedResizeTimer = setTimeout(renderNewStoryFigures, 80);
+    });
+    ["#encodingCanvasWrap", "#probeCanvasWrap", "#interiorMatchCanvasWrap", "#branchScaleCanvasWrap"]
+      .map(select)
+      .filter(Boolean)
+      .forEach((wrapper) => observer.observe(wrapper));
+  }
 
   renderGeometryStory();
   renderConeFold();
