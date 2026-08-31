@@ -1174,11 +1174,13 @@
   }
 
   /* Four stages from the single unknown to the cone.  v is only Dirichlet; its
-     Neumann trace gives h; adding the dragging term makes w_1 satisfy both
-     conditions; adding the ground state gives w; and h and w together map onto
-     the collar of the cone.  Near the boundary w_0 = 1 - lambda y^2 / 2 to one
-     per cent over the collar, which is what is drawn. */
-  const ENCODING = { progress: 0, playing: false, frame: 0 };
+     Neumann trace gives h; the dragging term completes w_1; the ground state
+     gives w; and the rim then carries h.  The field is painted on a cylinder in
+     the site's tube projection -- a cross-section ellipse of semi-axes
+     (rimDepth, half) with the axis across the frame -- and h is drawn beneath as
+     an ordinary plot.  Near the boundary w_0 = 1 - lambda y^2 / 2 to one per
+     cent over the collar, which is what is drawn. */
+  const ENCODING = { progress: 0 };
   const ENCODING_CAPTIONS = [
     "v on the cylinder, Dirichlet at y = 0.",
     "h read off the Neumann trace; the dragging term completes w\u2081.",
@@ -1192,8 +1194,14 @@
     return 1 - (3 * t * t - 2 * t * t * t);
   }
 
+  /* sin rather than cos: the visible half of the tube is psi in (-pi/2, pi/2),
+     where cos keeps one sign and the whole surface reads as a single colour.
+     Turning the domain a quarter turn about its axis is a gauge choice, and it
+     puts both signs of h on the face the reader can see. */
+  function encodingProfile(psi) { return ENCODING_H * Math.sin(psi); }
+
   function encodingField(y, psi, stage) {
-    const h = ENCODING_H * Math.cos(psi);
+    const h = encodingProfile(psi);
     const v = ENCODING_LAMBDA * h * y * (1 - y / (2 * ENCODING_L));
     if (stage < 1) return v;
     const w1 = v - encodingCutoff(y) * ENCODING_LAMBDA * y * h;
@@ -1201,15 +1209,13 @@
     return 1 - ENCODING_LAMBDA * y * y / 2 + w1;
   }
 
-  function encodingPoint(u, t, morph, box) {
-    const flatX = box.left + u * box.width;
-    const flatY = box.top + t * box.height;
-    const angle = TAU * u - Math.PI / 2;
-    const outer = box.radius * (1 - .16 * Math.cos(TAU * u));
-    const ring = outer - t * box.collar;
+  function encodingTube(box, y, psi, rim) {
+    // y = 0 is the outer rim, on the right; y = L is the inner edge, on the left
+    // the rim deformation is h itself, scaled for visibility
+    const wall = 1 - rim * encodingCutoff(y) * (encodingProfile(psi) / ENCODING_H) * .30;
     return {
-      x: lerp(flatX, box.cx + ring * Math.cos(angle), morph),
-      y: lerp(flatY, box.cy + ring * Math.sin(angle), morph),
+      x: box.right - (y / ENCODING_L) * box.length + box.depth * Math.cos(psi) * wall,
+      y: box.cy + box.half * Math.sin(psi) * wall,
     };
   }
 
@@ -1221,22 +1227,24 @@
 
     const p = Math.max(0, Math.min(1, ENCODING.progress)) * 3;
     const stage = Math.min(2, Math.floor(p + .5));
-    const morph = ease(Math.max(0, Math.min(1, p - 2)));
-    /* Clear the legend, as section 2 does with --geometry-key-width, read from
-       this figure's own laboratory rather than the first in the document. */
+    const rim = ease(Math.max(0, Math.min(1, p - 2)));
+    const active = rim > .5 ? 3 : stage;
+
     const laboratory = select("#encodingCanvasWrap")?.closest(".geometry-laboratory");
     const token = laboratory
       ? parseFloat(getComputedStyle(laboratory).getPropertyValue("--geometry-key-width")) / 100
       : 0;
-    const key = Number.isFinite(token) ? Math.max(0, Math.min(.45, token)) : 0;
-    const inset = width * key + 24;
+    const inset = width * (Number.isFinite(token) ? Math.max(0, Math.min(.45, token)) : 0) + 26;
+    const plotHeight = 82;
+    const tubeHeight = height - plotHeight - 54;
     const box = {
-      left: inset, top: 34, width: width - inset - 30, height: height - 96,
-      cx: inset + (width - inset - 30) / 2, cy: height / 2 - 8,
-      radius: Math.min(width - inset, height) * .40, collar: Math.min(width - inset, height) * .13,
+      right: width - 54, length: width - inset - 78,
+      cy: tubeHeight / 2 + 6,
+      half: Math.min(74, tubeHeight * .30),
+      depth: 22,
     };
 
-    const cols = 96, rows = 26;
+    const cols = 108, rows = 22;
     let low = Infinity, high = -Infinity;
     const grid = [];
     for (let j = 0; j < rows; j++) {
@@ -1248,64 +1256,90 @@
       }
       grid.push(row);
     }
-    for (let j = 0; j < rows; j++) {
-      for (let i = 0; i < cols; i++) {
-        const a = encodingPoint(i / cols, j / rows, morph, box);
-        const b = encodingPoint((i + 1) / cols, j / rows, morph, box);
-        const c = encodingPoint((i + 1) / cols, (j + 1) / rows, morph, box);
-        const d = encodingPoint(i / cols, (j + 1) / rows, morph, box);
+    const half = Math.max((high - low) / 2, 1e-6);
+
+    /* The tube is opaque, so only the near half is painted, over a solid body.
+       Letting the far side show through alpha fills turned every colour to mud. */
+    context.beginPath();
+    for (let i = 0; i <= 240; i++) {
+      const q = encodingTube(box, 0, TAU * i / 240, rim);
+      if (!i) context.moveTo(q.x, q.y); else context.lineTo(q.x, q.y);
+    }
+    for (let i = 240; i >= 0; i--) {
+      const q = encodingTube(box, ENCODING_L, TAU * i / 240, rim);
+      context.lineTo(q.x, q.y);
+    }
+    context.closePath();
+    context.fillStyle = colors.ink; context.fill();
+
+    for (let i = 0; i < cols; i++) {
+      const psi0 = i / cols * TAU, psi1 = (i + 1) / cols * TAU;
+      const front = Math.cos((i + .5) / cols * TAU);
+      if (front <= 0) continue;
+      for (let j = 0; j < rows; j++) {
+        const y0 = j / rows * ENCODING_L, y1 = (j + 1) / rows * ENCODING_L;
+        const a = encodingTube(box, y0, psi0, rim), b = encodingTube(box, y0, psi1, rim);
+        const c = encodingTube(box, y1, psi1, rim), d = encodingTube(box, y1, psi0, rim);
         context.beginPath();
         context.moveTo(a.x, a.y); context.lineTo(b.x, b.y);
         context.lineTo(c.x, c.y); context.lineTo(d.x, d.y);
         context.closePath();
-        // centred on the stage's own midrange, so the collar gradient of w_0 is
-        // as visible as the angular structure of v
-        const half = Math.max((high - low) / 2, 1e-6);
         const t = Math.max(-1, Math.min(1, (grid[j][i] - (low + high) / 2) / half));
+        // the far side is dimmed, which is what reads as curvature
+        // the rim of the visible half turns away from the viewer, so it darkens
+        const shade = .45 + .55 * front;
         context.fillStyle = t >= 0
-          ? `rgba(7,87,96,${(.10 + .62 * t).toFixed(3)})`
-          : `rgba(168,78,66,${(.10 - .62 * t).toFixed(3)})`;
+          ? `rgba(7,87,96,${(shade * (.16 + .74 * t)).toFixed(3)})`
+          : `rgba(168,78,66,${(shade * (.16 - .74 * t)).toFixed(3)})`;
         context.fill();
       }
     }
 
-    context.beginPath();
-    for (let i = 0; i <= 240; i++) {
-      const q = encodingPoint(i / 240, 0, morph, box);
-      if (!i) context.moveTo(q.x, q.y); else context.lineTo(q.x, q.y);
-    }
-    context.strokeStyle = colors.paper; context.lineWidth = 2.2; context.stroke();
-
-    if (morph > .01) {
-      // the unperturbed rim, so the mode-one profile reads as a departure from it
+    [0, ENCODING_L].forEach((y, index) => {
       context.beginPath();
       for (let i = 0; i <= 240; i++) {
-        const angle = TAU * (i / 240) - Math.PI / 2;
-        context.lineTo(box.cx + box.radius * Math.cos(angle), box.cy + box.radius * Math.sin(angle));
+        const q = encodingTube(box, y, TAU * i / 240, rim);
+        if (!i) context.moveTo(q.x, q.y); else context.lineTo(q.x, q.y);
       }
       context.closePath();
-      context.strokeStyle = `rgba(7,87,96,${(.55 * morph).toFixed(2)})`;
-      context.setLineDash([4, 5]); context.lineWidth = 1.2; context.stroke(); context.setLineDash([]);
-    }
+      context.strokeStyle = index ? colors.grid : colors.paper;
+      context.lineWidth = index ? 1.2 : 2.2;
+      context.stroke();
+    });
 
+    context.font = visualTheme.labelFont;
+    context.fillStyle = colors.faint;
+    context.textAlign = "center"; context.textBaseline = "top";
+    context.fillText("y = 0", box.right + 6, box.cy + box.half + 10);
+    context.fillText("y = L", box.right - box.length, box.cy + box.half + 10);
+
+    // h below, as an ordinary plot, once it has been read off
+    const top = tubeHeight + 26, mid = top + plotHeight / 2;
+    context.beginPath();
+    context.moveTo(inset, mid); context.lineTo(width - 20, mid);
+    context.strokeStyle = colors.grid; context.lineWidth = 1; context.stroke();
     if (stage >= 1) {
       context.beginPath();
       for (let i = 0; i <= 240; i++) {
-        const u = i / 240;
-        const q = encodingPoint(u, 0, morph, box);
-        const lift = Math.cos(TAU * u) * 16 * (1 - morph);
-        if (!i) context.moveTo(q.x, q.y - lift); else context.lineTo(q.x, q.y - lift);
+        const psi = TAU * i / 240;
+        const x = inset + i / 240 * (width - 20 - inset);
+        const y = mid - encodingProfile(psi) / (ENCODING_H * 1.35) * (plotHeight / 2);
+        if (!i) context.moveTo(x, y); else context.lineTo(x, y);
       }
-      context.strokeStyle = colors.orange; context.lineWidth = 1.6;
-      context.setLineDash([4, 4]); context.stroke(); context.setLineDash([]);
+      context.strokeStyle = colors.orange; context.lineWidth = 2; context.stroke();
+      context.textAlign = "left"; context.textBaseline = "bottom";
+      context.fillStyle = colors.faint;
+      context.fillText("h(\u03c8) = \u03bb\u207b\u00b9 \u2202\u1d67v(0,\u00b7)", inset, top - 4);
+      context.textBaseline = "top";
+      context.fillText("0", inset - 12, mid - 6);
+      context.textAlign = "center";
+      context.fillText("2\u03c0", width - 20, mid + 6);
     }
 
+    context.textAlign = "left"; context.textBaseline = "bottom";
     context.fillStyle = colors.faint;
-    context.font = visualTheme.labelFont;
-    context.textAlign = "left"; context.textBaseline = "top";
-    context.fillText(ENCODING_CAPTIONS[Math.min(3, morph > .5 ? 3 : stage)], 12, height - 22);
+    context.fillText(ENCODING_CAPTIONS[active], inset, height - 6);
 
-    const active = Math.min(3, morph > .5 ? 3 : stage);
     document.querySelectorAll("[data-encoding-stage]").forEach((button, index) => {
       button.classList.toggle("active", index === active);
     });
