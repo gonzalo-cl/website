@@ -630,6 +630,25 @@
     });
   };
 
+  const numberGlobally = (selector, attribute, kind, prefix) => {
+    let counter = 0;
+    main.querySelectorAll(selector).forEach((element) => {
+      if (!isEditoriallyVisible(element)) return;
+      counter += 1;
+      const number = String(counter);
+      const label = element.getAttribute(attribute);
+      element.dataset.number = number;
+      register(label, {
+        kind,
+        number,
+        text: `${prefix} ${number}`,
+        shortText: number,
+        href: anchor(element, `${kind}-${label}`),
+        element,
+      });
+    });
+  };
+
   numberWithinSection(".tex-display[data-equation]", "data-equation", "equation", "Equation");
   main.querySelectorAll(".tex-display[data-equation]").forEach((display) => {
     const tag = document.createElement("a");
@@ -640,7 +659,10 @@
     display.append(tag);
   });
 
-  numberWithinSection("figure[data-figure]", "data-figure", "figure", "Figure");
+  // Figures form one sequence throughout the exposition.  This also covers
+  // marginal figures: placement is a layout decision, not a second numbering
+  // system.  Equations retain section-local numbers above.
+  numberGlobally("figure[data-figure]", "data-figure", "figure", "Figure");
   main.querySelectorAll("figure[data-figure]").forEach((figure) => {
     if (!isEditoriallyVisible(figure)) return;
     const caption = figure.querySelector(":scope > figcaption");

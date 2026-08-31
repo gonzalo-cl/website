@@ -896,16 +896,10 @@
      planar domain, then one fundamental sector, then that sector folded into
      the cone whose sides it becomes.  CONE_FOLD_SECTORS is the displayed fold
      count, far below the true R = 28, which could not be told apart on this
-     canvas.  CONE_FOLD_MODE is the frequency of the boundary profile: a
-     mode-one h is very nearly a rigid tilt of the base and reads as an
-     unperturbed cone, so the profile carries three periods per sector. */
+     canvas.  The quotient coordinate runs once around the cone, so its
+     boundary profile must also run through exactly one period. */
   const CONE_FOLD_SECTORS = 6;
-  /* Mode three dominates, but a pure mode three repeats three times inside each
-     sector and the planar domain then looks eighteen-fold rather than six-fold.
-     Smaller first and second harmonics break that: the profile still closes up
-     across the sector, so the domain keeps exactly the R-fold symmetry it is
-     supposed to have and no more. */
-  const CONE_FOLD_HARMONICS = [.018, .025, .040];
+  const CONE_FOLD_AMPLITUDE = .055;
 
   function drawConeUnfold(context, width, height, progress) {
     const p = Math.max(0, Math.min(1, progress));
@@ -938,20 +932,15 @@
     const apexX = lerp(left + available / 2, left + 4, camera);
 
     const halfSector = Math.PI / CONE_FOLD_SECTORS;
-    /* The profile moves the rim along the generators, which is mostly an axial
-       motion, so at a near side-on view its excursion outruns the foreshortened
-       width of the rim and the curve folds over itself.  Viewing further round
-       the axis widens the rim enough for three periods to read as a wobble:
-       dx/dtheta then changes sign twice, a clean left-to-right sweep, where at
-       0.085 it changed sign six times. */
+    /* The profile moves the rim along the generators.  The oblique view gives
+       that single quotient-space period enough depth to remain legible without
+       turning it into an extra oscillation. */
     const depth = Math.max(10, slant * .26);
     const coneHalf = slant * .40;
 
-    // h(psi) = sum_k a_k cos(k psi), with psi = pi * angular running once around
-    // the cone across the sector.  Every term is even and 2pi-periodic in psi,
-    // so the two straight edges still agree and the sector closes up.
-    const profile = (angular) => 1 - CONE_FOLD_HARMONICS.reduce(
-      (total, amplitude, index) => total + amplitude * Math.cos((index + 1) * Math.PI * angular), 0);
+    // psi = pi * angular runs once around the quotient cone as angular runs
+    // from -1 to 1.  One cosine therefore gives one, and only one, period.
+    const profile = (angular) => 1 - CONE_FOLD_AMPLITUDE * Math.cos(Math.PI * angular);
 
     const point = (radial, angular, sectorCentre, deformed = true) => {
       const theta = Math.PI * angular;
@@ -1165,7 +1154,7 @@
     canvas.setAttribute("aria-label", uniformMode
       ? `Uniform branches at ${rows.length} real crossings, all of the same amplitude; ${reached} reach an integer order.`
       : `Classical branches at ${rows.length} real crossings, shrinking as the order grows; ${reached} reach an integer order.`);
-    const note = select("#branchScaleNote");
+    const note = select("[data-branch-scale-note]");
     if (note) {
       note.textContent = uniformMode
         ? "Uniform bifurcation branches guarantee some intersection with R \u2208 \u2115. Click Classical to see the problem of using standard Crandall\u2013Rabinowitz in this argument."
@@ -1466,6 +1455,7 @@
      is why the N = 28 one is so much larger than the disc: its k is 1.822983
      against the disc's 1/j_{1,1}. */
   const PROBE = { domain: 0, t1: 0, t2: 0, angle: 0, dragging: false, mode: "move" };
+  const PROBE_PLOT_SPAN = 12;
 
   function probeDomains() {
     const list = [];
@@ -1591,22 +1581,20 @@
 
     const value = probeIntegral(domain, PROBE.t1, PROBE.angle);
     const trace = [];
-    let peak = 1e-9;
     const base = probeAmplitude(domain, PROBE.angle);
     for (let i = 0; i <= 160; i++) {
       const shift = -Math.PI + TAU * i / 160;
       const v = Math.cos(shift) * base.re - Math.sin(shift) * base.im;
-      trace.push(v); peak = Math.max(peak, Math.abs(v));
+      trace.push(v);
     }
     const top = viewHeight + 16, mid = top + plotHeight / 2;
     context.beginPath();
     context.moveTo(14, mid); context.lineTo(width - 14, mid);
     context.strokeStyle = colors.grid; context.lineWidth = 1; context.stroke();
-    const span = domain.vanishes ? Math.max(peak, 1e-9) * 40 : peak * 1.2;
     context.beginPath();
     trace.forEach((v, i) => {
       const x = 14 + i / (trace.length - 1) * (width - 28);
-      const y = mid - v / span * (plotHeight / 2 - 8);
+      const y = mid - v / PROBE_PLOT_SPAN * (plotHeight / 2 - 8);
       if (!i) context.moveTo(x, y); else context.lineTo(x, y);
     });
     context.strokeStyle = domain.vanishes ? colors.cyan : colors.orange;
@@ -2082,11 +2070,12 @@
     if (segment === 0) drawNfoldDisk(context, width, height, { cx: geometryVisualCenter(width), selection: ease(local), divisions: 1, showCaption: false });
     else if (segment === 1) drawFoldingSector(context, width, height, local);
     else if (segment === 2) drawConeCylinder(context, width, height, local, 0);
-    // The cylinder is the large-order comparison, not the domain on which the
-    // proof bifurcates. Return to a finite real-R collar before growing the
-    // boundary wave, then continue that finite-R branch to integer order.
-    else if (segment === 3) drawConeCylinder(context, width, height, 1 - ease(local), .2 * ease(local), true);
-    else if (segment === 4) drawConeCylinder(context, width, height, 0, .2 + .8 * ease(local), true);
+    // First perturb the limiting cylinder, then return that already-perturbed
+    // picture to finite order.  This is the intended visual sequence; the
+    // surrounding prose still makes clear that the proof is carried out by
+    // uniform estimates on the finite-R collar.
+    else if (segment === 3) drawConeCylinder(context, width, height, 1, ease(local));
+    else if (segment === 4) drawConeCylinder(context, width, height, 1 - ease(local), 1, true);
     else drawUnfolding(context, width, height, local);
   }
 
@@ -2153,9 +2142,9 @@
   }
 
   const geometryState = { progress: 0, playing: false, frame: null };
-  const geometryNames = ["start with rotational symmetry", "choose one fundamental sector", "identify the radial sides", "inspect the large-order limit", "read the limiting mechanism", "bifurcate at finite real order", "close at an integer and lift to the plane"];
-  const geometryStates = ["the field is repeated around the disk", "one fundamental sector in rescaled coordinates", "identifying the radial sides gives the cone quotient", "a fixed boundary collar converges to the half-cylinder", "the half-cylinder reveals the limiting modes and scale", "the branch is constructed on the finite real-order collar", "the sectors fit exactly in the plane"];
-  const geometryCaptions = ["the same angular profile repeats N times", "follow one material sector", "the radial sides meet along the quotient seam", "this is the limiting comparison, not a nonlinear transfer step", "the illustrative rim displays the limiting deformation", "direct finite-order estimates control the deformed cone", "adjacent copies open in order; each boundary profile stays on its sector"];
+  const geometryNames = ["start with rotational symmetry", "choose one fundamental sector", "identify the radial sides", "inspect the large-order limit", "perturb the limiting cylinder", "return to finite real order", "close at an integer and lift to the plane"];
+  const geometryStates = ["the field is repeated around the disk", "one fundamental sector in rescaled coordinates", "identifying the radial sides gives the cone quotient", "a fixed boundary collar converges to the half-cylinder", "the limiting cylinder carries the boundary deformation", "the perturbed cylinder returns to a finite real-order cone", "the sectors fit exactly in the plane"];
+  const geometryCaptions = ["the same angular profile repeats N times", "follow one material sector", "the radial sides meet along the quotient seam", "this is the limiting comparison, not a nonlinear transfer step", "the cylinder is perturbed before returning to finite order", "uniform finite-order estimates justify the nearby cone branch", "adjacent copies open in order; each boundary profile stays on its sector"];
 
   function drawGeometryNarrative() {}
 
@@ -2174,7 +2163,13 @@
     // These positions use the canvas width, so their alignment must use the
     // same breakpoint instead of a viewport-width media query.
     const compact = width < 620;
-    order.style.transform = compact ? "none" : "translateX(-50%)";
+    order.style.transform = "none";
+
+    const laboratory = select("#storyGeometryCanvasWrap")?.closest(".geometry-laboratory");
+    const keyToken = laboratory
+      ? parseFloat(getComputedStyle(laboratory).getPropertyValue("--geometry-key-width")) / 100
+      : 0;
+    const keyFraction = Number.isFinite(keyToken) ? Math.max(0, Math.min(.45, keyToken)) : 0;
 
     const scaled = Math.max(0, Math.min(1, progress)) * 6;
     const segment = Math.min(5, Math.floor(scaled));
@@ -2183,8 +2178,8 @@
     let waveAmount = 0;
     let returning = false;
     if (segment === 2) cylinderAmount = local;
-    if (segment === 3) { cylinderAmount = 1 - ease(local); waveAmount = .2 * ease(local); returning = true; }
-    if (segment === 4) { cylinderAmount = 0; waveAmount = .2 + .8 * ease(local); returning = true; }
+    if (segment === 3) { cylinderAmount = 1; waveAmount = ease(local); }
+    if (segment === 4) { cylinderAmount = 1 - ease(local); waveAmount = 1; returning = true; }
 
     const overlayHalf = Math.min(118, height * .23);
     const unclampedOrderY = height * .54 - overlayHalf - (compact ? 62 : 41);
@@ -2195,7 +2190,7 @@
       const surfaceLeft = lerp(width * GEOMETRY_TRAJECTORY.coneTip, width * GEOMETRY_TRAJECTORY.cylinderLeft, t);
       const sheetOrder = 28 / Math.max(.035, 1 - t);
       const orderOpacity = ease(t / .12);
-      const orderX = compact ? 24 : width * .08 + 92;
+      const orderX = compact ? 24 : Math.max(width * (keyFraction + .02), width * .08 + 92);
       const orderY = overlayOrderY;
       setFormula(orderExpression, t > .965 ? "R\\to\\infty" : `R\\approx ${Math.round(sheetOrder)}`, { serif: true });
       orderNote.textContent = t > .965 ? "half-cylinder limit" : returning ? "R decreases" : "R increases";
@@ -2212,14 +2207,6 @@
       wall.style.left = `${wallX}px`;
       wall.style.top = `${wallY}px`;
       wall.style.opacity = String(wallOpacity);
-    }
-
-    if (segment === 4) {
-      setFormula(orderExpression, "R=R(s)\\in\\mathbb R,\\qquad R(s)\\to28", { serif: true });
-      orderNote.textContent = "finite real-order collar bifurcation";
-      order.style.left = `${compact ? 24 : width * .08 + 92}px`;
-      order.style.top = `${overlayOrderY}px`;
-      order.style.opacity = "1";
     }
 
     if (segment === 5) {

@@ -173,7 +173,7 @@
             <div class="intro-copy disk-proof-flow">
               <label for="pompeiu-model-note" class="margin-toggle" aria-label="Show the interactive disk probe">&#8853;</label>
               <input type="checkbox" id="pompeiu-model-note" class="margin-toggle">
-              <figure class="marginnote side-figure pompeiu-margin-figure" id="pompeiuFigure" aria-label="Interactive disk probe for the function cosine of x one">
+              <figure class="marginnote side-figure pompeiu-margin-figure" id="pompeiuFigure" data-figure="disk-probe-model" data-evidence="Interactive model" aria-label="Interactive disk probe for the function cosine of x one">
                 <div class="measurement-panel pompeiu-panel">
                   <canvas class="measurement-canvas" id="pompeiuCanvas" tabindex="0" role="img" aria-label="A disk moving over the field cosine of x one"></canvas>
                   <div class="measurement-side pompeiu-side">
@@ -203,6 +203,7 @@
                     </div>
                   </div>
                 </div>
+                <figcaption>Moving the disk and varying its radius displays the factor \(2\pi rJ_1(r)\) in its Pompeiu measurement.</figcaption>
               </figure>
 
               <p class="eyebrow">A two-dimensional model</p>
@@ -525,7 +526,7 @@
         </div>
         <div class="world-cards margin-figure-sequence">
           <article class="margin-figure-row">
-            <aside class="world-visual margin-figure side-figure" aria-label="Interactive cylinder branch figure">
+            <figure class="world-visual margin-figure side-figure" data-figure="cylinder-prior-bifurcation" data-evidence="Interactive schematic" aria-label="Interactive cylinder branch figure">
             <div class="world-sketch realistic-world" role="img" aria-label="A compact domain on a three-dimensional flat cylinder whose two boundary loops are controlled by the bifurcation parameter s">
               <svg viewBox="0 0 520 300" aria-hidden="true">
                 <defs>
@@ -577,7 +578,8 @@
               <input id="cylinderBranchRange" type="range" min="-1" max="1" step="0.01" value="0" aria-label="Cylinder bifurcation parameter from minus epsilon to plus epsilon" class="branch-range-hidden" tabindex="-1">
               <p class="branch-hint">Move along the blue line for the radially symmetric (trivial) examples, and along the red one for the new branch proved by Fall, Minlend and Weth.</p>
             </div>
-            </aside>
+            <figcaption>A bifurcating band on the flat cylinder.</figcaption>
+            </figure>
             <span>flat cylinder</span><h3>A radial Neumann mode and a nonradial Dirichlet mode have the same eigenvalue.</h3>
             <p>Fall, Minlend and Weth work on the full cylinder \(\mathbb{R}\times S^1\) and take as domain a band of length \(a\), carrying a radial Neumann eigenfunction across its length. Separation of variables gives</p>
             <div class="world-mode-pair tex-display">
@@ -592,7 +594,7 @@
             <a class="literature-link" href="https://ems.press/journals/jems/articles/14298635" target="_blank" rel="noreferrer">Fall–Minlend–Weth, JEMS (2025) ↗</a>
           </article>
           <article class="margin-figure-row">
-            <aside class="world-visual margin-figure side-figure" aria-label="Interactive planar annulus branch figure">
+            <figure class="world-visual margin-figure side-figure" data-figure="annulus-prior-bifurcation" data-evidence="Interactive schematic" aria-label="Interactive planar annulus branch figure">
             <div class="world-sketch realistic-world" role="img" aria-label="A doubly connected planar domain whose outer boundary carries a four-fold ripple controlled by the bifurcation parameter s">
               <svg viewBox="0 0 660 300" xmlns="http://www.w3.org/2000/svg">
                 <defs>
@@ -635,14 +637,15 @@
               <input id="annulusBranchRange" type="range" min="-1" max="1" step="0.01" value="0" aria-label="Annulus bifurcation parameter from minus epsilon to plus epsilon" class="branch-range-hidden" tabindex="-1">
               <p class="branch-hint">Move along the blue line for the radially symmetric (trivial) examples, and along the red one for the new branch proved by Enciso, Fern&aacute;ndez, Ruiz and Sicbaldi.</p>
             </div>
-            </aside>
+            <figcaption>A bifurcating doubly connected planar domain.</figcaption>
+            </figure>
             <span>planar annulus</span><h3>A Neumann eigenfunction of the Laplacian, locally constant on the boundary.</h3>
             <p>Relax the problem to domains that are not contractible, and let the eigenfunction take a different constant on each component of the boundary — one value on the outer curve, another on the inner one. Enciso, Fernández, Ruiz and Sicbaldi show that this weaker condition no longer forces a disk or an annulus: they construct doubly connected domains carrying a nonradial eigenfunction whose gradient vanishes on the whole boundary.</p>
             <p>The branch leaves the annulus \(\{a&lt;r&lt;1\}\) at the second nonconstant radial Neumann mode, where its eigenvalue meets the first Dirichlet eigenvalue of angular mode \(l\). That crossing exists for every \(l\ge4\); at \(l=4\) it sits at \(a=0.140989\). Both curves ripple as \(\cos4\theta\) and the domain thickens where the cosine is positive, but the outer curve carries almost all of the motion, with about twenty-eight times the amplitude of the inner one.</p>
             <a class="literature-link" href="https://doi.org/10.1215/00127094-2024-0054" target="_blank" rel="noreferrer">Enciso–Fernández–Ruiz–Sicbaldi, Duke (2025) ↗</a>
           </article>
           <article class="margin-figure-row">
-            <aside class="world-visual margin-figure side-figure" aria-label="Interactive spherical branch figure">
+            <figure class="world-visual margin-figure side-figure" data-figure="sphere-prior-bifurcation" data-evidence="Interactive schematic" aria-label="Interactive spherical branch figure">
             <div class="world-sketch realistic-world" role="img" aria-label="A contractible spherical cap contained in the northern hemisphere whose eight-fold boundary is controlled by the bifurcation parameter s">
               <svg viewBox="0 0 520 300" aria-hidden="true">
                 <defs>
@@ -691,12 +694,13 @@
               <input id="sphereBranchRange" type="range" min="-1" max="1" step="0.01" value="0" aria-label="Spherical bifurcation parameter from minus epsilon to plus epsilon" class="branch-range-hidden" tabindex="-1">
               <p class="branch-hint">Move along the blue line for the radially symmetric (trivial) examples, and along the red one for the new branch proved by Cao-Labora and Fern&aacute;ndez.</p>
             </div>
-            </aside>
+            <figcaption>A bifurcating geodesic disk on the sphere.</figcaption>
+            </figure>
             <span>half-sphere</span><h3>A geodesic disk bifurcates in an eight-fold mode.</h3><p>Cao-Labora and Fernández bifurcate from the north-pole disk <span class="formula">\(\cos\theta&gt;a_*\)</span>, where <span class="formula">\(a_*\approx0.477\)</span>. Its boundary lies strictly north of the equator. Computer-assisted techniques, using interval arithmetic, check that the hypotheses for bifurcation hold at <span class="formula">\(a_*\approx0.477\)</span>. The slider displays the axisymmetric examples as well as their bifurcated ones; the amplitude is enlarged so that the eight-fold term is visible. These give the first simply connected examples for the Schiffer problem. The half-sphere is also the first space where Schiffer admits counterexamples while the Serrin problem does not <a class="history-citation" href="#ref-kumaresan-prajapat">[27]</a>, suggesting that Schiffer counterexamples could exist in the plane too, despite Serrin&rsquo;s rigidity there.</p>
             <a class="literature-link" href="https://arxiv.org/abs/2510.05732" target="_blank" rel="noreferrer">Cao-Labora–Fernández (2025) ↗</a>
           </article>
           <article class="margin-figure-row wheeler-prior-art">
-            <aside class="world-visual margin-figure side-figure" aria-label="Interactive planar constant-flux branch figure">
+            <figure class="world-visual margin-figure side-figure" data-figure="constant-flux-prior-bifurcation" data-evidence="Interactive schematic" aria-label="Interactive planar constant-flux branch figure">
               <div class="world-sketch realistic-world" role="img" aria-label="A disk deforming into a ten-fold noncircular planar domain while equal outward arrows represent a constant nonzero normal derivative">
                 <svg viewBox="0 0 520 300" aria-hidden="true">
                   <defs>
@@ -723,7 +727,8 @@
                 <div class="range-scale"><span>\(-\varepsilon\)</span><span>\(0\)</span><span>\(+\varepsilon\)</span></div>
                 <div class="wheeler-flux-condition">equal arrows: \(\partial_\nu u=c(s)\ne0\)</div>
               </div>
-            </aside>
+              <figcaption>A planar constant-flux branch leaving the disk.</figcaption>
+            </figure>
             <span>plane · relaxed flux</span>
             <h3>Noncircular branches appear when the constant normal derivative may be nonzero.</h3>
             <p>Wheeler keeps the plane, simple connectivity, and the constant boundary value \(u=1\), but replaces Schiffer&rsquo;s zero-flux condition by \(\partial_\nu u=c\ne0\). For every integer \(m\ge4\), he proves a real-analytic \(m\)-fold branch leaving the disk at the smallest positive root of \(W_{1,m}\) <a class="history-citation" href="#ref-wheeler">[24]</a>.</p>
@@ -742,7 +747,7 @@
         <div class="intro-copy intro-copy-wide construction-flow">
           <label for="construction-gallery-note" class="margin-toggle" aria-label="Show the shape comparison">&#8853;</label>
           <input type="checkbox" id="construction-gallery-note" class="margin-toggle">
-        <figure class="marginnote side-figure margin-gallery intro-shapes" aria-label="Four examples with periodically fluted boundaries">
+        <figure class="marginnote side-figure margin-gallery intro-shapes" data-figure="fluted-boundary-comparison" data-evidence="Visual comparison" aria-label="Four examples with periodically fluted boundaries">
           <div class="intro-shapes-row">
             <div class="intro-shapes-examples">
               <div class="intro-shape intro-shape-result intro-shape-computer">
@@ -795,6 +800,7 @@
               </div>
             </div>
           </div>
+          <figcaption>The two constructed domains and two familiar fluted objects, shown at a common visual scale.</figcaption>
         </figure>
 
           <p>The two planar constructions now proceed differently, although both use bifurcation. The conformal fixed-disc construction follows a bifurcating relaxed constant-flux family to locate a precise zero-flux candidate, then uses rigorous fixed-point bounds to prove that an exact solution lies nearby. The real-order construction poses the moving-boundary problem on a fixed collar, bifurcates at a noninteger Bessel crossing, and proves that a uniformly controlled branch bends until its order reaches an integer.</p>
@@ -949,8 +955,8 @@
               <button type="button" data-story-stage="0.166667"><span>02</span><strong>Choose a sector</strong></button>
               <button type="button" data-story-stage="0.333333"><span>03</span><strong>Identify sides</strong></button>
               <button type="button" data-story-stage="0.5"><span>04</span><strong>Limiting model</strong></button>
-              <button type="button" data-story-stage="0.666667"><span>05</span><strong>Read the mechanism</strong></button>
-              <button type="button" data-story-stage="0.833333"><span>06</span><strong>Work at finite \(R\)</strong></button>
+              <button type="button" data-story-stage="0.666667"><span>05</span><strong>Perturb the cylinder</strong></button>
+              <button type="button" data-story-stage="0.833333"><span>06</span><strong>Return to finite \(R\)</strong></button>
               <button type="button" data-story-stage="1"><span>07</span><strong>Close at integer \(R\)</strong></button>
             </div>
             <p id="storyGeometryState" class="geometry-stage-note" hidden aria-hidden="true">The same angular profile repeats \(N\) times.</p>
@@ -1860,7 +1866,7 @@
         <div class="intro-copy intro-copy-wide">
           <p>Work on a ball of radius \(R\) and impose \(R\)-fold symmetry. Suppose for a moment that \(R\) is a natural number. Then the symmetry has a fundamental domain, a single angular sector of opening \(2\pi/R\), and quotienting the ball by the symmetry gives a cone of length \(R\) and circumference \(2\pi\). An \(R\)-fold symmetric solution on the ball is the same thing as a solution on that cone.</p>
         </div>
-        <figure class="geometry-laboratory interactive-plate annotated-plate reading-figure cone-fold-figure" data-figure="cone-unfolding-apparatus">
+        <figure class="geometry-laboratory interactive-plate annotated-plate reading-figure cone-fold-figure" data-figure="cone-unfolding-apparatus" data-evidence="Geometric schematic">
           <aside class="geometry-controls paper-demo-controls">
             <div class="geometry-stages" aria-label="Four stages of the fold">
               <button type="button" data-conefold-stage="0"><span>01</span><strong>The domain</strong></button>
@@ -1876,6 +1882,7 @@
               <canvas id="coneFoldCanvas" role="img" aria-label="Folding one sector of the R-fold domain into the cone, and unfolding it again"></canvas>
             </div>
           </section>
+          <figcaption>An \(R\)-fold symmetric domain is reduced to one fundamental sector, whose radial sides are identified to form the quotient cone. The boundary profile makes one period around the cone.</figcaption>
         </figure>
         <div class="intro-copy intro-copy-wide">
           <p>In cone coordinates \((r,\psi)\), with \(\psi=R\varphi\), the equation becomes</p>
@@ -2275,7 +2282,7 @@
         <div class="debye-lead paper-copy">
           <label for="cone-cylinder-note" class="margin-toggle" aria-label="Show the long-cone and cylinder comparison">&#8853;</label>
           <input type="checkbox" id="cone-cylinder-note" class="margin-toggle">
-          <aside class="marginnote side-figure cone-cylinder-sketch" aria-labelledby="coneCylinderSketchCaption">
+          <figure class="marginnote side-figure cone-cylinder-sketch" data-figure="cone-cylinder-collars" data-evidence="Geometric schematic" aria-labelledby="coneCylinderSketchCaption">
             <svg viewBox="0 0 320 118" role="img" aria-labelledby="coneCylinderSketchTitle coneCylinderSketchDesc">
               <title id="coneCylinderSketchTitle">A half-cylinder and a long cone near their boundaries</title>
               <desc id="coneCylinderSketchDesc">The final fixed-depth collars of a cylinder and a long cone are highlighted; the two are drawn with the same rim radius, and near the rim the two geometries become indistinguishable.</desc>
@@ -2294,8 +2301,8 @@
               <path class="sketch-guide" d="M228 61V69M266 61V69M228 65H266" />
               <text class="sketch-note" x="247" y="76">fixed collar</text>
             </svg>
-            <p class="sketch-caption" id="coneCylinderSketchCaption">The highlighted fixed collars approach the same geometry.</p>
-          </aside>
+            <figcaption class="sketch-caption" id="coneCylinderSketchCaption">The highlighted fixed collars approach the same geometry.</figcaption>
+          </figure>
           <p>On the half-cylinder, separation of variables is elementary. Each angular mode has a radial factor made from sines and cosines when \(k^2&lt;\lambda\), and from a bounded exponential when \(k^2&gt;\lambda\). These are the limiting profiles against which the finite-\(R\) collar modes are compared.</p>
           <p>On a cone, the corresponding regular modes are Bessel functions \(J_{kR}(\sqrt\lambda\,r)\). Their formula is less transparent, but a long cone is almost cylindrical near its rim: on every collar of fixed depth, the curvature tends to zero as \(R\to\infty\). We therefore expect its Bessel modes to approach the cylinder modes. The applet below makes this comparison visible.</p>
         </div>
@@ -2690,7 +2697,7 @@
             <div id="branchScaleCanvasWrap" class="branch-scale-canvas-wrap">
               <canvas id="branchScaleCanvas" role="img" aria-label="Bifurcation branches at integer orders fifteen to thirty"></canvas>
             </div>
-            <figcaption id="branchScaleNote">Bifurcation branches get smaller for higher \(R_\star\), so no intersection with \(R\in\mathbb{N}\) can be guaranteed. Click Uniform to see how to solve it.</figcaption>
+            <figcaption id="branchScaleNote"><span data-branch-scale-note>Bifurcation branches get smaller for higher \(R_\star\), so no intersection with \(R\in\mathbb{N}\) can be guaranteed. Click Uniform to see how to solve it.</span></figcaption>
           </figure>
         </div>
 

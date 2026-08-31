@@ -311,7 +311,7 @@ body.tufte-site main a.xref:hover { color: var(--orange); }
 }
 .section-banner-list {
   display: grid;
-  grid-template-columns: 1.05fr 1.25fr 1.25fr 1.05fr .68fr .82fr;
+  grid-template-columns: 1.05fr 1.25fr 1.25fr 1.05fr .75fr .75fr;
 }
 .section-banner-item {
   position: relative;
@@ -1151,6 +1151,15 @@ body.tufte-site main .margin-figure-row > .side-figure {
   padding: .75rem 0 0;
   border: 0;
   background: transparent;
+}
+.world-cards .world-visual > figcaption {
+  float: none;
+  width: 100%;
+  max-width: 100%;
+  margin: .75rem 0 0;
+  color: var(--muted);
+  font-style: italic;
+  line-height: var(--leading-caption) !important;
 }
 .world-cards .world-mode-pair {
   padding: .7rem 0 0;

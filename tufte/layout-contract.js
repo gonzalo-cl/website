@@ -502,6 +502,21 @@
     });
 
     const sideWidth = canonicalSideWidth();
+    const numberedFigures = Array.from(document.querySelectorAll("body.tufte-site main figure[data-number]"));
+    numberedFigures.forEach((figureElement, index) => {
+      const expected = String(index + 1);
+      if (figureElement.dataset.number !== expected) {
+        errors.push(`figure sequence jumps at ${figureElement.dataset.figure || index + 1}: expected ${expected}, found ${figureElement.dataset.number || "none"}`);
+      }
+    });
+    document.querySelectorAll("body.tufte-site main :is(.marginnote.side-figure, .margin-figure-row > .side-figure)").forEach((figureElement, index) => {
+      if (figureElement.tagName !== "FIGURE" || !figureElement.dataset.figure) {
+        errors.push(`visual aside ${index + 1} is not registered in the figure sequence`);
+      }
+      if (!figureElement.querySelector(":scope > figcaption")) {
+        errors.push(`visual aside ${index + 1} has no direct figure caption`);
+      }
+    });
     document.querySelectorAll("body.tufte-site main .side-figure").forEach((figureElement, index) => {
       if (!visible(figureElement)) return;
       const style = getComputedStyle(figureElement);
