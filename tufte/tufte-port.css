@@ -1893,12 +1893,14 @@ body.tufte-site main .paper-demo-controls .control-heading:has(> [hidden]:only-c
   display: none;
 }
 body.tufte-site main .paper-demo-controls .control-heading > span,
+/* The solver readout is deliberately exempt: the computational notes state
+   that the Dirichlet and Neumann defects are reported, so hiding them turned
+   off the very thing that lets a reader check the approximation. */
 body.tufte-site main .paper-demo-controls :is(
   .variation-equation,
   .variation-equation-label,
   .variation-legend,
   .geometry-stage-note,
-  .solver-readout,
   .crossing-card,
   .parameter-pair,
   .fixed-zoom-pair,
@@ -4431,7 +4433,9 @@ body.tufte-site main :is(.three-wrap canvas, #phaseFamilyCanvas):focus-visible {
   vector-effect: non-scaling-stroke;
 }
 .cone-remap-figure svg .remap-sector {
-  fill: rgba(56, 143, 145, .10);
+  /* The collar is the whole band r > R - L on the cone surface, not a pair of
+     section circles, so it has to read as a filled region. */
+  fill: rgba(56, 143, 145, .30);
   stroke: none;
 }
 .cone-remap-figure svg .remap-collar-region {

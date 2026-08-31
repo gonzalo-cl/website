@@ -113,13 +113,22 @@
     return points;
   }
 
+  /* On the trivial line the Fall-Minlend-Weth domain is the straight band
+     between two round loops, and the free parameter is its width: the loops
+     slide apart and together while both stay exact circles.  The crossing width
+     is the one at which the branch appears. */
+  let cylinderTrivial = 0;
+
   function renderCylinderBifurcation(branchAmount) {
     if (!cylinderDomainBack || !cylinderDomainFront || !cylinderBoundaryBack
         || !cylinderBoundaryFront) return;
-    const leftFront = cylinderBoundaryHalf(165, -Math.PI / 2, Math.PI / 2, branchAmount);
-    const rightFront = cylinderBoundaryHalf(355, -Math.PI / 2, Math.PI / 2, branchAmount);
-    const leftBack = cylinderBoundaryHalf(165, Math.PI / 2, 3 * Math.PI / 2, branchAmount);
-    const rightBack = cylinderBoundaryHalf(355, Math.PI / 2, 3 * Math.PI / 2, branchAmount);
+    const spread = 95 * cylinderTrivial;
+    const leftBase = 165 - spread;
+    const rightBase = 355 + spread;
+    const leftFront = cylinderBoundaryHalf(leftBase, -Math.PI / 2, Math.PI / 2, branchAmount);
+    const rightFront = cylinderBoundaryHalf(rightBase, -Math.PI / 2, Math.PI / 2, branchAmount);
+    const leftBack = cylinderBoundaryHalf(leftBase, Math.PI / 2, 3 * Math.PI / 2, branchAmount);
+    const rightBack = cylinderBoundaryHalf(rightBase, Math.PI / 2, 3 * Math.PI / 2, branchAmount);
     cylinderDomainFront.setAttribute("d", worldPath([...leftFront, ...[...rightFront].reverse()], true));
     cylinderDomainBack.setAttribute("d", worldPath([...leftBack, ...[...rightBack].reverse()], true));
     cylinderBoundaryFront.setAttribute("d", `${worldPath(leftFront)}${worldPath(rightFront)}`);
@@ -290,6 +299,7 @@
     renderBranchDiagram(annulusBranchDiagram, branchAmount, annulusTrivial);
   }
 
+  let sphereTrivial = 0;
   function renderSphereBifurcation(branchAmount) {
     if (!sphereDomainFill || !sphereBoundaryBack || !sphereBoundaryFront) return;
     const sphereFront = [];
@@ -299,8 +309,12 @@
     // We view the north-pole cap obliquely but from within it, so its projected
     // image is a closed domain inside the sphere rather than a band cut along
     // the equator.  The angular amplitude is deliberately enlarged for sight.
-    const crossingHeight = .477;
-    const baseLatitude = Math.asin(crossingHeight);
+    /* On the trivial line the domain is the round spherical cap and the free
+       parameter is its latitude: a_* = 0.477 is the crossing, and moving off it
+       opens or closes the cap while its boundary stays an exact circle of
+       latitude. */
+    const crossingHeight = .477 * (1 + .42 * sphereTrivial);
+    const baseLatitude = Math.asin(Math.max(.06, Math.min(.94, crossingHeight)));
     const displayedAngularAmplitude = .095;
     const equatorMinorRadius = 85;
     const projectedPoleRadius = Math.sqrt(sphereRadius ** 2 - equatorMinorRadius ** 2);
@@ -394,16 +408,26 @@
   if (worldSection) {
     bindWorldBranch(cylinderBranchRange, cylinderBranchValue, (amount) => {
       renderCylinderBifurcation(amount);
-      renderBranchDiagram(cylinderBranchDiagram, amount);
+      renderBranchDiagram(cylinderBranchDiagram, amount, cylinderTrivial);
     });
     bindWorldBranch(sphereBranchRange, sphereBranchValue, (amount) => {
       renderSphereBifurcation(amount);
-      renderBranchDiagram(sphereBranchDiagram, amount);
+      renderBranchDiagram(sphereBranchDiagram, amount, sphereTrivial);
     });
     bindWorldBranch(annulusBranchRange, annulusBranchValue, renderAnnulusBifurcation);
     bindWorldBranch(wheelerBranchRange, wheelerBranchValue, renderWheelerBifurcation);
-    bindBranchDiagram(cylinderBranchDiagram, cylinderBranchRange);
-    bindBranchDiagram(sphereBranchDiagram, sphereBranchRange);
+    bindBranchDiagram(cylinderBranchDiagram, cylinderBranchRange, {
+      onTrivial: (trivial) => {
+        cylinderTrivial = trivial;
+        renderCylinderBifurcation(Number(cylinderBranchRange.value) || 0);
+      },
+    });
+    bindBranchDiagram(sphereBranchDiagram, sphereBranchRange, {
+      onTrivial: (trivial) => {
+        sphereTrivial = trivial;
+        renderSphereBifurcation(Number(sphereBranchRange.value) || 0);
+      },
+    });
     bindBranchDiagram(annulusBranchDiagram, annulusBranchRange, {
     onTrivial: (trivial) => {
       annulusTrivial = trivial;
@@ -856,20 +880,187 @@
      the cone is perturbed exactly where the domain is. */
   const coneFoldState = { progress: 0, playing: false, frame: null };
   const coneFoldCaptions = [
-    "The perturbed domain, with its R-fold symmetry.",
-    "The copies close up around one sector.",
-    "The two straight edges meet.",
-    "The perturbed cone.",
+    "The R-fold symmetric planar domain.",
+    "One fundamental sector.",
+    "The sector rolls up.",
+    "The cone, with its mode-three boundary.",
   ];
+
+  /* The 4.1 figure: a cone opens into the flat sector it is isometric to, and
+     nothing else.  The rim carries a mode-one perturbation, so the cone is a
+     tilted one -- the axis no longer meets the base circle at its centre --
+     which is what section 2 does when it returns from the cylinder.  The
+     unfolded picture is a circular sector of the same slant length; the mode
+     one shows there as a rim that is not a circular arc. */
+  /* The 4.1 figure follows section 2's construction: the R-fold symmetric
+     planar domain, then one fundamental sector, then that sector folded into
+     the cone whose sides it becomes.  CONE_FOLD_SECTORS is the displayed fold
+     count, far below the true R = 28, which could not be told apart on this
+     canvas.  CONE_FOLD_MODE is the frequency of the boundary profile: a
+     mode-one h is very nearly a rigid tilt of the base and reads as an
+     unperturbed cone, so the profile carries three periods per sector. */
+  const CONE_FOLD_SECTORS = 6;
+  const CONE_FOLD_MODE = 3;
+  const CONE_FOLD_AMPLITUDE = .055;
+
+  function drawConeUnfold(context, width, height, progress) {
+    const p = Math.max(0, Math.min(1, progress));
+    const select1 = ease(Math.min(1, p / .34));
+    const fold = ease(Math.max(0, (p - .34) / .66));
+    const cy = height * .50;
+
+    // The legend sits over the left of the canvas; section 2 clears it with the
+    // --geometry-key-width token.  Read it from this figure's own laboratory,
+    // not the first one in the document.
+    const laboratory = select("#coneFoldCanvasWrap")?.closest(".geometry-laboratory");
+    const keyToken = laboratory
+      ? parseFloat(getComputedStyle(laboratory).getPropertyValue("--geometry-key-width")) / 100
+      : 0;
+    const keyFraction = Number.isFinite(keyToken) ? Math.max(0, Math.min(.45, keyToken)) : 0;
+    const left = width * keyFraction + 16;
+    const available = width - left;
+
+    /* The whole domain needs room on both sides of its centre; the cone needs
+       room on one.  The camera moves in on its own schedule, finishing before
+       the fold starts, so the chosen sector is already recentred and full size
+       by the time it is the only thing on the canvas.  Tying this to `fold`
+       left the sector stage small and stranded on the right. */
+    const camera = ease(Math.max(0, Math.min(1, (p - .12) / .28)));
+    const domainRadius = Math.min(available * .46, height * .44);
+    // Viewing further round the axis widens the rim, so the cone reaches about
+    // 1.33 slants across; size it to fit that, not the slant alone.
+    const coneSlant = Math.min(available * .70, height * .88);
+    const slant = lerp(domainRadius, coneSlant, camera);
+    const apexX = lerp(left + available / 2, left + 4, camera);
+
+    const halfSector = Math.PI / CONE_FOLD_SECTORS;
+    /* The profile moves the rim along the generators, which is mostly an axial
+       motion, so at a near side-on view its excursion outruns the foreshortened
+       width of the rim and the curve folds over itself.  Viewing further round
+       the axis widens the rim enough for three periods to read as a wobble:
+       dx/dtheta then changes sign twice, a clean left-to-right sweep, where at
+       0.085 it changed sign six times. */
+    const depth = Math.max(10, slant * .26);
+    const coneHalf = slant * .40;
+
+    // h(psi) = a cos(k psi), with psi = pi * angular running once around the
+    // cone across the sector, so the sector carries k periods of the profile.
+    const profile = (angular) => 1 - CONE_FOLD_AMPLITUDE
+      * Math.cos(CONE_FOLD_MODE * Math.PI * angular);
+
+    const point = (radial, angular, sectorCentre, deformed = true) => {
+      const theta = Math.PI * angular;
+      const u = radial * (deformed ? profile(angular) : 1);
+      const flatAngle = sectorCentre + halfSector * angular;
+      const flatX = apexX + u * slant * Math.cos(flatAngle);
+      const flatY = cy + u * slant * Math.sin(flatAngle);
+      // Oblique projection: the depth axis contributes sin(theta) to x, the
+      // profile contributes through u, so a circle in space reads as a narrow
+      // ellipse rather than a circle.
+      const coneX = apexX + u * slant + u * depth * Math.sin(theta);
+      const coneY = cy + u * coneHalf * Math.cos(theta);
+      return { x: lerp(flatX, coneX, fold), y: lerp(flatY, coneY, fold) };
+    };
+
+    const strips = [];
+    const stripCount = 44;
+    for (let i = 0; i < stripCount; i++) {
+      const a0 = -1 + 2 * i / stripCount;
+      const a1 = -1 + 2 * (i + 1) / stripCount;
+      strips.push({ a0, a1, depth: Math.cos(Math.PI * (a0 + a1) / 2) });
+    }
+
+    const drawSector = (centre, opacity, chosen) => {
+      if (opacity <= .004) return;
+      context.save();
+      context.globalAlpha = opacity;
+      // Painter's algorithm: once folded, the far side of the cone has to go
+      // down first or the surface reads as a flat shape.
+      const ordered = fold > .01 ? [...strips].sort((l, r) => l.depth - r.depth) : strips;
+      ordered.forEach((strip) => {
+        const q0 = point(0, strip.a0, centre), q1 = point(1, strip.a0, centre);
+        const q2 = point(1, strip.a1, centre), q3 = point(0, strip.a1, centre);
+        context.beginPath();
+        context.moveTo(q0.x, q0.y); context.lineTo(q1.x, q1.y);
+        context.lineTo(q2.x, q2.y); context.lineTo(q3.x, q3.y);
+        context.closePath();
+        const lit = .15 + .16 * fold * (1 - strip.depth) / 2 + (chosen ? .10 : .02);
+        context.fillStyle = `rgba(7,87,96,${lit.toFixed(3)})`;
+        context.fill();
+      });
+
+      if (chosen) {
+        for (let i = 1; i < 10; i++) {
+          const angular = -1 + 2 * i / 10;
+          const a = point(0, angular, centre), b = point(1, angular, centre);
+          context.beginPath(); context.moveTo(a.x, a.y); context.lineTo(b.x, b.y);
+          context.strokeStyle = colors.grid; context.lineWidth = .7; context.stroke();
+        }
+        for (let ring = 1; ring <= 5; ring++) {
+          context.beginPath();
+          for (let i = 0; i <= 150; i++) {
+            const q = point(ring / 5, -1 + 2 * i / 150, centre);
+            if (!i) context.moveTo(q.x, q.y); else context.lineTo(q.x, q.y);
+          }
+          context.strokeStyle = colors.grid; context.lineWidth = .7; context.stroke();
+        }
+        // The unperturbed rim, so the mode reads as a departure from a circle.
+        context.beginPath();
+        for (let i = 0; i <= 220; i++) {
+          const q = point(1, -1 + 2 * i / 220, centre, false);
+          if (!i) context.moveTo(q.x, q.y); else context.lineTo(q.x, q.y);
+        }
+        context.strokeStyle = "rgba(7,87,96,.55)";
+        context.setLineDash([4, 5]); context.lineWidth = 1.1;
+        context.stroke(); context.setLineDash([]);
+      }
+
+      context.beginPath();
+      for (let i = 0; i <= 320; i++) {
+        const q = point(1, -1 + 2 * i / 320, centre);
+        if (!i) context.moveTo(q.x, q.y); else context.lineTo(q.x, q.y);
+      }
+      context.strokeStyle = colors.paper;
+      context.lineWidth = chosen ? 2.2 : 1.1;
+      if (chosen) { context.shadowColor = colors.orange; context.shadowBlur = 7; }
+      context.stroke(); context.shadowBlur = 0;
+
+      // The two edges that become the seam once the sector closes up.  Folded,
+      // the seam is on the far side and should recede.
+      [-1, 1].forEach((angular) => {
+        const a = point(0, angular, centre), b = point(1, angular, centre);
+        context.beginPath(); context.moveTo(a.x, a.y); context.lineTo(b.x, b.y);
+        context.strokeStyle = chosen ? colors.paper : colors.grid;
+        context.globalAlpha = opacity * (chosen ? .12 + .62 * (1 - fold) : .5);
+        context.lineWidth = chosen ? 1.5 : .8;
+        context.stroke();
+        context.globalAlpha = opacity;
+      });
+      context.restore();
+    };
+
+    for (let k = 0; k < CONE_FOLD_SECTORS; k++) {
+      if (k === 0) continue;
+      const opacity = (1 - select1) * (1 - fold);
+      drawSector(k * 2 * halfSector, opacity, false);
+    }
+    drawSector(0, 1, true);
+
+    context.beginPath();
+    context.arc(apexX, cy, 3, 0, TAU);
+    context.fillStyle = colors.paper; context.fill();
+  }
 
   function renderConeFold() {
     if (!select("#coneFoldCanvasWrap")) return;
     const { canvas, context, width, height } = canvasMetrics("#coneFoldCanvas", "#coneFoldCanvasWrap", 420);
     context.clearRect(0, 0, width, height);
     context.fillStyle = colors.ink; context.fillRect(0, 0, width, height);
-    // Reversed: the section 2 stage unfolds a cone into the plane, and 4.1
-    // wants the fold, which is the same one-parameter family read the other way.
-    drawUnfolding(context, width, height, 1 - Math.max(0, Math.min(1, coneFoldState.progress)));
+    /* Section 2's stage is scaled for its own canvas: its centre is offset by
+       the --geometry-key-width token and its radius is clamped against that
+       canvas's height, so borrowing it here showed only a fraction of the
+       figure.  This draws the same unfolding, sized to this canvas. */
+    drawConeUnfold(context, width, height, Math.max(0, Math.min(1, coneFoldState.progress)));
     const active = coneFoldStage();
     const value = select("#coneFoldValue");
     const stageLabel = `stage ${active + 1}`;
@@ -1528,7 +1719,12 @@
       context.fillText("COMMON-ZERO CROSSINGS AT THE BRANCH ORIGIN", plot.left + 8, zeroY - 29);
       context.fillStyle = colors.faint;
       context.fillText("each quadratic jet opens toward decreasing R", plot.left + 8, plot.top + 10);
-      context.fillText("white rings mark a two-jet reaching an integer within |s| ≤ 1", plot.left + 8, plot.top + 26);
+      /* The jet is a local model.  Saying only that a ring is where it reaches
+         an integer invites reading each ring as a counterexample; the rings are
+         where the quadratic would land, which is what the proof then has to
+         establish for genuinely small amplitude. */
+      context.fillText("white rings mark where the quadratic model would reach an integer", plot.left + 8, plot.top + 26);
+      context.fillText("extrapolated to |s| ≤ 1; the jet is only a small-amplitude approximation", plot.left + 8, plot.top + 42);
     }
 
     if (!paperEdition && activeIndex >= 0 && pointGeometry[activeIndex]) {
