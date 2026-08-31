@@ -2182,7 +2182,7 @@ function renderModesComparison() {
   }
 
   drawAngularStrip(context, angularRect);
-  canvas.setAttribute("aria-label", `Angular mode ${modesState.k}: ${cylinder.regime} cylinder radial profiles compared with Bessel profiles at N 28 and real order ${currentR.toFixed(6)}.`);
+  canvas.setAttribute("aria-label", `Angular mode ${modesState.k}: ${cylinder.regime} cylinder radial profiles compared with Bessel profiles at N 28 and order ${currentR.toFixed(6)}.`);
 }
 
 function modesPolarPoint(plot, radius, angle, R) {
@@ -2754,7 +2754,7 @@ updateModesComparison();
 // ─────────────────────────────────────────────────────────────────────────────
 // Large-radius Bessel dictionary. This is an exact separated-mode experiment,
 // not the fixed-rho nonlinear continuation above.  The spectral scale q_R is
-// chosen so J_R'(q_R R)=0 along one Neumann root branch at real order. Exact
+// chosen so J_R'(q_R R)=0 along one Neumann root branch at real R. Exact
 // Bessel samples are precomputed for 26 <= R <= 30 and interpolated here.
 
 const debyeData = window.DEBYE_WIDE_DATA;

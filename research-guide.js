@@ -204,7 +204,7 @@
       target: "#figure-cone-quotient-construction",
       focus: "[data-story-stage='0.833333']",
       doText: "Select “Work at finite R”, then “Close at integer R”.",
-      observe: "Real order permits the bifurcation, but only integer R = N unfolds with no quotient seam.",
+      observe: "Non-integer R permits the bifurcation, but only integer R = N unfolds with no quotient seam.",
       conclude: "Near-integer arithmetic and uniform branch bending force an exact planar landing.",
       prepare: () => {
         stopButtonIfPlaying(document.getElementById("storyGeometryPlayButton"));

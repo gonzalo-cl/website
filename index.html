@@ -927,7 +927,7 @@
                 <tr data-route-level="mechanism" class="is-selected">
                   <th scope="row">Geometric mechanism</th>
                   <td data-route="Conformal fixed-disk route">A higher \(D_{10}\) Wronskian crossing supplies the numerical seed; a computed relaxed branch is continued to zero flux, and \(p=k\phi'\) encodes its endpoint.</td>
-                  <td data-route="Bifurcation route">An \(N\)-fold quotient is encoded on a fixed collar; real order lets a branch bend until the quotient closes at an integer.</td>
+                  <td data-route="Bifurcation route">An \(N\)-fold quotient is encoded on a fixed collar; letting \(R\) take real values lets a branch bend until the quotient closes at an integer.</td>
                 </tr>
                 <tr data-route-level="reduction">
                   <th scope="row">Analytic reduction</th>
@@ -1026,16 +1026,16 @@
               </header>
               <ol>
                 <li data-proof-tags="geometry" data-proof-level="mechanism">
-                  <div class="proof-node-card"><div class="proof-node-select" data-proof-node="real-quotient"><strong>Sector quotient and real order \(R\)</strong><small>The planar symmetry problem becomes a cone problem defined for real order.</small></div><a href="#cone-remap" aria-label="Open the cone quotient construction">↗</a></div>
+                  <div class="proof-node-card"><div class="proof-node-select" data-proof-node="real-quotient"><strong>Sector quotient at non-integer \(R\)</strong><small>The planar symmetry problem becomes a cone problem defined for every real \(R\).</small></div><a href="#cone-remap" aria-label="Open the cone quotient construction">↗</a></div>
                   <p class="proof-node-dependency">Depends on: the \(N\)-fold symmetry and its fundamental sector.</p>
                 </li>
                 <li data-proof-tags="analysis arithmetic" data-proof-level="mechanism">
-                  <div class="proof-node-card"><div class="proof-node-select" data-proof-node="real-crossing"><strong>Near-integer Bessel crossing</strong><small>Real order permits the common zero that integer-order rigidity forbids.</small></div><a href="#abundance-experiment" aria-label="Open the near-integer crossing theorem">↗</a></div>
+                  <div class="proof-node-card"><div class="proof-node-select" data-proof-node="real-crossing"><strong>Near-integer Bessel crossing</strong><small>Non-integer \(R\) permits the common zero that integer \(R\) forbids.</small></div><a href="#abundance-experiment" aria-label="Open the near-integer crossing theorem">↗</a></div>
                   <p class="proof-node-dependency">Depends on: Bessel asymptotics and phase arithmetic.</p>
                 </li>
                 <li data-proof-tags="geometry analysis" data-proof-level="reduction">
                   <div class="proof-node-card"><div class="proof-node-select" data-proof-node="real-collar"><strong>Move the boundary on one fixed collar</strong><small>A pullback replaces the moving cone boundary by a fixed strip.</small></div><a href="#fixed-domain" aria-label="Open the fixed-collar formulation">↗</a></div>
-                  <p class="proof-node-dependency">Depends on: the cone at real order and a collar of fixed width.</p>
+                  <p class="proof-node-dependency">Depends on: the cone at non-integer \(R\) and a collar of fixed width.</p>
                 </li>
                 <li data-proof-tags="analysis bifurcation" data-proof-level="reduction">
                   <div class="proof-node-card"><div class="proof-node-select" data-proof-node="real-bifurcation"><strong>Uniform Crandall–Rabinowitz branch</strong><small>The estimates remain uniform as the crossing order grows.</small></div><a href="#bifurcation-setting" aria-label="Open the uniform bifurcation theorem">↗</a></div>
@@ -1166,10 +1166,10 @@
                 <div id="storyGeometryWallFormula" class="geometry-math-label geometry-wall-formula"></div>
                 <div id="storyGeometryLiftFormula" class="geometry-math-label geometry-lift-formula"></div>
               </div>
-              <noscript><p class="no-js-figure-description">Static proof map: take one sector of an N-fold domain, identify its sides to obtain a cone, formulate the problem for real order R on a fixed boundary collar, construct and bend a branch at finite R, then reach an integer R = N where the quotient seam closes and the domain unfolds into the plane.</p></noscript>
+              <noscript><p class="no-js-figure-description">Static proof map: take one sector of an N-fold domain, identify its sides to obtain a cone, formulate the problem for real R on a fixed boundary collar, construct and bend a branch at finite R, then reach an integer R = N where the quotient seam closes and the domain unfolds into the plane.</p></noscript>
             </div>
           </section>
-          <figcaption><span class="figure-caption-summary">A real order opens a cone branch that closes into the plane at an integer.</span><span class="figure-caption-note">The half-cylinder stage is a limiting picture of the local mechanism, not the logical starting point of the planar proof. The proof works on the finite-\(R\) collar, continues until \(R\) is an integer, and then lifts the quotient to the plane. Boundary displacement is enlarged uniformly throughout the animation so that the perturbation remains visible.</span></figcaption>
+          <figcaption><span class="figure-caption-summary">A non-integer order opens a cone branch that closes into the plane at an integer.</span><span class="figure-caption-note">The half-cylinder stage is a limiting picture of the local mechanism, not the logical starting point of the planar proof. The proof works on the finite-\(R\) collar, continues until \(R\) is an integer, and then lifts the quotient to the plane. Boundary displacement is enlarged uniformly throughout the animation so that the perturbation remains visible.</span></figcaption>
         </figure>
       </section>
 
@@ -2208,7 +2208,7 @@
               <input id="modesTransferRange" type="range" min="0" max="1" value="0.62" step="0.002">
               <div class="range-scale"><span>\(R_*\) / open seam</span><span>\(N=28\) / closed</span></div>
               <div class="parameter-pair" hidden aria-hidden="true">
-                <div><span>real order \(R(s)\)</span><strong id="modesOrderValue">28.016…</strong></div>
+                <div><span>order \(R(s)\)</span><strong id="modesOrderValue">28.016…</strong></div>
                 <div><span>boundary amplitude \(s\)</span><strong id="modesAmplitudeValue">0.2228</strong></div>
               </div>
             </div>
@@ -3034,8 +3034,8 @@
         </details>
 
             <section id="bifurcation-setting" class="bifurcation-setting">
-        <header class="section-heading" data-title="The bifurcation setting: a collar problem for every real order" data-toc="proof-subsection">
-          <h3>The bifurcation setting: a collar problem for every real order</h3>
+        <header class="section-heading" data-title="The bifurcation setting: a collar problem for every real R" data-toc="proof-subsection">
+          <h3>The bifurcation setting: a collar problem for every real R</h3>
         </header>
         <div class="intro-copy intro-copy-wide">
           <p>The equation \(\mathcal{G}(R,v)=0\) gives a rigorous formulation of the problem and yields Schiffer solutions whenever \(R\) is an integer. The trivial solution \(v=0\) exists for every \(R\) and corresponds to the balls. The required branch \(R(s),v(s)\) starts at \(R(0)=R_\star\) near an integer and must reach that integer at a nonzero value of \(s\).</p>
@@ -3128,7 +3128,7 @@
             </div>
 
             <div class="crossing-card" aria-label="Numerically selected cone crossing" hidden aria-hidden="true">
-              <div><span>initial real order</span><strong>28.026397</strong></div>
+              <div><span>initial order</span><strong>28.026397</strong></div>
               <div><span>integral order</span><strong>28</strong></div>
               <p>Smallest crossing below 100 with <span class="formula">\(1&lt;\lambda&lt;4\)</span> and fractional gap below 0.1.</p>
             </div>

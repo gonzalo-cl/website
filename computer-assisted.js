@@ -3747,7 +3747,7 @@
   const quotientDescriptions = [
     "An N-fold planar domain is made from repeated sectors.",
     "Quotienting by the rotations leaves one sector; its radial edges are identified.",
-    "After rescaling the angle, the collar equation makes sense for real order R. The core is retained through its Dirichlet-to-Neumann map.",
+    "After rescaling the angle, the collar equation makes sense for real R. The core is retained through its Dirichlet-to-Neumann map.",
     "When R reaches the integer N, N copies close without a seam and give a planar domain.",
   ];
 
@@ -3860,7 +3860,7 @@
       drawLabel(context, "regular core", left + 12, top - 14, { size: 11 });
       drawLabel(context, "fixed collar", right - 12, top - 14, { align: "right", color: colors.accent, size: 11 });
       drawLabel(context, "DtN interface", interfaceX, bottom + 24, { align: "center", color: colors.accent, size: 11 });
-      drawLabel(context, "real order R", width / 2, 25, { align: "center", color: colors.heading, size: 13 });
+      drawLabel(context, "order R", width / 2, 25, { align: "center", color: colors.heading, size: 13 });
     }
 
     quotientCanvas.setAttribute("aria-label", quotientDescriptions[quotientStage]);

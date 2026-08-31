@@ -328,7 +328,7 @@
       ["4.2", "Exploring the cone bifurcation", "#phase-story", "proof-subsection"],
       ["4.3", "A motivation for uniformity: the cylinder", "#half-cylinder-strategy", "proof-subsection"],
       ["4.4", "The fixed-collar formulation", "#fixed-domain", "proof-subsection"],
-      ["4.5", "The bifurcation setting: a collar problem for every real order", "#bifurcation-setting", "proof-subsection"],
+      ["4.5", "The bifurcation setting: a collar problem for every real R", "#bifurcation-setting", "proof-subsection"],
       ["4.6", "Integer landing and planar lift", "#modes-experiment", "proof-subsection"],
       ["", "References", "#references", "section"],
       ["", "Acknowledgements", "#acknowledgements", "section"],

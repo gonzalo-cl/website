@@ -125,7 +125,7 @@ Transition: From Section 3.3, use the top navigation to click Section 3.4 for Ge
 
 Transition: Cut from Section 3.7 to the first stage of the Section 2.2 bifurcation overview.
 
-### 2:20–3:58 — Jaume — Real order, quadratic bending, and integer landing
+### 2:20–3:58 — Jaume — Non-integer order, quadratic bending, and integer landing
 
 #### Section 2.2 · Bifurcation overview animation
 
