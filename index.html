@@ -2604,16 +2604,25 @@
           </div>
           <figcaption>Set the boundary value on \(r=R-L\); the interior solution is then determined, and so is its normal derivative. Only at one amplitude does that derivative agree with the one the collar supplies, which is what \(\mathcal{G}_2=0\) asks. Drawn in the quotient angle \(\psi\); at integer \(R\) it unfolds to \(B(0,R-L)\).</figcaption>
         </figure>
-        <p>We are left with the edge \(\{y=L\}\), where the collar meets the part of the cone we set aside. There we can simply solve the Dirichlet problem \((\Delta+\lambda)u=0\) inside \(\{r&lt;R-L\}\) with the boundary data our collar solution supplies, which is \(w_0(L)+v(L,\cdot)\), since \(\chi\) vanishes near \(y=L\). But for the two pieces to fit together into one solution of the equation, the normal derivatives must agree as well. That is what a Dirichlet-to-Neumann map records: \(D_R\) is the Fourier multiplier</p>
-        <div class="tex-display">
-          \[ D_R\big[\cos k\psi\big]=\tau_k(R)\cos k\psi,\qquad
-          \tau_k(R)=\sqrt\lambda\,\frac{J_{kR}'\big(\sqrt\lambda\,(R-L)\big)}{J_{kR}\big(\sqrt\lambda\,(R-L)\big)},\qquad k\in\mathbb{N}_0, \]
+        <p>Regarding the upper end of the collar \(\{y=L\}\), we write a condition \(\mathcal{G}_2(R,v)=0\) that ensures the corresponding solution \(v\), when passed to the cone, can be extended regularly to a Schiffer solution on the full cone. This mapping is based on a Dirichlet-to-Neumann map; see below for more details.</p>
         </div>
-        <p>which for integer \(R\) is the honest interior Dirichlet-to-Neumann map of \(\Delta+\lambda\) on \(B(0,R-L)\) for even, \(R\)-fold symmetric functions, and which is defined for every real \(R\) by the same expression. The condition for extending our solution smoothly to the inside is then</p>
-        <div class="tex-display">
-          \[ \mathcal{G}_2(R,v):=D_R\big[v(L,\cdot)\big]+\partial_yv(L,\cdot)=0. \]
-        </div>
-        <p>Only \(v\) appears, because \(w_0\) already extends: it is the restriction of a solution regular at the apex, so it satisfies the matching condition on its own.</p>
+
+        <details class="optional-digression proof-details intro-proof">
+          <summary><span><small>Optional explanation</small>Encoding regular extension in \(\mathcal{G}_2\)</span><i>expand +</i></summary>
+          <div class="intro-proof-body">
+            <p>We are left with the edge \(\{y=L\}\), where the collar meets the part of the cone we set aside. There we can simply solve the Dirichlet problem \((\Delta+\lambda)u=0\) inside \(\{r&lt;R-L\}\) with the boundary data our collar solution supplies, which is \(w_0(L)+v(L,\cdot)\), since \(\chi\) vanishes near \(y=L\). But for the two pieces to fit together into one solution of the equation, the normal derivatives must agree as well. That is what a Dirichlet-to-Neumann map records: \(D_R\) is the Fourier multiplier</p>
+            <div class="tex-display">
+              \[ D_R\big[\cos k\psi\big]=\tau_k(R)\cos k\psi,\qquad
+              \tau_k(R)=\sqrt\lambda\,\frac{J_{kR}'\big(\sqrt\lambda\,(R-L)\big)}{J_{kR}\big(\sqrt\lambda\,(R-L)\big)},\qquad k\in\mathbb{N}_0, \]
+            </div>
+            <p>which for integer \(R\) is the honest interior Dirichlet-to-Neumann map of \(\Delta+\lambda\) on \(B(0,R-L)\) for even, \(R\)-fold symmetric functions, and which is defined for every real \(R\) by the same expression. The condition for extending our solution smoothly to the inside is then</p>
+            <div class="tex-display">
+              \[ \mathcal{G}_2(R,v):=D_R\big[v(L,\cdot)\big]+\partial_yv(L,\cdot)=0. \]
+            </div>
+            <p>Only \(v\) appears, because \(w_0\) already extends: it is the restriction of a solution regular at the apex, so it satisfies the matching condition on its own.</p>
+          </div>
+        </details>
+        <div class="intro-copy intro-copy-wide">
         <p>Writing \(\mathcal{G}=(\mathcal{G}_1,\mathcal{G}_2)\), a zero of \(\mathcal{G}\) at integer order is already a counterexample.</p>
         <article class="math-statement" data-kind="proposition" data-label="collar-to-counterexample" aria-labelledby="collarToCounterexampleTitle">
           <header class="math-statement-header"><span>Proposition</span><small id="collarToCounterexampleTitle"><a href="https://arxiv.org/abs/2608.05114" target="_blank" rel="noreferrer">Theorem 2.7 of the paper</a></small></header>
