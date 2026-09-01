@@ -1565,9 +1565,9 @@
       extent: BESSEL_J1_FIRST_ZERO * 1.35,
     });
     list.push({
-      name: "N = 10",
+      name: "\u03a9",
       cancellationScales: Object.freeze([
-        Object.freeze({ factor: 1, label: "the tenfold domain's distinguished scale" }),
+        Object.freeze({ factor: 1, label: "the distinguished scale of \u03a9" }),
       ]),
       radius: d10ProbeRadius,
       extent: D10_PROBE_EXTENT,
