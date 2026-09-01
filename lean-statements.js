@@ -359,7 +359,11 @@
         token: "IsSchifferDomain",
         concept: "schiffer",
         paper: "solves the Schiffer problem",
-        explanation: "The displayed project-local predicate for the normalized Schiffer boundary-value problem",
+        explanation: "The displayed project-local predicate expresses the normalized Schiffer boundary-value problem; its standalone formalization appears",
+        reference: Object.freeze({
+          href: "#lean-statement-schiffer-property",
+          label: "below",
+        }),
       }),
     ]),
     "pompeiu-star-shaped": Object.freeze([
