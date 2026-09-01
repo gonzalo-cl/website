@@ -498,9 +498,34 @@ body.tufte-site main #experiment > .modes-experiment { padding-bottom: 0; }
   letter-spacing: -.02em;
 }
 
-.intro-bottom { width: var(--measure-reading); }
-.intro-bottom p { width: 100%; max-width: none; margin: 1.4rem 0; }
-.intro-route-overview { margin-top: .25rem; }
+.paper-frontmatter-section {
+  width: var(--measure-reading);
+  max-width: var(--measure-reading);
+  margin: 0 0 2.5rem;
+}
+body.tufte-site main .paper-frontmatter-section > h2 {
+  margin: 0 0 .75rem;
+  color: var(--ink);
+  font-family: var(--font-heading);
+  font-size: var(--type-component-heading);
+  font-style: normal;
+  font-weight: var(--weight-emphasis);
+  line-height: 1.3;
+}
+body.tufte-site main .paper-frontmatter-section > p {
+  width: 100%;
+  max-width: none;
+  margin: 0 0 .85rem;
+  color: var(--ink);
+  font-family: var(--font-prose);
+  font-size: var(--type-proof) !important;
+  font-style: normal;
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-proof);
+}
+body.tufte-site main .paper-frontmatter-section > p:last-child { margin-bottom: 0; }
+
+.intro-proof-overview { margin-top: 2.5rem; }
 
 .chapter-pagination {
   width: var(--measure-reading);
@@ -2173,6 +2198,22 @@ body.tufte-site main .paper-demo-controls .geometry-stages button strong {
 }
 body.tufte-site main .paper-demo-controls .geometry-scrub {
   margin-top: .2rem;
+}
+body.tufte-site main .paper-demo-controls .apparatus-control-group + .apparatus-control-group {
+  margin-top: .6rem;
+  padding-top: .6rem;
+  border-top: 1px solid var(--line);
+}
+.apparatus-control-label {
+  display: block;
+  margin-bottom: .3rem;
+  color: var(--muted);
+  font-family: var(--font-interface);
+  font-size: var(--type-control);
+  font-weight: var(--weight-regular);
+  letter-spacing: .04em;
+  line-height: 1.3;
+  text-transform: uppercase;
 }
 :is(.geometry-canvas-panel, .canvas-panel, .modes-plot-panel, .phase-story-plot, .debye-plot-panel, .abundance-plot-panel) {
   grid-template-columns: minmax(0, 1fr);
@@ -3924,7 +3965,7 @@ body > footer {
 
   .site-acknowledgements { padding-top: 0; }
 
-  .intro-index, .intro h1, .intro-authors, .intro-sources, .intro-bottom,
+  .intro-index, .intro h1, .intro-authors, .intro-sources, .paper-frontmatter-section,
   .section-heading,
   :is(.intro-copy, .intro-copy-wide, .borrow-lead, .geometry-lead, .computer-assisted-lead, .computer-assisted-copy, .proof-strategy-lead, .half-cylinder-introduction, .experiment-story-lead, .cone-lead, .modes-lead, .phase-story-lead, .debye-lead, .abundance-lead, .proof-strategy-subheading),
   .disk-sidequest .intro-copy,
@@ -4750,14 +4791,6 @@ body.tufte-site main :is(.three-wrap canvas, #phaseFamilyCanvas):focus-visible {
   }
 }
 
-/* Promoted out of an optional-digression expander: the rigidity literature is
-   part of the argument, not an aside, so it needs a heading of its own. */
-.rigidity-heading {
-  margin: 34px 0 12px;
-  color: var(--ink);
-  font: var(--weight-emphasis) var(--type-component-heading)/1.4 var(--font-heading);
-}
-
 .cone-remap-figure svg .remap-inner-face {
   /* The cut at r = R - L, and the cylinder face at y = L that maps onto it.
      Hatched rather than filled: it is an interface, not a piece of the collar,
@@ -4867,17 +4900,6 @@ body.tufte-site main .cr-statement .cr-variant-button[data-cr-variant="uniform"]
 .abundance-examples-margin .abundance-examples-table td { padding: 7px 8px; }
 .abundance-examples-margin .abundance-examples-table { table-layout: auto; }
 
-/* The route overview inherited the .intro-bottom register, 21px and muted, from
-   the block it shares a wrapper with.  It reads as body prose, so it takes the
-   same size, leading and colour as the introduction's own paragraphs. */
-body.tufte-site main .intro-route-overview p,
-.intro-route-overview p {
-  /* the .intro-bottom family rule carries !important, so this has to as well */
-  font-size: var(--type-proof) !important;
-  line-height: 1.43;
-  color: var(--ink);
-}
-
 .fact-list { margin: 14px 0; padding-left: 22px; list-style: disc; }
 .fact-list li { margin: 0 0 14px; }
 .fact-list li:last-child { margin-bottom: 0; }
@@ -4941,82 +4963,6 @@ body.tufte-site main .range-scale { color: var(--muted); }
   letter-spacing: .04em;
 }
 .no-js-notice p { margin: .45rem 0 0; font-size: var(--type-note); line-height: 1.55; }
-
-.research-entry {
-  width: min(100%, var(--measure-reading-page));
-  margin: 2.25rem 0 2.5rem;
-  padding: 1.6rem 0 0;
-  border-top: 1px solid var(--ink);
-}
-.research-entry-heading {
-  display: grid;
-  grid-template-columns: minmax(12rem, .8fr) minmax(0, 1.2fr);
-  column-gap: 2rem;
-  align-items: end;
-  margin-bottom: 1.15rem;
-}
-body.tufte-site main .research-entry-heading .eyebrow {
-  grid-column: 1;
-  margin: 0 0 .35rem;
-}
-body.tufte-site main .research-entry-heading h2 {
-  grid-column: 1;
-  margin: 0;
-  color: var(--ink);
-  font: italic 400 var(--type-subsection)/1.08 var(--serif);
-}
-body.tufte-site main .research-entry-heading > p:last-child {
-  grid-column: 2;
-  grid-row: 1 / span 2;
-  align-self: end;
-  margin: 0;
-  color: var(--muted);
-  font-size: var(--type-note);
-  line-height: 1.55;
-}
-.research-entry-links {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-}
-.research-entry-links > a {
-  min-width: 0;
-  min-height: 9rem;
-  display: flex;
-  flex-direction: column;
-  gap: .45rem;
-  padding: 1rem;
-  color: var(--ink);
-  border-right: 1px solid var(--line);
-  text-decoration: none;
-}
-.research-entry-links > a:last-child { border-right: 0; }
-.research-entry-links > a:hover { background: rgba(160, 0, 0, .025); }
-.research-entry-links span {
-  color: var(--orange);
-  font-family: var(--mono);
-  font-size: var(--type-label);
-  font-variant: small-caps;
-}
-.research-entry-links strong {
-  color: var(--ink);
-  font: 500 var(--type-body)/1.25 var(--serif);
-}
-.research-entry-links small {
-  margin-top: auto;
-  color: var(--muted);
-  font-size: var(--type-note);
-  line-height: 1.45;
-}
-.research-tour-static {
-  width: min(100%, var(--measure-reading-page));
-  margin: 1.5rem 0;
-  padding: 1.2rem;
-  border: 1px solid var(--line);
-}
-.research-tour-static h2 { margin-top: 0; }
-.research-tour-static li + li { margin-top: .45rem; }
 
 .object-permalink {
   flex: 0 0 auto;
@@ -5509,92 +5455,6 @@ body.tufte-site main .certificate-term-detail p {
 .certificate-provenance-index dt { color: var(--ink); }
 .certificate-provenance-index dd { margin: 0; color: var(--muted); font-size: var(--type-note); line-height: 1.5; }
 
-.research-tour {
-  position: fixed;
-  z-index: 240;
-  right: max(1rem, env(safe-area-inset-right));
-  bottom: max(1rem, env(safe-area-inset-bottom));
-  width: min(58rem, calc(100vw - 2rem));
-  color: var(--paper);
-  border: 1px solid rgba(241, 238, 229, .35);
-  background: var(--ink);
-  box-shadow: 0 1.4rem 5rem rgba(19, 33, 38, .35);
-}
-.research-tour[hidden] { display: none !important; }
-.research-tour-header {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
-  gap: .6rem;
-  align-items: center;
-  padding: .8rem 1rem;
-  border-bottom: 1px solid rgba(241, 238, 229, .2);
-}
-.research-tour-header span {
-  color: #c89a75;
-  font-family: var(--mono);
-  font-size: var(--type-label);
-  font-variant: small-caps;
-}
-body.tufte-site .research-tour-header h2 {
-  margin: .15rem 0 0;
-  color: var(--paper);
-  font: italic 400 var(--type-body)/1.2 var(--serif);
-}
-.research-tour-header > button,
-.research-tour-actions button {
-  min-height: 44px;
-  padding: .5rem .7rem;
-  color: var(--paper);
-  border: 1px solid rgba(241, 238, 229, .28);
-  background: transparent;
-  cursor: pointer;
-  font-family: var(--mono);
-  font-size: var(--type-label);
-}
-.research-tour-header > button i { margin-left: .35rem; color: #c89a75; font-style: normal; }
-.research-tour-body { padding: .8rem 1rem 1rem; }
-body.research-tour-active { scroll-padding-bottom: 20rem; }
-.research-tour-instructions {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
-  margin: 0;
-}
-.research-tour-instructions > div { min-width: 0; }
-.research-tour-instructions dt {
-  color: #c89a75;
-  font-family: var(--mono);
-  font-size: var(--type-label);
-  font-variant: small-caps;
-}
-.research-tour-instructions dd {
-  margin: .3rem 0 0;
-  color: rgba(241, 238, 229, .82);
-  font-size: var(--type-note);
-  line-height: 1.45;
-}
-.research-tour-actions {
-  display: grid;
-  grid-template-columns: auto minmax(12rem, 1fr) auto;
-  gap: .55rem;
-  margin-top: .8rem;
-  padding-top: .8rem;
-  border-top: 1px solid rgba(241, 238, 229, .2);
-}
-.research-tour-actions button:disabled { opacity: .38; cursor: default; }
-.research-tour-status {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-}
-.is-research-tour-target {
-  scroll-margin-bottom: 19rem !important;
-  outline: 2px solid var(--teal);
-  outline-offset: 6px;
-}
-
 html:not(.js) .route-comparison-controls,
 html:not(.js) .route-comparison-continuations,
 html:not(.js) .proof-atlas-filters,
@@ -5734,14 +5594,10 @@ body.tufte-site main figure .abundance-toolbar > :is(strong, div) {
 }
 
 @media (max-width: 1180px) {
-  .research-entry,
   .certificate-explorer { width: 100%; max-width: 100%; }
 }
 
 @media (max-width: 900px) {
-  .research-entry-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .research-entry-links > a:nth-child(2) { border-right: 0; }
-  .research-entry-links > a:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
   .proof-atlas-heading,
   .certificate-explorer-heading { grid-template-columns: minmax(0, 1fr); }
   body.tufte-site main .proof-atlas-heading > p:last-child {
@@ -5759,46 +5615,15 @@ body.tufte-site main figure .abundance-toolbar > :is(strong, div) {
     top: 0;
     margin-right: 0;
   }
-  .research-entry-heading { grid-template-columns: minmax(0, 1fr); }
-  body.tufte-site main .research-entry-heading > p:last-child {
-    grid-column: 1;
-    grid-row: auto;
-    margin-top: .65rem;
-  }
   .route-comparison-continuations { grid-template-columns: minmax(0, 1fr); }
   .proof-atlas-lanes { grid-template-columns: minmax(0, 1fr); }
   .proof-atlas-lane + .proof-atlas-lane { border-top: 1px solid var(--ink); border-left: 0; }
   .proof-atlas-endpoint { grid-template-columns: minmax(0, 1fr); text-align: center; }
   .certificate-explorer-grid { grid-template-columns: minmax(0, 1fr); }
   .certificate-explorer-grid > section + section { border-top: 1px solid var(--line); border-left: 0; }
-  .research-tour {
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    max-height: 42dvh;
-    overflow-y: auto;
-    border-right: 0;
-    border-bottom: 0;
-    border-left: 0;
-  }
-  .research-tour-body { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
-  body.research-tour-active { scroll-padding-bottom: 45dvh; }
-  .research-tour-header { grid-template-columns: minmax(0, 1fr) auto auto; position: sticky; top: 0; z-index: 2; background: var(--ink); }
-  .research-tour-header button span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
-  .research-tour-instructions { grid-template-columns: minmax(0, 1fr); gap: .65rem; }
-  .research-tour-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .research-tour-actions #researchTourFocus { grid-column: 1 / -1; grid-row: 1; }
-  .is-research-tour-target { scroll-margin-bottom: 45dvh !important; }
 }
 
 @media (max-width: 520px) {
-  .research-entry-links { grid-template-columns: minmax(0, 1fr); }
-  .research-entry-links > a {
-    min-height: 7rem;
-    border-right: 0;
-    border-bottom: 1px solid var(--line);
-  }
-  .research-entry-links > a:last-child { border-bottom: 0; }
   .route-comparison-controls,
   .proof-atlas-filters { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .route-comparison-controls button,
@@ -5815,15 +5640,13 @@ body.tufte-site main figure .abundance-toolbar > :is(strong, div) {
 }
 
 @media print {
-  .research-entry,
   .route-comparison-controls,
   .route-comparison-continuations,
   .proof-atlas-filters,
   .proof-atlas-detail,
   .certificate-explorer-actions,
   .certificate-checker-status,
-  .object-permalink,
-  .research-tour { display: none !important; }
+  .object-permalink { display: none !important; }
   .proof-atlas { break-inside: auto; }
   .proof-atlas-lanes { display: block; }
   .proof-atlas-lane + .proof-atlas-lane { border-top: 1px solid #000; border-left: 0; }

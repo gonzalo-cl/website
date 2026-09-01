@@ -20,8 +20,8 @@
     <script defer src="lean-statements.js?v=20260831.12"></script>
     <script defer src="math.js?v=20260830.1"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tufte-css@1.9.0/tufte.min.css">
-    <link rel="stylesheet" href="styles.css?v=20260831.15">
-    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260831.18">
+    <link rel="stylesheet" href="styles.css?v=20260901.1">
+    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260901.1">
   </head>
   <body class="tufte-site">
     <a class="skip-link" href="#top">Skip to the exposition</a>
@@ -59,6 +59,12 @@
         <h1>Constructing Noncircular Schiffer Domains</h1>
         <p class="intro-authors">Exposition by <a href="https://people.epfl.ch/gonzalo.caolabora" target="_blank" rel="noreferrer">Gonzalo Cao-Labora</a>, <a href="https://www.damtp.cam.ac.uk/user/mjc249/home.html" target="_blank" rel="noreferrer">Matthew J. Colbrook</a>, <a href="https://jaume.dedios.cat/" target="_blank" rel="noreferrer">Jaume de Dios Pont</a>, and <a href="https://georgestepaniants.com/" target="_blank" rel="noreferrer">George Stepaniants</a>.</p>
         <p id="research-sources" class="intro-sources"><span>Based on</span> <a href="https://arxiv.org/abs/2608.01579" target="_blank" rel="noreferrer"><em>A computer-assisted counterexample to the planar Pompeiu and Schiffer conjectures</em></a>, <a href="https://arxiv.org/abs/2608.05114" target="_blank" rel="noreferrer"><em>Counterexamples to Schiffer’s Conjecture</em></a>, and <a href="https://arxiv.org/abs/2608.08953" target="_blank" rel="noreferrer"><em>A computer-assisted counterexample to the planar Berenstein conjecture</em></a>.</p>
+
+        <section class="paper-frontmatter-section paper-abstract" aria-labelledby="abstractTitle">
+          <h2 id="abstractTitle">Abstract</h2>
+          <p>Let \(\Omega\subset\mathbb R^2\) be a bounded domain. Pompeiu asked whether a function \(f\) is determined by its integrals over all rigid motions \(E(\Omega)\). Williams showed that nonuniqueness occurs exactly when \(\Omega\) supports a nonconstant Laplace eigenfunction whose value is constant and whose normal derivative vanishes on \(\partial\Omega\). The disk is the classical example, and Schiffer conjectured that it is the only connected smooth planar one. This exposition presents two proofs that the conjecture is false.</p>
+        </section>
+
         <div class="formal-statement-pair formal-statement-pair-aside">
           <article id="statement-main-result" class="math-statement math-statement-theorem intro-main-result" data-kind="theorem" data-label="main-result" aria-labelledby="mainResultTitle">
             <header class="math-statement-header"><span>Theorem</span><small>Main result</small></header>
@@ -73,66 +79,11 @@
           <div id="mainFormalizationNotes" class="formalization-notes" aria-label="Formalization notes" hidden></div>
         </div>
 
-        <nav id="research-entry" class="research-entry" aria-labelledby="researchEntryTitle">
-          <header class="research-entry-heading">
-            <p class="eyebrow">Ways through the proof</p>
-            <h2 id="researchEntryTitle">Explore the result</h2>
-            <p>The exposition is one continuous argument; these routes lead directly to its interactive and verifiable parts.</p>
-          </header>
-          <div class="research-entry-links">
-            <a id="researchTourStart" href="#linear-rigidity" data-start-research-tour>
-              <span>01 · four minutes</span><strong>Take the guided tour</strong><small>Four stops through rigidity, construction, and closure.</small>
-            </a>
-            <a href="#proof-atlas">
-              <span>02 · logical map</span><strong>Open the proof atlas</strong><small>Dependencies and section locations for every proof step.</small>
-            </a>
-            <a href="#certificate-explorer">
-              <span>03 · exact replay</span><strong>Check the certificate</strong><small>Replay the decisive inequalities with exact rational arithmetic.</small>
-            </a>
-            <a href="#research-sources">
-              <span>04 · source papers</span><strong>Read the articles</strong><small>Open the three papers underlying this exposition.</small>
-            </a>
-          </div>
-        </nav>
-
-        <noscript>
-          <section id="research-tour-outline" class="research-tour-static" aria-labelledby="researchTourStaticTitle">
-            <h2 id="researchTourStaticTitle">Four-stop research tour</h2>
-            <p>JavaScript is disabled, so the guided controls are replaced by direct reading links. The complete prose, theorem statements, tables, captions, and exact certificate inputs remain available.</p>
-            <ol>
-              <li><a href="#linear-rigidity">Linear rigidity at the disk</a></li>
-              <li><a href="#figure-computer-proof-overview">From a numerical centre to an exact domain</a></li>
-              <li><a href="#figure-cone-quotient-construction">Let the order become real, then close the seam</a></li>
-              <li><a href="#proof-atlas">Compare the complete proof mechanisms</a></li>
-            </ol>
-          </section>
-        </noscript>
-
-        <div class="intro-bottom">
-          <p>Let \(\Omega\subset\mathbb R^2\) be a bounded domain. Pompeiu asked whether a function \(f\) is determined by its integrals over all rigid motions \(E(\Omega)\). Williams showed that nonuniqueness occurs exactly when \(\Omega\) supports a nonconstant Laplace eigenfunction whose value is constant and whose normal derivative vanishes on \(\partial\Omega\). The disk is the classical example, and Schiffer conjectured that it is the only connected smooth planar one.</p>
-        </div>
-
-        <div class="intro-bottom intro-route-overview">
-          <p>In the conformal fixed-disk route, a higher tenfold Wronskian crossing supplies a linearized kernel direction for a numerical search in the relaxed constant-flux problem. Numerical continuation follows a computed noncircular branch to zero flux and encodes the endpoint by a conformal map from the unit disk; a computer-assisted contraction, independent of the search path, then proves that an exact solution lies near that numerical centre.</p>
-          <p>A different route considers the problem under \(N\)-fold symmetry, for \(N\) sufficiently large, and relaxes it so that \(N\) can take decimal values. The problem is thus formulated over a cone of angle \(2\pi/R\), which converges to a cylinder as \(R\to\infty\). Rigorous bifurcation theory, with uniform bounds in \(R\), then allows one to conclude that the bifurcation reaches integer values of \(R\).</p>
-        </div>
-        <figure class="geometry-laboratory interactive-plate annotated-plate reading-figure probe-figure" data-figure="pompeiu-probe">
-          <aside class="geometry-controls paper-demo-controls">
-            <div class="geometry-stages" role="group" aria-label="Choose a domain">
-              <button type="button" data-probe-domain="0" aria-pressed="true"><span>01</span><strong>disk</strong></button>
-              <button type="button" data-probe-domain="1" aria-pressed="false"><span>02</span><strong>N = 10</strong></button>
-              <button type="button" data-probe-domain="2" aria-pressed="false"><span>03</span><strong>N = 28</strong></button>
-              <button type="button" data-probe-domain="3" aria-pressed="false"><span>04</span><strong>square</strong></button>
-            </div>
-            <div class="geometry-scrub"><div class="control-label"><label for="probeAngle">rotate</label><output id="probeDomainName" aria-live="polite" aria-atomic="true">disk, radius j&#8321;,&#8321;</output></div><input id="probeAngle" type="range" min="0" max="6.2832" step="0.001" value="0" aria-describedby="pompeiuProbeOverviewCaption"></div>
-          </aside>
-          <section class="geometry-canvas-panel" aria-label="A domain moved over the plane wave cosine of x one">
-            <div id="probeCanvasWrap" class="geometry-canvas-wrap probe-canvas-wrap">
-              <canvas id="probeCanvas" tabindex="0" role="img" aria-label="A domain moved over the plane wave cosine of x one, with its integral plotted below" aria-describedby="pompeiuProbeOverviewCaption" aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown Shift+ArrowLeft Shift+ArrowRight Shift+ArrowUp Shift+ArrowDown [ ]"></canvas>
-            </div>
-          </section>
-          <figcaption id="pompeiuProbeOverviewCaption">Move each footprint over the plane wave \(\cos x_1\) to compare its integral. The disk uses a Bessel-zero radius; the \(D_{10}\) and \(D_{28}\) outlines show the two constructed profiles, and the square is a comparison. Drag to translate or rotate; with the canvas focused, use the arrow, Shift, and bracket keys.</figcaption>
-        </figure>
+        <section class="paper-frontmatter-section intro-proof-overview" aria-labelledby="introProofOverviewTitle">
+          <h2 id="introProofOverviewTitle">Two proofs</h2>
+          <p>This note contains two different proofs of this fact. The first keeps the unit disk as a fixed reference domain and describes the unknown boundary by a conformal map. A tenfold Wronskian crossing gives a direction in which to search, and numerical continuation leads to an approximate zero-flux solution. A separate computer-assisted contraction argument then proves that an exact solution lies nearby.</p>
+          <p>The second allows the symmetry order \(N\) to vary continuously. On a cone of angle \(2\pi/R\), the limit \(R\to\infty\) becomes a cylinder, where the relevant bifurcation is easier to see. Uniform estimates carry the resulting branch back to finite \(R\) and force it to meet an integer value, where the cone closes to give a planar domain.</p>
+        </section>
       </section>
 
       <section id="introduction" class="story-intro">
@@ -155,6 +106,30 @@
             \]
           </div>
           <p>Pompeiu asked in 1929 whether the collection of all these readings determines the unknown field. Mathematically, this asks whether the map \(f\mapsto M_\Omega f\) is injective.</p>
+        </div>
+
+        <figure class="geometry-laboratory interactive-plate annotated-plate reading-figure probe-figure" data-figure="pompeiu-probe">
+          <aside class="geometry-controls paper-demo-controls">
+            <div class="apparatus-control-group probe-domain-selector">
+              <span class="apparatus-control-label">domain</span>
+              <div class="geometry-stages" role="group" aria-label="Choose a domain">
+                <button type="button" data-probe-domain="0" aria-pressed="true"><span>01</span><strong>disk</strong></button>
+                <button type="button" data-probe-domain="1" aria-pressed="false"><span>02</span><strong>N = 10</strong></button>
+                <button type="button" data-probe-domain="2" aria-pressed="false"><span>03</span><strong>N = 28</strong></button>
+                <button type="button" data-probe-domain="3" aria-pressed="false"><span>04</span><strong>square</strong></button>
+              </div>
+            </div>
+            <div class="geometry-scrub apparatus-control-group probe-rotation-control"><div class="control-label"><label for="probeAngle">rotation</label><output id="probeAngleValue" for="probeAngle">0°</output></div><input id="probeAngle" type="range" min="0" max="6.2832" step="0.001" value="0" aria-describedby="pompeiuProbeOverviewCaption"></div>
+          </aside>
+          <section class="geometry-canvas-panel" aria-label="A domain moved over the plane wave cosine of x one">
+            <div id="probeCanvasWrap" class="geometry-canvas-wrap probe-canvas-wrap">
+              <canvas id="probeCanvas" tabindex="0" role="img" aria-label="A domain moved over the plane wave cosine of x one, with its integral plotted below" aria-describedby="pompeiuProbeOverviewCaption" aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown Shift+ArrowLeft Shift+ArrowRight Shift+ArrowUp Shift+ArrowDown [ ]"></canvas>
+            </div>
+          </section>
+          <figcaption id="pompeiuProbeOverviewCaption">Move the selected footprint over the plane wave \(\cos x_1\). The lower curve plots \(\int_{E(\Omega)}\cos x_1\,dx\) against horizontal translation, on the same spatial scale as the field above. The disk uses a Bessel-zero radius; \(D_{10}\) and \(D_{28}\) are the two constructed profiles, and the square is a comparison. Drag inside the domain to translate it and outside to rotate it; the rotation slider and the arrow, Shift, and bracket keys provide the same motions.</figcaption>
+        </figure>
+
+        <div class="intro-copy intro-copy-wide intro-pompeiu-copy">
           <div class="formal-statement-pair">
             <article class="math-statement math-statement-definition" data-kind="definition" data-label="pompeiu-property-definition" aria-labelledby="pompeiuDefinitionTitle">
               <header class="math-statement-header"><span>Definition</span><small>Pompeiu property</small></header>
@@ -561,9 +536,8 @@
           </div>
         </details>
 
-          <h4 class="rigidity-heading">Established rigidity results</h4>
         <div class="intro-copy rigidity-copy">
-          <p>The linearized obstruction is only the beginning; a substantial rigidity literature confirms the conjecture whenever extra information is available. If \(\lambda\) sits low in the Neumann spectrum the disk is forced: for simply connected planar domains, being among the seven lowest Neumann eigenvalues suffices <a class="history-citation" href="#ref-aviles">[18]</a><a class="history-citation" href="#ref-deng">[19]</a>, and the range widens for centrally symmetric convex domains. Berenstein proved rigidity from the opposite extreme, assuming infinitely many orthogonal Neumann eigenfunctions that are constant on the boundary <a class="history-citation" href="#ref-berenstein-inverse">[20]</a>. A condition on the eigenfunction itself also suffices: Willms and Gladwell showed that if \(u\) has no saddle points, then a simply connected planar domain must be a disk <a class="history-citation" href="#ref-willms-gladwell">[23]</a>.</p>
+          <p><strong>Established rigidity results.</strong> The linearized obstruction is only the beginning; a substantial rigidity literature confirms the conjecture whenever extra information is available. If \(\lambda\) sits low in the Neumann spectrum the disk is forced: for simply connected planar domains, being among the seven lowest Neumann eigenvalues suffices <a class="history-citation" href="#ref-aviles">[18]</a><a class="history-citation" href="#ref-deng">[19]</a>, and the range widens for centrally symmetric convex domains. Berenstein proved rigidity from the opposite extreme, assuming infinitely many orthogonal Neumann eigenfunctions that are constant on the boundary <a class="history-citation" href="#ref-berenstein-inverse">[20]</a>. A condition on the eigenfunction itself also suffices: Willms and Gladwell showed that if \(u\) has no saddle points, then a simply connected planar domain must be a disk <a class="history-citation" href="#ref-willms-gladwell">[23]</a>.</p>
             <p>Regularity results say that a counterexample cannot hide in a rough domain. Kinderlehrer and Nirenberg's free-boundary theorem makes \(u\) and \(\partial\Omega\) real-analytic <a class="history-citation" href="#ref-kinderlehrer-nirenberg">[21]</a>, and in the planar Pompeiu setting Williams showed that a bounded Lipschitz counterexample with connected boundary already has real-analytic boundary <a class="history-citation" href="#ref-williams-analyticity">[22]</a>. Any counterexample is therefore as smooth as one could ask, so both constructions below produce analytic boundaries rather than merely continuous ones.</p>
         </div>
 
@@ -3275,30 +3249,6 @@
       </section>
     </main>
 
-    <aside id="research-tour" class="research-tour" role="region" aria-labelledby="researchTourTitle" hidden>
-      <header class="research-tour-header">
-        <div>
-          <span id="researchTourProgress">Stop 1 of 4</span>
-          <h2 id="researchTourTitle">Linear rigidity at the disk</h2>
-        </div>
-        <button id="researchTourCollapse" type="button" aria-expanded="true" aria-controls="researchTourBody"><span>Minimize</span><i aria-hidden="true">−</i></button>
-        <button id="researchTourEnd" type="button"><span>End tour</span><i aria-hidden="true">×</i></button>
-      </header>
-      <div id="researchTourBody" class="research-tour-body">
-        <dl class="research-tour-instructions">
-          <div><dt>Interaction</dt><dd id="researchTourDo">Move the normal-displacement slider from zero to either side.</dd></div>
-          <div><dt>Visible change</dt><dd id="researchTourObserve">Geometry permits many normal motions, but the Schiffer boundary data require a matching eigenfunction mode.</dd></div>
-          <div><dt>Mathematical role</dt><dd id="researchTourConclude">Bourget–Siegel removes every genuine nonradial integer-order direction at a disk.</dd></div>
-        </dl>
-        <div class="research-tour-actions">
-          <button id="researchTourPrevious" type="button" disabled><span aria-hidden="true">←</span> Previous</button>
-          <button id="researchTourFocus" type="button">Move focus to the demonstration</button>
-          <button id="researchTourNext" type="button">Next <span aria-hidden="true">→</span></button>
-        </div>
-        <output id="researchTourStatus" class="research-tour-status" aria-live="polite">Stop 1 of 4: Linear rigidity at the disk.</output>
-      </div>
-    </aside>
-
     <footer>
       <span>Constructing Noncircular Schiffer Domains</span>
       <span>computer-assisted fixed disk &nbsp;∥&nbsp; cone bifurcation</span>
@@ -3349,13 +3299,13 @@
     <script defer src="abundance-data.js"></script>
     <script defer src="dtn-data.js?v=20260831.1"></script>
     <script defer src="app.js?v=20260831.9"></script>
-    <script defer src="story.js?v=20260831.12"></script>
+    <script defer src="story.js?v=20260901.1"></script>
     <script defer src="abundance.js?v=20260831.9"></script>
     <script defer src="pompeiu.js?v=20260831.8"></script>
     <script defer src="computer-assisted.js?v=20260831.9"></script>
     <script defer src="applet-layout.js?v=20260831.6"></script>
     <script defer src="certificate-checker.js?v=20260831.8"></script>
-    <script defer src="research-guide.js?v=20260831.9"></script>
+    <script defer src="research-guide.js?v=20260901.1"></script>
     <script defer src="scholarly-tools.js?v=20260831.11"></script>
     <script defer src="tufte/layout-contract.js?v=20260831.14"></script>
   </body>

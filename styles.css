@@ -51,14 +51,6 @@ a { color: inherit; }
 .intro-index { display: flex; gap: 15px; color: var(--muted); font: 11px var(--mono); letter-spacing: .12em; text-transform: uppercase; }
 .intro-index span { color: var(--orange); }
 .intro h1 { margin: 70px 0 58px; max-width: 1120px; font: 300 clamp(68px, 8.6vw, 128px)/.86 var(--serif); letter-spacing: -.052em; }
-.intro-bottom { display: block; }
-.intro-bottom p { max-width: 900px; margin: 0 0 0 auto; color: var(--muted); font-size: clamp(14px, 1.15vw, 17px); line-height: 1.72; }
-.intro-bottom p + p { margin-top: 18px; }
-.intro-bottom p > span { color: var(--ink); font-family: var(--mono); font-size: .86em; }
-.intro-bottom p > .katex { font-size: .92em; }
-.intro-bottom .edition-link { margin-top: 18px; font: 11px/1.5 var(--mono) !important; letter-spacing: .06em; text-transform: uppercase; }
-.intro-bottom .edition-link a { color: var(--orange); text-decoration-thickness: 1px; text-underline-offset: 4px; }
-
 /* KaTeX follows the typography and palette of the surrounding argument. */
 .katex, .katex-display, .katex-html { color: inherit; }
 .katex .mathsf { font-family: KaTeX_SansSerif, var(--sans); }
@@ -825,7 +817,6 @@ dialog hr { height: 1px; margin: 32px 0; background: var(--line); border: 0; }
   .status { display: none; }
   .intro { padding: 56px 24px 68px; }
   .intro h1 { margin: 54px 0 42px; font-size: clamp(42px,12vw,52px); line-height: .94; }
-  .intro-bottom p { max-width: none; }
   .borrow-flexibility { padding: 80px 24px; }
   .geometric-escape { padding: 80px 18px 0; }
   .story-heading { grid-template-columns: 34px minmax(0,1fr); gap: 20px; }
@@ -1002,10 +993,6 @@ dialog hr { height: 1px; margin: 32px 0; background: var(--line); border: 0; }
 .intro-copy p:last-child { margin-bottom: 0; }
 .intro-copy a { color: var(--orange); text-underline-offset: 3px; }
 .siegel-theorem { margin: 25px 0 22px; padding: 21px 0 20px; color: var(--ink); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); }
-/* Promoted out of an optional-digression expander: the rigidity literature is
-   part of the argument, not an aside, so it needs a heading of its own. */
-.rigidity-heading { margin: 34px 0 12px; color: var(--ink); font: 500 var(--type-body)/1.4 var(--sans); }
-
 .siegel-theorem h4 { margin: 0 0 13px; color: var(--ink); font: 500 18px/1.35 var(--serif); }
 .siegel-theorem p { margin: 0; color: var(--muted); font-size: var(--type-proof); line-height: 1.72; }
 .siegel-theorem .tex-display { margin: 16px 0 0; padding-left: 18px; color: var(--ink); border-left: 2px solid var(--orange); overflow-x: auto; }
@@ -1243,7 +1230,6 @@ dialog hr { height: 1px; margin: 32px 0; background: var(--line); border: 0; }
 
 body > footer { padding-inline: var(--layout-gutter); }
 
-.intro-bottom p { max-width: var(--layout-prose); margin-right: auto; }
 .borrow-lead,
 .geometry-lead,
 .proof-strategy-lead,
@@ -1260,8 +1246,6 @@ body > footer { padding-inline: var(--layout-gutter); }
 .phase-family { margin-right: 0; margin-left: 0; }
 
 @media (min-width: 1001px) {
-  .intro-bottom p { margin-left: var(--layout-indent); }
-
   .story-intro .intro-lead { margin-left: 0; }
   .intro-copy-wide,
   .intro-proof,
@@ -1466,17 +1450,6 @@ body.tufte-site main .cr-statement .cr-variant-button[data-cr-variant="uniform"]
 .abundance-examples-margin .abundance-examples-table th,
 .abundance-examples-margin .abundance-examples-table td { padding: 7px 8px; }
 .abundance-examples-margin .abundance-examples-table { table-layout: auto; }
-
-/* The route overview inherited the .intro-bottom register, 21px and muted, from
-   the block it shares a wrapper with.  It reads as body prose, so it takes the
-   same size, leading and colour as the introduction's own paragraphs. */
-body.tufte-site main .intro-route-overview p,
-.intro-route-overview p {
-  /* the .intro-bottom family rule carries !important, so this has to as well */
-  font-size: var(--type-proof) !important;
-  line-height: 1.43;
-  color: var(--ink);
-}
 
 .fact-list { margin: 14px 0; padding-left: 22px; list-style: disc; }
 .fact-list li { margin: 0 0 14px; }

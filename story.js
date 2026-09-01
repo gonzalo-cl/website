@@ -392,11 +392,11 @@
     wheelerBoundary.setAttribute("d", path);
 
     wheelerFluxArrows.textContent = "";
-    // Sample one outward normal in each fundamental sector.  Deriving the
-    // count from the boundary mode keeps the arrow field equivariant under
-    // the same rotations as the displayed domain.
-    for (let index = 0; index < mode; index += 1) {
-      const theta = TAU * (index + .25) / mode;
+    // Two evenly spaced normals per fundamental sector keep the arrow field
+    // equivariant under the same rotations as the displayed domain.
+    const arrowCount = 2 * mode;
+    for (let index = 0; index < arrowCount; index += 1) {
+      const theta = TAU * (index + .5) / arrowCount;
       const point = boundaryPoint(theta);
       const tangentX = radius * (-Math.sin(theta)
         - displayedEpsilon * (mode + 1) * Math.sin((mode + 1) * theta));
@@ -1543,17 +1543,13 @@
     const j11 = 3.8317059702;
     list.push({
       name: "disk, radius j\u2081,\u2081",
-      note: "the classical Pompeiu failure",
       vanishes: true,
-      readout: "zero for every position and angle",
       radius: () => j11,
       extent: j11 * 1.35,
     });
     list.push({
       name: "N = 10, certified example",
-      note: "the stored centre of the computer-assisted proof",
       vanishes: true,
-      readout: "certified exact domain: zero at every motion",
       radius: d10ProbeRadius,
       extent: D10_PROBE_EXTENT,
     });
@@ -1564,9 +1560,7 @@
       const scale = Math.sqrt(record.lambda), order = record.R, h = record.h;
       list.push({
         name: `N = ${order}, this proof`,
-        note: "boundary from the landing record",
         vanishes: true,
-        readout: "numerically zero at every sampled motion",
         radius: (theta) => {
           let sum = 0;
           for (let j = 0; j < h.length; j++) sum += h[j] * Math.cos(j * order * theta);
@@ -1578,9 +1572,7 @@
     const side = 2 * j11;
     list.push({
       name: "square",
-      note: "has the Pompeiu property",
       vanishes: false,
-      readout: "changes with position",
       radius: (theta) => (side / 2) / Math.max(Math.abs(Math.cos(theta)), Math.abs(Math.sin(theta))),
       extent: side * .95,
     });
@@ -1615,8 +1607,8 @@
     const domain = domains[Math.min(PROBE.domain, domains.length - 1)];
     context.clearRect(0, 0, width, height);
 
-    const plotHeight = 96;
-    const viewHeight = height - plotHeight - 62;
+    const plotHeight = 92;
+    const viewHeight = height - plotHeight - 24;
     const scale = Math.min(width / (2.4 * domain.extent), viewHeight / (2.2 * domain.extent));
     const cx = width / 2, cy = viewHeight / 2;
     const toX = (x) => cx + x * scale;
@@ -1632,19 +1624,22 @@
     PROBE.t1 = Math.max(-limitX, Math.min(limitX, PROBE.t1));
     PROBE.t2 = Math.max(-limitY, Math.min(limitY, PROBE.t2));
 
-    // the wave, at its true period
+    // A continuous diverging map makes the cosine visible as a smooth wave:
+    // negative and positive extrema meet at the paper colour when cos(x₁)=0.
     const image = context.createImageData(Math.round(width), Math.round(viewHeight));
     const pixels = image.data;
+    const negativeWave = [7, 87, 96];
+    const neutralWave = [255, 255, 248];
+    const positiveWave = [180, 95, 6];
     for (let px = 0; px < image.width; px++) {
       const value = Math.cos((px - cx) / scale);
-      const t = (value + 1) / 2;
-      const r = Math.round(255 - 78 * t), g = Math.round(255 - 24 * t), b = Math.round(248 - 8 * t);
-      const rr = Math.round(232 + 23 * t), gg = Math.round(238 - 60 * t), bb = Math.round(236 - 80 * t);
+      const target = value < 0 ? negativeWave : positiveWave;
+      const blend = Math.abs(value);
       for (let py = 0; py < image.height; py++) {
         const o = (py * image.width + px) * 4;
-        pixels[o] = value >= 0 ? rr : r;
-        pixels[o + 1] = value >= 0 ? gg : g;
-        pixels[o + 2] = value >= 0 ? bb : b;
+        pixels[o] = Math.round(neutralWave[0] + blend * (target[0] - neutralWave[0]));
+        pixels[o + 1] = Math.round(neutralWave[1] + blend * (target[1] - neutralWave[1]));
+        pixels[o + 2] = Math.round(neutralWave[2] + blend * (target[2] - neutralWave[2]));
         pixels[o + 3] = 255;
       }
     }
@@ -1668,45 +1663,44 @@
 
     const trace = [];
     const base = probeAmplitude(domain, PROBE.angle);
-    const value = Math.cos(PROBE.t1) * base.re - Math.sin(PROBE.t1) * base.im;
-    for (let i = 0; i <= 160; i++) {
-      const shift = -Math.PI + TAU * i / 160;
-      const v = Math.cos(shift) * base.re - Math.sin(shift) * base.im;
-      trace.push(v);
+    const integralAt = (shift) => Math.cos(shift) * base.re - Math.sin(shift) * base.im;
+    const value = integralAt(PROBE.t1);
+    const traceSamples = Math.max(160, Math.round(width / 2));
+    for (let i = 0; i <= traceSamples; i++) {
+      const x = i / traceSamples * width;
+      // Use the same screen-to-world map as the heat map above.  Their peaks,
+      // zeros, and period therefore line up exactly in the two panels.
+      const shift = (x - cx) / scale;
+      trace.push({ x, value: integralAt(shift) });
     }
     const top = viewHeight + 16, mid = top + plotHeight / 2;
     context.beginPath();
-    context.moveTo(14, mid); context.lineTo(width - 14, mid);
+    context.moveTo(0, mid); context.lineTo(width, mid);
     context.strokeStyle = colors.grid; context.lineWidth = 1; context.stroke();
     context.beginPath();
-    trace.forEach((v, i) => {
-      const x = 14 + i / (trace.length - 1) * (width - 28);
-      const y = mid - v / PROBE_PLOT_SPAN * (plotHeight / 2 - 8);
-      if (!i) context.moveTo(x, y); else context.lineTo(x, y);
+    trace.forEach((sample, i) => {
+      const y = mid - sample.value / PROBE_PLOT_SPAN * (plotHeight / 2 - 8);
+      if (!i) context.moveTo(sample.x, y); else context.lineTo(sample.x, y);
     });
     context.strokeStyle = domain.vanishes ? colors.cyan : colors.orange;
     context.lineWidth = 2; context.stroke();
 
-    context.font = visualTheme.labelFont;
-    context.textAlign = "left"; context.textBaseline = "top";
-    context.fillStyle = colors.faint;
-    context.fillText("integral against the shift t\u2081", 14, top - 14);
+    const currentX = toX(PROBE.t1);
+    const currentY = mid - value / PROBE_PLOT_SPAN * (plotHeight / 2 - 8);
+    context.beginPath();
+    context.arc(currentX, currentY, 3.5, 0, TAU);
     context.fillStyle = domain.vanishes ? colors.cyan : colors.orange;
-    context.fillText(`\u222b cos(x\u2081) = ${value.toExponential(2)}`, 14, top + plotHeight + 2);
-    context.fillStyle = colors.faint;
-    context.fillText(domain.readout, 14, top + plotHeight + 16);
-    context.textAlign = "right";
-    context.fillText("drag inside to move \u00b7 outside to turn", width - 14, top + plotHeight + 16);
-    context.textAlign = "left";
+    context.fill();
 
     document.querySelectorAll("[data-probe-domain]").forEach((button, index) => {
       button.classList.toggle("active", index === PROBE.domain);
       button.setAttribute("aria-pressed", String(index === PROBE.domain));
     });
-    const label = select("#probeDomainName");
-    if (label) label.textContent = domain.name;
     const angle = select("#probeAngle");
-    if (angle) angle.setAttribute("aria-valuetext", `${(PROBE.angle * 180 / Math.PI).toFixed(1)} degrees`);
+    const degrees = ((PROBE.angle * 180 / Math.PI) % 360 + 360) % 360;
+    if (angle) angle.setAttribute("aria-valuetext", `${degrees.toFixed(1)} degrees`);
+    const angleValue = select("#probeAngleValue");
+    if (angleValue) angleValue.textContent = `${degrees.toFixed(0)}°`;
     canvas.setAttribute("aria-label",
       `${domain.name} over the plane wave cosine x one; the integral is ${value.toExponential(2)}.`);
     PROBE.geometry = { toX, toY, scale, cx, cy, width, height, viewHeight };
