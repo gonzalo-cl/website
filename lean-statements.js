@@ -63,7 +63,11 @@
     "schiffer-star-shaped": Object.freeze({
       title: "Schiffer_Star_Shaped",
       alignmentScope: "primary-declaration",
-      caption: "The Lean statement records C² boundary regularity. The paper states smooth regularity after applying Williams’s theorem; that upgrade is not yet formalized.",
+      caption: "The Lean statement records C² boundary regularity. Williams’s theorem says that every planar Lipschitz counterexample has real-analytic, hence smooth, boundary; that regularity upgrade is not yet formalized.",
+      captionCitation: Object.freeze({
+        href: "https://doi.org/10.1512/iumj.1981.30.30028",
+        label: "Williams (1981)",
+      }),
       source: [
         "/-- A regular `C²` super-level set.",
         "The set `Ω` is open because its",
@@ -175,12 +179,8 @@
     }),
   ]);
 
-  const statementRemarks = Object.freeze({
-    "schiffer-star-shaped": Object.freeze({
-      title: "Comparator challenge",
-      note: "This display shows only the theorem’s type. The linked challenge file retains the proof hole; Comparator uses the trusted statement to check the completed development.",
-      sources: comparatorSources,
-    }),
+  const statementSources = Object.freeze({
+    "schiffer-star-shaped": comparatorSources,
   });
 
   const mathlibDocumentation = Object.freeze({
@@ -668,31 +668,32 @@
     if (statement.caption) {
       const caption = document.createElement("p");
       caption.className = "lean-statement-caption";
-      caption.textContent = statement.caption;
+      caption.append(document.createTextNode(statement.caption));
+      if (statement.captionCitation) {
+        const citation = document.createElement("a");
+        citation.href = statement.captionCitation.href;
+        citation.target = "_blank";
+        citation.rel = "noreferrer";
+        citation.textContent = "[" + statement.captionCitation.label + "]";
+        caption.append(document.createTextNode(" "), citation);
+      }
       (notesTarget || body).append(caption);
     }
     body.append(pre);
-    const statementRemark = statementRemarks[key];
-    if (statementRemark) {
-      const remark = document.createElement("div");
-      remark.className = "lean-formalization-remark lean-statement-remark";
-      const remarkTitle = document.createElement("strong");
-      remarkTitle.textContent = statementRemark.title;
-      const remarkBody = document.createElement("p");
-      remarkBody.textContent = statementRemark.note;
-      const remarkSources = document.createElement("div");
-      remarkSources.className = "lean-formalization-sources";
-      statementRemark.sources.forEach((sourceDefinition, index) => {
-        if (index) remarkSources.append(document.createTextNode(" · "));
+    const sources = statementSources[key];
+    if (sources) {
+      const sourceLinks = document.createElement("div");
+      sourceLinks.className = "lean-formalization-sources lean-statement-sources";
+      sources.forEach((sourceDefinition, index) => {
+        if (index) sourceLinks.append(document.createTextNode(" · "));
         const link = document.createElement("a");
         link.href = sourceDefinition.href;
         link.target = "_blank";
         link.rel = "noreferrer";
         link.textContent = sourceDefinition.label + " ↗";
-        remarkSources.append(link);
+        sourceLinks.append(link);
       });
-      remark.append(remarkTitle, remarkBody, remarkSources);
-      (notesTarget || body).append(remark);
+      (notesTarget || body).append(sourceLinks);
     }
     const alignments = semanticAlignments[key] || [];
     if (alignments.length) {
