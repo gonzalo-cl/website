@@ -21,7 +21,7 @@
     <script defer src="math.js?v=20260830.1"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tufte-css@1.9.0/tufte.min.css">
     <link rel="stylesheet" href="styles.css?v=20260901.2">
-    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260901.5">
+    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260901.6">
   </head>
   <body class="tufte-site">
     <a class="skip-link" href="#top">Skip to the exposition</a>
@@ -1025,8 +1025,8 @@
         </header>
 
         <div class="computer-assisted-lead">
-          <p>The computer-assisted certification turns a bifurcation-seeded numerical centre into an exact solution. Here \(k=\sqrt\lambda\) is the Helmholtz frequency, \(\mathbb D\) is the unit disk, \(\phi_p:\mathbb D\to\Omega\) is the conformal map to a candidate domain, and \(U=u\circ\phi_p\) is the physical field viewed on that fixed disk. A point \(x=(g,p)\) is an infinite coefficient list: \(g=\Delta(U-1)\) is the pulled-back source and determines \(U\) through the explicit inverse \(K\) introduced below, while \(p=k\phi_p'\) contains the frequency \(p_0=k\) and the shape coefficients. The search gives a finite centre \(x^\circ\). The proof chooses the weighted coefficient-space radius \(r=10^{-6}\), then checks rigorously that the ball of that radius around \(x^\circ\) contains a true solution \(x^*\). This radius is not a physical boundary distance; the much sharper geometric enclosure is derived later.</p>
-          <p>The steps below identify the bounded quantities and prove convergence inside the chosen ball.</p>
+          <p>The numerical search produces a finite centre \(x^\circ=(g^\circ,p^\circ)\). The proof moves every candidate domain to the unit disk, rewrites the Schiffer problem as one cubic equation in infinite coefficient lists, and certifies a unique exact zero \(x^*\) within a small validated ball around that centre.</p>
+          <p>Here \(p=k\phi_p'\) carries the frequency and shape, while \(g=\Delta(U-1)\) determines the pulled-back field \(U=1+Kg\). The validated radius \(10^{-6}\) belongs to this weighted coefficient space; the final geometric enclosure is much sharper.</p>
         </div>
 
         <article class="math-statement math-statement-theorem computer-assisted-theorem" data-kind="theorem" data-label="computer-assisted-existence" aria-labelledby="computerAssistedTheoremTitle">
@@ -1046,9 +1046,9 @@
           <h3>A numerical centre from the relaxed problem</h3>
         </header>
         <div class="computer-assisted-copy paper-copy">
-          <p class="proof-step-bridge">At the higher tenfold Wronskian zero, the linearized relaxed equations acquire a nontrivial tenfold kernel. This supplies the bifurcation seed for the numerical search. Numerical continuation follows a computed noncircular branch to zero flux and constructs the centre \(x^\circ\); the validation below, not the exploratory continuation, proves exact existence.</p>
+          <p class="proof-step-bridge">A higher tenfold Wronskian zero opens a noncircular direction. Numerical continuation follows it to zero flux and produces \(x^\circ\); the later certificate, not this search path, proves existence.</p>
           <p>A direct small deformation of a Schiffer disk would require two different integer-order Bessel functions to vanish at the same positive number, which they do not. The search therefore solves a relaxed problem first: it allows the outward derivative to be a constant \(c\), rather than demanding \(c=0\) from the start.</p>
-          <p>On the unit disk, let \(\mu=\sqrt\lambda\) be the trial Helmholtz wavenumber and let \(0\le r\le1\) be the radial coordinate. Thus \(\mu\) is also the Bessel argument at the boundary, playing the same role as \(\rho=kR\) for a disk of radius \(R\) in the introduction. This radial \(r\) is unrelated to the coefficient-ball radius used in the certificate. For a radial solution, the constant boundary derivative is</p>
+          <p>On the unit disk, let \(\mu=\sqrt\lambda\) be the trial wavenumber and \(0\le r\le1\) the radial coordinate, unrelated to the later coefficient-ball radius. The radial solution has constant boundary slope</p>
           <div class="tex-display">
             \[
             u_0(r):=u_\mu(r)=\frac{J_0(\mu r)}{J_0(\mu)},\qquad
@@ -1056,7 +1056,7 @@
             \partial_ru_0(1)=-\mu\frac{J_1(\mu)}{J_0(\mu)}=:c(\mu).
             \]
           </div>
-          <p>Now let \(\varepsilon\) measure a possible departure from the disk. We vary the boundary and the field together:</p>
+          <p>A tenfold departure from the disk must vary the boundary and the field together:</p>
           <div class="tex-display">
             \[
             \begin{aligned}
@@ -1068,14 +1068,25 @@
             \end{aligned}
             \]
           </div>
-          <p>The function \(V=\left.\partial_\varepsilon u_\varepsilon\right|_{\varepsilon=0}\) is the <em>first-order change in the field</em>: it is the initial velocity of the solution as the disk starts to move. It is not the boundary displacement. The scalar \(h\) moves the boundary, while \(V\) changes the value of the solution at fixed polar coordinates. Both changes are necessary. If the boundary moved but the field stayed equal to \(u_0\), then evaluating \(u_0\) at the new boundary would create the unwanted angular term \(\varepsilon h u_0'(1)\cos(10\theta)\).</p>
-          <p>The tenfold Fourier component of the first-order field satisfies the homogeneous Helmholtz equation on the disk. A first-order change in \(\mu\) contributes only to the radial component and therefore decouples from this tenfold calculation. Separation of variables forces the regular tenfold change to have the form</p>
+          <p>The scalar \(h\) moves the shape; \(V=\left.\partial_\varepsilon u_\varepsilon\right|_{\varepsilon=0}\) changes the field at fixed coordinates. Their first-order boundary errors can cancel precisely when</p>
+          <div class="tex-display">
+            \[
+            W_{1,10}(\mu)
+            =J_1(\mu)J_{10}'(\mu)-J_{10}(\mu)J_1'(\mu)=0.
+            \]
+          </div>
+        </div>
+          <details class="proof-details computer-assisted-details computer-search-derivation">
+            <summary><span>Derivation of the Wronskian criterion</span></summary>
+            <div class="computer-search-derivation-body">
+          <p>Here \(h\) is the boundary displacement and \(V\) is the field variation. Moving only the boundary would create the unwanted term \(\varepsilon h u_0'(1)\cos(10\theta)\); a first-order change in \(\mu\) is purely radial and decouples from this tenfold channel.</p>
+          <p>Separation of variables forces the regular tenfold field response to be</p>
           <div class="tex-display">
             \[
             V(r,\theta)=aJ_{10}(\mu r)\cos(10\theta).
             \]
           </div>
-          <p>Taylor-expand the two boundary conditions at the moving boundary \(r=r_\varepsilon(\theta)\). Because \(u_0\) is radial, the first-order tilt of the normal contributes no additional angular term. After taking the coefficient of \(\varepsilon\cos(10\theta)\), preservation of the boundary value and preservation of a constant boundary slope give</p>
+          <p>Taylor expansion at \(r=r_\varepsilon(\theta)\) gives the two boundary equations</p>
           <div class="tex-display">
             \[
             \begin{aligned}
@@ -1086,7 +1097,7 @@
             \end{aligned}
             \]
           </div>
-          <p>These are two homogeneous equations for two amplitudes: \(a\) changes the field and \(h\) changes the shape. A nonzero pair \((a,h)\) exists exactly when the coefficient matrix is singular. Using the formulas for \(u_0'(1)\) and \(u_0''(1)\), its determinant is</p>
+          <p>A nonzero pair \((a,h)\) exists exactly when this system is singular. Using the radial formulas above,</p>
           <div class="tex-display">
             \[
             \begin{aligned}
@@ -1100,10 +1111,12 @@
             \end{aligned}
             \]
           </div>
-          <p>This explains the two Bessel orders. The \(J_1\) response comes from differentiating the radial background \(J_0\), whereas \(J_{10}\) comes from the tenfold change in the field. If \(W_{1,10}(\mu)\ne0\), then \(a=h=0\): neither the field nor the boundary can start moving in this mode. If \(W_{1,10}(\mu)=0\), their two boundary-response vectors are proportional. One can then choose nonzero \(a\) and \(h\) so that the field change cancels the error caused by the boundary change in both boundary conditions.</p>
-          <p>The relaxation is necessary. At a genuine Schiffer disk, \(c(\mu)=0\), hence \(J_1(\mu)=0\). Because that zero is simple, the additional condition \(W_{1,10}(\mu)=0\) would force \(J_{10}(\mu)=0\) at the same positive number. That common zero does not exist. When \(c\ne0\), neither Bessel function has to vanish: only the two response vectors have to align.</p>
-          <p>Wheeler proved that the smallest positive root of \(W_{1,m}\) produces a local noncircular \(m\)-fold branch for every \(m\ge4\) in this relaxed problem <a class="history-citation" href="#ref-wheeler">[24]</a>. The present construction uses the same mechanism in the \(m=10\) sector at the higher positive zero \(\mu\approx31.278088\). This zero is a starting frequency, not yet the desired domain: it opens the tenfold direction from the disk with \(c\ne0\).</p>
-          <p>From that higher crossing, numerical continuation follows a computed noncircular branch. Along the branch it adjusts the shape, the field, the frequency, and \(c\), eventually reaching \(k\approx31.967007\) with computed \(c=0\). The endpoint gives \(x^\circ=(g^\circ,p^\circ)\). Only this stored endpoint enters the rigorous certificate; the continuation path itself is not used in the existence proof.</p>
+          <p>The \(J_1\) response comes from differentiating the radial background \(J_0\); \(J_{10}\) is the tenfold field response. Away from a Wronskian zero the system forces \(a=h=0\). At a zero the response vectors align, so nonzero shape and field changes cancel both boundary errors.</p>
+            </div>
+          </details>
+        <div class="computer-assisted-copy paper-copy computer-search-continuation">
+          <p>The relaxation is essential. If \(c(\mu)=0\), then \(J_1(\mu)=0\), and the Wronskian condition would also force \(J_{10}(\mu)=0\), an impossible common positive zero. Allowing \(c\ne0\) asks only that the two response vectors align.</p>
+          <p>Wheeler proved that Wronskian roots open local noncircular \(m\)-fold branches for every \(m\ge4\) <a class="history-citation" href="#ref-wheeler">[24]</a>. The construction uses a higher root \(\mu\approx31.278088\) in the \(m=10\) sector, then continues the field, shape, frequency, and \(c\) until \(c=0\) at \(k\approx31.967007\). That endpoint is \(x^\circ\), the only part of the search used by the certificate.</p>
         </div>
 
         <figure class="computer-assisted-figure interactive-plate figure-band" data-apparatus="visual-aside" data-figure="computer-assisted-search" data-evidence="mixed" data-evidence-detail="The perturbation equations and Wronskian criterion are exact linear analysis. The continuation silhouettes are schematic, and the zero-flux endpoint is finite numerical data later enclosed by the certificate." aria-labelledby="searchFigureTitle">
@@ -1166,7 +1179,7 @@
         </header>
         <div class="computer-assisted-copy paper-copy">
           <p class="proof-step-bridge">A conformal map resolves the difficulty of comparing functions on different unknown domains by moving every candidate problem back to the same unit disk.</p>
-          <p>Write \(z\) for the complex coordinate, \(\mathbb D=\{z:|z|&lt;1\}\) for the unit disk, and \(\mathbb T=\partial\mathbb D\) for its boundary circle. The analytic function \(\phi_p\) maps \(\mathbb D\) to the candidate domain. With real coefficients \(p_j\in\mathbb R\), tenfold rotation and reflection are built into the powers of \(z\):</p>
+          <p>Let \(\mathbb D=\{z:|z|&lt;1\}\) and \(\mathbb T=\partial\mathbb D\). The analytic map \(\phi_p:\mathbb D\to\Omega\) encodes tenfold rotation and reflection through real coefficients:</p>
           <div class="tex-display">
             \[
             p(z)=\sum_{j\ge0}p_jz^{10j},\qquad
@@ -1182,21 +1195,21 @@
             \phi_p(\overline z)=\overline{\phi_p(z)}.
             \]
           </div>
-          <p>These two identities generate the full dihedral symmetry \(D_{10}\), not only cyclic tenfold rotation. On the boundary, they also make the geometric meaning of \(p\) explicit:</p>
+          <p>These identities generate the full dihedral symmetry \(D_{10}\). On the boundary, \(p_0=k\) is the frequency and \(p_1,p_2,\ldots\) change the shape:</p>
           <div class="tex-display compact-definition-display">
             \[
             \left|\partial_\theta\phi_p(e^{i\theta})\right|
             =\frac{|p(e^{i\theta})|}{p_0}.
             \]
           </div>
-          <p>Here \(p_0=k\) is the frequency, while \(p_1,p_2,\ldots\) change the shape. The definition gives \(p=k\phi_p'\). If \(U=u\circ\phi_p\) is the original field viewed on the disk, then the equation becomes</p>
+          <p>Since \(p=k\phi_p'\), the pulled-back field \(U=u\circ\phi_p\) satisfies</p>
           <div id="equation-fixed-disc-problem" class="tex-display" data-equation="fixed-disc-problem">
             \[
             \Delta U+|p|^2U=0\quad\text{in }\mathbb D,\qquad
             U=1,\quad\partial_rU=0\quad\text{on }\mathbb T.
             \]
           </div>
-          <p>The Laplacian and the outward derivative change by the following scale factors:</p>
+          <p>The coordinate change scales the Laplacian and outward derivative by</p>
           <div class="tex-display">
             \[
             \Delta U=|\phi_p'|^2(\Delta u)\circ\phi_p,
@@ -1205,8 +1218,7 @@
             \quad\text{on }\mathbb T.
             \]
           </div>
-          <p>Since \(|p|^2=k^2|\phi_p'|^2\), all motion of the boundary is now recorded by the coefficient \(|p|^2\). The boundary itself stays at the unit circle. The normalization \(\phi_p(0)=0\), \(\phi_p'(0)=1\) prevents the shape coefficients from wasting freedom on translation, rotation, or resizing.</p>
-          <p>The proof works in a function space where the boundary value and boundary derivative are well defined. It does not yet assume that \(\phi_p\) is one-to-one; that will be proved from the final coefficient bounds.</p>
+          <p>Thus the boundary stays at the unit circle and its motion appears only through \(|p|^2=k^2|\phi_p'|^2\). The normalization \(\phi_p(0)=0\), \(\phi_p'(0)=1\) removes translation, rotation, and rescaling. Injectivity of \(\phi_p\) is not assumed here; the final coefficient bounds prove it.</p>
         </div>
 
         <article class="math-statement" data-kind="proposition" data-label="fixed-disc-transfer">
@@ -1281,7 +1293,7 @@
         </article>
 
         <div class="computer-assisted-copy paper-copy">
-          <p>Three neighbouring radial modes have the same boundary value, while their radial derivatives are the known numbers \(\beta_t=10|\ell|+2t(t+10|\ell|+1)\). Call the coefficients of the \(s-1,s,s+1\) modes \(A,B,C\), in that order. They obey</p>
+          <p>Three neighbouring radial modes have the same boundary value and known radial derivatives \(\beta_t=10|\ell|+2t(t+10|\ell|+1)\). Their coefficients \(A,B,C\) obey</p>
           <div class="tex-display">
             \[
             A+B+C=0,
@@ -1289,8 +1301,7 @@
             A\beta_{s-1}+B\beta_s+C\beta_{s+1}=0.
             \]
           </div>
-          <p>The first equality cancels the boundary value; the second cancels the boundary derivative. Applying the Laplacian then returns the original middle mode. The accompanying visual displays both balances.</p>
-          <p>The size estimate is exact too. For total degree \(D=10|\ell|+2s\), the three absolute coefficients add to \(1/[D(D+2)]\), at most \(1/8\). Higher-total-degree modes are therefore easier, not harder, to control.</p>
+          <p>The two equalities cancel the boundary value and derivative; applying the Laplacian returns the original middle mode. For total degree \(D=10|\ell|+2s\), the three absolute coefficients add to \(1/[D(D+2)]\le1/8\), so higher modes are easier to control.</p>
         </div>
 
         <figure class="computer-assisted-figure interactive-plate figure-band" data-apparatus="visual-aside" data-figure="compatible-inverse-modes" data-evidence="exact" aria-labelledby="inverseFigureTitle">
@@ -1323,13 +1334,13 @@
         </figure>
 
         <div class="computer-assisted-copy paper-copy">
-          <p>Now \(v=Kg\) automatically has both zero boundary conditions. Since \(g=\Delta v\) and \(U=1+v\), the entire disk problem becomes one equation:</p>
+          <p class="proof-step-bridge">With \(v=Kg\), both boundary conditions hold automatically and the entire fixed-disk problem becomes one equation:</p>
           <div id="equation-computer-cubic-equation" class="tex-display important-equation" data-equation="computer-cubic-equation">
             \[
             F(g,p):=g+|p|^2(1+Kg)=0.
             \]
           </div>
-          <p>The term \(g\) is \(\Delta v\), while \(|p|^2(1+Kg)\) is \(|p|^2U\). Thus \(F=0\) is exactly the PDE, with both boundary conditions already built in. It is a cubic equation in the coefficient lists \(g\) and \(p\), so its derivatives and nonlinear error can be bounded explicitly.</p>
+          <p>This is exactly the PDE with both boundary conditions built in. Because \(F\) is cubic in \(g\) and \(p\), its derivatives and nonlinear error admit explicit bounds.</p>
           <p><strong>Where is the shape determined?</strong> Expanding \(F(g,p)=0\) in disk-polynomial coefficients produces two kinds of equations. The nonharmonic rows \(s\ge1\) primarily determine the field coefficients \(g_{\ell,s}\). In the harmonic rows \(s=0\), however, there is no coefficient \(g_{\ell,0}\) available to change. Those remaining equations must therefore be satisfied by adjusting \(p\), and hence determine the frequency and the shape.</p>
         </div>
 
@@ -1337,22 +1348,21 @@
           <h3>Finite coefficients and the infinite tail</h3>
         </header>
         <div class="computer-assisted-copy paper-copy">
-          <p class="proof-step-bridge">A computer stores finitely many numbers, but a function has infinitely many coefficients. The proof therefore bounds every uncomputed coefficient that could affect the result.</p>
-          <p>The main computation keeps \(0\le\ell\le60\), \(1\le s\le40\) for \(g\), and \(0\le j\le30\) for \(p\). Because reality and reflection identify negative angular indices with positive ones, these nonnegative indices give</p>
+          <p class="proof-step-bridge">The certificate joins a finite matrix calculation to analytic tail estimates, leaving no coefficient unchecked.</p>
+          <p>The main block keeps \(0\le\ell\le60\), \(1\le s\le40\) for \(g\), and \(0\le j\le30\) for \(p\). Reflection symmetry reduces the count to</p>
           <div class="tex-display">
             \[
             61\cdot40+31=2471
             \]
           </div>
-          <p>unknowns in the central block. Here \(M\) is the scaled finite Jacobian. The computer forms a binary64 approximate inverse \(R_{\mathrm{fin}}\), whose floating-point entries are then represented by their exact dyadic rational values inside the checker; \(R_{\mathrm{fin}}\) is not asserted to be the exact inverse of \(M\). The subscript distinguishes this finite matrix from the cone order \(R\) used in the other proof. Just outside the block, multiplication by the finite centre can couple nearby equations and unknowns, so every such interaction is enumerated and checked. Farther away, the factor \(1/[D(D+2)]\) in \(K\) decreases like \(1/D^2\), and monotone formulas cover all remaining field and shape modes.</p>
-          <p>The approximate inverse therefore has two pieces:</p>
+          <p>central unknowns. For the scaled finite Jacobian \(M\), the checker uses the exact dyadic values of a stored approximate inverse \(R_{\mathrm{fin}}\). Every coupling just outside the block is enumerated; farther away, the \(1/[D(D+2)]\) factor in \(K\) yields monotone \(D^{-2}\) bounds.</p>
+          <p>The full approximate inverse splits as</p>
           <div class="tex-display">
             \[
             \mathcal A=\mathcal A_{\mathrm{finite}}\oplus J_{\mathrm{tail}}.
             \]
           </div>
-          <p>The first piece \(\mathcal A_{\mathrm{finite}}\) is built from the stored matrix \(R_{\mathrm{fin}}\) and handles the \(2471\) central coordinates. The principal tail operator \(J_{\mathrm{tail}}\) pairs each sufficiently distant coefficient with its matching equation and has an explicit inverse. Finally, \(\|I-R_{\mathrm{fin}}M\|_1&lt;1\) proves that the finite matrix really is invertible: the approximate inverse defect is too small to leave a missing direction. Together these facts prove that the full operator \(\mathcal A\) is invertible on the infinite list, not merely on a truncation.</p>
-          <p>The figure keeps the two kinds of unknown separate: \(g\) is a two-dimensional array indexed by \((\ell,s)\), while \(p\) is a one-dimensional list indexed by \(j\). For each list, the explicitly checked nearby region meets the decreasing remote-tail estimate, leaving no unchecked gap.</p>
+          <p>Here \(\mathcal A_{\mathrm{finite}}\) handles the \(2471\) central coordinates and \(J_{\mathrm{tail}}\) inverts the remote principal part explicitly. The check \(\|I-R_{\mathrm{fin}}M\|_1&lt;1\) proves the finite block invertible. Together with the verified interaction band, this makes \(\mathcal A\) invertible on the complete infinite list, not only on a truncation.</p>
         </div>
 
         <figure class="computer-assisted-figure interactive-plate figure-band" data-apparatus="visual-aside" data-figure="finite-tail-certificate" data-evidence="schematic" aria-labelledby="tailFigureTitle">
@@ -1386,8 +1396,8 @@
           <h3>Certified fixed-point convergence</h3>
         </header>
         <div class="computer-assisted-copy paper-copy">
-          <p class="proof-step-bridge">The approximate solution \(x^\circ\) must be replaced by a true solution. Banach's fixed-point theorem supplies one if a small enough ball around \(x^\circ\) is carried into itself and distances shrink inside that ball.</p>
-          <p>A point of the coefficient space \(X\) is a complete infinite list \(x=(g,p)\). For a perturbation \(x-x^\circ=(\delta g,\eta)\), the first component changes the source and \(\eta=p-p^\circ\) changes the frequency and shape. The certificate fixes the coefficient weight \(\varrho=1.05\) and writes \(b=p_0^\circ\) for the centre frequency, then uses</p>
+          <p class="proof-step-bridge">Banach's theorem replaces \(x^\circ\) by an exact solution once a coefficient ball maps strictly into itself and distances shrink inside it.</p>
+          <p>For \(x-x^\circ=(\delta g,\eta)\), with \(\eta=p-p^\circ\), the certificate fixes \(\varrho=1.05\), writes \(b=p_0^\circ\), and uses</p>
           <div class="coefficient-norm-grid" aria-label="Weighted coefficient norms used by the certificate">
             <div class="tex-display compact-definition-display">
               \[
@@ -1405,7 +1415,7 @@
               \]
             </div>
           </div>
-          <p>Here \(\|\cdot\|_P\) is the weighted norm on the \(p\)-list. The factor \(2b\) puts source and shape perturbations on the scale needed by the product \(|p|^2(1+Kg)\). With this norm, write</p>
+          <p>The factor \(2b\) balances source and shape perturbations for the product \(|p|^2(1+Kg)\). Define</p>
           <div class="tex-display">
             \[
             B_r(x^\circ)=\{x:\|x-x^\circ\|_X\le r\},
@@ -1413,14 +1423,14 @@
             T(x)=x-\mathcal A F(x).
             \]
           </div>
-          <p>The map \(T\) is an approximate Newton step. Because \(\mathcal A\) is invertible, \(T(x)=x\) exactly when \(F(x)=0\). To define the four bounds, first separate the part of \(F\) that is linear near \(x^\circ\) from the part that is not. Since \(F\) is cubic, there are a symmetric bilinear map \(B_2\) and a symmetric trilinear map \(B_3\) such that, for every coefficient change \(\delta x\in X\),</p>
+          <p>The map \(T\) is an approximate Newton step, and invertibility of \(\mathcal A\) makes \(T(x)=x\) equivalent to \(F(x)=0\). Since \(F\) is cubic, its nonlinear remainder has bilinear and trilinear parts:</p>
           <div class="tex-display">
             \[
             \mathcal A\!\left(F(x^\circ+\delta x)-F(x^\circ)-DF(x^\circ)\delta x\right)
             =B_2(\delta x,\delta x)+B_3(\delta x,\delta x,\delta x).
             \]
           </div>
-          <p>Here \(DF(x^\circ)\delta x\) is the linear approximation to the change in \(F\). The checker supplies nonnegative numbers \(Y,Z,C_2,C_3\) for which</p>
+          <p>The checker supplies nonnegative bounds \(Y,Z,C_2,C_3\) for which</p>
           <div class="operator-bound-grid">
             <div class="tex-display">
               \[
@@ -1447,14 +1457,14 @@
               \]
             </div>
           </div>
-          <p>for every \(\delta x_1,\delta x_2,\delta x_3\in X\). The certified numerical upper bounds are:</p>
+          <p>for all coefficient changes. The certified upper bounds are</p>
           <div class="certificate-bound-list" aria-label="Outward bounds used in the radii polynomial">
             <span><b>\(Y\)</b><small>size of first step</small><strong>\(1.59\times10^{-10}\)</strong></span>
             <span><b>\(Z\)</b><small>linear inverse defect</small><strong>\(0.621\)</strong></span>
             <span><b>\(C_2\)</b><small>quadratic change</small><strong>\(122\)</strong></span>
             <span><b>\(C_3\)</b><small>cubic change</small><strong>\(0.012\)</strong></span>
           </div>
-          <p>Thus \(Y\) is the size of the first Newton move from the centre, after applying \(\mathcal A\). The number \(Z\) is the worst possible linear stretching left after \(\mathcal A\) tries to invert \(DF(x^\circ)\). Finally, \(C_2\) and \(C_3\) are worst-case bounds for the quadratic and cubic parts. They apply to arbitrary coefficient changes, not samples from a plot.</p>
+          <p>These are operator bounds for arbitrary coefficient changes, not samples from a plot.</p>
         </div>
 
         <article class="math-statement" data-kind="criterion" data-label="radii-criterion">
@@ -1473,7 +1483,7 @@
         </article>
 
         <div class="computer-assisted-copy paper-copy">
-          <p>The proof chooses \(r=10^{-6}\) and then evaluates the bounds with exact fractions. The self-map check is</p>
+          <p>At \(r=10^{-6}\), exact-fraction evaluation gives the self-map estimate</p>
           <div class="tex-display">
             \[
             \|T(x)-x^\circ\|_X
@@ -1482,21 +1492,21 @@
             \qquad (x\in B_r(x^\circ)).
             \]
           </div>
-          <p>The contraction check gives \(q(r)&lt;0.621245&lt;1\), so</p>
+          <p>and the contraction estimate \(q(r)&lt;0.621245&lt;1\) gives</p>
           <div class="tex-display">
             \[
             \|T(x)-T(y)\|_X\le q(r)\,\|x-y\|_X
             \qquad (x,y\in B_r(x^\circ)).
             \]
           </div>
-          <p>Start anywhere in the ball and repeat \(x_{n+1}=T(x_n)\). The distance still remaining after \(n\) steps satisfies</p>
+          <p>Thus every iteration \(x_{n+1}=T(x_n)\) stays in the ball and satisfies</p>
           <div class="tex-display">
             \[
             \|x_n-x^*\|_X
             \le q(r)^n\|x_0-x^*\|_X.
             \]
           </div>
-          <p>Since \(q(r)&lt;1\), the powers \(q(r)^n\) tend to zero. Thus the points converge to one limit \(x^*\). Continuity gives \(T(x^*)=x^*\), and invertibility of \(\mathcal A\) then gives \(F(x^*)=0\). Starting at the centre yields the sharper estimate</p>
+          <p>Because \(q(r)&lt;1\), the iterates converge to the unique fixed point \(x^*\) in the ball, hence to a zero of \(F\). Starting at the centre sharpens the enclosure to</p>
           <div class="tex-display">
             \[
             \|x^*-x^\circ\|_X
@@ -1504,7 +1514,7 @@
             &lt;4.20\times10^{-10}.
             \]
           </div>
-          <p>The chosen radius-\(10^{-6}\) ball is therefore a certified safe region; the actual solution is forced into a much smaller neighbourhood of its centre. The two-dimensional animation below is a schematic view of this infinite-dimensional coefficient space, but its displayed distance bounds are the certified ones.</p>
+          <p>The radius-\(10^{-6}\) ball is the safe region; the exact solution is forced into the much smaller radius \(4.20\times10^{-10}\). The animation is a schematic projection of this infinite-dimensional argument.</p>
         </div>
 
         <figure class="computer-assisted-figure interactive-plate figure-band" data-apparatus="visual-aside" data-figure="radii-polynomial-certificate" data-evidence="certified" aria-labelledby="certificateFigureTitle">
@@ -1557,7 +1567,7 @@
           <h3>From the coefficient solution to a domain</h3>
         </header>
         <div class="computer-assisted-copy paper-copy">
-          <p class="proof-step-bridge">Solving the coefficient equation is not enough by itself. The resulting series must define one genuine, noncircular domain and an analytic field on that domain.</p>
+          <p class="proof-step-bridge">The coefficient zero becomes a Schiffer domain after three geometric checks: boundary enclosure, injectivity, and noncircularity.</p>
           <p><strong>First, the exact boundary stays near the plotted one.</strong> The coefficient ball gives</p>
           <div class="tex-display">
             \[
@@ -1565,7 +1575,7 @@
             &lt;7.13\times10^{-11}.
             \]
           </div>
-          <p>The contribution from all shape coefficients beyond those stored by the computer is less than \(3.47\times10^{-13}\).</p>
+          <p>The unprinted shape coefficients contribute less than \(3.47\times10^{-13}\).</p>
           <p><strong>Second, the map cannot fold over itself.</strong> The same bounds prove</p>
           <div class="tex-display">
             \[
@@ -1575,14 +1585,14 @@
             \quad(|z|\le1).
             \]
           </div>
-          <p>Indeed, \(\phi_{p^*}'(z)=1+\sum_{j\ge1}(p_j^*/p_0^*)z^{10j}\), so the coefficient estimate gives \(\operatorname{Re}\phi_{p^*}'\ge1-\sum_{j\ge1}|p_j^*/p_0^*|&gt;0.35\) throughout the closed disk. For two different points \(z_1,z_2\),</p>
+          <p>The coefficient estimate gives \(\operatorname{Re}\phi_{p^*}'&gt;0.35\) throughout the closed disk. For \(z_1\ne z_2\),</p>
           <div class="tex-display">
             \[
             \frac{\phi_{p^*}(z_2)-\phi_{p^*}(z_1)}{z_2-z_1}
             =\int_0^1\phi_{p^*}'\bigl(z_1+t(z_2-z_1)\bigr)\,dt.
             \]
           </div>
-          <p>The segment stays inside the convex disk, and the real part of this average derivative is positive, so the quotient cannot be zero. Hence \(\phi_{p^*}(z_1)\ne\phi_{p^*}(z_2)\). The weighted \(p\)-norm also makes \(\phi_{p^*}\) holomorphic on a slightly larger disk; by continuity the strict real-part bound persists in a smaller neighbourhood of \(\overline{\mathbb D}\), giving the one-to-one map required by conformal transfer.</p>
+          <p>The segment lies in the disk, so this average derivative has positive real part and cannot vanish. Hence \(\phi_{p^*}\) is injective. The weighted norm extends the map slightly beyond \(\overline{\mathbb D}\), where the strict bound persists by continuity.</p>
           <p><strong>Third, the domain is not a disk.</strong> The first normalized shape coefficient satisfies</p>
           <div class="tex-display">
             \[
@@ -1590,8 +1600,8 @@
             \qquad |q_1^*|&gt;0.03459.
             \]
           </div>
-          <p>Thus \(\phi_{p^*}\) contains a nonlinear term. If its tenfold-symmetric image were a disk, that disk would be centred at the origin, and the normalized conformal map onto it would be linear. The nonzero coefficient rules this out.</p>
-          <p>Finally, the coefficient equation makes \(U^*=1+Kg^*\) solve an elliptic equation with the analytic coefficient \(|p^*|^2\). Analytic elliptic regularity gives analyticity in the disk. Near the analytic circle, the analytic Cauchy data \(U^*=1\), \(\partial_rU^*=0\) determine a Cauchy&ndash;Kovalevskaya extension; uniqueness makes this collar extension agree with the interior solution. Thus \(U^*\) is analytic across the boundary, and composition with \(\phi_{p^*}^{-1}\) produces the required real-analytic field on the physical domain.</p>
+          <p>A tenfold-symmetric disk would be centred at the origin and have a linear normalized conformal map. The nonzero \(q_1^*\) rules this out.</p>
+          <p>Finally, \(U^*=1+Kg^*\) solves an elliptic equation with analytic coefficient \(|p^*|^2\). Elliptic regularity and the analytic Cauchy data \(U^*=1\), \(\partial_rU^*=0\) extend it across the circle. Composing with \(\phi_{p^*}^{-1}\) gives the required real-analytic field on the physical domain.</p>
         </div>
 
         <article class="math-statement" data-kind="proposition" data-label="computer-geometric-reconstruction">
@@ -1633,8 +1643,7 @@
         </article>
 
         <div class="computer-assisted-copy paper-copy computer-assisted-close">
-          <p>For the final implication, insert the plane wave \(e^{-ik\omega\cdot x}\) into Green's identity with \(u\). The two interior Helmholtz terms cancel. Since \(u=1\) and \(\partial_\nu u=0\) on the boundary, the remaining term is \(-k^2\int_\Omega e^{-ik\omega\cdot x}\,dx=0\), which is the displayed Fourier-transform identity.</p>
-          <p>The conformal reduction and computer-assisted contraction construct an exact noncircular Schiffer domain and show that the same domain also fails the Pompeiu property. The companion construction below switches which boundary datum vanishes; the bifurcation proof closes existence through uniform bifurcation estimates and integer landing.</p>
+          <p>Insert the plane wave \(e^{-ik\omega\cdot x}\) into Green's identity with \(u\). The interior Helmholtz terms cancel, while \(u=1\) and \(\partial_\nu u=0\) leave \(-k^2\int_\Omega e^{-ik\omega\cdot x}\,dx=0\). Thus the certified noncircular Schiffer domain also fails the Pompeiu property.</p>
         </div>
 
         <details class="proof-details computer-assisted-details">
