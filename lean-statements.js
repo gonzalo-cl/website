@@ -352,7 +352,7 @@
         token: "IsSchifferDomain",
         concept: "schiffer",
         paper: "solves the Schiffer problem",
-        explanation: "The displayed project-local predicate expresses the normalized Schiffer boundary-value problem; its standalone formalization appears",
+        explanation: "Ω supports a solution of the normalized Schiffer boundary-value problem; see the full definition",
         source: schifferDomainDefinition,
         reference: Object.freeze({
           href: "#lean-statement-schiffer-property",
