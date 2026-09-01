@@ -12,12 +12,8 @@
   const statements = Object.freeze({
     "pompeiu-property": Object.freeze({
       title: "HasPompeiuProperty",
+      showAlignmentHint: false,
       source: [
-        "import Mathlib",
-        "noncomputable section",
-        "",
-        "open MeasureTheory Metric Topology Bornology",
-        "",
         "abbrev Plane := ℂ",
         "abbrev RigidMotion := AffineIsometryEquiv ℝ Plane Plane",
         "",
@@ -253,8 +249,7 @@
         token: "MeasurementMap",
         concept: "measurement-map",
         paper: "the measurement map f ↦ MΩf",
-        noteTitle: "Formalization remark",
-        note: "The paper suppresses function-space details. This excerpt chooses continuous real-valued functions and Lebesgue integrals over rigid-motion images.",
+        explanation: "The measurement map for continuous functions",
       }),
       Object.freeze({
         token: "Injective",
@@ -793,7 +788,7 @@
     const pre = document.createElement("pre");
     const source = document.createElement("code");
     source.className = "language-lean";
-    source.textContent = alignments.length
+    source.textContent = alignments.length && statement.showAlignmentHint !== false
       ? `-- Hover over terms for explanations\n-- and semantic alignment with the paper.\n\n${statement.source}`
       : statement.source;
     pre.append(source);
