@@ -206,11 +206,11 @@
   });
 
   const mathlibTerms = Object.freeze([
-    Object.freeze({ token: "ContDiff", documentation: mathlibDocumentation.contDiff }),
-    Object.freeze({ token: "Metric.ball", documentation: mathlibDocumentation.metricBall }),
-    Object.freeze({ token: "AffineIsometryEquiv", documentation: mathlibDocumentation.affineIsometryEquiv }),
-    Object.freeze({ token: "frontier", documentation: mathlibDocumentation.frontier }),
-    Object.freeze({ token: "iteratedDeriv", documentation: mathlibDocumentation.iteratedDeriv }),
+    Object.freeze({ token: "ContDiff", explanation: "Continuous differentiability through the specified order", documentation: mathlibDocumentation.contDiff }),
+    Object.freeze({ token: "Metric.ball", explanation: "The open metric ball with a given centre and radius", documentation: mathlibDocumentation.metricBall }),
+    Object.freeze({ token: "AffineIsometryEquiv", explanation: "An affine distance-preserving equivalence; here it represents a rigid motion", documentation: mathlibDocumentation.affineIsometryEquiv }),
+    Object.freeze({ token: "frontier", explanation: "The topological boundary of a set", documentation: mathlibDocumentation.frontier }),
+    Object.freeze({ token: "iteratedDeriv", explanation: "The iterated derivative of a one-variable function", documentation: mathlibDocumentation.iteratedDeriv }),
   ]);
 
   const boundedAlignment = Object.freeze({
@@ -571,7 +571,7 @@
         let fromIndex = Math.max(0, minimumOffset - consumed);
         let index = node.data.indexOf(token, fromIndex);
         while (index !== -1) {
-          if (consumed + index >= minimumOffset) return { index, node };
+          if (consumed + index >= minimumOffset) return { index, node, offset: consumed + index };
           fromIndex = index + token.length;
           index = node.data.indexOf(token, fromIndex);
         }
@@ -593,36 +593,35 @@
       : 0;
 
     controller.alignments.forEach((alignment) => {
-      const match = findTextOccurrence(
-        source,
-        alignment.token,
-        Math.max(0, primaryDeclarationOffset),
-      );
-      if (!match) return;
-
-      const { index, node } = match;
-      const before = node.data.slice(0, index);
-      const after = node.data.slice(index + alignment.token.length);
-      const fragment = document.createDocumentFragment();
-      if (before) fragment.append(document.createTextNode(before));
-      const term = document.createElement("span");
-      term.className = "lean-semantic-term";
-      term.tabIndex = 0;
-      term.textContent = alignment.token;
-      term.dataset.leanAlignment = key + ":" + alignment.concept;
-      term.setAttribute("aria-describedby", controller.panel.id);
-      term.addEventListener("pointerenter", () => controller.show(alignment));
-      term.addEventListener("focus", () => controller.show(alignment));
-      term.addEventListener("click", () => controller.show(alignment, { pin: true }));
-      term.addEventListener("keydown", (event) => {
-        if (event.key !== "Enter" && event.key !== " ") return;
-        event.preventDefault();
-        controller.show(alignment, { pin: true });
-      });
-      controller.registerTerm(alignment, term);
-      fragment.append(term);
-      if (after) fragment.append(document.createTextNode(after));
-      node.replaceWith(fragment);
+      let minimumOffset = Math.max(0, primaryDeclarationOffset);
+      let match = findTextOccurrence(source, alignment.token, minimumOffset);
+      while (match) {
+        const { index, node, offset } = match;
+        const before = node.data.slice(0, index);
+        const after = node.data.slice(index + alignment.token.length);
+        const fragment = document.createDocumentFragment();
+        if (before) fragment.append(document.createTextNode(before));
+        const term = document.createElement("span");
+        term.className = "lean-semantic-term";
+        term.tabIndex = 0;
+        term.textContent = alignment.token;
+        term.dataset.leanAlignment = key + ":" + alignment.concept;
+        term.setAttribute("aria-describedby", controller.panel.id);
+        term.addEventListener("pointerenter", () => controller.show(alignment));
+        term.addEventListener("focus", () => controller.show(alignment));
+        term.addEventListener("click", () => controller.show(alignment, { pin: true }));
+        term.addEventListener("keydown", (event) => {
+          if (event.key !== "Enter" && event.key !== " ") return;
+          event.preventDefault();
+          controller.show(alignment, { pin: true });
+        });
+        controller.registerTerm(alignment, term);
+        fragment.append(term);
+        if (after) fragment.append(document.createTextNode(after));
+        node.replaceWith(fragment);
+        minimumOffset = offset + alignment.token.length;
+        match = findTextOccurrence(source, alignment.token, minimumOffset);
+      }
     });
 
     disclosure.addEventListener("pointerleave", controller.reset);
@@ -632,27 +631,46 @@
     source.dataset.semanticAnnotated = "true";
   };
 
-  const annotateMathlibTerms = (source) => {
+  const annotateMathlibTerms = (disclosure, source) => {
     if (source.dataset.mathlibAnnotated === "true") return;
-    mathlibTerms.forEach(({ token, documentation }) => {
-      const match = findTextOccurrence(source, token);
-      if (!match) return;
-      const { index, node } = match;
-      const before = node.data.slice(0, index);
-      const after = node.data.slice(index + token.length);
-      const fragment = document.createDocumentFragment();
-      if (before) fragment.append(document.createTextNode(before));
-      const link = document.createElement("a");
-      link.className = "lean-mathlib-term";
-      link.href = documentation.href;
-      link.target = "_blank";
-      link.rel = "noreferrer";
-      link.textContent = token;
-      link.title = documentation.label;
-      link.setAttribute("aria-label", `${token}: open Mathlib documentation`);
-      fragment.append(link);
-      if (after) fragment.append(document.createTextNode(after));
-      node.replaceWith(fragment);
+    const controller = alignmentControllers.get(disclosure);
+    mathlibTerms.forEach(({ token, explanation, documentation }) => {
+      let minimumOffset = 0;
+      let match = findTextOccurrence(source, token, minimumOffset);
+      while (match) {
+        const { index, node, offset } = match;
+        const before = node.data.slice(0, index);
+        const after = node.data.slice(index + token.length);
+        const fragment = document.createDocumentFragment();
+        if (before) fragment.append(document.createTextNode(before));
+        const link = document.createElement("a");
+        link.className = "lean-mathlib-term";
+        link.href = documentation.href;
+        link.target = "_blank";
+        link.rel = "noreferrer";
+        link.textContent = token;
+        link.title = documentation.label;
+        link.setAttribute("aria-label", `${token}: open Mathlib documentation`);
+        if (controller) {
+          const alignment = Object.freeze({
+            token,
+            concept: `mathlib-${token}`,
+            paper: token,
+            explanation,
+            documentation,
+          });
+          link.setAttribute("aria-describedby", controller.panel.id);
+          link.addEventListener("pointerenter", () => controller.show(alignment));
+          link.addEventListener("pointerleave", controller.reset);
+          link.addEventListener("focus", () => controller.show(alignment));
+          link.addEventListener("blur", controller.reset);
+        }
+        fragment.append(link);
+        if (after) fragment.append(document.createTextNode(after));
+        node.replaceWith(fragment);
+        minimumOffset = offset + token.length;
+        match = findTextOccurrence(source, token, minimumOffset);
+      }
     });
     source.dataset.mathlibAnnotated = "true";
   };
@@ -666,43 +684,55 @@
     }
     const statementDefinition = statements[disclosure.dataset.statement];
     annotateSource(disclosure, source, statementDefinition);
-    annotateMathlibTerms(source);
+    annotateMathlibTerms(disclosure, source);
   };
 
   const bindPaperTerms = (disclosure, key, controller, notesTarget) => {
+    const alignmentByConcept = new Map();
     controller.alignments.forEach((alignment) => {
-      paperTargets(key, alignment.concept).forEach((target) => {
-        const concepts = target.dataset.leanAlignment.trim().split(/\s+/u);
-        const nestedControl = target.closest("a, button, summary");
-        if (concepts.length !== 1 || nestedControl) return;
+      if (!alignmentByConcept.has(alignment.concept)) {
+        alignmentByConcept.set(alignment.concept, alignment);
+      }
+    });
+    const targets = new Set(controller.alignments.flatMap((alignment) => (
+      paperTargets(key, alignment.concept)
+    )));
+    targets.forEach((target) => {
+      const concepts = target.dataset.leanAlignment.trim().split(/\s+/u);
+      const alignment = concepts
+        .map((concept) => concept.split(":", 2)[1])
+        .map((concept) => alignmentByConcept.get(concept))
+        .find(Boolean);
+      if (!alignment) return;
+      const nativeControl = target.closest("a, button, summary");
+      const interactionTarget = nativeControl || target;
 
-        target.classList.add("lean-paper-term");
+      target.classList.add("lean-paper-term");
+      target.setAttribute("aria-controls", disclosure.id);
+      target.title = "Hover for an explanation; click to keep this alignment selected";
+      if (!nativeControl) {
         target.tabIndex = 0;
         target.setAttribute("role", "button");
-        target.setAttribute("aria-controls", disclosure.id);
-        target.title = "Show the matching term in the formalized statement";
+      }
 
-        const select = () => {
-          disclosure.open = true;
-          if (notesTarget) notesTarget.hidden = false;
-          highlight(disclosure);
-          controller.show(alignment, { pin: true });
-        };
-        target.addEventListener("pointerenter", () => {
-          if (disclosure.open) controller.show(alignment);
-        });
-        target.addEventListener("pointerleave", controller.reset);
-        target.addEventListener("focus", () => {
-          if (disclosure.open) controller.show(alignment);
-        });
-        target.addEventListener("blur", controller.reset);
-        target.addEventListener("click", select);
+      const show = ({ pin = false } = {}) => {
+        disclosure.open = true;
+        if (notesTarget) notesTarget.hidden = false;
+        highlight(disclosure);
+        controller.show(alignment, { pin });
+      };
+      interactionTarget.addEventListener("pointerenter", () => show());
+      interactionTarget.addEventListener("pointerleave", controller.reset);
+      interactionTarget.addEventListener("focus", () => show());
+      interactionTarget.addEventListener("blur", controller.reset);
+      if (!nativeControl) {
+        target.addEventListener("click", () => show({ pin: true }));
         target.addEventListener("keydown", (event) => {
           if (event.key !== "Enter" && event.key !== " ") return;
           event.preventDefault();
-          select();
+          show({ pin: true });
         });
-      });
+      }
     });
   };
 

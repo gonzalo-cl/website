@@ -879,29 +879,28 @@ body.tufte-site main .formal-statement-pair {
   max-width: var(--measure-reading-page);
   margin: 3rem 0;
 }
-body.tufte-site main .formal-statement-pair > .math-statement,
+body.tufte-site main .formal-statement-paper > .math-statement,
 body.tufte-site main .formal-statement-pair > .lean-statement {
   width: 100%;
   max-width: 100%;
 }
-body.tufte-site main .formal-statement-pair > .math-statement { margin: 0; }
+body.tufte-site main .formal-statement-paper > .math-statement { margin: 0; }
 
 /* The headline theorem and its formal counterpart occupy the canonical prose
-   and aside columns. The disclosure remains collapsed until requested, so the
-   aside does not create empty vertical space in the reading column. */
+   and aside columns. Statement and notes flow in their own paper column, so
+   the height of the Lean excerpt cannot move the notes' vertical anchor. */
 body.tufte-site main .formal-statement-pair-aside {
   width: var(--measure-folio-page);
   max-width: var(--measure-folio-page);
   display: grid;
   grid-template-columns: minmax(0, 2fr) minmax(18rem, 1fr);
-  grid-template-areas:
-    "theorem lean"
-    "notes lean";
+  grid-template-areas: "paper lean";
   column-gap: var(--measure-gutter-page);
   align-items: start;
 }
-body.tufte-site main .formal-statement-pair-aside > .math-statement {
-  grid-area: theorem;
+body.tufte-site main .formal-statement-paper {
+  grid-area: paper;
+  min-width: 0;
 }
 body.tufte-site main .formalization-aside {
   grid-area: lean;
@@ -909,7 +908,6 @@ body.tufte-site main .formalization-aside {
   margin: 0;
 }
 body.tufte-site main .formalization-notes {
-  grid-area: notes;
   min-width: 0;
   width: 100%;
   max-width: 100%;
