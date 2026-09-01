@@ -606,13 +606,15 @@
         const fragment = document.createDocumentFragment();
         if (before) fragment.append(document.createTextNode(before));
         const term = document.createElement("span");
-        term.className = "lean-semantic-term";
+        term.className = "lean-semantic-term lean-explorable-term";
         term.tabIndex = 0;
         term.textContent = alignment.token;
         term.dataset.leanAlignment = key + ":" + alignment.concept;
         term.setAttribute("aria-describedby", controller.panel.id);
         term.addEventListener("pointerenter", () => controller.show(alignment));
+        term.addEventListener("pointerleave", controller.reset);
         term.addEventListener("focus", () => controller.show(alignment));
+        term.addEventListener("blur", controller.reset);
         term.addEventListener("click", () => controller.show(alignment, { pin: true }));
         term.addEventListener("keydown", (event) => {
           if (event.key !== "Enter" && event.key !== " ") return;
@@ -648,7 +650,7 @@
         const fragment = document.createDocumentFragment();
         if (before) fragment.append(document.createTextNode(before));
         const link = document.createElement("a");
-        link.className = "lean-mathlib-term";
+        link.className = "lean-mathlib-term lean-explorable-term";
         link.href = documentation.href;
         link.target = "_blank";
         link.rel = "noreferrer";
@@ -668,6 +670,7 @@
           link.addEventListener("pointerleave", controller.reset);
           link.addEventListener("focus", () => controller.show(alignment));
           link.addEventListener("blur", controller.reset);
+          controller.registerTerm(alignment, link);
         }
         fragment.append(link);
         if (after) fragment.append(document.createTextNode(after));
@@ -711,7 +714,7 @@
       const nativeControl = target.closest("a, button, summary");
       const interactionTarget = nativeControl || target;
 
-      target.classList.add("lean-paper-term");
+      target.classList.add("lean-paper-term", "lean-explorable-term");
       target.setAttribute("aria-controls", disclosure.id);
       target.title = "Hover for an explanation; click to keep this alignment selected";
       if (!nativeControl) {

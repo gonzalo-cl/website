@@ -1460,26 +1460,21 @@ body.tufte-site main details.lean-statement > .lean-statement-body {
   margin: 0;
   padding: 1rem 1.1rem 1.1rem;
 }
-.lean-semantic-term {
+.lean-explorable-term {
   border-radius: .12rem;
+  background-color: rgba(160, 0, 0, .04);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  color: inherit !important;
   cursor: help;
   outline: 0;
-  text-decoration: none;
-  transition: color .12s ease, background-color .12s ease;
-}
-.lean-semantic-term:is(:hover, :focus-visible, .is-lean-selected) {
-  color: var(--orange);
-  background: rgba(160, 0, 0, .075);
-}
-.lean-mathlib-term {
-  border-radius: .12rem;
-  color: inherit !important;
   text-decoration: none !important;
-  transition: color .12s ease, background-color .12s ease;
+  transition: color .12s ease, background-color .12s ease, box-shadow .12s ease;
 }
-.lean-mathlib-term:is(:hover, :focus-visible) {
-  color: var(--teal) !important;
-  background: rgba(40, 123, 123, .1);
+.lean-explorable-term:is(:hover, :focus-visible, .is-lean-selected, .is-lean-aligned) {
+  color: var(--orange) !important;
+  background-color: rgba(160, 0, 0, .09);
+  box-shadow: 0 0 0 2px rgba(160, 0, 0, .07);
 }
 body.tufte-site main .lean-statement-caption {
   width: 100%;
@@ -1544,24 +1539,6 @@ body.tufte-site main .lean-formalization-remark > p {
   font-size: var(--type-note);
 }
 .lean-formalization-sources[hidden] { display: none; }
-[data-lean-alignment] {
-  border-radius: .08rem;
-  transition: background-color .12s ease, box-shadow .12s ease;
-}
-[data-lean-alignment].is-lean-aligned {
-  background: rgba(160, 0, 0, .075);
-  box-shadow: 0 0 0 2px rgba(160, 0, 0, .075);
-}
-.lean-paper-term {
-  cursor: help;
-  outline: 0;
-  text-decoration: none;
-}
-.lean-paper-term:focus-visible {
-  background: rgba(160, 0, 0, .075);
-  box-shadow: 0 0 0 2px rgba(160, 0, 0, .16);
-}
-
 /* The laboratories share one composition contract: numerical image on the
    reading side, apparatus on the right.  Keeping the placement here (rather
    than in each applet) makes it difficult for a new control rail to drift
