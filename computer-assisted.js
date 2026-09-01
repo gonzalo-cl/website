@@ -5,6 +5,7 @@
     heading: "#111111",
     text: "#26241f",
     muted: "#666158",
+    brown: "#4a3428",
     accent: "#a00000",
     accentLight: "#f7f4e9",
     teal: "#075760",
@@ -1131,12 +1132,17 @@
   const drawMappedGrid = (context, centerX, centerY, radius, options = {}) => {
     const amplitude = options.amplitude ?? 1;
     const alpha = options.alpha ?? 1;
-    const ringCount = options.rings ?? 3;
-    const spokeCount = options.spokes ?? 12;
+    const ringCount = options.rings ?? 4;
+    const spokeCount = options.spokes ?? 20;
     context.save();
     context.globalAlpha = alpha;
-    context.strokeStyle = colors.ruleDark;
-    context.lineWidth = 1;
+    traceConformalBoundary(context, centerX, centerY, radius, amplitude, {
+      fill: options.fill || colors.accentLight,
+      stroke: "rgba(0, 0, 0, 0)",
+      lineWidth: .1,
+    });
+    context.strokeStyle = options.ringStroke || colors.teal;
+    context.lineWidth = 1.15;
     for (let ring = 1; ring <= ringCount; ring += 1) {
       context.beginPath();
       for (let index = 0; index <= 360; index += 1) {
@@ -1149,6 +1155,8 @@
       }
       context.stroke();
     }
+    context.strokeStyle = options.spokeStroke || colors.brown;
+    context.lineWidth = .9;
     for (let spoke = 0; spoke < spokeCount; spoke += 1) {
       const theta = spoke / spokeCount * Math.PI * 2;
       context.beginPath();
@@ -1166,62 +1174,6 @@
       lineWidth: 2.2,
     });
     context.restore();
-  };
-
-  const transferFieldValue = (radius, theta) => {
-    const boundaryEnvelope = (1 - radius * radius) ** 2;
-    return 1 + .50 * boundaryEnvelope * (
-      .68 * Math.cos(3 * Math.PI * radius)
-      + .42 * radius * radius * Math.cos(10 * theta)
-    );
-  };
-
-  const transferFieldColor = (value) => {
-    const signed = clamp((value - 1) / .55, -1, 1);
-    const amount = Math.abs(signed) * .82;
-    const neutral = { red: 242, green: 239, blue: 228 };
-    const target = signed >= 0
-      ? { red: 160, green: 0, blue: 0 }
-      : { red: 7, green: 87, blue: 96 };
-    return `rgb(${Math.round(mix(neutral.red, target.red, amount))}, ${Math.round(mix(neutral.green, target.green, amount))}, ${Math.round(mix(neutral.blue, target.blue, amount))})`;
-  };
-
-  const drawTransferField = (context, centerX, centerY, scale, mapped) => {
-    const radialCells = 11;
-    const angularCells = 48;
-    const project = (radius, theta) => {
-      const point = mapped
-        ? conformalPoint(radius, theta, 30, 1)
-        : { x: radius * Math.cos(theta), y: radius * Math.sin(theta) };
-      return { x: centerX + point.x * scale, y: centerY - point.y * scale };
-    };
-    for (let radial = 0; radial < radialCells; radial += 1) {
-      const inner = radial / radialCells;
-      const outer = (radial + 1) / radialCells;
-      for (let angular = 0; angular < angularCells; angular += 1) {
-        const theta0 = angular / angularCells * Math.PI * 2;
-        const theta1 = (angular + 1) / angularCells * Math.PI * 2;
-        const points = [
-          project(inner, theta0),
-          project(outer, theta0),
-          project(outer, theta1),
-          project(inner, theta1),
-        ];
-        const color = transferFieldColor(transferFieldValue(
-          (inner + outer) / 2,
-          (theta0 + theta1) / 2,
-        ));
-        context.beginPath();
-        context.moveTo(points[0].x, points[0].y);
-        points.slice(1).forEach((point) => context.lineTo(point.x, point.y));
-        context.closePath();
-        context.fillStyle = color;
-        context.fill();
-        context.strokeStyle = color;
-        context.lineWidth = .55;
-        context.stroke();
-      }
-    }
   };
 
   const drawCorrespondingPoint = (context, x, y, label, options = {}) => {
@@ -1260,21 +1212,19 @@
     );
     const diskCenter = compact
       ? { x: width / 2, y: height * .27 }
-      : { x: width * .76, y: height * .53 };
+      : { x: width * .24, y: height * .53 };
     const domainCenter = compact
       ? { x: width / 2, y: height * .73 }
-      : { x: width * .24, y: height * .53 };
+      : { x: width * .76, y: height * .53 };
 
-    drawTransferField(context, diskCenter.x, diskCenter.y, radius, false);
     drawMappedGrid(context, diskCenter.x, diskCenter.y, radius, {
       amplitude: 0,
-      alpha: .45,
+      alpha: .82,
       stroke: colors.heading,
     });
-    drawTransferField(context, domainCenter.x, domainCenter.y, radius, true);
     drawMappedGrid(context, domainCenter.x, domainCenter.y, radius, {
       amplitude: 1,
-      alpha: .45,
+      alpha: .82,
       stroke: colors.accent,
     });
     if (compact) {
@@ -1304,8 +1254,8 @@
       drawArrow(context, arrowX, arrowTop, arrowX, arrowBottom, { color: colors.teal, width: 2.2, head: 8 });
       drawLabel(context, "\\(\\phi_p\\)", arrowX + 12, (arrowTop + arrowBottom) / 2 + 4, { color: colors.teal, size: 14, weight: 700 });
     } else {
-      const arrowStart = diskCenter.x - radius - 32;
-      const arrowEnd = domainCenter.x + radius + 32;
+      const arrowStart = diskCenter.x + radius + 32;
+      const arrowEnd = domainCenter.x - radius - 32;
       drawArrow(context, arrowStart, diskCenter.y, arrowEnd, domainCenter.y, { color: colors.teal, width: 2.2, head: 8 });
       drawLabel(context, "\\(\\phi_p\\)", (arrowStart + arrowEnd) / 2, diskCenter.y - 14, { align: "center", color: colors.teal, size: 14, weight: 700 });
     }
@@ -1332,7 +1282,7 @@
 
     pullbackCanvas.setAttribute(
       "aria-label",
-      "Schematic mechanism. The fixed disk is mapped by phi sub p to the physical domain. A marked disk point z maps to x equals phi sub p of z, and its sampled colour matches exactly on both sides. The colours are an illustrative scalar field for the coordinate transfer, not the certified eigenfunction. The exact identity is U of z equals u of x.",
+      "The actual thirty-term map phi sub p sends a polar grid on the unit disk to a curved conformal grid on the physical domain. A marked point z sub zero maps to phi sub p of z sub zero.",
     );
   };
 
@@ -1937,7 +1887,7 @@
     }
     tailCanvas.setAttribute(
       "aria-label",
-      `Certificate-structure schematic, not to scale. Layer ${selectedTailStage + 1} of 5: ${tailStages[selectedTailStage].label}. The two-dimensional field array g and the one-dimensional shape-and-frequency list p are shown separately. ${tailStages[selectedTailStage].status} There is no unchecked gap between the explicitly enumerated near region and the remote decreasing bound.`,
+      `Coefficient-index structure, not to scale. Layer ${selectedTailStage + 1} of 5: ${tailStages[selectedTailStage].label}. The two-dimensional field array g and the one-dimensional shape-and-frequency list p are shown separately. ${tailStages[selectedTailStage].status} There is no unchecked gap between the explicitly enumerated near region and the remote decreasing bound.`,
     );
   };
 
@@ -2442,7 +2392,7 @@
       lineWidth: 2.3,
       fill: colors.tealLight,
     });
-    drawLabel(context, "finite numerical centre", centerX, centerY - radius - 16, {
+    drawLabel(context, "centre x°", centerX, centerY - radius - 16, {
       align: "center",
       color: colors.heading,
       size: 14,
@@ -2523,7 +2473,7 @@
     context.stroke();
     context.setLineDash([]);
 
-    drawLabel(context, "computed boundary", lineLeft, lineCenterY - tubeHalfWidth - 9, {
+    drawLabel(context, "boundary at x°", lineLeft, lineCenterY - tubeHalfWidth - 9, {
       color: colors.accent,
       size: compact ? 12 : 14,
       weight: 700,
@@ -2575,7 +2525,7 @@
       size: 14,
       weight: 700,
     });
-    drawLabel(context, compact ? "mapped domain" : "numerical centre map shown", domainCenter.x, domainCenter.y - radius - (compact ? 16 : 20), {
+    drawLabel(context, compact ? "mapped domain" : "map at x°", domainCenter.x, domainCenter.y - radius - (compact ? 16 : 20), {
       align: "center",
       color: colors.heading,
       size: 14,
@@ -2766,7 +2716,7 @@
     const stage = reconstructionStages[selectedReconstructionStage];
     reconstructionCanvas.setAttribute(
       "aria-label",
-      `Certified reconstruction check ${selectedReconstructionStage + 1} of 3: ${stage.label}. The plotted outline is the finite numerical centre; the exact boundary lies inside the certified enclosure and is visually indistinguishable at this scale. ${stage.status}`,
+      `Geometric check ${selectedReconstructionStage + 1} of 3: ${stage.label}. ${stage.status}`,
     );
   };
 
@@ -2826,15 +2776,15 @@
     }),
     Object.freeze({
       title: "One point means two functions",
-      note: "The unknown lives in a Banach space X of function pairs. One point x = (g,p) contains a function g describing the transformed Helmholtz field and a function p describing the conformal shape. The two displayed directions are only a schematic slice through X: moving in the g direction changes the interior field, while moving in the p direction changes the boundary. The exact solution will be one special point x*.",
-      noteMath: "The unknown lives in a Banach space \\(X\\) of function pairs. One point \\(x=(g,p)\\) contains a function \\(g\\) describing the transformed Helmholtz field and a function \\(p\\) describing the conformal shape. The two displayed directions are only a schematic slice through \\(X\\): moving in the \\(g\\) direction changes the interior field, while moving in the \\(p\\) direction changes the boundary. The exact solution will be one special point \\(x^*\\).",
+      note: "The unknown lives in a Banach space X of function pairs. One point x = (g,p) contains a function g describing the transformed Helmholtz field and a function p describing the conformal shape. The two displayed directions form only a two-dimensional slice through X: moving in the g direction changes the interior field, while moving in the p direction changes the boundary. The exact solution will be one special point x*.",
+      noteMath: "The unknown lives in a Banach space \\(X\\) of function pairs. One point \\(x=(g,p)\\) contains a function \\(g\\) describing the transformed Helmholtz field and a function \\(p\\) describing the conformal shape. The two displayed directions form only a two-dimensional slice through \\(X\\): moving in the \\(g\\) direction changes the interior field, while moving in the \\(p\\) direction changes the boundary. The exact solution will be one special point \\(x^*\\).",
       animation: 3200,
       hold: 3800,
     }),
     Object.freeze({
       title: "Prove convergence",
-      note: "At r = 10⁻⁶, the certified bound ‖T(x) − x°‖ ≤ Y + Zr + C₂r² + C₃r³ < 0.622r holds for every x in the ball. Here Y bounds the error at the centre, Z the linear change, and C₂,C₃ the nonlinear change. Every Newton step therefore stays inside the ball. A second estimate shows that T shrinks distances there by a factor less than 0.622, so its iterates converge to one exact zero x*.",
-      noteMath: "At \\(r=10^{-6}\\), the certified bound \\(\\lVert T(x)-x^\\circ\\rVert\\le Y+Zr+C_2r^2+C_3r^3<0.622r\\) holds for every \\(x\\) in the ball. Here \\(Y\\) bounds the error at the centre, \\(Z\\) the linear change, and \\(C_2,C_3\\) the nonlinear change. Every Newton step therefore stays inside the ball. A second estimate shows that \\(T\\) shrinks distances there by a factor less than \\(0.622\\), so its iterates converge to one exact zero \\(x^*\\).",
+      note: "At r = 10⁻⁶, the bound ‖T(x) − x°‖ ≤ Y + Zr + C₂r² + C₃r³ < 0.622r holds for every x in the ball. Here Y bounds the error at the centre, Z the linear change, and C₂,C₃ the nonlinear change. Every Newton step therefore stays inside the ball. A second estimate shows that T shrinks distances there by a factor less than 0.622, so its iterates converge to one exact zero x*.",
+      noteMath: "At \\(r=10^{-6}\\), the bound \\(\\lVert T(x)-x^\\circ\\rVert\\le Y+Zr+C_2r^2+C_3r^3<0.622r\\) holds for every \\(x\\) in the ball. Here \\(Y\\) bounds the error at the centre, \\(Z\\) the linear change, and \\(C_2,C_3\\) the nonlinear change. Every Newton step therefore stays inside the ball. A second estimate shows that \\(T\\) shrinks distances there by a factor less than \\(0.622\\), so its iterates converge to one exact zero \\(x^*\\).",
       animation: 2800,
       hold: 4000,
     }),

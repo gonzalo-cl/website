@@ -51,14 +51,6 @@ a { color: inherit; }
 .intro-index { display: flex; gap: 15px; color: var(--muted); font: 11px var(--mono); letter-spacing: .12em; text-transform: uppercase; }
 .intro-index span { color: var(--orange); }
 .intro h1 { margin: 70px 0 58px; max-width: 1120px; font: 300 clamp(68px, 8.6vw, 128px)/.86 var(--serif); letter-spacing: -.052em; }
-.intro-bottom { display: block; }
-.intro-bottom p { max-width: 900px; margin: 0 0 0 auto; color: var(--muted); font-size: clamp(14px, 1.15vw, 17px); line-height: 1.72; }
-.intro-bottom p + p { margin-top: 18px; }
-.intro-bottom p > span { color: var(--ink); font-family: var(--mono); font-size: .86em; }
-.intro-bottom p > .katex { font-size: .92em; }
-.intro-bottom .edition-link { margin-top: 18px; font: 11px/1.5 var(--mono) !important; letter-spacing: .06em; text-transform: uppercase; }
-.intro-bottom .edition-link a { color: var(--orange); text-decoration-thickness: 1px; text-underline-offset: 4px; }
-
 /* KaTeX follows the typography and palette of the surrounding argument. */
 .katex, .katex-display, .katex-html { color: inherit; }
 .katex .mathsf { font-family: KaTeX_SansSerif, var(--sans); }
@@ -601,7 +593,7 @@ input[type="range"]::-moz-range-thumb { width: 9px; height: 9px; border: 3px sol
 .collar-field-panel > footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 0 13px; color: rgba(241,238,229,.32); border-top: 1px solid var(--line-light); font: 11px var(--mono); text-transform: uppercase; letter-spacing: .04em; }
 .collar-crop-key { display: flex; align-items: center; gap: 6px; }
 .collar-crop-key i { width: 13px; height: 8px; display: inline-block; border: 1px solid var(--teal); }
-.collar-field-caption { grid-column: 1/-1; margin: 0; padding: 19px 24px 21px; color: rgba(241,238,229,.43); border-top: 1px solid var(--line-light); font-size: 11px; line-height: 1.7; }
+.collar-field-caption { grid-column: 1/-1; margin: 0; padding: 19px 24px 21px; border-top: 1px solid var(--line-light); }
 .angular-quotient-note { display: grid; grid-template-columns: 220px minmax(0,1fr); gap: 40px; padding: 34px; border: 1px solid var(--line-light); border-bottom: 0; }
 .angular-quotient-note > span { color: var(--orange); font: 11px var(--mono); text-transform: uppercase; letter-spacing: .08em; }
 .angular-quotient-note > div { min-width: 0; }
@@ -823,7 +815,6 @@ dialog hr { height: 1px; margin: 32px 0; background: var(--line); border: 0; }
   .status { display: none; }
   .intro { padding: 56px 24px 68px; }
   .intro h1 { margin: 54px 0 42px; font-size: clamp(42px,12vw,52px); line-height: .94; }
-  .intro-bottom p { max-width: none; }
   .borrow-flexibility { padding: 80px 24px; }
   .geometric-escape { padding: 80px 18px 0; }
   .story-heading { grid-template-columns: 34px minmax(0,1fr); gap: 20px; }
@@ -1000,10 +991,6 @@ dialog hr { height: 1px; margin: 32px 0; background: var(--line); border: 0; }
 .intro-copy p:last-child { margin-bottom: 0; }
 .intro-copy a { color: var(--orange); text-underline-offset: 3px; }
 .siegel-theorem { margin: 25px 0 22px; padding: 21px 0 20px; color: var(--ink); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); }
-/* Promoted out of an optional-digression expander: the rigidity literature is
-   part of the argument, not an aside, so it needs a heading of its own. */
-.rigidity-heading { margin: 34px 0 12px; color: var(--ink); font: 500 var(--type-body)/1.4 var(--sans); }
-
 .siegel-theorem h4 { margin: 0 0 13px; color: var(--ink); font: 500 18px/1.35 var(--serif); }
 .siegel-theorem p { margin: 0; color: var(--muted); font-size: var(--type-proof); line-height: 1.72; }
 .siegel-theorem .tex-display { margin: 16px 0 0; padding-left: 18px; color: var(--ink); border-left: 2px solid var(--orange); overflow-x: auto; }
@@ -1237,7 +1224,6 @@ dialog hr { height: 1px; margin: 32px 0; background: var(--line); border: 0; }
 
 body > footer { padding-inline: var(--layout-gutter); }
 
-.intro-bottom p { max-width: var(--layout-prose); margin-right: auto; }
 .borrow-lead,
 .geometry-lead,
 .proof-strategy-lead,
@@ -1254,8 +1240,6 @@ body > footer { padding-inline: var(--layout-gutter); }
 .phase-family { margin-right: 0; margin-left: 0; }
 
 @media (min-width: 1001px) {
-  .intro-bottom p { margin-left: var(--layout-indent); }
-
   .story-intro .intro-lead { margin-left: 0; }
   .intro-copy-wide,
   .intro-proof,
@@ -1461,17 +1445,6 @@ body.tufte-site main .cr-statement .cr-variant-button[data-cr-variant="uniform"]
 .abundance-examples-margin .abundance-examples-table td { padding: 7px 8px; }
 .abundance-examples-margin .abundance-examples-table { table-layout: auto; }
 
-/* The route overview inherited the .intro-bottom register, 21px and muted, from
-   the block it shares a wrapper with.  It reads as body prose, so it takes the
-   same size, leading and colour as the introduction's own paragraphs. */
-body.tufte-site main .intro-route-overview p,
-.intro-route-overview p {
-  /* the .intro-bottom family rule carries !important, so this has to as well */
-  font-size: var(--type-proof) !important;
-  line-height: 1.43;
-  color: var(--ink);
-}
-
 .fact-list { margin: 14px 0; padding-left: 22px; list-style: disc; }
 .fact-list li { margin: 0 0 14px; }
 .fact-list li:last-child { margin-bottom: 0; }
@@ -1503,15 +1476,11 @@ body.tufte-site main .intro-route-overview p,
 .cone-fold-figure .geometry-canvas-wrap { height: 300px; }
 .cone-fold-figure .geometry-controls { display: none; }
 
-.cone-fold-figure figcaption { font-size: var(--type-caption); line-height: 1.5; }
-
 .strategy-steps { margin: 14px 0 0; padding-left: 22px; }
 .strategy-steps li { margin: 0 0 12px; }
 .strategy-steps li:last-child { margin-bottom: 0; }
 
 .fixed-collar-figure .geometry-canvas-wrap, .fixed-collar-figure .figure-canvas-wrap { height: 240px; }
-.fixed-collar-figure figcaption { font-size: var(--type-caption); line-height: 1.5; }
-
 /* The margin copies keep every class the wide figures had, so their SVG fills
    and palettes still apply; these undo the parts of the laboratory layout that
    only make sense at reading width. */
@@ -1528,8 +1497,3 @@ body.tufte-site main .cone-fold-figure .geometry-scrub,
 .cone-fold-figure .geometry-scrub { display: none; }
 .cone-fold-figure .geometry-controls { border: 0; padding: 0; margin: 0 0 8px; min-height: 0; }
 .cone-fold-figure .geometry-canvas-wrap { height: 300px; }
-body.tufte-site main :is(.cone-fold-figure, .fixed-collar-figure) .figure-evidence,
-body.tufte-site main :is(.cone-fold-figure, .fixed-collar-figure) .figure-tools,
-:is(.cone-fold-figure, .fixed-collar-figure) .figure-evidence,
-:is(.cone-fold-figure, .fixed-collar-figure) .figure-tools { display: none; }
-:is(.cone-fold-figure, .fixed-collar-figure) figcaption { font-size: var(--type-caption); line-height: 1.5; }

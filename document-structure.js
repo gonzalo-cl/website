@@ -110,7 +110,14 @@
   const toc = sectionNavigation?.querySelector("nav[data-toc-nav]");
   if (toc) {
     const headings = Array.from(main.querySelectorAll(".section-heading[data-number][data-title]"))
-      .filter((heading) => Object.prototype.hasOwnProperty.call(tocClassByLevel, heading.dataset.toc || ""));
+      .filter((heading) => {
+        const level = heading.dataset.toc || "";
+        if (!Object.prototype.hasOwnProperty.call(tocClassByLevel, level)) return false;
+        /* The sticky banner is chapter navigation, not a second copy of the
+           document tail. Unnumbered back matter remains in reading order and
+           in the heading registry without becoming a peer chapter tab. */
+        return level !== "section" || Boolean(heading.dataset.number);
+      });
 
     const records = headings.map((heading) => {
       const target = headingTarget(heading);
@@ -672,7 +679,7 @@
     label.href = "#" + figure.id;
     label.setAttribute("aria-label", "Permalink to Figure " + figure.dataset.number);
     label.textContent = `Figure ${figure.dataset.number}.`;
-    caption.prepend(label);
+    caption.prepend(label, document.createTextNode(" "));
   });
 
   numberWithinSection("aside[data-aside]", "data-aside", "aside", "Aside");
