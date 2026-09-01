@@ -1,6 +1,14 @@
 (() => {
   "use strict";
 
+  const schifferDomainDefinition = [
+    "def IsSchifferDomain (Ω : Set Plane) : Prop :=",
+    "  ∃ (u : Plane → ℝ), ContDiff ℝ 2 u ∧",
+    "    (∀ x ∈ Ω, -(Δ u) x = u x) ∧",
+    "    (∀ x ∈ frontier Ω, u x = 1) ∧",
+    "    (∀ x ∈ frontier Ω, ∇ u x = 0)",
+  ].join("\n");
+
   const statements = Object.freeze({
     "pompeiu-property": Object.freeze({
       title: "HasPompeiuProperty",
@@ -33,12 +41,7 @@
       source: [
         "open Gradient Laplacian",
         "",
-        "def IsSchifferDomain (Ω : Set (Plane)) : Prop :=",
-        "  ∃ (u : Plane → ℝ),",
-        "    ContDiff ℝ 2 u ∧",
-        "    (∀ x ∈ Ω, -(Δ u) x = u x) ∧",
-        "    (∀ x ∈ frontier Ω, u x = 1) ∧",
-        "    (∀ x ∈ frontier Ω, ∇ u x = 0)",
+        schifferDomainDefinition,
       ].join("\n"),
     }),
     "schiffer-pompeiu-equivalence": Object.freeze({
@@ -67,12 +70,6 @@
         "    Ω = {x | 0 < F x} ∧",
         "    ∀ x, F x = 0 →",
         "      ∇ F x ≠ 0",
-        "",
-        "def IsSchifferDomain (Ω : Set Plane) : Prop :=",
-        "  ∃ (u : Plane → ℝ), ContDiff ℝ 2 u ∧",
-        "    (∀ x ∈ Ω, -(Δ u) x = u x) ∧",
-        "    (∀ x ∈ frontier Ω, u x = 1) ∧",
-        "    (∀ x ∈ frontier Ω, ∇ u x = 0)",
         "",
         "def IsEuclideanDisk",
         "    (Ω : Set Plane) : Prop :=",
@@ -361,6 +358,7 @@
         concept: "schiffer",
         paper: "solves the Schiffer problem",
         explanation: "The displayed project-local predicate expresses the normalized Schiffer boundary-value problem; its standalone formalization appears",
+        source: schifferDomainDefinition,
         reference: Object.freeze({
           href: "#lean-statement-schiffer-property",
           label: "below",
@@ -469,6 +467,12 @@
     label.textContent = "Semantic alignment";
     const statement = document.createElement("p");
     statement.className = "lean-semantic-alignment-statement";
+    const sourceExcerpt = document.createElement("pre");
+    sourceExcerpt.className = "lean-semantic-alignment-source";
+    sourceExcerpt.hidden = true;
+    const sourceCode = document.createElement("code");
+    sourceCode.className = "language-lean";
+    sourceExcerpt.append(sourceCode);
     const remark = document.createElement("div");
     remark.className = "lean-formalization-remark";
     remark.hidden = true;
@@ -477,7 +481,7 @@
     const remarkSources = document.createElement("div");
     remarkSources.className = "lean-formalization-sources";
     remark.append(remarkTitle, remarkBody, remarkSources);
-    panel.append(label, statement, remark);
+    panel.append(label, statement, sourceExcerpt, remark);
 
     const termsByConcept = new Map();
     let activeTargets = [];
@@ -523,6 +527,12 @@
         documentation.textContent = alignment.documentation.label + " ↗";
         statement.append(document.createTextNode(" "), documentation);
       }
+      sourceExcerpt.hidden = !alignment.source;
+      sourceCode.textContent = alignment.source || "";
+      if (alignment.source && typeof window.hljs?.highlightElement === "function") {
+        sourceCode.removeAttribute("data-highlighted");
+        window.hljs.highlightElement(sourceCode);
+      }
       remark.hidden = !alignment.note;
       if (alignment.note) {
         remarkTitle.textContent = alignment.noteTitle || "Formalization remark";
@@ -551,6 +561,8 @@
       }
       clearSelection();
       statement.textContent = "Select a highlighted term in the paper or Lean statement to compare them.";
+      sourceExcerpt.hidden = true;
+      sourceCode.textContent = "";
       remark.hidden = true;
     };
     const clear = () => {
@@ -564,6 +576,25 @@
     };
     reset();
     return { alignments, clear, panel, registerTerm, reset, show };
+  };
+
+  const bindExplorableTerm = (term, alignment, controller) => {
+    term.classList.add("lean-explorable-term");
+    term.tabIndex = 0;
+    term.setAttribute("role", "button");
+    term.setAttribute("aria-describedby", controller.panel.id);
+    term.title = "Hover for an explanation; click to keep this term selected";
+    term.addEventListener("pointerenter", () => controller.show(alignment));
+    term.addEventListener("pointerleave", controller.reset);
+    term.addEventListener("focus", () => controller.show(alignment));
+    term.addEventListener("blur", controller.reset);
+    term.addEventListener("click", () => controller.show(alignment, { pin: true }));
+    term.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      controller.show(alignment, { pin: true });
+    });
+    controller.registerTerm(alignment, term);
   };
 
   const findTextOccurrence = (source, token, minimumOffset = 0) => {
@@ -611,22 +642,10 @@
         const fragment = document.createDocumentFragment();
         if (before) fragment.append(document.createTextNode(before));
         const term = document.createElement("span");
-        term.className = "lean-semantic-term lean-explorable-term";
-        term.tabIndex = 0;
+        term.className = "lean-semantic-term";
         term.textContent = alignment.token;
         term.dataset.leanAlignment = key + ":" + alignment.concept;
-        term.setAttribute("aria-describedby", controller.panel.id);
-        term.addEventListener("pointerenter", () => controller.show(alignment));
-        term.addEventListener("pointerleave", controller.reset);
-        term.addEventListener("focus", () => controller.show(alignment));
-        term.addEventListener("blur", controller.reset);
-        term.addEventListener("click", () => controller.show(alignment, { pin: true }));
-        term.addEventListener("keydown", (event) => {
-          if (event.key !== "Enter" && event.key !== " ") return;
-          event.preventDefault();
-          controller.show(alignment, { pin: true });
-        });
-        controller.registerTerm(alignment, term);
+        bindExplorableTerm(term, alignment, controller);
         fragment.append(term);
         if (after) fragment.append(document.createTextNode(after));
         node.replaceWith(fragment);
@@ -645,6 +664,7 @@
   const annotateMathlibTerms = (disclosure, source) => {
     if (source.dataset.mathlibAnnotated === "true") return;
     const controller = alignmentControllers.get(disclosure);
+    if (!controller) return;
     mathlibTerms.forEach(({ token, explanation, documentation }) => {
       let minimumOffset = 0;
       let match = findTextOccurrence(source, token, minimumOffset);
@@ -654,30 +674,18 @@
         const after = node.data.slice(index + token.length);
         const fragment = document.createDocumentFragment();
         if (before) fragment.append(document.createTextNode(before));
-        const link = document.createElement("a");
-        link.className = "lean-mathlib-term lean-explorable-term";
-        link.href = documentation.href;
-        link.target = "_blank";
-        link.rel = "noreferrer";
-        link.textContent = token;
-        link.title = documentation.label;
-        link.setAttribute("aria-label", `${token}: open Mathlib documentation`);
-        if (controller) {
-          const alignment = Object.freeze({
-            token,
-            concept: `mathlib-${token}`,
-            paper: token,
-            explanation,
-            documentation,
-          });
-          link.setAttribute("aria-describedby", controller.panel.id);
-          link.addEventListener("pointerenter", () => controller.show(alignment));
-          link.addEventListener("pointerleave", controller.reset);
-          link.addEventListener("focus", () => controller.show(alignment));
-          link.addEventListener("blur", controller.reset);
-          controller.registerTerm(alignment, link);
-        }
-        fragment.append(link);
+        const term = document.createElement("span");
+        term.className = "lean-mathlib-term";
+        term.textContent = token;
+        const alignment = Object.freeze({
+          token,
+          concept: `mathlib-${token}`,
+          paper: token,
+          explanation,
+          documentation,
+        });
+        bindExplorableTerm(term, alignment, controller);
+        fragment.append(term);
         if (after) fragment.append(document.createTextNode(after));
         node.replaceWith(fragment);
         minimumOffset = offset + token.length;

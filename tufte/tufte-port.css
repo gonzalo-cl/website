@@ -1512,6 +1512,31 @@ body.tufte-site main .lean-semantic-alignment-statement {
   color: var(--ink);
   font-size: .92em;
 }
+.lean-semantic-alignment-source {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  margin: .65rem 0 0;
+  padding: .7rem .8rem;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  background: var(--paper-2);
+}
+.lean-semantic-alignment-source[hidden] { display: none; }
+body.tufte-site main .lean-semantic-alignment-source > code,
+body.tufte-site main .lean-semantic-alignment-source > code.hljs {
+  display: block;
+  box-sizing: border-box;
+  width: max-content;
+  min-width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  background: transparent;
+  font-size: var(--type-label);
+  line-height: 1.55;
+  white-space: inherit;
+}
 .lean-formalization-remark {
   margin: .75rem 0 0;
   padding: .7rem .85rem;
