@@ -10,7 +10,7 @@
         "",
         "open MeasureTheory Metric Topology Bornology",
         "",
-        "abbrev Plane := (EuclideanSpace ℝ (Fin 2))",
+        "abbrev Plane := ℂ",
         "abbrev RigidMotion := AffineIsometryEquiv ℝ Plane Plane",
         "",
         "/-- The measurement map for a set `Ω` takes a continuous function",
@@ -63,12 +63,11 @@
     "schiffer-star-shaped": Object.freeze({
       title: "Schiffer_Star_Shaped",
       alignmentScope: "primary-declaration",
-      caption: "Regularity mismatch: the formalized theorem asserts a regular C² boundary, whereas the paper states “smooth.” The upgrade from Lipschitz to smooth has not been formalized here.",
+      caption: "The Lean statement records C² boundary regularity. The paper states smooth regularity after applying Williams’s theorem; that upgrade is not yet formalized.",
       source: [
-        "/-- A regular `C²` super-level",
-        "set. The set `Ω` is open because",
-        "its defining function is",
-        "continuous. -/",
+        "/-- A regular `C²` super-level set.",
+        "The set `Ω` is open because its",
+        "defining function is continuous. -/",
         "def HasC2Boundary",
         "    (Ω : Set Plane) : Prop :=",
         "  ∃ (F : Plane → ℝ),",
@@ -77,16 +76,12 @@
         "    ∀ x, F x = 0 →",
         "      ∇ F x ≠ 0",
         "",
-        "/-- An ordinary open Euclidean",
-        "disk, with arbitrary centre and",
-        "radius. -/",
+        "/-- An ordinary open Euclidean disk,",
+        "with arbitrary centre and radius. -/",
         "def IsEuclideanDisk",
         "    (Ω : Set Plane) : Prop :=",
         "  ∃ (c : Plane) (r : ℝ),",
         "    Ω = Metric.ball c r",
-        "",
-        "-- `IsSchifferDomain` is defined",
-        "-- in the later Lean excerpt below.",
         "",
         "theorem Schiffer_Star_Shaped :",
         "  ∃ (Ω : Set Plane),",
@@ -94,8 +89,7 @@
         "    StarConvex ℝ 0 Ω ∧",
         "    HasC2Boundary Ω ∧",
         "    ¬ IsEuclideanDisk Ω ∧",
-        "    IsSchifferDomain Ω := by",
-        "  sorry",
+        "    IsSchifferDomain Ω",
       ].join("\n"),
     }),
     "pompeiu-star-shaped": Object.freeze({
@@ -161,7 +155,7 @@
 
   const regularityRemark = Object.freeze({
     noteTitle: "Formalization remark",
-    note: "The Lean predicate records a regular C² boundary, while the paper states the resulting counterexample as smooth. A C² boundary is Lipschitz; S. A. Williams proved that a planar Lipschitz domain without the Pompeiu property has real-analytic boundary. That regularity upgrade has not been formalized here.",
+    note: "The Schiffer conjecture is generally stated for Lipschitz domains. A C² boundary is Lipschitz, and S. A. Williams proved that a planar Lipschitz domain without the Pompeiu property has real-analytic boundary. Thus the Lean theorem reaches the conjecture’s usual regularity class, while the upgrade to the paper’s smooth statement remains unformalized.",
     sources: Object.freeze([
       Object.freeze({
         href: "https://doi.org/10.1512/iumj.1981.30.30028",
@@ -180,6 +174,58 @@
       label: "Comparator challenge file",
     }),
   ]);
+
+  const statementRemarks = Object.freeze({
+    "schiffer-star-shaped": Object.freeze({
+      title: "Comparator challenge",
+      note: "This display shows only the theorem’s type. The linked challenge file retains the proof hole; Comparator uses the trusted statement to check the completed development.",
+      sources: comparatorSources,
+    }),
+  });
+
+  const mathlibDocumentation = Object.freeze({
+    isBounded: Object.freeze({
+      href: "https://leanprover-community.github.io/mathlib4_docs/Mathlib/Topology/Bornology/Basic.html#Bornology.IsBounded",
+      label: "Mathlib docs",
+    }),
+    starConvex: Object.freeze({
+      href: "https://leanprover-community.github.io/mathlib4_docs/Mathlib/Analysis/Convex/Star.html#StarConvex",
+      label: "Mathlib docs",
+    }),
+  });
+
+  const boundedAlignment = Object.freeze({
+    token: "IsBounded",
+    concept: "bounded",
+    paper: "bounded",
+    explanation: "Mathlib’s bornological boundedness predicate; in Euclidean space, it is equivalent to containment in a sufficiently large ball",
+    documentation: mathlibDocumentation.isBounded,
+  });
+  const nonemptyAlignment = Object.freeze({
+    token: "Nonempty",
+    concept: "nonempty",
+    paper: "nonempty",
+    explanation: "Here Ω is coerced to its subtype, so Nonempty Ω means that Ω contains a point",
+  });
+  const planeAlignment = Object.freeze({
+    token: "Plane",
+    concept: "plane",
+    paper: "planar",
+    explanation: "An abbreviation for ℂ, regarded here as the real Euclidean plane",
+  });
+  const starConvexAlignment = Object.freeze({
+    token: "StarConvex",
+    concept: "star-shaped",
+    paper: "star-shaped with respect to the origin",
+    explanation: "Mathlib’s predicate saying that every segment from the origin to a point of Ω remains in Ω",
+    documentation: mathlibDocumentation.starConvex,
+  });
+  const euclideanDiskAlignment = Object.freeze({
+    token: "IsEuclideanDisk",
+    concept: "not-disk",
+    paper: "not a disk",
+    explanation: "This project-local predicate means that Ω is an open metric ball; the theorem negates it",
+  });
 
   /* Each entry names a Lean token, its paper-level meaning, and the semantic
      concept marked in the nearby prose. New formal counterparts extend this
@@ -233,21 +279,19 @@
       }),
     ]),
     "schiffer-pompeiu-equivalence": Object.freeze([
-      Object.freeze({
-        token: "IsBounded",
-        concept: "bounded",
-        paper: "bounded",
-      }),
+      boundedAlignment,
       Object.freeze({
         token: "HasC2Boundary",
         concept: "regularity",
         paper: "smooth boundary",
+        explanation: "A project-local predicate requiring the domain to be a regular C² super-level set",
         ...regularityRemark,
       }),
       Object.freeze({
         token: "IsSchifferDomain",
         concept: "schiffer",
         paper: "solves the Schiffer problem",
+        explanation: "The project-local predicate for the normalized Schiffer boundary-value problem",
       }),
       Object.freeze({
         token: "HasPompeiuProperty",
@@ -258,36 +302,42 @@
       }),
     ]),
     "schiffer-star-shaped": Object.freeze([
-      Object.freeze({ token: "IsBounded", concept: "bounded", paper: "bounded" }),
-      Object.freeze({ token: "Nonempty", concept: "nonempty", paper: "nonempty" }),
-      Object.freeze({ token: "StarConvex", concept: "star-shaped", paper: "star-shaped with respect to the origin" }),
+      boundedAlignment,
+      nonemptyAlignment,
+      planeAlignment,
+      starConvexAlignment,
       Object.freeze({
         token: "HasC2Boundary",
         concept: "regularity",
         paper: "smooth",
+        explanation: "A project-local predicate requiring Ω to be a regular C² super-level set",
         ...regularityRemark,
       }),
-      Object.freeze({ token: "IsEuclideanDisk", concept: "not-disk", paper: "not a disk" }),
+      euclideanDiskAlignment,
       Object.freeze({
         token: "IsSchifferDomain",
         concept: "schiffer",
         paper: "solves the Schiffer problem",
-        noteTitle: "Formalization remark",
-        note: "IsSchifferDomain is defined in the later Lean excerpt below. This display uses sorry to expose the theorem’s semantic shape without reproducing its proof. The repository publishes the trusted public statement in Comparator challenge style: the challenge records the statement, and Comparator checks the completed development against it.",
-        sources: comparatorSources,
+        explanation: "The project-local predicate for the normalized Schiffer boundary-value problem; its definition appears",
+        reference: Object.freeze({
+          href: "#lean-statement-schiffer-property",
+          label: "below",
+        }),
       }),
     ]),
     "pompeiu-star-shaped": Object.freeze([
-      Object.freeze({ token: "IsBounded", concept: "bounded", paper: "bounded" }),
-      Object.freeze({ token: "Nonempty", concept: "nonempty", paper: "nonempty" }),
-      Object.freeze({ token: "StarConvex", concept: "star-shaped", paper: "star-shaped with respect to the origin" }),
+      boundedAlignment,
+      nonemptyAlignment,
+      planeAlignment,
+      starConvexAlignment,
       Object.freeze({
         token: "HasC2Boundary",
         concept: "regularity",
         paper: "regular C² boundary",
+        explanation: "A project-local predicate requiring Ω to be a regular C² super-level set",
         ...regularityRemark,
       }),
-      Object.freeze({ token: "IsEuclideanDisk", concept: "not-disk", paper: "not a disk" }),
+      euclideanDiskAlignment,
       Object.freeze({
         token: "HasPompeiuProperty",
         concept: "pompeiu",
@@ -393,7 +443,31 @@
       statement.textContent = "";
       const code = document.createElement("code");
       code.textContent = alignment.token;
-      statement.append(code, document.createTextNode(" corresponds to “" + alignment.paper + "” in the paper."));
+      statement.append(code);
+      if (alignment.explanation) {
+        statement.append(document.createTextNode(" — " + alignment.explanation));
+        if (alignment.reference) {
+          const reference = document.createElement("a");
+          reference.href = alignment.reference.href;
+          reference.textContent = alignment.reference.label;
+          reference.addEventListener("click", () => {
+            const target = document.querySelector(alignment.reference.href);
+            if (target?.tagName === "DETAILS") target.open = true;
+          });
+          statement.append(document.createTextNode(" "), reference);
+        }
+        statement.append(document.createTextNode("."));
+      } else {
+        statement.append(document.createTextNode(" ↔ “" + alignment.paper + "”."));
+      }
+      if (alignment.documentation) {
+        const documentation = document.createElement("a");
+        documentation.href = alignment.documentation.href;
+        documentation.target = "_blank";
+        documentation.rel = "noreferrer";
+        documentation.textContent = alignment.documentation.label + " ↗";
+        statement.append(document.createTextNode(" "), documentation);
+      }
       remark.hidden = !alignment.note;
       if (alignment.note) {
         remarkTitle.textContent = alignment.noteTitle || "Formalization remark";
@@ -598,6 +672,28 @@
       (notesTarget || body).append(caption);
     }
     body.append(pre);
+    const statementRemark = statementRemarks[key];
+    if (statementRemark) {
+      const remark = document.createElement("div");
+      remark.className = "lean-formalization-remark lean-statement-remark";
+      const remarkTitle = document.createElement("strong");
+      remarkTitle.textContent = statementRemark.title;
+      const remarkBody = document.createElement("p");
+      remarkBody.textContent = statementRemark.note;
+      const remarkSources = document.createElement("div");
+      remarkSources.className = "lean-formalization-sources";
+      statementRemark.sources.forEach((sourceDefinition, index) => {
+        if (index) remarkSources.append(document.createTextNode(" · "));
+        const link = document.createElement("a");
+        link.href = sourceDefinition.href;
+        link.target = "_blank";
+        link.rel = "noreferrer";
+        link.textContent = sourceDefinition.label + " ↗";
+        remarkSources.append(link);
+      });
+      remark.append(remarkTitle, remarkBody, remarkSources);
+      (notesTarget || body).append(remark);
+    }
     const alignments = semanticAlignments[key] || [];
     if (alignments.length) {
       const controller = createAlignmentController(key, alignments);
