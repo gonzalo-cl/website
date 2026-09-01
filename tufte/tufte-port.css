@@ -609,6 +609,13 @@ body.tufte-site main p.collar-field-caption {
   letter-spacing: normal;
   text-transform: none;
 }
+body.tufte-site main figure > figcaption.figure-caption-full {
+  float: none;
+  clear: both;
+  grid-column: 1 / -1;
+  width: 100%;
+  max-width: none;
+}
 /* Source code is the one document-level exception to the prose family.
    Syntax colour may vary, but code does not acquire a component-local stack. */
 body.tufte-site main :is(pre, code, kbd, samp) {
@@ -4175,12 +4182,15 @@ body.tufte-site main .probe-figure .probe-motion-controls .geometry-scrub + .geo
   padding-top: .8rem;
   border-top: 1px solid var(--line);
 }
-body.tufte-site main .probe-dilation-track { position: relative; }
+body.tufte-site main .probe-dilation-track {
+  --probe-range-thumb-radius: 7.5px;
+  position: relative;
+}
 body.tufte-site main .probe-dilation-track input { position: relative; z-index: 1; width: 100%; }
 body.tufte-site main .probe-dilation-snaps {
   position: absolute;
   z-index: 2;
-  inset: 0;
+  inset: 0 var(--probe-range-thumb-radius);
   pointer-events: none;
 }
 body.tufte-site main .probe-dilation-snap {
@@ -4547,6 +4557,7 @@ body.tufte-site main :is(.three-wrap canvas, #phaseFamilyCanvas):focus-visible {
     height: 16px;
   }
 
+  body.tufte-site main .probe-dilation-track { --probe-range-thumb-radius: 11px; }
   body.tufte-site main .measurement-slider-mark { top: 37px; }
   .section-banner-link { min-height: 44px; }
 }

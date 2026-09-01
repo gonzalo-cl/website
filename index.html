@@ -17,11 +17,11 @@
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js" integrity="sha384-bjyGPfbij8/NDKJhSGZNP/khQVgtHUE5exjm4Ydllo42FwIgYsdLO2lXGmRBf5Mz" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.12.0/highlight.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/highlightjs-lean@1.2.0/dist/lean.min.js"></script>
-    <script defer src="lean-statements.js?v=20260901.1"></script>
+    <script defer src="lean-statements.js?v=20260901.7"></script>
     <script defer src="math.js?v=20260830.1"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tufte-css@1.9.0/tufte.min.css">
-    <link rel="stylesheet" href="styles.css?v=20260901.2">
-    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260901.10">
+    <link rel="stylesheet" href="styles.css?v=20260901.3">
+    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260901.11">
   </head>
   <body class="tufte-site">
     <a class="skip-link" href="#top">Skip to the exposition</a>
@@ -43,8 +43,6 @@
           <li class="section-banner-item"><a class="section-banner-link" href="#geometric-escape"><b>2</b><span>Two routes to a counterexample</span></a></li>
           <li class="section-banner-item"><a class="section-banner-link" href="#computer-assisted-proof"><b>3</b><span>The computer-assisted proof</span></a></li>
           <li class="section-banner-item"><a class="section-banner-link" href="#experiment"><b>4</b><span>The bifurcation proof</span></a></li>
-          <li class="section-banner-item"><a class="section-banner-link" href="#references"><b aria-hidden="true"></b><span>References</span></a></li>
-          <li class="section-banner-item"><a class="section-banner-link" href="#acknowledgements"><b aria-hidden="true"></b><span>Acknowledgements</span></a></li>
         </ol>
       </nav>
     </details>
@@ -60,26 +58,28 @@
       <section class="intro">
         <h1>Constructing Noncircular Schiffer Domains</h1>
         <p class="intro-authors">Exposition by <a href="https://people.epfl.ch/gonzalo.caolabora" target="_blank" rel="noreferrer">Gonzalo Cao-Labora</a>, <a href="https://www.damtp.cam.ac.uk/user/mjc249/home.html" target="_blank" rel="noreferrer">Matthew J. Colbrook</a>, <a href="https://jaume.dedios.cat/" target="_blank" rel="noreferrer">Jaume de Dios Pont</a>, and <a href="https://georgestepaniants.com/" target="_blank" rel="noreferrer">George Stepaniants</a>.</p>
-        <p id="research-sources" class="intro-sources"><span>Based on</span> <a href="https://arxiv.org/abs/2608.01579" target="_blank" rel="noreferrer"><em>A computer-assisted counterexample to the planar Pompeiu and Schiffer conjectures</em></a>, <a href="https://arxiv.org/abs/2608.05114" target="_blank" rel="noreferrer"><em>Counterexamples to Schiffer’s Conjecture</em></a>, and <a href="https://arxiv.org/abs/2608.08953" target="_blank" rel="noreferrer"><em>A computer-assisted counterexample to the planar Berenstein conjecture</em></a>. <a class="intro-acknowledgements-link" href="#acknowledgements">Acknowledgements</a>.</p>
-        <div class="formal-statement-pair">
-          <article id="statement-main-result" class="math-statement math-statement-theorem intro-main-result" data-kind="theorem" data-label="main-result" aria-labelledby="mainResultTitle">
-            <header class="math-statement-header"><span>Theorem</span><small>Main result</small></header>
-            <div class="math-statement-body">
-              <h2 id="mainResultTitle">A non-disk planar Schiffer domain exists.</h2>
-              <p>There is a bounded, smooth, simply connected planar domain, star-shaped with respect to the origin, which is not a disk and solves the Schiffer problem.</p>
+        <p id="research-sources" class="intro-sources"><span>Based on</span> <a href="https://arxiv.org/abs/2608.01579" target="_blank" rel="noreferrer"><em>A computer-assisted counterexample to the planar Pompeiu and Schiffer conjectures</em></a>, <a href="https://arxiv.org/abs/2608.05114" target="_blank" rel="noreferrer"><em>Counterexamples to Schiffer’s Conjecture</em></a>, and <a href="https://arxiv.org/abs/2608.08953" target="_blank" rel="noreferrer"><em>A computer-assisted counterexample to the planar Berenstein conjecture</em></a>.</p>
+
+        <section class="paper-frontmatter-section paper-abstract" aria-labelledby="abstractTitle">
+          <h2 id="abstractTitle">Abstract</h2>
+          <p>Let \(\Omega\subset\mathbb R^2\) be a bounded domain. Pompeiu asked whether a function \(f\) is determined by its integrals over all rigid motions \(E(\Omega)\). Williams showed that nonuniqueness occurs exactly when \(\Omega\) supports a nonconstant Laplace eigenfunction whose value is constant and whose normal derivative vanishes on \(\partial\Omega\). The disk is the classical example, and Schiffer conjectured that it is the only connected smooth planar one. This exposition presents two proofs that the conjecture is false.</p>
+          <div class="formal-statement-pair formal-statement-pair-aside">
+            <div class="formal-statement-paper">
+              <article id="statement-main-result" class="math-statement math-statement-theorem intro-main-result" data-kind="theorem" data-label="main-result" aria-labelledby="mainResultTitle">
+                <header class="math-statement-header"><span>Theorem</span><small>A non-disk planar Schiffer domain exists</small></header>
+                <div class="math-statement-body">
+                  <p id="mainResultTitle">There is a <span data-lean-alignment="schiffer-star-shaped:bounded">bounded</span>, <span data-lean-alignment="schiffer-star-shaped:nonempty">nonempty</span>, <span data-lean-alignment="schiffer-star-shaped:regularity">smooth</span> <span data-lean-alignment="schiffer-star-shaped:plane">planar</span> domain, <span data-lean-alignment="schiffer-star-shaped:star-shaped">star-shaped with respect to the origin</span>, which is <span data-lean-alignment="schiffer-star-shaped:not-disk">not a disk</span> and <span data-lean-alignment="schiffer-star-shaped:schiffer">solves the Schiffer problem</span>.</p>
+                </div>
+              </article>
+              <div id="mainFormalizationNotes" class="formalization-notes" aria-label="Formalization notes" hidden></div>
             </div>
-          </article>
-          <lean-statement data-statement="schiffer-star-shaped"></lean-statement>
-        </div>
-
-        <div class="intro-bottom">
-          <p>Let \(\Omega\subset\mathbb R^2\) be a bounded domain. Pompeiu asked whether a function \(f\) is determined by its integrals over all rigid motions \(E(\Omega)\). Williams showed that nonuniqueness occurs exactly when \(\Omega\) supports a nonconstant Laplace eigenfunction whose value is constant and whose normal derivative vanishes on \(\partial\Omega\). The disk is the classical example, and Schiffer conjectured that it is the only connected smooth planar one.</p>
-        </div>
-
-        <div class="intro-bottom intro-route-overview">
-          <p>In the conformal fixed-disk route, a higher tenfold Wronskian crossing supplies a linearized kernel direction for a numerical search in the relaxed constant-flux problem. Numerical continuation follows a computed noncircular branch to zero flux and encodes the endpoint by a conformal map from the unit disk; a computer-assisted contraction, independent of the search path, then proves that an exact solution lies near that numerical centre.</p>
-          <p>A different route starts with \(N\)-fold symmetry, for \(N\) sufficiently large, and replaces the integer \(N\) by a real cone order \(R\). The problem is then formulated over a cone of angle \(2\pi/R\), which converges to a cylinder as \(R\to\infty\). Rigorous bifurcation theory, with uniform bounds in \(R\), then shows that the branch reaches an integer value of \(R\).</p>
-        </div>
+            <aside class="formalization-aside" aria-label="Lean formalization of the main theorem">
+              <lean-statement data-statement="schiffer-star-shaped" data-notes-target="#mainFormalizationNotes"></lean-statement>
+            </aside>
+          </div>
+          <p>The first proof replaces the unknown domain by a conformal image of the unit disk. This turns an equation on a moving boundary into an equation on one fixed disk, with the shape stored in the coefficients of the conformal map. A numerical computation finds an approximate noncircular solution; a computer-assisted contraction argument then controls the remaining errors and proves that an exact solution lies nearby.</p>
+          <p>The second proof looks for \(N\)-fold symmetric examples near a disk. It first allows the symmetry order to vary as a real parameter \(R\), so that one fundamental sector becomes a cone of angle \(2\pi/R\). For large \(R\), the boundary region of this cone is close to a cylinder. This comparison makes it possible to start a noncircular branch at a noninteger value of \(R\), with estimates that remain uniform as \(R\) grows. The branch can then be continued until \(R\) reaches an integer \(N\). At that point the sectors fit together without a seam and give a planar \(N\)-fold symmetric domain.</p>
+        </section>
       </section>
 
       <section id="introduction" class="story-intro">
@@ -166,38 +166,39 @@
         <details class="disk-sidequest">
           <summary><span>The disk as a Pompeiu counterexample</span></summary>
           <div class="disk-sidequest-body">
-            <p class="applet-instruction">These figures are interactive: drag the highlighted set to move its centre, and use the slider to change its size.</p>
-            <figure class="fullwidth measurement-figure line-probe-figure" id="lineProbeFigure" data-figure="interval-probe-model" data-evidence="exact">
-              <figcaption class="measurement-caption">
-                <p class="eyebrow">A one-dimensional model</p>
-                <h3>The Pompeiu operator for an interval.</h3>
-                <p>Let \(I_L=[-L/2,L/2]\) and \(f(x)=\cos x\). For the translate \(I_L+t\), direct integration gives</p>
-                <div class="tex-display line-probe-computation">
-                  \[
-                  \int_{I_L+t}f(x)\,dx
-                  =\int_{t-L/2}^{t+L/2}\cos x\,dx
-                  =2\sin(L/2)\cos t.
-                  \]
-                </div>
-                <p>Hence \(I_{2\pi}\) fails the one-dimensional Pompeiu property: the nonzero function \(\cos x\) belongs to the kernel for every translation. The panel below plots this identity as \(t\) and \(L\) vary.<span class="visually-hidden"> With the graph focused, use Left or Right to move the interval; hold Shift for a larger step.</span></p>
-              </figcaption>
-              <div class="measurement-panel line-probe-panel side-figure">
-                <canvas class="measurement-canvas" id="lineProbeCanvas" tabindex="0" role="img" aria-label="Graph of cosine x with a movable interval" aria-keyshortcuts="ArrowLeft ArrowRight Shift+ArrowLeft Shift+ArrowRight"></canvas>
-                <div class="measurement-side line-probe-side">
-                  <div class="measurement-size-control">
-                    <label for="lineProbeLength"><span>Interval length</span><output id="lineProbeLengthValue" for="lineProbeLength">\(L=2\pi\)</output></label>
-                    <div class="measurement-slider">
-                      <input id="lineProbeLength" type="range" min="0.5" max="12.5" step="0.01" value="6.2831853072" aria-label="Dilate the interval by changing its length">
-                      <i class="measurement-slider-mark" aria-hidden="true"></i>
+            <div class="intro-copy line-probe-flow">
+              <label for="line-probe-note" class="margin-toggle" aria-label="Show the interactive interval probe">&#8853;</label>
+              <input type="checkbox" id="line-probe-note" class="margin-toggle">
+              <figure class="marginnote side-figure line-probe-figure" id="lineProbeFigure" data-figure="interval-probe-model" data-evidence="exact">
+                <div class="measurement-panel line-probe-panel">
+                  <canvas class="measurement-canvas" id="lineProbeCanvas" tabindex="0" role="img" aria-label="Graph of cosine x with a movable interval" aria-describedby="lineProbeCaption" aria-keyshortcuts="ArrowLeft ArrowRight Shift+ArrowLeft Shift+ArrowRight"></canvas>
+                  <div class="measurement-side line-probe-side">
+                    <div class="measurement-size-control">
+                      <label for="lineProbeLength"><span>Interval length</span><output id="lineProbeLengthValue" for="lineProbeLength">\(L=2\pi\)</output></label>
+                      <div class="measurement-slider">
+                        <input id="lineProbeLength" type="range" min="0.5" max="12.5" step="0.01" value="6.2831853072" aria-label="Dilate the interval by changing its length">
+                        <i class="measurement-slider-mark" aria-hidden="true"></i>
+                      </div>
+                      <div class="measurement-range-scale"><span>\(0.5\)</span><span class="measurement-range-mark">\(2\pi\)</span><span>\(12.5\)</span></div>
                     </div>
-                    <div class="measurement-range-scale"><span>\(0.5\)</span><span class="measurement-range-mark">\(2\pi\)</span><span>\(12.5\)</span></div>
-                  </div>
-                  <div class="measurement-readout pompeiu-readout">
-                    <div class="measurement-value-line"><span>\(\int_{t-L/2}^{t+L/2}\cos x\,dx\)</span><strong id="lineProbeValue">= 0.000</strong></div>
+                    <div class="measurement-readout pompeiu-readout">
+                      <div class="measurement-value-line"><span>\(\int_{t-L/2}^{t+L/2}\cos x\,dx\)</span><strong id="lineProbeValue">= 0.000</strong></div>
+                    </div>
                   </div>
                 </div>
+                <figcaption id="lineProbeCaption">The interval integral \(2\sin(L/2)\cos t\) as the centre \(t\) and length \(L\) vary.</figcaption>
+              </figure>
+
+              <p>For a one-dimensional model, let \(I_L=[-L/2,L/2]\) and \(f(x)=\cos x\). For the translate \(I_L+t\), direct integration gives</p>
+              <div class="tex-display line-probe-computation">
+                \[
+                \int_{I_L+t}f(x)\,dx
+                =\int_{t-L/2}^{t+L/2}\cos x\,dx
+                =2\sin(L/2)\cos t.
+                \]
               </div>
-            </figure>
+              <p>Thus \(I_{2\pi}\) fails the one-dimensional Pompeiu property: the nonzero function \(\cos x\) belongs to the kernel for every translation.</p>
+            </div>
 
             <div class="intro-copy disk-proof-flow">
               <label for="pompeiu-model-note" class="margin-toggle" aria-label="Show the interactive disk probe">&#8853;</label>
@@ -323,18 +324,17 @@
         <figure class="membrane-figure" id="schifferModeFigure" data-applet="radial-neumann-modes" data-figure="radial-neumann-modes" data-evidence="exact">
           <div class="schiffer-mode-panel">
             <div class="schiffer-mode-heading">
-              <div><p class="eyebrow">Radial Neumann eigenfunctions</p><h3>The profiles \(J_0(\rho_n r)\), where \(\rho_n\) is the \(n\)-th positive zero of \(J_1\).</h3></div>
+              <h4>Choose a radial Neumann mode</h4>
               <button type="button" id="schifferModePlay" class="mode-play" aria-pressed="false">pause</button>
             </div>
-            <canvas id="schifferModeCanvas" role="img" aria-label="Shallow three-dimensional animation of a radial Neumann eigenmode on a disk"></canvas>
+            <canvas id="schifferModeCanvas" role="img" aria-label="Shallow three-dimensional animation of a radial Neumann eigenmode on a disk" aria-describedby="schifferModeCaption"></canvas>
             <div class="schiffer-mode-controls" role="group" aria-label="Choose a radial mode">
               <button type="button" data-radial-mode="1" aria-pressed="false">mode 1</button>
               <button type="button" data-radial-mode="2" aria-pressed="false">mode 2</button>
               <button type="button" data-radial-mode="3" aria-pressed="true">mode 3</button>
             </div>
-            <p class="membrane-model-note">The applet illustrates these radial nodal patterns on the unit disk. The shallow surface and radial trace evaluate \(J_0(\rho_n r)\cos(\rho_n t)\), where \(\rho_n\) is the \(n\)-th positive zero of \(J_1\).</p>
           </div>
-          <figcaption id="schifferModeCaption"><span class="figure-caption-summary">Radial Neumann modes meet the disk boundary with zero slope.</span><span class="figure-caption-note">The Bessel profile is exact; depth, lighting, and animation are visual aids for the radial mode.</span></figcaption>
+          <figcaption id="schifferModeCaption" class="figure-caption-full">The radial Neumann modes \(J_0(\rho_n r)\cos(\rho_n t)\), with \(J_1(\rho_n)=0\), meet the disk boundary with zero slope.</figcaption>
         </figure>
 
         <p>In both problems the disk produced the same arithmetic condition: the frequency times the radius must be a zero of \(J_1\). That coincidence is not an accident, and Williams made it precise.</p>

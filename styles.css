@@ -1162,8 +1162,6 @@ dialog hr { height: 1px; margin: 32px 0; background: var(--line); border: 0; }
 .chladni-photo-panel a { color: var(--ink); text-decoration-color: var(--orange); text-underline-offset: 3px; }
 .schiffer-mode-panel { min-width: 0; }
 .schiffer-mode-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; min-height: 92px; padding: 18px 20px; border-bottom: 1px solid var(--line); }
-.schiffer-mode-heading .eyebrow { margin-bottom: 7px; }
-.schiffer-mode-heading h3 { margin: 0; color: var(--ink); font: 300 27px/1.08 var(--serif); letter-spacing: -.015em; }
 .mode-play { flex: 0 0 auto; padding: 8px 11px; color: var(--ink); border: 1px solid var(--line); background: transparent; cursor: pointer; font: 500 var(--type-label)/1 var(--mono); text-transform: uppercase; letter-spacing: .07em; }
 .mode-play:hover, .mode-play:focus-visible { color: var(--orange); border-color: var(--orange); outline: 0; }
 .schiffer-mode-panel canvas { display: block; width: 100%; aspect-ratio: 16 / 9; border-bottom: 1px solid var(--line); background: #e8e1cf; }
@@ -1171,7 +1169,6 @@ dialog hr { height: 1px; margin: 32px 0; background: var(--line); border: 0; }
 .schiffer-mode-controls button { padding: 12px 8px; color: var(--muted); border: 0; border-right: 1px solid var(--line); background: transparent; cursor: pointer; font: 500 var(--type-label)/1.4 var(--mono); text-transform: uppercase; letter-spacing: .06em; }
 .schiffer-mode-controls button:last-child { border-right: 0; }
 .schiffer-mode-controls button[aria-pressed="true"] { color: var(--ink); background: rgba(160,0,0,.08); box-shadow: inset 0 2px 0 var(--orange); }
-.membrane-model-note { margin: 0; padding: 16px 20px 19px; color: var(--muted); font-size: var(--type-caption); line-height: 1.7; }
 
 .intro-theorem { display: grid; grid-template-columns: 190px minmax(0,1fr); gap: 42px; max-width: 1060px; margin: 74px 0 0 70px; padding: 30px 32px; color: var(--ink); border: 1px solid var(--line); border-top: 2px solid var(--orange); background: rgba(255,255,255,.16); }
 .intro-theorem-label { display: flex; flex-direction: column; gap: 7px; color: var(--orange); font: 500 var(--type-label)/1.55 var(--mono); text-transform: uppercase; letter-spacing: .08em; }
@@ -1202,7 +1199,6 @@ dialog hr { height: 1px; margin: 32px 0; background: var(--line); border: 0; }
   .measurement-canvas { height: 320px; }
   .probe-question { padding: 27px 22px; }
   .schiffer-mode-heading { min-height: 0; }
-  .schiffer-mode-heading h3 { font-size: 23px; }
 }
 
 /* Editorial width system.
