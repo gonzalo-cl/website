@@ -198,6 +198,10 @@ body.tufte-site main .intro-sources > span {
   letter-spacing: .035em;
 }
 body.tufte-site main .intro-sources a { color: inherit; text-decoration-color: var(--line); }
+body.tufte-site main .intro-bottom {
+  width: var(--measure-reading);
+  max-width: var(--measure-reading);
+}
 body.tufte-site main a.xref {
   color: inherit;
   font-style: normal;
@@ -648,6 +652,11 @@ body.tufte-site h3 {
   letter-spacing: 0;
 }
 
+body.tufte-site main .rigidity-heading {
+  color: var(--ink);
+  font: italic var(--weight-regular) var(--type-subsubsection)/1.2 var(--font-heading);
+}
+
 .section-heading {
   width: var(--measure-reading);
   display: grid;
@@ -737,6 +746,33 @@ body.tufte-site main .phase-story-example-note {
   font-variant: small-caps;
   letter-spacing: .06em;
   text-transform: lowercase;
+}
+
+body.tufte-site #methodDialog p:not(.eyebrow) {
+  font-family: var(--font-prose);
+  font-size: var(--type-note);
+  font-style: normal;
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-caption);
+}
+
+body.tufte-site #methodDialog .formula {
+  display: inline;
+  max-width: none;
+  overflow: visible;
+  vertical-align: baseline;
+}
+
+body.tufte-site #methodDialog .eyebrow {
+  color: var(--orange);
+  font-family: var(--font-heading);
+  font-size: var(--type-label);
+  font-style: normal;
+  font-weight: var(--weight-regular);
+  font-variant: small-caps;
+  line-height: 1.3;
+  letter-spacing: .055em;
+  text-transform: none;
 }
 
 .equations {
@@ -1367,7 +1403,16 @@ body.tufte-site main .marginnote > strong:first-child {
 .intro-proof { margin-left: 0; }
 .intro-proof-body, .proof-argument { width: var(--measure-reading-in-figure); max-width: var(--measure-reading-in-figure); margin-left: 0; }
 .proof-details { border-color: var(--line); }
-.proof-details > summary { font-family: var(--font-heading); font-variant: normal; text-transform: none; }
+.proof-details > summary {
+  font-family: var(--font-heading);
+  font-size: var(--type-note);
+  font-style: normal;
+  font-weight: var(--weight-regular);
+  font-variant: normal;
+  line-height: 1.4;
+  letter-spacing: normal;
+  text-transform: none;
+}
 body.tufte-site main details.optional-digression > summary > span {
   display: grid;
   gap: .2rem;
