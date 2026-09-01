@@ -561,6 +561,9 @@
       console.error(`Unknown Lean statement: ${key || "(missing key)"}`);
       return;
     }
+    const notesTarget = host.dataset.notesTarget
+      ? document.querySelector(host.dataset.notesTarget)
+      : null;
 
     const disclosure = document.createElement("details");
     disclosure.className = "lean-statement";
@@ -582,6 +585,7 @@
 
     const body = document.createElement("div");
     body.className = "lean-statement-body";
+    body.id = disclosure.id + "-body";
     const pre = document.createElement("pre");
     const source = document.createElement("code");
     source.className = "language-lean";
@@ -591,24 +595,27 @@
       const caption = document.createElement("p");
       caption.className = "lean-statement-caption";
       caption.textContent = statement.caption;
-      body.append(caption);
+      (notesTarget || body).append(caption);
     }
     body.append(pre);
     const alignments = semanticAlignments[key] || [];
     if (alignments.length) {
       const controller = createAlignmentController(key, alignments);
       alignmentControllers.set(disclosure, controller);
-      body.append(controller.panel);
+      (notesTarget || body).append(controller.panel);
       bindPaperTerms(disclosure, key, controller);
     }
     disclosure.append(summary, body);
     host.replaceWith(disclosure);
+    if (notesTarget) notesTarget.hidden = !disclosure.open;
 
     disclosure.addEventListener("toggle", () => {
       if (disclosure.open) {
+        if (notesTarget) notesTarget.hidden = false;
         highlight(disclosure);
       } else {
         alignmentControllers.get(disclosure)?.clear();
+        if (notesTarget) notesTarget.hidden = true;
       }
     });
     highlight(disclosure);

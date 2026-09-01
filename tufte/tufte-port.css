@@ -868,13 +868,28 @@ body.tufte-site main .formal-statement-pair-aside {
   max-width: var(--measure-folio-page);
   display: grid;
   grid-template-columns: minmax(0, 2fr) minmax(18rem, 1fr);
+  grid-template-areas:
+    "theorem lean"
+    "notes lean";
   column-gap: var(--measure-gutter-page);
   align-items: start;
 }
+body.tufte-site main .formal-statement-pair-aside > .math-statement {
+  grid-area: theorem;
+}
 body.tufte-site main .formalization-aside {
+  grid-area: lean;
   min-width: 0;
   margin: 0;
 }
+body.tufte-site main .formalization-notes {
+  grid-area: notes;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  margin: 1rem 0 0;
+}
+body.tufte-site main .formalization-notes[hidden] { display: none; }
 body.tufte-site main .formalization-aside > details.lean-statement {
   width: 100%;
   max-width: 100%;
@@ -887,6 +902,8 @@ body.tufte-site main .formalization-aside .lean-statement pre code {
   font-size: var(--type-label);
   line-height: 1.55;
 }
+body.tufte-site main .formalization-notes .lean-statement-caption { margin: 0; }
+body.tufte-site main .formalization-notes .lean-semantic-alignment { margin-top: .85rem; }
 
 /* Displayed mathematics in Tufte CSS is part of the text block, not a
    coloured application card. */
