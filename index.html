@@ -21,7 +21,7 @@
     <script defer src="math.js?v=20260830.1"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tufte-css@1.9.0/tufte.min.css">
     <link rel="stylesheet" href="styles.css?v=20260901.2">
-    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260901.9">
+    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260901.10">
   </head>
   <body class="tufte-site">
     <a class="skip-link" href="#top">Skip to the exposition</a>
@@ -80,23 +80,6 @@
           <p>In the conformal fixed-disk route, a higher tenfold Wronskian crossing supplies a linearized kernel direction for a numerical search in the relaxed constant-flux problem. Numerical continuation follows a computed noncircular branch to zero flux and encodes the endpoint by a conformal map from the unit disk; a computer-assisted contraction, independent of the search path, then proves that an exact solution lies near that numerical centre.</p>
           <p>A different route starts with \(N\)-fold symmetry, for \(N\) sufficiently large, and replaces the integer \(N\) by a real cone order \(R\). The problem is then formulated over a cone of angle \(2\pi/R\), which converges to a cylinder as \(R\to\infty\). Rigorous bifurcation theory, with uniform bounds in \(R\), then shows that the branch reaches an integer value of \(R\).</p>
         </div>
-        <figure class="geometry-laboratory interactive-plate annotated-plate reading-figure probe-figure" data-figure="pompeiu-probe" data-evidence="mixed" data-evidence-detail="The disk uses an exact Bessel zero. The N = 10 outline is the stored numerical centre enclosed by the computer-assisted proof; the exact boundary lies within 7.13 × 10⁻¹¹ of it. The N = 28 boundary is a numerical landing record. Displayed integrals use numerical quadrature, and the square is a contrasting reference shape.">
-          <aside class="geometry-controls paper-demo-controls">
-            <div class="geometry-stages" role="group" aria-label="Choose a domain">
-              <button type="button" data-probe-domain="0" aria-pressed="true"><span>01</span><strong>disk</strong></button>
-              <button type="button" data-probe-domain="1" aria-pressed="false"><span>02</span><strong>N = 10</strong></button>
-              <button type="button" data-probe-domain="2" aria-pressed="false"><span>03</span><strong>N = 28</strong></button>
-              <button type="button" data-probe-domain="3" aria-pressed="false"><span>04</span><strong>square</strong></button>
-            </div>
-            <div class="geometry-scrub"><div class="control-label"><label for="probeAngle">rotate</label><output id="probeDomainName" aria-live="polite" aria-atomic="true">disk, radius j&#8321;,&#8321;</output></div><input id="probeAngle" type="range" min="0" max="6.2832" step="0.001" value="0" aria-describedby="pompeiuProbeOverviewCaption"></div>
-          </aside>
-          <section class="geometry-canvas-panel" aria-label="A domain moved over the plane wave cosine of x one">
-            <div id="probeCanvasWrap" class="geometry-canvas-wrap probe-canvas-wrap">
-              <canvas id="probeCanvas" tabindex="0" role="img" aria-label="A domain moved over the plane wave cosine of x one, with its integral plotted below" aria-describedby="pompeiuProbeOverviewCaption" aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown Shift+ArrowLeft Shift+ArrowRight Shift+ArrowUp Shift+ArrowDown [ ]"></canvas>
-            </div>
-          </section>
-          <figcaption id="pompeiuProbeOverviewCaption"><span class="figure-caption-summary">Moving the footprints over the plane wave compares when their averaged signals vanish.</span><span class="figure-caption-note">The disk uses the exact Bessel radius. The \(N=10\) outline is the numerical centre of the certified counterexample, rescaled by its frequency; the exact boundary is visually indistinguishable at this scale. The \(N=28\) profile is the saved numerical landing record, and the square is a comparison. Drag inside a footprint to move it and outside to rotate it.<span class="visually-hidden"> With the canvas focused, the arrow keys move it, Shift takes a larger step, and the bracket keys rotate it.</span></span></figcaption>
-        </figure>
       </section>
 
       <section id="introduction" class="story-intro">
@@ -119,6 +102,33 @@
             \]
           </div>
           <p>Pompeiu asked in 1929 whether the collection of all these readings determines the unknown field. Mathematically, this asks whether the map \(f\mapsto M_\Omega f\) is injective.</p>
+        </div>
+
+        <figure class="geometry-laboratory interactive-plate annotated-plate reading-figure probe-figure" data-figure="pompeiu-probe">
+          <aside class="geometry-controls paper-demo-controls probe-domain-controls" aria-label="Choose a domain">
+            <div class="apparatus-control-group probe-domain-selector">
+              <span class="apparatus-control-label">domain</span>
+              <div class="geometry-stages" role="group" aria-label="Choose a domain">
+                <button type="button" data-probe-domain="0" aria-pressed="true"><span>01</span><strong>disk</strong></button>
+                <button type="button" data-probe-domain="1" aria-pressed="false"><span>02</span><strong>N = 10</strong></button>
+                <button type="button" data-probe-domain="2" aria-pressed="false"><span>03</span><strong>square</strong></button>
+              </div>
+            </div>
+          </aside>
+          <aside class="geometry-controls paper-demo-controls probe-motion-controls" aria-label="Rotate and dilate the selected domain">
+            <div class="geometry-scrub apparatus-control-group probe-rotation-control"><div class="control-label"><label for="probeAngle">rotation</label><output id="probeAngleValue" for="probeAngle">0°</output></div><input id="probeAngle" type="range" min="0" max="6.2832" step="0.001" value="0" aria-describedby="pompeiuProbeOverviewCaption"></div>
+            <div class="geometry-scrub apparatus-control-group probe-dilation-control"><div class="control-label"><label for="probeDilation">dilation</label><output id="probeDilationValue" for="probeDilation">×1.000</output></div><div class="probe-dilation-track"><input id="probeDilation" type="range" min="0.8" max="1.9" step="0.001" value="1" aria-describedby="pompeiuProbeOverviewCaption" aria-valuetext="first disk cancellation, factor 1"><span class="probe-dilation-snaps" aria-hidden="true"></span></div></div>
+          </aside>
+          <section class="geometry-canvas-panel" aria-label="A domain moved over a sinusoidal plane wave">
+            <div id="probeCanvasWrap" class="geometry-canvas-wrap probe-canvas-wrap">
+              <canvas id="probeCanvas" tabindex="0" role="img" aria-label="A domain moved over a sinusoidal plane wave, with its integral plotted below" aria-describedby="pompeiuProbeOverviewCaption" aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown Shift+ArrowLeft Shift+ArrowRight Shift+ArrowUp Shift+ArrowDown [ ]"></canvas>
+              <span id="probeIntegralLabel" class="canvas-tex-label probe-integral-label" aria-hidden="true">\(\int_{E(\Omega)}\sin(\omega x_1)\,dx\)</span>
+            </div>
+          </section>
+          <figcaption id="pompeiuProbeOverviewCaption">Moving and rotating the footprint tests its response to one plane wave. Dilating the disk reveals its first two cancellation radii; the tenfold domain has one distinguished scale, while the square has none that works independently of rotation.</figcaption>
+        </figure>
+
+        <div class="intro-copy intro-copy-wide intro-pompeiu-copy">
           <div class="formal-statement-pair">
             <article class="math-statement math-statement-definition" data-kind="definition" data-label="pompeiu-property-definition" aria-labelledby="pompeiuDefinitionTitle">
               <header class="math-statement-header"><span>Definition</span><small>Pompeiu property</small></header>
@@ -2967,7 +2977,7 @@
     <script defer src="abundance-data.js"></script>
     <script defer src="dtn-data.js?v=20260831.1"></script>
     <script defer src="app.js?v=20260901.2"></script>
-    <script defer src="story.js?v=20260901.4"></script>
+    <script defer src="story.js?v=20260901.5"></script>
     <script defer src="abundance.js?v=20260901.2"></script>
     <script defer src="pompeiu.js?v=20260831.8"></script>
     <script defer src="computer-assisted.js?v=20260901.6"></script>

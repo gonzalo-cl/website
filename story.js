@@ -1506,10 +1506,23 @@
   /* Move a domain over sin(x_1) and watch its integral.  For a Schiffer domain
      the integral vanishes for every rigid motion, which is the Pompeiu failure
      itself.  Each domain is rescaled so that its own frequency becomes 1. */
-  const PROBE = { domain: 0, t1: 0, t2: 0, angle: 0, dilation: 1, dragging: false, mode: "move" };
-  const PROBE_DILATION_MIN = .985;
-  const PROBE_DILATION_MAX = 1.015;
-  const PROBE_DILATION_SNAP = .00065;
+  const PROBE = {
+    domain: 0,
+    t1: 0,
+    t2: 0,
+    angle: 0,
+    dilation: 1,
+    dragging: false,
+    mode: "move",
+    plotSpan: 0,
+    plotSpanKey: "",
+  };
+  const PROBE_DILATION_MIN = .8;
+  const PROBE_DILATION_MAX = 1.9;
+  const PROBE_DILATION_SNAP = .012;
+  const BESSEL_J1_FIRST_ZERO = 3.8317059702;
+  const BESSEL_J1_SECOND_ZERO = 7.0155866698;
+  const DISK_SECOND_CANCELLATION = BESSEL_J1_SECOND_ZERO / BESSEL_J1_FIRST_ZERO;
 
   /* Polar Fourier coefficients of k phi(D), derived from the same thirty
      printed q_j coefficients used for the D_10 numerical centre in Section 3.
@@ -1542,23 +1555,27 @@
 
   function probeDomains() {
     const list = [];
-    const j11 = 3.8317059702;
     list.push({
       name: "disk, radius j\u2081,\u2081",
-      vanishes: true,
-      radius: () => j11,
-      extent: j11 * 1.35,
+      cancellationScales: Object.freeze([
+        Object.freeze({ factor: 1, label: "first disk cancellation, j one one" }),
+        Object.freeze({ factor: DISK_SECOND_CANCELLATION, label: "second disk cancellation, j one two" }),
+      ]),
+      radius: () => BESSEL_J1_FIRST_ZERO,
+      extent: BESSEL_J1_FIRST_ZERO * 1.35,
     });
     list.push({
       name: "N = 10",
-      vanishes: true,
+      cancellationScales: Object.freeze([
+        Object.freeze({ factor: 1, label: "the tenfold domain's distinguished scale" }),
+      ]),
       radius: d10ProbeRadius,
       extent: D10_PROBE_EXTENT,
     });
-    const side = 2 * j11;
+    const side = 2 * BESSEL_J1_FIRST_ZERO;
     list.push({
       name: "square",
-      vanishes: false,
+      cancellationScales: Object.freeze([]),
       radius: (theta) => (side / 2) / Math.max(Math.abs(Math.cos(theta)), Math.abs(Math.sin(theta))),
       extent: side * .95,
     });
@@ -1599,7 +1616,11 @@
 
     const plotHeight = 92;
     const viewHeight = height - plotHeight - 24;
-    const scale = Math.min(width / (2.4 * domain.extent), viewHeight / (2.2 * domain.extent));
+    // Keep the camera fixed across the full dilation range.  Besides preventing
+    // a misleading zoom while the footprint grows, this reveals substantially
+    // more of the surrounding wave than the old near-unit dilation window did.
+    const viewExtent = referenceDomain.extent * PROBE_DILATION_MAX;
+    const scale = Math.min(width / (2.4 * viewExtent), viewHeight / (2.2 * viewExtent));
     const cx = width / 2, cy = viewHeight / 2;
     const toX = (x) => cx + x * scale;
     const toY = (y) => cy - y * scale;
@@ -1663,12 +1684,18 @@
       const amplitude = probeAmplitude(scaledDomain, PROBE.angle, 1000);
       return Math.hypot(amplitude.re, amplitude.im);
     };
-    const plotSpan = Math.max(
-      amplitudeAtDilation(PROBE_DILATION_MIN),
-      amplitudeAtDilation(PROBE_DILATION_MAX),
-      referenceDomain.vanishes ? 0 : Math.hypot(base.re, base.im),
-      1e-6,
-    ) * 1.12;
+    const plotSpanKey = `${PROBE.domain}:${PROBE.angle.toFixed(6)}`;
+    if (PROBE.plotSpanKey !== plotSpanKey) {
+      PROBE.plotSpan = 1e-6;
+      for (let index = 0; index <= 12; index += 1) {
+        const dilation = PROBE_DILATION_MIN
+          + index / 12 * (PROBE_DILATION_MAX - PROBE_DILATION_MIN);
+        PROBE.plotSpan = Math.max(PROBE.plotSpan, amplitudeAtDilation(dilation));
+      }
+      PROBE.plotSpan *= 1.12;
+      PROBE.plotSpanKey = plotSpanKey;
+    }
+    const plotSpan = PROBE.plotSpan;
     const plotLeft = Math.min(190, Math.max(140, width * .24));
     const traceSamples = Math.max(160, Math.round(width / 2));
     for (let i = 0; i <= traceSamples; i++) {
@@ -1687,7 +1714,10 @@
       const y = mid - sample.value / plotSpan * (plotHeight / 2 - 8);
       if (!i) context.moveTo(sample.x, y); else context.lineTo(sample.x, y);
     });
-    const cancels = referenceDomain.vanishes && PROBE.dilation === 1;
+    const activeCancellation = referenceDomain.cancellationScales.find(
+      ({ factor }) => Math.abs(PROBE.dilation - factor) < 1e-9,
+    );
+    const cancels = Boolean(activeCancellation);
     context.strokeStyle = cancels ? colors.cyan : colors.orange;
     context.lineWidth = 2; context.stroke();
 
@@ -1712,18 +1742,35 @@
     const dilation = select("#probeDilation");
     const dilationValue = select("#probeDilationValue");
     const dilationControl = dilation?.closest(".probe-dilation-control");
-    if (dilation) dilation.setAttribute("aria-valuetext", PROBE.dilation === 1
-      ? "correct scale, factor 1"
+    if (dilation) dilation.setAttribute("aria-valuetext", activeCancellation
+      ? `${activeCancellation.label}, dilation factor ${PROBE.dilation.toFixed(4)}`
       : `dilation factor ${PROBE.dilation.toFixed(4)}`);
-    if (dilationValue) dilationValue.textContent = `×${PROBE.dilation.toFixed(3)}`;
-    if (dilationControl) dilationControl.dataset.snapped = String(PROBE.dilation === 1);
+    if (dilationValue) {
+      const diskZero = PROBE.domain === 0 && activeCancellation
+        ? (activeCancellation.factor === 1 ? " · j₁,₁" : " · j₁,₂")
+        : "";
+      dilationValue.textContent = `×${PROBE.dilation.toFixed(3)}${diskZero}`;
+    }
+    if (dilationControl) dilationControl.dataset.snapped = String(cancels);
+    const snapLayer = select(".probe-dilation-snaps");
+    if (snapLayer) {
+      snapLayer.replaceChildren(...referenceDomain.cancellationScales.map(({ factor, label }) => {
+        const marker = document.createElement("span");
+        marker.className = "probe-dilation-snap";
+        marker.style.left = `${100 * (factor - PROBE_DILATION_MIN) / (PROBE_DILATION_MAX - PROBE_DILATION_MIN)}%`;
+        marker.dataset.active = String(Math.abs(PROBE.dilation - factor) < 1e-9);
+        marker.title = label;
+        return marker;
+      }));
+      snapLayer.hidden = referenceDomain.cancellationScales.length === 0;
+    }
     const integralLabel = select("#probeIntegralLabel");
     if (integralLabel) {
       integralLabel.style.left = "12px";
       integralLabel.style.top = `${mid - 9}px`;
     }
     canvas.setAttribute("aria-label",
-      `${domain.name}, dilated by ${PROBE.dilation.toFixed(4)}, over the plane wave sine x one; the integral is ${value.toExponential(2)}.`);
+      `${domain.name}, dilated by ${PROBE.dilation.toFixed(4)}, over a sinusoidal plane wave; the integral is ${value.toExponential(2)}.${activeCancellation ? ` This is ${activeCancellation.label}.` : ""}`);
     PROBE.geometry = { toX, toY, scale, cx, cy, width, height, viewHeight };
   }
 
@@ -1830,7 +1877,11 @@
     if (dilation) {
       dilation.addEventListener("input", () => {
         const requested = Math.max(PROBE_DILATION_MIN, Math.min(PROBE_DILATION_MAX, Number(dilation.value)));
-        PROBE.dilation = Math.abs(requested - 1) <= PROBE_DILATION_SNAP ? 1 : requested;
+        const domain = probeDomains()[Math.min(PROBE.domain, probeDomains().length - 1)];
+        const snap = domain.cancellationScales.find(
+          ({ factor }) => Math.abs(requested - factor) <= PROBE_DILATION_SNAP,
+        );
+        PROBE.dilation = snap ? snap.factor : requested;
         syncDilationSlider();
         renderPompeiuProbe();
       });
@@ -1868,7 +1919,11 @@
           PROBE.t1 = t1;
           PROBE.t2 = t2;
           PROBE.angle = angleValue;
-          PROBE.dilation = Math.abs(dilationValue - 1) <= PROBE_DILATION_SNAP ? 1 : dilationValue;
+          const selectedDomain = probeDomains()[domain];
+          const snap = selectedDomain.cancellationScales.find(
+            ({ factor }) => Math.abs(dilationValue - factor) <= PROBE_DILATION_SNAP,
+          );
+          PROBE.dilation = snap ? snap.factor : dilationValue;
           syncSlider();
           syncDilationSlider();
           renderPompeiuProbe();

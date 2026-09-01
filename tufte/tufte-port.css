@@ -4177,16 +4177,23 @@ body.tufte-site main .probe-figure .probe-motion-controls .geometry-scrub + .geo
 }
 body.tufte-site main .probe-dilation-track { position: relative; }
 body.tufte-site main .probe-dilation-track input { position: relative; z-index: 1; width: 100%; }
-body.tufte-site main .probe-dilation-track i {
+body.tufte-site main .probe-dilation-snaps {
   position: absolute;
   z-index: 2;
+  inset: 0;
+  pointer-events: none;
+}
+body.tufte-site main .probe-dilation-snap {
+  position: absolute;
   top: 50%;
-  left: 50%;
   width: 2px;
   height: .8rem;
   background: var(--teal);
-  pointer-events: none;
   transform: translate(-50%, -50%);
+}
+body.tufte-site main .probe-dilation-snap[data-active="true"] {
+  height: 1rem;
+  background: var(--ink);
 }
 body.tufte-site main .probe-dilation-control[data-snapped="true"] output { color: var(--teal); }
 body.tufte-site main .probe-integral-label {
