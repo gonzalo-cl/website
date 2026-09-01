@@ -229,7 +229,8 @@
     token: "Plane",
     concept: "plane",
     paper: "planar",
-    explanation: "An abbreviation for ℂ, regarded here as the real Euclidean plane",
+    explanation: "Alias for ℂ",
+    occurrenceScope: "source",
   });
   const starConvexAlignment = Object.freeze({
     token: "StarConvex",
@@ -597,7 +598,11 @@
       : 0;
 
     controller.alignments.forEach((alignment) => {
-      let minimumOffset = Math.max(0, primaryDeclarationOffset);
+      // Most theorem alignments deliberately begin at the primary declaration,
+      // but source-level aliases can remain informative wherever they occur.
+      let minimumOffset = alignment.occurrenceScope === "source"
+        ? 0
+        : Math.max(0, primaryDeclarationOffset);
       let match = findTextOccurrence(source, alignment.token, minimumOffset);
       while (match) {
         const { index, node, offset } = match;
