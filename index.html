@@ -172,7 +172,29 @@
         <details class="disk-sidequest">
           <summary><span><small>Optional digression</small>The disk as a Pompeiu counterexample</span><i>expand +</i></summary>
           <div class="disk-sidequest-body">
-            <div class="intro-copy">
+            <div class="intro-copy line-probe-flow">
+              <label for="line-probe-note" class="margin-toggle" aria-label="Show the interactive interval probe">&#8853;</label>
+              <input type="checkbox" id="line-probe-note" class="margin-toggle">
+              <figure class="marginnote side-figure line-probe-figure" id="lineProbeFigure" data-figure="interval-probe-model">
+                <div class="measurement-panel line-probe-panel">
+                  <canvas class="measurement-canvas" id="lineProbeCanvas" tabindex="0" role="img" aria-label="Graph of cosine x with a movable interval" aria-describedby="lineProbeCaption" aria-keyshortcuts="ArrowLeft ArrowRight Shift+ArrowLeft Shift+ArrowRight"></canvas>
+                  <div class="measurement-side line-probe-side">
+                    <div class="measurement-size-control">
+                      <label for="lineProbeLength"><span>Interval length</span><output id="lineProbeLengthValue" for="lineProbeLength">\(L=2\pi\)</output></label>
+                      <div class="measurement-slider">
+                        <input id="lineProbeLength" type="range" min="0.5" max="12.5" step="0.01" value="6.2831853072" aria-label="Dilate the interval by changing its length">
+                        <i class="measurement-slider-mark" aria-hidden="true"></i>
+                      </div>
+                      <div class="measurement-range-scale"><span>\(0.5\)</span><span class="measurement-range-mark">\(2\pi\)</span><span>\(12.5\)</span></div>
+                    </div>
+                    <div class="measurement-readout pompeiu-readout">
+                      <div class="measurement-value-line"><span>\(\int_{t-L/2}^{t+L/2}\cos x\,dx\)</span><strong id="lineProbeValue">= 0.000</strong></div>
+                    </div>
+                  </div>
+                </div>
+                <figcaption id="lineProbeCaption">The interval integral \(2\sin(L/2)\cos t\) as the centre \(t\) and length \(L\) vary.</figcaption>
+              </figure>
+
               <p>For a one-dimensional model, let \(I_L=[-L/2,L/2]\) and \(f(x)=\cos x\). For the translate \(I_L+t\), direct integration gives</p>
               <div class="tex-display line-probe-computation">
                 \[
@@ -183,25 +205,6 @@
               </div>
               <p>Thus \(I_{2\pi}\) fails the one-dimensional Pompeiu property: the nonzero function \(\cos x\) belongs to the kernel for every translation.</p>
             </div>
-            <figure class="fullwidth measurement-figure line-probe-figure" id="lineProbeFigure" data-figure="interval-probe-model">
-              <div class="measurement-panel line-probe-panel side-figure">
-                <canvas class="measurement-canvas" id="lineProbeCanvas" tabindex="0" role="img" aria-label="Graph of cosine x with a movable interval" aria-keyshortcuts="ArrowLeft ArrowRight Shift+ArrowLeft Shift+ArrowRight"></canvas>
-                <div class="measurement-side line-probe-side">
-                  <div class="measurement-size-control">
-                    <label for="lineProbeLength"><span>Interval length</span><output id="lineProbeLengthValue" for="lineProbeLength">\(L=2\pi\)</output></label>
-                    <div class="measurement-slider">
-                      <input id="lineProbeLength" type="range" min="0.5" max="12.5" step="0.01" value="6.2831853072" aria-label="Dilate the interval by changing its length">
-                      <i class="measurement-slider-mark" aria-hidden="true"></i>
-                    </div>
-                    <div class="measurement-range-scale"><span>\(0.5\)</span><span class="measurement-range-mark">\(2\pi\)</span><span>\(12.5\)</span></div>
-                  </div>
-                  <div class="measurement-readout pompeiu-readout">
-                    <div class="measurement-value-line"><span>\(\int_{t-L/2}^{t+L/2}\cos x\,dx\)</span><strong id="lineProbeValue">= 0.000</strong></div>
-                  </div>
-                </div>
-              </div>
-              <figcaption>The interval integral \(2\sin(L/2)\cos t\) as \(t\) and \(L\) vary. With the graph focused, use Left and Right to translate the interval; hold Shift for a larger step.</figcaption>
-            </figure>
 
             <div class="intro-copy disk-proof-flow">
               <label for="pompeiu-model-note" class="margin-toggle" aria-label="Show the interactive disk probe">&#8853;</label>
