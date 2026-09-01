@@ -225,7 +225,7 @@
       const row = document.createElement("tr");
       const values = [
         String(Math.floor(example.radius)),
-        example.radius.toFixed(9),
+        example.radius.toFixed(6),
         formatGap(example.gap, false),
       ];
       const labels = ["integer N", "crossing order R", "gap R − N"];
@@ -453,7 +453,7 @@
       context.font = visualTheme.labelFont;
       context.textAlign = "center";
       context.textBaseline = "bottom";
-      context.fillText("CROSSING ORDER · LOGARITHMIC SCALE", (plot.left + plot.right) / 2, state.height - 8);
+      context.fillText("CROSSING ORDER: LOGARITHMIC SCALE", (plot.left + plot.right) / 2, state.height - 8);
 
       if (!plot.compact) {
         context.fillStyle = "rgba(160,0,0,0.70)";
@@ -563,10 +563,10 @@
       if (state.hoverKind === "reference") {
         const reference = model.reference;
         return [
-          "RUNNING EXAMPLE · SEPARATE REAL CROSSING",
+          "RUNNING EXAMPLE: SEPARATE REAL CROSSING",
           "order " + reference.R.toFixed(9) + "   fractional part " + reference.fractionalPart.toFixed(9),
           "common zero " + reference.rho.toFixed(9) + "   spectral value " + reference.lambda.toFixed(6),
-          "J₁ zero 16 · J_R zero 6 · outside the displayed window",
+          "J₁ zero 16, J_R zero 6, outside the displayed window",
         ];
       }
       if (state.hoverKind === "search" && state.hoverIndex >= 0) {
@@ -579,7 +579,7 @@
           "order " + radius.toFixed(9) + "   fractional part " + model.fractional[index].toFixed(9),
           "common zero " + rho.toFixed(9) + "   spectral value " + lambda.toFixed(6),
           "first-order zero " + model.columns.n[index]
-            + " · window root " + model.columns.localIndex[index],
+            + ", window root " + model.columns.localIndex[index],
         ];
       }
       return null;
@@ -678,7 +678,7 @@
         elements.plotState.textContent = paperEdition
           ? "common-zero crossing sample"
           : formatInteger(count)
-            + " crossings · "
+            + " crossings, "
             + formatInteger(nearHundredth)
             + " within 0.01 of an integer";
       }

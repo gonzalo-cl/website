@@ -997,8 +997,8 @@ function drawBoundaryDiagram() {
   const h2 = solvedParameters.wallCoefficients?.[2] || 0;
   const h3 = solvedParameters.wallCoefficients?.[3] || 0;
   label.textContent = state.s === 0
-    ? "Γ₀ · flat"
-    : `Γₛ · h₂=${h2.toFixed(2)} · h₃=${h3.toFixed(2)}`;
+    ? "Γ₀, flat"
+    : `Γₛ, h₂=${h2.toFixed(2)}, h₃=${h3.toFixed(2)}`;
   svg.setAttribute("aria-label", state.s === 0
     ? "Flat cylinder boundary"
     : `Computed boundary with first mode ${state.s.toFixed(3)}, second mode ${h2.toFixed(4)}, and third mode ${h3.toFixed(4)}. The dashed curve is the first-mode approximation.`);
@@ -1041,12 +1041,6 @@ function updateReadouts() {
   $("#sValue").textContent = `${state.s >= 0 ? "+" : ""}${state.s.toFixed(3)}`;
   setMath("#phaseValue", `${(state.phase / Math.PI).toFixed(2)}\\pi`);
   setMath("#modeValue", `k\\le ${state.maxMode}`);
-  $("#interiorValue").textContent = "0 · analytic";
-  $("#wallMode2Value").textContent = state.solution.parameters.wallCoefficients[2].toExponential(2);
-  $("#wallMode3Value").textContent = state.solution.parameters.wallCoefficients[3].toExponential(2);
-  $("#dirichletValue").textContent = state.solution.dirichletL2.toExponential(2);
-  $("#neumannValue").textContent = state.solution.neumannL2.toExponential(2);
-  $("#decayValue").textContent = (1 / Math.sqrt(4 - state.lambda)).toFixed(2);
   $("#domainState").textContent = Math.abs(state.s) < .0025 ? "trivial cylinder at the branch origin" : "boundary and field solved simultaneously";
 }
 
@@ -1371,7 +1365,7 @@ function drawUnfoldedSeamInset(context, width, solution, gap) {
     context.stroke();
   });
   context.fillStyle = gap < 1e-8 ? SCHIFFER_VISUAL_THEME.teal : SCHIFFER_VISUAL_THEME.ink;
-  context.fillText(gap < 1e-8 ? "SEAM CLOSED" : `×${magnification} · actual gap ${(gap * 180 / Math.PI).toFixed(3)}°`, left + 11, top + 34);
+  context.fillText(gap < 1e-8 ? "SEAM CLOSED" : `×${magnification}, actual gap ${(gap * 180 / Math.PI).toFixed(3)}°`, left + 11, top + 34);
   context.restore();
 }
 
@@ -1804,12 +1798,12 @@ function updateConeReadouts() {
   setMath("#coneSInline", `s=${solution.s.toFixed(4)}`);
   $("#coneRValue").textContent = solution.R.toFixed(6);
   $("#coneLambdaValue").textContent = solution.lambda.toFixed(6);
-  $("#coneGapValue").textContent = gapDegrees < 5e-5 ? "0° · closed" : `${gapDegrees.toFixed(3)}°`;
-  $("#coneDirichletValue").textContent = solution.dirichlet_rms === 0 ? "0 · exact base" : solution.dirichlet_rms.toExponential(2);
-  $("#coneNeumannValue").textContent = solution.neumann_rms === 0 ? "0 · exact base" : solution.neumann_rms.toExponential(2);
+  $("#coneGapValue").textContent = gapDegrees < 5e-5 ? "0° (closed)" : `${gapDegrees.toFixed(3)}°`;
+  $("#coneDirichletValue").textContent = solution.dirichlet_rms === 0 ? "0 (exact base)" : solution.dirichlet_rms.toExponential(2);
+  $("#coneNeumannValue").textContent = solution.neumann_rms === 0 ? "0 (exact base)" : solution.neumann_rms.toExponential(2);
   $("#coneDomainState").textContent = coneState.progress > .999
-    ? "integral order reached · planar lift defined"
-    : (coneState.progress < .001 ? "nonintegral crossing · angular gap present" : "computed cone branch");
+    ? "Integral order reached; planar lift defined"
+    : (coneState.progress < .001 ? "Nonintegral crossing; angular gap present" : "Computed cone branch");
   drawConeBranchPlot();
 }
 
@@ -1822,13 +1816,13 @@ function updateConeAxis() {
     setMath(center, "\\psi\\in[-\\pi,\\pi]");
     setMath(right, "x=0\\;\\text{(boundary)}");
   } else if (coneState.view === "cone") {
-    left.textContent = "cone point";
-    center.textContent = "metric cone surface · drag / zoom";
-    right.textContent = "boundary";
+    left.textContent = "Cone point";
+    center.textContent = "Metric cone surface; drag or zoom";
+    right.textContent = "Boundary";
   } else {
     left.textContent = "28 copies";
     setMath(center, "\\text{sector angle}=2\\pi/R");
-    right.textContent = coneState.progress > .999 ? "seam closed" : "seam magnified ×50";
+    right.textContent = coneState.progress > .999 ? "Seam closed" : "Seam magnified ×50";
   }
 }
 
@@ -2152,24 +2146,24 @@ function renderModesComparison() {
   drawModesSeries(context, cylinderRect, cylinderSelectedNormalized, MODES_COLORS.white, 1.7);
   drawModesSeries(context, coneRect, coneIntegerNormalized, MODES_COLORS.cyan, 3.8);
   drawModesSeries(context, coneRect, coneCurrentNormalized, MODES_COLORS.orange, 2.1);
-  drawModesRim(context, cylinderRect, "boundary x = 0");
-  drawModesRim(context, coneRect, "boundary r = R");
+  drawModesRim(context, cylinderRect, "Boundary x = 0");
+  drawModesRim(context, coneRect, "Boundary r = R");
 
   const symbol = cylinder.regime === "oscillatory" ? "ω" : "α";
   const cylinderEquation = cylinder.regime === "oscillatory"
     ? "cos(ωx), sin(ωx)"
     : "e^{αx}, e^{−αx}";
-  const cylinderDetail = `${symbol} = ${cylinder.parameter.toFixed(4)} · ${cylinder.regime}`;
+  const cylinderDetail = `${symbol} = ${cylinder.parameter.toFixed(4)}, ${cylinder.regime}`;
   const currentR = modesOrder();
   const coneRimValue = modesConeProfile(modesState.k, 0);
-  drawModesPanelLabel(context, cylinderRect, `half-cylinder / k = ${modesState.k}`, cylinderEquation, cylinderDetail);
-  drawModesPanelLabel(context, coneRect, `cone / k = ${modesState.k}`, `J_{${modesState.k}R}(ρr/R)`, `R = ${currentR.toFixed(6)} · boundary value ${coneRimValue.toExponential(1)}`);
+  drawModesPanelLabel(context, cylinderRect, `Half-cylinder / k = ${modesState.k}`, cylinderEquation, cylinderDetail);
+  drawModesPanelLabel(context, coneRect, `Cone / k = ${modesState.k}`, `J_{${modesState.k}R}(ρr/R)`, `R = ${currentR.toFixed(6)}, boundary value ${coneRimValue.toExponential(1)}`);
 
   if (cylinder.regime === "evanescent") {
     context.save();
     context.fillStyle = MODES_COLORS.faint;
     context.font = SCHIFFER_VISUAL_THEME.labelFont;
-    context.fillText("dashed: growing branch rejected as x → −∞", cylinderRect.left + 8, cylinderRect.top + 15);
+    context.fillText("Dashed: growing branch rejected as x → −∞", cylinderRect.left + 8, cylinderRect.top + 15);
     context.restore();
   }
   if (modesState.k === 1 && modesState.transfer > .995) {
@@ -2664,15 +2658,15 @@ function updateModesReadouts() {
   $("#modesPhaseFill").style.width = `${phasePercent}%`;
   $("#modesPhaseMarker").style.left = `${phasePercent}%`;
   $("#modesPhaseTrack").setAttribute("aria-label", `The Debye cylinder phase shift is ${comparison.phaseDegrees.toFixed(2)} degrees, from zero degrees at the crossing to ${comparison.landingPhaseDegrees.toFixed(2)} degrees at N equals 28.`);
-  $("#modesGapValue").textContent = gapDegrees < 5e-5 ? "0° · closed" : `${gapDegrees.toFixed(3)}°`;
+  $("#modesGapValue").textContent = gapDegrees < 5e-5 ? "0° (closed)" : `${gapDegrees.toFixed(3)}°`;
   $("#modesWavelengthValue").textContent = `${TWO_PI.toFixed(3)} units`;
   setMath("#modesCurvatureValue", `1/${solution.R.toFixed(3)}`);
   if (gapDegrees < 5e-5) {
-    $("#modesPlotState").textContent = "integral order · 28 sectors fit exactly";
+    $("#modesPlotState").textContent = "Integral order; 28 sectors fit exactly";
   } else if (modesCropContainsSeam(solution)) {
-    $("#modesPlotState").textContent = "nonintegral order · seam inside main zoom";
+    $("#modesPlotState").textContent = "Nonintegral order; seam inside main zoom";
   } else {
-    $("#modesPlotState").textContent = "nonintegral order · seam tracked below";
+    $("#modesPlotState").textContent = "Nonintegral order; seam tracked below";
   }
 }
 
@@ -3018,8 +3012,8 @@ if (debyeData) {
     if (!SCHIFFER_VISUAL_THEME.paperEdition) {
       context.fillStyle = SCHIFFER_VISUAL_THEME.muted;
       context.font = SCHIFFER_VISUAL_THEME.labelFont;
-      context.fillText("one sector", 10, 17);
-      context.fillText(collarFieldState.mode === 0 ? "radial mode · no angular variation" : "one angular period", 10, 32);
+      context.fillText("One sector", 10, 17);
+      context.fillText(collarFieldState.mode === 0 ? "Radial mode; no angular variation" : "One angular period", 10, 32);
     }
     context.restore();
     canvas.setAttribute(
@@ -3418,11 +3412,11 @@ if (debyeData) {
       setMath("#debyePhaseValue", "J_R'(\\rho_R)=0");
       setMath("#debyeBetaValue", `\\rho_R=${rho.toFixed(5)}`);
       $("#debyeDecayValue").textContent = `${alpha2.toFixed(4)}, ${alpha3.toFixed(4)}`;
-      $("#debyePlotState").textContent = "exact Bessel samples · Neumann data matched at the boundary";
+      $("#debyePlotState").textContent = "Exact Bessel samples; Neumann data matched at the boundary";
       return;
     }
     setMath("#debyeModeValue", `k=${debyeState.mode}`);
-    $("#debyePlotState").textContent = `fixed R = 28 · k = 1 and k = ${debyeState.mode}`;
+    $("#debyePlotState").textContent = `Fixed R = 28, k = 1 and k = ${debyeState.mode}`;
   }
 
   function updateDebyeComparison() {

@@ -558,7 +558,7 @@
   function drawDiskFrame(context, width, height, opacity) {
     context.save();
     context.globalAlpha = opacity;
-    drawFrameLabel(context, width, "01 / quotient", "Keep one angular wavelength", "N = 28 · sector angle 2π/28");
+    drawFrameLabel(context, width, "01 / quotient", "Keep one angular wavelength", "N = 28, sector angle 2π/28");
     const radius = Math.min(width * .28, height * .35);
     const cx = width * .5;
     const cy = height * .55;
@@ -589,7 +589,7 @@
   function drawConeFrame(context, width, height, opacity) {
     context.save();
     context.globalAlpha = opacity;
-    drawFrameLabel(context, width, "02 / cone quotient", "Identify the sides of one fundamental sector", "boundary circumference 2π · cone parameter R");
+    drawFrameLabel(context, width, "02 / cone quotient", "Identify the sides of one fundamental sector", "Boundary circumference 2π, cone parameter R");
     const left = width * .13;
     const right = width * .87;
     const cy = height * .56;
@@ -2757,7 +2757,7 @@
       context.fillText(`unit-amplitude quadratic drop ${(point.row.gamma / 2).toFixed(4)}`, boxX + 10, boxY + 45);
       if (point.row.reference) {
         context.fillStyle = colors.orange;
-        context.fillText("running example · separate spectral window", boxX + 10, boxY + 62);
+        context.fillText("Running example: separate spectral window", boxX + 10, boxY + 62);
       }
     }
     context.restore();

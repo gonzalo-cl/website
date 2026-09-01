@@ -49,7 +49,7 @@
 
   const rounded = (value) => Math.round(value * 10) / 10;
   const marginSelector = "body.tufte-site main .marginnote";
-  const disclosureSelector = "body.tufte-site main details:not(.secondary-controls, .mobile-apparatus-disclosure, .certificate-provenance-index)";
+  const disclosureSelector = "body.tufte-site main details:not(.secondary-controls, .mobile-apparatus-disclosure)";
   const roleSelector = ".paper-copy, .math-statement, .lean-statement, .small-multiples, .figure-band, .reading-figure, .margin-figure-sequence, .data-table";
 
   function runLayoutContract() {
@@ -236,7 +236,6 @@
       "computer-contraction",
       "computer-reconstruction",
       "computer-berenstein",
-      "computer-local-global",
     ];
     const actualComputerProofOrder = Array.from(
       document.querySelectorAll("#computer-assisted-proof > header.section-heading[id]"),
@@ -254,9 +253,6 @@
       "finite-tail-certificate",
       "radii-polynomial-certificate",
       "computer-assisted-reconstruction",
-      "berenstein-boundary-data",
-      "berenstein-field-comparison",
-      "local-global-solvability",
     ];
     const actualComputerFigures = Array.from(
       document.querySelectorAll("#computer-assisted-proof > figure[data-figure]"),
@@ -322,7 +318,6 @@
       ["3.5", "Certified fixed-point convergence", "#computer-contraction", "proof-subsection"],
       ["3.6", "From the coefficient solution to a domain", "#computer-reconstruction", "proof-subsection"],
       ["3.7", "Berenstein companion: the Dirichlet endpoint", "#computer-berenstein", "proof-subsection"],
-      ["3.8", "Local boundary data versus global solvability", "#computer-local-global", "proof-subsection"],
       ["4", "The bifurcation proof", "#experiment", "section"],
       ["4.1", "The cone quotient", "#cone-remap", "proof-subsection"],
       ["4.2", "Exploring the cone bifurcation", "#phase-story", "proof-subsection"],
@@ -455,22 +450,17 @@
     document.querySelectorAll("details.optional-digression").forEach((details, index) => {
       const summary = details.querySelector(":scope > summary");
       const span = summary?.querySelector(":scope > span");
-      const label = span?.querySelector(":scope > small");
-      if (!summary || !span || label?.textContent.trim() !== "Optional digression") {
+      if (!summary || !span || !normalizeText(span.textContent)) {
         errors.push(`optional digression ${index + 1} does not use the shared summary grammar`);
       }
     });
-    const optionalTitles = Array.from(document.querySelectorAll("details.optional-digression > summary > span"), (span) => {
-      const label = span.querySelector(":scope > small");
-      return Array.from(span.childNodes)
-        .filter((node) => node !== label)
-        .map((node) => node.textContent)
-        .join("")
-        .trim();
-    });
+    const optionalTitles = Array.from(
+      document.querySelectorAll("details.optional-digression > summary > span"),
+      (span) => normalizeText(span.textContent),
+    );
     [
       "The Schiffer–Pompeiu equivalence",
-      "Berenstein conjecture: What if we switch the Neumann and Dirichlet conditions?",
+      "Berenstein conjecture: exchanged Dirichlet and Neumann data",
     ].forEach((title) => {
       if (!optionalTitles.includes(title)) errors.push(`missing optional digression: ${title}`);
     });
@@ -781,19 +771,6 @@
       if (Math.abs(box.width - expectedWidth) > 2) errors.push(`data table ${index + 1} is outside the reading measure`);
     });
 
-    const proofAtlas = document.querySelector("body.tufte-site main .proof-atlas");
-    if (visible(proofAtlas)) {
-      const box = proofAtlas.getBoundingClientRect();
-      const sectionBox = proofAtlas.closest("main > section")?.getBoundingClientRect();
-      const expectedWidth = sectionMeasure(proofAtlas, narrow ? 1 : reading);
-      if (Math.abs(box.width - expectedWidth) > 2) {
-        errors.push("proof atlas is outside the reading measure");
-      }
-      if (sectionBox && Math.abs(box.left - sectionBox.left) > 1) {
-        errors.push("proof atlas is not aligned with the reading measure");
-      }
-    }
-
     document.querySelectorAll("body.tufte-site main .figure-band").forEach((band, index) => {
       if (!band.getClientRects().length) return;
       const box = band.getBoundingClientRect();
@@ -987,12 +964,6 @@
       { family: monoFamily, weight: regularWeight, style: "normal" },
       "source code",
     );
-    checkTypography(
-      "body.tufte-site main :is(.route-comparison-controls button, .proof-atlas-filters button, .certificate-explorer button, .certificate-explorer select, .certificate-explorer-actions a, .certificate-provenance-index > summary)",
-      { family: monoFamily, weight: regularWeight, style: "normal" },
-      "document control",
-    );
-
     const forbiddenControlChrome = ":is(.variation-equation, .variation-equation-label, .variation-legend, .geometry-stage-note, .solver-readout, .crossing-card, .parameter-pair, .fixed-zoom-pair, .problem-map, .phase-law, .phase-agreement, .collar-field-readout, .collar-field-locator, .debye-status, .phase-story-readout, .modes-status)";
     document.querySelectorAll("body.tufte-site main .paper-demo-controls:not(.geometry-controls)").forEach((controls, index) => {
       if (!visible(controls)) return;

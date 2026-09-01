@@ -139,10 +139,9 @@ a { color: inherit; }
 .proof-details { margin: 0; border: 0; border-top: 1px solid var(--line-light); border-bottom: 1px solid var(--line-light); }
 .proof-details > summary { display: flex; justify-content: space-between; align-items: center; padding: 24px 0; cursor: pointer; list-style: none; color: rgba(241,238,229,.72); font: 11px var(--mono); text-transform: uppercase; letter-spacing: .08em; }
 .proof-details > summary::-webkit-details-marker { display: none; }
-.proof-details > summary i { color: var(--orange); font-style: normal; }
+.proof-details > summary::after { content: "+"; flex: 0 0 auto; margin-left: 18px; color: var(--orange); font-size: 14px; font-style: normal; }
 .proof-details[open] > summary { border-bottom: 1px solid var(--line-light); }
-.proof-details[open] > summary i { font-size: 0; }
-.proof-details[open] > summary i::after { content: "collapse −"; font-size: 11px; }
+.proof-details[open] > summary::after { content: "−"; }
 
 /* A native disclosure for formal counterparts of prose statements. Content
    supplies only the Lean source; this component owns its label, measure, and
@@ -349,7 +348,6 @@ input[type="range"]::-moz-range-thumb { width: 9px; height: 9px; border: 3px sol
 .solver-readout div { display: flex; justify-content: space-between; align-items: baseline; padding: 11px 0; border-bottom: 1px solid var(--line-light); }
 .solver-readout > div > span { color: rgba(241,238,229,.4); font: 11px var(--mono); text-transform: uppercase; letter-spacing: .06em; }
 .solver-readout strong { font: 11px var(--mono); color: rgba(241,238,229,.82); }
-#wallMode2Value, #wallMode3Value { color: var(--orange); }
 
 .canvas-panel { min-width: 0; display: grid; grid-template-rows: 58px minmax(500px,1fr) 36px; background: #101b20; }
 .canvas-toolbar { display: flex; align-items: center; justify-content: space-between; padding: 0 22px; border-bottom: 1px solid var(--line-light); }
@@ -1018,8 +1016,6 @@ dialog hr { height: 1px; margin: 32px 0; background: var(--line); border: 0; }
 .intro-proof { margin: 40px 0 0 70px; max-width: 960px; }
 .intro-proof + .intro-proof { margin-top: 0; border-top: 0; }
 .optional-digression > summary > span { display: grid; gap: 5px; }
-.optional-digression > summary > span.digression-title { display: block; }
-.optional-digression > summary small { color: var(--orange); font: inherit; }
 .intro-proof-body { max-width: 830px; padding: 10px 0 32px; color: var(--muted); font-size: var(--type-proof); line-height: 1.82; }
 .intro-proof-body p { margin: 0 0 16px; }
 .intro-proof-body .tex-display { margin: 22px 0; color: var(--ink); }
@@ -1153,11 +1149,9 @@ dialog hr { height: 1px; margin: 32px 0; background: var(--line); border: 0; }
 .disk-sidequest > summary { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 24px 0; color: var(--ink); cursor: pointer; list-style: none; font: 500 var(--type-label)/1.5 var(--mono); text-transform: uppercase; letter-spacing: .08em; }
 .disk-sidequest > summary::-webkit-details-marker { display: none; }
 .disk-sidequest > summary > span { display: grid; gap: 5px; }
-.disk-sidequest > summary small { color: var(--orange); font: inherit; }
-.disk-sidequest > summary i { flex: 0 0 auto; color: var(--orange); font-style: normal; font-weight: 400; }
+.disk-sidequest > summary::after { content: "+"; flex: 0 0 auto; color: var(--orange); font-size: 14px; font-style: normal; font-weight: 400; }
 .disk-sidequest[open] > summary { border-bottom: 1px solid var(--line); }
-.disk-sidequest[open] > summary i { font-size: 0; }
-.disk-sidequest[open] > summary i::after { content: "collapse −"; font-size: var(--type-label); }
+.disk-sidequest[open] > summary::after { content: "−"; }
 .disk-sidequest-body { padding: 48px 0 42px; }
 .disk-sidequest .line-probe-figure { margin: 0 0 68px; }
 .disk-sidequest .line-probe-figure + .intro-copy { max-width: 840px; padding-top: 58px; border-top: 1px solid var(--line); }
