@@ -17,11 +17,11 @@
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js" integrity="sha384-bjyGPfbij8/NDKJhSGZNP/khQVgtHUE5exjm4Ydllo42FwIgYsdLO2lXGmRBf5Mz" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.12.0/highlight.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/highlightjs-lean@1.2.0/dist/lean.min.js"></script>
-    <script defer src="lean-statements.js?v=20260831.12"></script>
+    <script defer src="lean-statements.js?v=20260901.1"></script>
     <script defer src="math.js?v=20260830.1"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tufte-css@1.9.0/tufte.min.css">
     <link rel="stylesheet" href="styles.css?v=20260901.1">
-    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260901.1">
+    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260901.2">
   </head>
   <body class="tufte-site">
     <a class="skip-link" href="#top">Skip to the exposition</a>
@@ -63,26 +63,20 @@
         <section class="paper-frontmatter-section paper-abstract" aria-labelledby="abstractTitle">
           <h2 id="abstractTitle">Abstract</h2>
           <p>Let \(\Omega\subset\mathbb R^2\) be a bounded domain. Pompeiu asked whether a function \(f\) is determined by its integrals over all rigid motions \(E(\Omega)\). Williams showed that nonuniqueness occurs exactly when \(\Omega\) supports a nonconstant Laplace eigenfunction whose value is constant and whose normal derivative vanishes on \(\partial\Omega\). The disk is the classical example, and Schiffer conjectured that it is the only connected smooth planar one. This exposition presents two proofs that the conjecture is false.</p>
-        </section>
-
-        <div class="formal-statement-pair formal-statement-pair-aside">
-          <article id="statement-main-result" class="math-statement math-statement-theorem intro-main-result" data-kind="theorem" data-label="main-result" aria-labelledby="mainResultTitle">
-            <header class="math-statement-header"><span>Theorem</span><small>Main result</small></header>
-            <div class="math-statement-body">
-              <p id="mainResultTitle" class="math-statement-title">A non-disk planar Schiffer domain exists.</p>
-              <p>There is a <span data-lean-alignment="schiffer-star-shaped:bounded">bounded</span>, <span data-lean-alignment="schiffer-star-shaped:nonempty">nonempty</span>, <span data-lean-alignment="schiffer-star-shaped:regularity">smooth</span> <span data-lean-alignment="schiffer-star-shaped:plane">planar</span> domain, <span data-lean-alignment="schiffer-star-shaped:star-shaped">star-shaped with respect to the origin</span>, which is <span data-lean-alignment="schiffer-star-shaped:not-disk">not a disk</span> and <span data-lean-alignment="schiffer-star-shaped:schiffer">solves the Schiffer problem</span>.</p>
-            </div>
-          </article>
-          <aside class="formalization-aside" aria-label="Lean formalization of the main theorem">
-            <lean-statement data-statement="schiffer-star-shaped" data-notes-target="#mainFormalizationNotes"></lean-statement>
-          </aside>
-          <div id="mainFormalizationNotes" class="formalization-notes" aria-label="Formalization notes" hidden></div>
-        </div>
-
-        <section class="paper-frontmatter-section intro-proof-overview" aria-labelledby="introProofOverviewTitle">
-          <h2 id="introProofOverviewTitle">Two proofs</h2>
-          <p>This note contains two different proofs of this fact. The first keeps the unit disk as a fixed reference domain and describes the unknown boundary by a conformal map. A tenfold Wronskian crossing gives a direction in which to search, and numerical continuation leads to an approximate zero-flux solution. A separate computer-assisted contraction argument then proves that an exact solution lies nearby.</p>
-          <p>The second allows the symmetry order \(N\) to vary continuously. On a cone of angle \(2\pi/R\), the limit \(R\to\infty\) becomes a cylinder, where the relevant bifurcation is easier to see. Uniform estimates carry the resulting branch back to finite \(R\) and force it to meet an integer value, where the cone closes to give a planar domain.</p>
+          <div class="formal-statement-pair formal-statement-pair-aside">
+            <article id="statement-main-result" class="math-statement math-statement-theorem intro-main-result" data-kind="theorem" data-label="main-result" aria-labelledby="mainResultTitle">
+              <header class="math-statement-header"><span>Theorem</span><small>A non-disk planar Schiffer domain exists</small></header>
+              <div class="math-statement-body">
+                <p id="mainResultTitle">There is a <span data-lean-alignment="schiffer-star-shaped:bounded">bounded</span>, <span data-lean-alignment="schiffer-star-shaped:nonempty">nonempty</span>, <span data-lean-alignment="schiffer-star-shaped:regularity">smooth</span> <span data-lean-alignment="schiffer-star-shaped:plane">planar</span> domain, <span data-lean-alignment="schiffer-star-shaped:star-shaped">star-shaped with respect to the origin</span>, which is <span data-lean-alignment="schiffer-star-shaped:not-disk">not a disk</span> and <span data-lean-alignment="schiffer-star-shaped:schiffer">solves the Schiffer problem</span>.</p>
+              </div>
+            </article>
+            <aside class="formalization-aside" aria-label="Lean formalization of the main theorem">
+              <lean-statement data-statement="schiffer-star-shaped" data-notes-target="#mainFormalizationNotes"></lean-statement>
+            </aside>
+            <div id="mainFormalizationNotes" class="formalization-notes" aria-label="Formalization notes" hidden></div>
+          </div>
+          <p>The first <em>proof</em> replaces the unknown domain by a conformal image of the unit disk. This turns an equation on a moving boundary into an equation on one fixed disk, with the shape stored in the coefficients of the conformal map. A numerical computation finds an approximate noncircular solution; a computer-assisted contraction argument then controls the remaining errors and proves that an exact solution lies nearby.</p>
+          <p>The second <em>proof</em> looks for \(N\)-fold symmetric examples. It first allows the symmetry order to vary as a real parameter \(R\), so that one fundamental sector becomes a cone of angle \(2\pi/R\). For large \(R\), the boundary region of this cone is close to a cylinder, where a noncircular branch of solutions can be constructed. Estimates uniform in \(R\) show that the branch reaches an integer value \(R=N\). At that point the sectors fit together without a seam and give a planar \(N\)-fold symmetric domain.</p>
         </section>
       </section>
 
@@ -109,7 +103,7 @@
         </div>
 
         <figure class="geometry-laboratory interactive-plate annotated-plate reading-figure probe-figure" data-figure="pompeiu-probe">
-          <aside class="geometry-controls paper-demo-controls">
+          <aside class="geometry-controls paper-demo-controls probe-domain-controls" aria-label="Choose a domain">
             <div class="apparatus-control-group probe-domain-selector">
               <span class="apparatus-control-label">domain</span>
               <div class="geometry-stages" role="group" aria-label="Choose a domain">
@@ -119,18 +113,22 @@
                 <button type="button" data-probe-domain="3" aria-pressed="false"><span>04</span><strong>square</strong></button>
               </div>
             </div>
-            <div class="geometry-scrub apparatus-control-group probe-rotation-control"><div class="control-label"><label for="probeAngle">rotation</label><output id="probeAngleValue" for="probeAngle">0°</output></div><input id="probeAngle" type="range" min="0" max="6.2832" step="0.001" value="0" aria-describedby="pompeiuProbeOverviewCaption"></div>
           </aside>
-          <section class="geometry-canvas-panel" aria-label="A domain moved over the plane wave cosine of x one">
+          <aside class="geometry-controls paper-demo-controls probe-motion-controls" aria-label="Rotate and dilate the selected domain">
+            <div class="geometry-scrub apparatus-control-group probe-rotation-control"><div class="control-label"><label for="probeAngle">rotation</label><output id="probeAngleValue" for="probeAngle">0°</output></div><input id="probeAngle" type="range" min="0" max="6.2832" step="0.001" value="0" aria-describedby="pompeiuProbeOverviewCaption"></div>
+            <div class="geometry-scrub apparatus-control-group probe-dilation-control"><div class="control-label"><label for="probeDilation">dilation</label><output id="probeDilationValue" for="probeDilation">×1.000</output></div><div class="probe-dilation-track"><input id="probeDilation" type="range" min="0.985" max="1.015" step="0.0001" value="1" aria-describedby="pompeiuProbeOverviewCaption" aria-valuetext="correct scale, factor 1"><i aria-hidden="true"></i></div></div>
+          </aside>
+          <section class="geometry-canvas-panel" aria-label="A domain moved over the plane wave sine of x one">
             <div id="probeCanvasWrap" class="geometry-canvas-wrap probe-canvas-wrap">
-              <canvas id="probeCanvas" tabindex="0" role="img" aria-label="A domain moved over the plane wave cosine of x one, with its integral plotted below" aria-describedby="pompeiuProbeOverviewCaption" aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown Shift+ArrowLeft Shift+ArrowRight Shift+ArrowUp Shift+ArrowDown [ ]"></canvas>
+              <canvas id="probeCanvas" tabindex="0" role="img" aria-label="A domain moved over the plane wave sine of x one, with its integral plotted below" aria-describedby="pompeiuProbeOverviewCaption" aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown Shift+ArrowLeft Shift+ArrowRight Shift+ArrowUp Shift+ArrowDown [ ]"></canvas>
+              <span id="probeIntegralLabel" class="canvas-tex-label probe-integral-label" aria-hidden="true">\(\int_{E(\Omega)}\sin(\omega x_1)\,dx\)</span>
             </div>
           </section>
-          <figcaption id="pompeiuProbeOverviewCaption">Move the selected footprint over the plane wave \(\cos x_1\). The lower curve plots \(\int_{E(\Omega)}\cos x_1\,dx\) against horizontal translation, on the same spatial scale as the field above. The disk uses a Bessel-zero radius; \(D_{10}\) and \(D_{28}\) are the two constructed profiles, and the square is a comparison. Drag inside the domain to translate it and outside to rotate it; the rotation slider and the arrow, Shift, and bracket keys provide the same motions.</figcaption>
+          <figcaption id="pompeiuProbeOverviewCaption">Move the selected footprint over the plane wave \(\sin(\omega x_1)\). The lower curve plots its integral against horizontal translation on the same spatial scale. At the marked dilation, the disk and the two constructed profiles cancel the wave for every translation and rotation; moving away from that scale restores a sinusoidal response. The square is included for comparison. Drag inside the domain to translate it and outside to rotate it; the sliders and the arrow, Shift, and bracket keys provide the same motions.</figcaption>
         </figure>
 
         <div class="intro-copy intro-copy-wide intro-pompeiu-copy">
-          <div class="formal-statement-pair">
+          <div class="formal-statement-pair formal-statement-pair-aside">
             <article class="math-statement math-statement-definition" data-kind="definition" data-label="pompeiu-property-definition" aria-labelledby="pompeiuDefinitionTitle">
               <header class="math-statement-header"><span>Definition</span><small>Pompeiu property</small></header>
               <div class="math-statement-body">
@@ -145,7 +143,10 @@
                 </div>
               </div>
             </article>
-            <lean-statement data-statement="pompeiu-property"></lean-statement>
+            <aside class="formalization-aside" aria-label="Lean formalization of the Pompeiu property">
+              <lean-statement data-statement="pompeiu-property" data-notes-target="#pompeiuPropertyFormalizationNotes"></lean-statement>
+            </aside>
+            <div id="pompeiuPropertyFormalizationNotes" class="formalization-notes" aria-label="Formalization notes" hidden></div>
           </div>
 
           <label for="pompeiu-history-note" class="margin-toggle" aria-label="Show the historical note">&#8853;</label>
@@ -235,11 +236,11 @@
               </figure>
 
               <p class="eyebrow">A two-dimensional model</p>
-              <div class="formal-statement-pair">
+              <div class="formal-statement-pair formal-statement-pair-aside">
                 <article class="math-statement math-statement-proposition" data-kind="proposition" data-label="disk-pompeiu-counterexample" aria-labelledby="diskPropositionTitle">
                   <header class="math-statement-header"><span>Proposition</span><small>disk counterexample</small></header>
                   <div class="math-statement-body">
-                    <p id="diskPropositionTitle" class="math-statement-title">Every <span data-lean-alignment="disk-not-pompeiu:disk">disk</span> <span data-lean-alignment="disk-not-pompeiu:fails">fails the Pompeiu property</span>.</p>
+                    <p id="diskPropositionTitle">Every <span data-lean-alignment="disk-not-pompeiu:disk">disk</span> <span data-lean-alignment="disk-not-pompeiu:fails">fails the Pompeiu property</span>.</p>
                     <p>Let \(B_r\) be a disk of radius \(r\), and let \(\rho_\star&gt;0\) be a zero of \(J_1\). Then</p>
                     <div class="tex-display">
                       \[
@@ -249,7 +250,10 @@
                     <p>is nonzero and satisfies \(\int_{E(B_r)}f(x)\,dx=0\) for every rigid motion \(E\). Rotations give no additional domains because \(B_r\) is rotationally invariant.</p>
                   </div>
                 </article>
-                <lean-statement data-statement="disk-not-pompeiu"></lean-statement>
+                <aside class="formalization-aside" aria-label="Lean formalization of the disk proposition">
+                  <lean-statement data-statement="disk-not-pompeiu" data-notes-target="#diskFormalizationNotes"></lean-statement>
+                </aside>
+                <div id="diskFormalizationNotes" class="formalization-notes" aria-label="Formalization notes" hidden></div>
               </div>
               <div class="disk-sidequest-proof">
                 <label for="bst-proof-note" class="margin-toggle" aria-label="Show the Brown, Schreiber and Taylor note">&#8853;</label>
@@ -308,9 +312,20 @@
             <img src="assets/chladni-plate.jpg" width="1280" height="857" loading="lazy" decoding="async" alt="Sand gathered along circular nodal lines separating four radial nodal domains on a vibrating round Chladni plate">
             <figcaption>A vibrating Chladni plate. Sand migrates from the moving regions and settles along the circular nodal lines, where the plate remains still. <a href="https://commons.wikimedia.org/wiki/File:Round_Chladni_plate_with_4_circular_nodes.JPG" target="_blank" rel="noreferrer">Pieter Kuiper, public domain.</a></figcaption>
           </figure>
-          <p>A domain \(\Omega\) for which the system <a class="xref" data-ref="schiffer-system" data-ref-short href="#equation-schiffer-system"><span data-lean-alignment="schiffer-property:schiffer-system">the displayed Schiffer system</span></a> has a solution is called a <em>Schiffer domain</em>. The disk is one: its radial modes are multiples of \(J_0(\sqrt\lambda\,r)\), and their normal derivative vanishes at the boundary precisely when \(\sqrt\lambda\,r\) is a zero of \(J_0'\) — equivalently of \(J_1\), since \(J_0'=-J_1\).</p>
-          <p>Equivalently, the boundary condition can be written as <span data-lean-alignment="schiffer-property:gradient">\(\nabla u=0\)</span>. Indeed, constancy of \(u\) along the boundary kills every tangential derivative, while \(\partial_\nu u=0\) kills the normal component. Together they make the full gradient vanish on \(\partial\Omega\). One may also <span data-lean-alignment="schiffer-property:normalization">normalize \(\lambda=1\)</span>: if \((u,\lambda)\) solves the system on \(\Omega\), then \(x\mapsto u(x/\sqrt\lambda)\) solves it with eigenvalue \(1\) on the rescaled domain \(\sqrt\lambda\,\Omega\). The equivalent convention used here fixes the domain and varies \(\lambda\).</p>
-          <lean-statement data-statement="schiffer-property"></lean-statement>
+          <div class="formal-statement-pair formal-statement-pair-aside">
+            <article class="math-statement math-statement-definition" data-kind="definition" data-label="schiffer-domain-definition" aria-labelledby="schifferDomainDefinitionTitle">
+              <header class="math-statement-header"><span>Definition</span><small>Schiffer domain</small></header>
+              <div class="math-statement-body">
+                <p id="schifferDomainDefinitionTitle">A domain \(\Omega\) is a <em>Schiffer domain</em> when a <span data-lean-alignment="schiffer-property:regularity">\(C^2\) function</span> solves <span data-lean-alignment="schiffer-property:schiffer-system">the Schiffer system</span> <a class="xref" data-ref="schiffer-system" data-ref-short href="#equation-schiffer-system">displayed above</a> on \(\Omega\).</p>
+                <p>The boundary conditions are equivalently <span data-lean-alignment="schiffer-property:gradient">\(\nabla u=0\)</span> <span data-lean-alignment="schiffer-property:boundary">on \(\partial\Omega\)</span>: constancy kills the tangential derivative and \(\partial_\nu u=0\) kills the normal derivative. One may also <span data-lean-alignment="schiffer-property:normalization">normalize \(\lambda=1\)</span> by rescaling the domain.</p>
+              </div>
+            </article>
+            <aside class="formalization-aside" aria-label="Lean formalization of a Schiffer domain">
+              <lean-statement data-statement="schiffer-property" data-notes-target="#schifferPropertyFormalizationNotes"></lean-statement>
+            </aside>
+            <div id="schifferPropertyFormalizationNotes" class="formalization-notes" aria-label="Formalization notes" hidden></div>
+          </div>
+          <p>The disk is a Schiffer domain: its radial modes are multiples of \(J_0(\sqrt\lambda\,r)\), and their normal derivative vanishes at the boundary precisely when \(\sqrt\lambda\,r\) is a zero of \(J_0'\) — equivalently of \(J_1\), since \(J_0'=-J_1\).</p>
           <article class="math-statement math-statement-conjecture" data-kind="conjecture" data-label="schiffer-conjecture" aria-labelledby="schifferConjectureTitle">
             <header class="math-statement-header"><span>Conjecture</span><small>Schiffer</small></header>
             <div class="math-statement-body"><p id="schifferConjectureTitle">Every connected smooth bounded planar Schiffer domain is a disk.</p></div>
@@ -335,12 +350,11 @@
 
         <p>In both problems the disk produced the same arithmetic condition: the frequency times the radius must be a zero of \(J_1\). That coincidence is not an accident, and Williams made it precise.</p>
 
-        <div class="formal-statement-pair">
+        <div class="formal-statement-pair formal-statement-pair-aside">
           <article id="statement-williams-equivalence" class="math-statement math-statement-theorem intro-theorem" data-kind="theorem" data-label="williams-equivalence" aria-labelledby="williamsTheoremTitle">
-            <header class="math-statement-header"><span>Theorem</span><small>Williams · 1976</small></header>
+            <header class="math-statement-header"><span>Theorem</span><small>The Pompeiu and Schiffer problems are equivalent · Williams, 1976</small></header>
             <div class="math-statement-body">
-              <p id="williamsTheoremTitle" class="math-statement-title">The Pompeiu and Schiffer problems are equivalent.</p>
-              <p>Let \(\Omega\subset\mathbb R^2\) be a <span data-lean-alignment="schiffer-pompeiu-equivalence:bounded">bounded</span>, simply connected domain with <span data-lean-alignment="schiffer-pompeiu-equivalence:regularity">smooth boundary</span>. Then the following statements are equivalent:</p>
+              <p id="williamsTheoremTitle">Let \(\Omega\subset\mathbb R^2\) be a <span data-lean-alignment="schiffer-pompeiu-equivalence:bounded">bounded</span>, simply connected domain with <span data-lean-alignment="schiffer-pompeiu-equivalence:regularity">smooth boundary</span>. Then the following statements are equivalent:</p>
               <ol>
                 <li data-lean-alignment="schiffer-pompeiu-equivalence:pompeiu">There is a nonzero continuous function \(f\) such that \(\int_{E(\Omega)}f(x)\,dx=0\) for every rigid motion \(E\);</li>
                 <li data-lean-alignment="schiffer-pompeiu-equivalence:schiffer">There are \(\lambda&gt;0\) and a nonconstant function \(u\) solving the Schiffer problem <a class="xref" data-ref="schiffer-system" data-ref-short href="#equation-schiffer-system">the displayed Schiffer system</a> on \(\Omega\).</li>
@@ -348,7 +362,10 @@
               <p>Consequently, a smooth noncircular solution of the Schiffer problem also gives a smooth noncircular probe without the Pompeiu property.</p>
             </div>
           </article>
-          <lean-statement data-statement="schiffer-pompeiu-equivalence"></lean-statement>
+          <aside class="formalization-aside" aria-label="Lean formalization of Williams’s equivalence theorem">
+            <lean-statement data-statement="schiffer-pompeiu-equivalence" data-notes-target="#williamsFormalizationNotes"></lean-statement>
+          </aside>
+          <div id="williamsFormalizationNotes" class="formalization-notes" aria-label="Formalization notes" hidden></div>
         </div>
 
         <details class="optional-digression proof-details intro-proof">
@@ -793,7 +810,6 @@
               </svg>
               <p class="eyebrow">Bifurcation route</p>
               <strong class="figure-panel-title">A \(D_{28}\)-symmetric profile</strong>
-              <small>An informal numerical illustration of the pattern predicted by the asymptotic proof.</small>
               </div>
             </div>
             <div class="intro-shapes-aside">
@@ -836,14 +852,17 @@
         <div class="paper-copy pompeiu-corollary-intro">
           <p>Combining <a class="xref" data-ref="main-result" href="#statement-main-result">the main theorem</a> with the equivalence in <a class="xref" data-ref="williams-equivalence" href="#statement-williams-equivalence">Williams&rsquo; equivalence theorem</a> gives planar counterexamples to Pompeiu&rsquo;s problem.</p>
         </div>
-        <div class="formal-statement-pair">
+        <div class="formal-statement-pair formal-statement-pair-aside">
           <article class="math-statement" data-kind="corollary" data-label="pompeiu-star-shaped" aria-labelledby="pompeiuCorollaryTitle">
             <header class="math-statement-header"><span>Corollary</span><small>planar Pompeiu counterexample</small></header>
             <div class="math-statement-body">
               <p id="pompeiuCorollaryTitle">There is a <span data-lean-alignment="pompeiu-star-shaped:bounded">bounded</span>, <span data-lean-alignment="pompeiu-star-shaped:nonempty">nonempty</span> <span data-lean-alignment="pompeiu-star-shaped:plane">planar</span> domain with <span data-lean-alignment="pompeiu-star-shaped:regularity">regular \(C^2\) boundary</span>, <span data-lean-alignment="pompeiu-star-shaped:star-shaped">star-shaped with respect to the origin</span>, which is <span data-lean-alignment="pompeiu-star-shaped:not-disk">not a disk</span> and <span data-lean-alignment="pompeiu-star-shaped:pompeiu">does not have the Pompeiu property</span>.</p>
             </div>
           </article>
-          <lean-statement data-statement="pompeiu-star-shaped"></lean-statement>
+          <aside class="formalization-aside" aria-label="Lean formalization of the Pompeiu corollary">
+            <lean-statement data-statement="pompeiu-star-shaped" data-notes-target="#pompeiuCorollaryFormalizationNotes"></lean-statement>
+          </aside>
+          <div id="pompeiuCorollaryFormalizationNotes" class="formalization-notes" aria-label="Formalization notes" hidden></div>
         </div>
         <div class="intro-copy berenstein-companion" aria-labelledby="berensteinCompanionTitle">
           <label for="berenstein-companion-note" class="margin-toggle" aria-label="Show the Berenstein counterexample">&#8853;</label>
@@ -1137,15 +1156,15 @@
         </figure>
 
         <nav class="proof-fork" aria-label="Choose which proof to read">
-          <svg class="proof-fork-mark" viewBox="0 0 600 64" role="img" aria-label="One path splitting into two proof routes">
+          <svg class="proof-fork-mark" viewBox="0 0 600 82" role="img" aria-label="One path splitting into two proof routes">
             <defs>
-              <marker id="proofForkArrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto" markerUnits="strokeWidth">
-                <path d="M0 0L6 3L0 6Z"></path>
+              <marker id="proofForkArrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto" markerUnits="strokeWidth">
+                <path d="M0 0L7 3.5L0 7Z"></path>
               </marker>
             </defs>
-            <path d="M300 3V23"></path>
-            <path d="M300 23L150 57" marker-end="url(#proofForkArrow)"></path>
-            <path d="M300 23L450 57" marker-end="url(#proofForkArrow)"></path>
+            <path d="M300 3V24"></path>
+            <path d="M300 24C300 45 150 43 150 74" marker-end="url(#proofForkArrow)"></path>
+            <path d="M300 24C300 45 450 43 450 74" marker-end="url(#proofForkArrow)"></path>
           </svg>
           <div class="proof-fork-options">
             <a href="#computer-assisted-proof" data-proof-route="computer-assisted" data-proof-target="#computer-assisted-proof">The computer-assisted proof</a>
@@ -1307,9 +1326,9 @@
 
         <figure class="computer-assisted-figure interactive-plate figure-band" data-apparatus="visual-aside" data-figure="conformal-pullback" aria-labelledby="pullbackFigureTitle">
           <section class="computer-assisted-canvas-panel apparatus-visual">
-            <svg id="pullbackCanvas" class="computer-assisted-vector" role="img" aria-label="The fixed disk mapped to the physical domain, with one point and its field value carried across"><title>Conformal pullback to the fixed disk</title><desc>The same field is shown before and after the conformal change of coordinates.</desc></svg>
+            <svg id="pullbackCanvas" class="computer-assisted-vector" role="img" aria-label="The polar grid on the unit disk mapped by phi sub p to a conformal grid on the physical domain"><title>A concrete conformal map</title><desc>The thirty stored coefficients map circles and rays in the unit disk to curved coordinate lines in the physical domain.</desc></svg>
           </section>
-          <figcaption id="pullbackFigureTitle">The conformal map \(\phi_p\) transfers the free-boundary problem to the unit disk, where the shape enters through \(|p|^2\).</figcaption>
+          <figcaption id="pullbackFigureTitle">The thirty-term map \(\phi_p(z)=z+\sum_{j=1}^{30}a_jz^{10j+1}\) sends the polar grid on \(\mathbb D\) to a conformal grid on \(\Omega=\phi_p(\mathbb D)\). The marked point shows \(z_0\mapsto\phi_p(z_0)\).</figcaption>
         </figure>
 
         <header id="computer-compatible-inverse" class="section-heading proof-strategy-subheading" data-title="Both boundary conditions in one equation" data-toc="proof-subsection">
@@ -1941,10 +1960,9 @@
           <p><strong>Area versus rim.</strong> Schiffer makes each plane wave cancel across the filled area \(\mathbf 1_\Omega\,dx\); Berenstein makes it cancel while walking only around the boundary.</p>
         </div>
         <article class="math-statement berenstein-proof-comparison" data-kind="comparison" data-label="berenstein-fixed-disc-comparison" aria-labelledby="berensteinFixedDiscTitle">
-          <header class="math-statement-header"><span>Proof comparison</span><small>the fixed-disk formulation</small></header>
+          <header class="math-statement-header"><span>Proof comparison</span><small>Effect of exchanging the boundary data</small></header>
           <div class="math-statement-body">
-            <h4 id="berensteinFixedDiscTitle">Effect of exchanging the boundary data</h4>
-            <p>Both certificates encode the boundary by a conformal map and pull the field back to the unit disk. The zero datum behaves simply under this change of coordinates; the nonzero datum is multiplied by the local boundary stretch.</p>
+            <p id="berensteinFixedDiscTitle">Both certificates encode the boundary by a conformal map and pull the field back to the unit disk. The zero datum behaves simply under this change of coordinates; the nonzero datum is multiplied by the local boundary stretch.</p>
 
             <section class="berenstein-proof-lane berenstein-proof-lane-schiffer" aria-labelledby="berensteinSchifferLaneTitle">
               <h5 id="berensteinSchifferLaneTitle">Schiffer: both zero traces are built into one inverse</h5>
@@ -3023,17 +3041,22 @@
         <div class="intro-copy intro-copy-wide">
           <p>The five constants measure, in order, the size of the interval in \(R\), the size of the ball in \(X\), the derivatives of \(\mathcal{G}\) up to fourth order, the linear inverse together with the kernel and cokernel vectors in norm, and the transversality. In the paper they are written \(c_1,c_2,C_1,C_2,c_3\). Applied to the collar problem, all five can be bounded uniformly over large crossings, which gives the following.</p>
         </div>
-        <article id="uniformConeBifurcation" class="math-statement" data-kind="theorem" data-label="uniform-cone-bifurcation" aria-labelledby="uniformConeBifurcationTitle">
-          <header class="math-statement-header"><span>Theorem</span><small id="uniformConeBifurcationTitle">the hypotheses hold uniformly</small></header>
-          <div class="math-statement-body">
-            <p>There is \(R_{\mathrm{unif}}\) such that <span data-lean-alignment="uniform-cone-bifurcation:crossing">every crossing</span></p>
-            <div class="tex-display">
-              \[ R_*\ge R_{\mathrm{unif}},\qquad J_1(\rho)=J_{R_*}(\rho)=0,\qquad 2\le\lambda_*:=\frac{\rho^2}{R_*^2}\le3 \]
+        <div class="formal-statement-pair formal-statement-pair-aside">
+          <article id="uniformConeBifurcation" class="math-statement" data-kind="theorem" data-label="uniform-cone-bifurcation" aria-labelledby="uniformConeBifurcationTitle">
+            <header class="math-statement-header"><span>Theorem</span><small id="uniformConeBifurcationTitle">the hypotheses hold uniformly</small></header>
+            <div class="math-statement-body">
+              <p>There is \(R_{\mathrm{unif}}\) such that <span data-lean-alignment="uniform-cone-bifurcation:crossing">every crossing</span></p>
+              <div class="tex-display">
+                \[ R_*\ge R_{\mathrm{unif}},\qquad J_1(\rho)=J_{R_*}(\rho)=0,\qquad 2\le\lambda_*:=\frac{\rho^2}{R_*^2}\le3 \]
+              </div>
+              <p>satisfies the hypotheses of <a class="xref" data-ref="crandall-rabinowitz"></a> with <span data-lean-alignment="uniform-cone-bifurcation:uniform-control">\(C_1,\ldots,C_5\) independent of the crossing</span>.</p>
             </div>
-            <p>satisfies the hypotheses of <a class="xref" data-ref="crandall-rabinowitz"></a> with <span data-lean-alignment="uniform-cone-bifurcation:uniform-control">\(C_1,\ldots,C_5\) independent of the crossing</span>.</p>
-          </div>
-        </article>
-        <lean-statement data-statement="uniform-cone-bifurcation"></lean-statement>
+          </article>
+          <aside class="formalization-aside" aria-label="Lean formalization of the uniform cone theorem">
+            <lean-statement data-statement="uniform-cone-bifurcation" data-notes-target="#uniformConeFormalizationNotes"></lean-statement>
+          </aside>
+          <div id="uniformConeFormalizationNotes" class="formalization-notes" aria-label="Formalization notes" hidden></div>
+        </div>
       </section>
 
 
@@ -3122,22 +3145,24 @@
         <header class="section-heading" data-title="Integer landing and planar lift" data-toc="proof-subsection">
           <h3>Integer landing and planar lift</h3>
         </header>
-        <article id="statement-near-integer-crossings" class="math-statement near-integer-theorem" data-kind="theorem" data-label="near-integer-crossings">
-          <header class="math-statement-header"><span>Theorem</span><small>near-integer crossings</small></header>
-          <div class="math-statement-body">
-            <p>For every \(\delta&gt;0\) and every lower threshold \(N_{\min}\), there are <span data-lean-alignment="near-integer-crossings:parameters">an integer \(N\ge N_{\min}\), a real order \(R_*\), and a frequency \(\rho&gt;0\)</span> such that</p>
-            <div class="tex-display" data-lean-alignment="near-integer-crossings:gap near-integer-crossings:bessel near-integer-crossings:window">
-              \[
-              \begin{gathered}
-              N&lt;R_*&lt;N+\delta,\\
-              J_1(\rho)=J_{R_*}(\rho)=0,\\
-              2&lt;\dfrac{\rho^2}{R_*^2}&lt;3.
-              \end{gathered}
-              \]
+        <div class="formal-statement-pair formal-statement-pair-aside">
+          <article id="statement-near-integer-crossings" class="math-statement near-integer-theorem" data-kind="theorem" data-label="near-integer-crossings">
+            <header class="math-statement-header"><span>Theorem</span><small>near-integer crossings</small></header>
+            <div class="math-statement-body">
+              <p>For every \(\delta&gt;0\) and every lower threshold \(N_{\min}\), there are <span data-lean-alignment="near-integer-crossings:parameters">an integer \(N\ge N_{\min}\), a real order \(R_*\), and a frequency \(\rho&gt;0\)</span> such that</p>
+              <div class="statement-equation-stack">
+                <div class="tex-display" data-lean-alignment="near-integer-crossings:gap">\[N&lt;R_*&lt;N+\delta,\]</div>
+                <div class="tex-display" data-lean-alignment="near-integer-crossings:bessel">\[J_1(\rho)=J_{R_*}(\rho)=0,\]</div>
+                <div class="tex-display" data-lean-alignment="near-integer-crossings:window">\[2&lt;\dfrac{\rho^2}{R_*^2}&lt;3.\]</div>
+              </div>
+              <p>The scatter plot below is a finite numerical sample of these coincidences. The theorem itself comes from aligning the fixed-order McMahon phase and the large-order Debye phase.</p>
             </div>
-            <p>The scatter plot below is a finite numerical sample of these coincidences. The theorem itself comes from aligning the fixed-order McMahon phase and the large-order Debye phase.</p>
-          </div>
-        </article>
+          </article>
+          <aside class="formalization-aside" aria-label="Lean formalization of the near-integer crossing theorem">
+            <lean-statement data-statement="near-integer-crossings" data-notes-target="#nearIntegerFormalizationNotes"></lean-statement>
+          </aside>
+          <div id="nearIntegerFormalizationNotes" class="formalization-notes" aria-label="Formalization notes" hidden></div>
+        </div>
         <div class="intro-copy intro-copy-wide abundance-examples-host">
         <label for="abundance-examples-note" class="margin-toggle" aria-label="Show five particularly close examples">&#8853;</label>
         <input type="checkbox" id="abundance-examples-note" class="margin-toggle">
@@ -3158,7 +3183,6 @@
           </div>
         </aside>
         </div>
-        <lean-statement data-statement="near-integer-crossings"></lean-statement>
         <details class="abundance-proof-details proof-details">
           <summary><span>Proof sketch of <a class="xref" data-ref="near-integer-crossings" href="#statement-near-integer-crossings">the near-integer crossing theorem</a></span><i>expand +</i></summary>
           <div class="proof-argument abundance-proof-argument">
@@ -3299,10 +3323,10 @@
     <script defer src="abundance-data.js"></script>
     <script defer src="dtn-data.js?v=20260831.1"></script>
     <script defer src="app.js?v=20260831.9"></script>
-    <script defer src="story.js?v=20260901.1"></script>
+    <script defer src="story.js?v=20260901.2"></script>
     <script defer src="abundance.js?v=20260831.9"></script>
     <script defer src="pompeiu.js?v=20260831.8"></script>
-    <script defer src="computer-assisted.js?v=20260831.9"></script>
+    <script defer src="computer-assisted.js?v=20260901.1"></script>
     <script defer src="applet-layout.js?v=20260831.6"></script>
     <script defer src="certificate-checker.js?v=20260831.8"></script>
     <script defer src="research-guide.js?v=20260901.1"></script>

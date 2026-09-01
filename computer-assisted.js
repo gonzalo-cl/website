@@ -5,6 +5,7 @@
     heading: "#111111",
     text: "#26241f",
     muted: "#666158",
+    brown: "#4a3428",
     accent: "#a00000",
     accentLight: "#f7f4e9",
     teal: "#075760",
@@ -805,12 +806,17 @@
   const drawMappedGrid = (context, centerX, centerY, radius, options = {}) => {
     const amplitude = options.amplitude ?? 1;
     const alpha = options.alpha ?? 1;
-    const ringCount = options.rings ?? 3;
-    const spokeCount = options.spokes ?? 12;
+    const ringCount = options.rings ?? 4;
+    const spokeCount = options.spokes ?? 20;
     context.save();
     context.globalAlpha = alpha;
-    context.strokeStyle = colors.ruleDark;
-    context.lineWidth = 1;
+    traceConformalBoundary(context, centerX, centerY, radius, amplitude, {
+      fill: options.fill || colors.accentLight,
+      stroke: "rgba(0, 0, 0, 0)",
+      lineWidth: .1,
+    });
+    context.strokeStyle = options.ringStroke || colors.teal;
+    context.lineWidth = 1.15;
     for (let ring = 1; ring <= ringCount; ring += 1) {
       context.beginPath();
       for (let index = 0; index <= 360; index += 1) {
@@ -823,6 +829,8 @@
       }
       context.stroke();
     }
+    context.strokeStyle = options.spokeStroke || colors.brown;
+    context.lineWidth = .9;
     for (let spoke = 0; spoke < spokeCount; spoke += 1) {
       const theta = spoke / spokeCount * Math.PI * 2;
       context.beginPath();
@@ -840,62 +848,6 @@
       lineWidth: 2.2,
     });
     context.restore();
-  };
-
-  const transferFieldValue = (radius, theta) => {
-    const boundaryEnvelope = (1 - radius * radius) ** 2;
-    return 1 + .50 * boundaryEnvelope * (
-      .68 * Math.cos(3 * Math.PI * radius)
-      + .42 * radius * radius * Math.cos(10 * theta)
-    );
-  };
-
-  const transferFieldColor = (value) => {
-    const signed = clamp((value - 1) / .55, -1, 1);
-    const amount = Math.abs(signed) * .82;
-    const neutral = { red: 242, green: 239, blue: 228 };
-    const target = signed >= 0
-      ? { red: 160, green: 0, blue: 0 }
-      : { red: 7, green: 87, blue: 96 };
-    return `rgb(${Math.round(mix(neutral.red, target.red, amount))}, ${Math.round(mix(neutral.green, target.green, amount))}, ${Math.round(mix(neutral.blue, target.blue, amount))})`;
-  };
-
-  const drawTransferField = (context, centerX, centerY, scale, mapped) => {
-    const radialCells = 11;
-    const angularCells = 48;
-    const project = (radius, theta) => {
-      const point = mapped
-        ? conformalPoint(radius, theta, 30, 1)
-        : { x: radius * Math.cos(theta), y: radius * Math.sin(theta) };
-      return { x: centerX + point.x * scale, y: centerY - point.y * scale };
-    };
-    for (let radial = 0; radial < radialCells; radial += 1) {
-      const inner = radial / radialCells;
-      const outer = (radial + 1) / radialCells;
-      for (let angular = 0; angular < angularCells; angular += 1) {
-        const theta0 = angular / angularCells * Math.PI * 2;
-        const theta1 = (angular + 1) / angularCells * Math.PI * 2;
-        const points = [
-          project(inner, theta0),
-          project(outer, theta0),
-          project(outer, theta1),
-          project(inner, theta1),
-        ];
-        const color = transferFieldColor(transferFieldValue(
-          (inner + outer) / 2,
-          (theta0 + theta1) / 2,
-        ));
-        context.beginPath();
-        context.moveTo(points[0].x, points[0].y);
-        points.slice(1).forEach((point) => context.lineTo(point.x, point.y));
-        context.closePath();
-        context.fillStyle = color;
-        context.fill();
-        context.strokeStyle = color;
-        context.lineWidth = .55;
-        context.stroke();
-      }
-    }
   };
 
   const drawCorrespondingPoint = (context, x, y, label, options = {}) => {
@@ -934,29 +886,27 @@
     );
     const diskCenter = compact
       ? { x: width / 2, y: height * .27 }
-      : { x: width * .76, y: height * .53 };
+      : { x: width * .24, y: height * .53 };
     const domainCenter = compact
       ? { x: width / 2, y: height * .73 }
-      : { x: width * .24, y: height * .53 };
+      : { x: width * .76, y: height * .53 };
 
-    drawTransferField(context, diskCenter.x, diskCenter.y, radius, false);
     drawMappedGrid(context, diskCenter.x, diskCenter.y, radius, {
       amplitude: 0,
-      alpha: .45,
+      alpha: .82,
       stroke: colors.heading,
     });
-    drawTransferField(context, domainCenter.x, domainCenter.y, radius, true);
     drawMappedGrid(context, domainCenter.x, domainCenter.y, radius, {
       amplitude: 1,
-      alpha: .45,
+      alpha: .82,
       stroke: colors.accent,
     });
     if (compact) {
       drawLabel(context, "fixed disk 𝔻", diskCenter.x, diskCenter.y - radius - 14, { align: "center", color: colors.heading, size: 14, weight: 700 });
       drawLabel(context, "physical domain Ω", domainCenter.x, domainCenter.y - radius - 14, { align: "center", color: colors.heading, size: 14, weight: 700 });
     } else {
-      drawLabel(context, "physical domain Ω", domainCenter.x, domainCenter.y - radius - 24, { align: "center", color: colors.heading, size: 14, weight: 700 });
       drawLabel(context, "fixed disk 𝔻", diskCenter.x, diskCenter.y - radius - 24, { align: "center", color: colors.heading, size: 14, weight: 700 });
+      drawLabel(context, "image Ω = φₚ(𝔻)", domainCenter.x, domainCenter.y - radius - 24, { align: "center", color: colors.heading, size: 14, weight: 700 });
     }
 
     const sampleRadius = .62;
@@ -978,35 +928,27 @@
       drawArrow(context, arrowX, arrowTop, arrowX, arrowBottom, { color: colors.teal, width: 2.2, head: 8 });
       drawLabel(context, "φₚ", arrowX + 12, (arrowTop + arrowBottom) / 2 + 4, { color: colors.teal, size: 14, weight: 700 });
     } else {
-      const arrowStart = diskCenter.x - radius - 32;
-      const arrowEnd = domainCenter.x + radius + 32;
+      const arrowStart = diskCenter.x + radius + 32;
+      const arrowEnd = domainCenter.x - radius - 32;
       drawArrow(context, arrowStart, diskCenter.y, arrowEnd, domainCenter.y, { color: colors.teal, width: 2.2, head: 8 });
       drawLabel(context, "φₚ", (arrowStart + arrowEnd) / 2, diskCenter.y - 14, { align: "center", color: colors.teal, size: 14, weight: 700 });
     }
 
-    drawCorrespondingPoint(context, diskPoint.x, diskPoint.y, "z", {
+    drawCorrespondingPoint(context, diskPoint.x, diskPoint.y, "z₀", {
       color: colors.teal,
       halo: "rgba(7, 87, 96, .28)",
       labelX: 10,
       labelY: -10,
     });
-    drawCorrespondingPoint(context, physicalPoint.x, physicalPoint.y, "x = φₚ(z)", {
+    drawCorrespondingPoint(context, physicalPoint.x, physicalPoint.y, "φₚ(z₀)", {
       color: colors.accent,
       labelX: 10,
       labelY: -10,
     });
 
-    drawLabel(
-      context,
-      compact ? "same field value at z and φₚ(z)" : "schematic scalar field · same sampled colour at z and x",
-      width / 2,
-      height - 16,
-      { align: "center", color: colors.muted, size: compact ? 12 : 14 },
-    );
-
     pullbackCanvas.setAttribute(
       "aria-label",
-      "Schematic mechanism. The fixed disk is mapped by phi sub p to the physical domain. A marked disk point z maps to x equals phi sub p of z, and its sampled colour matches exactly on both sides. The colours are an illustrative scalar field for the coordinate transfer, not the certified eigenfunction. The exact identity is U of z equals u of x.",
+      "The actual thirty-term map phi sub p sends a polar grid on the unit disk to a curved conformal grid on the physical domain. A marked point z sub zero maps to phi sub p of z sub zero.",
     );
   };
 

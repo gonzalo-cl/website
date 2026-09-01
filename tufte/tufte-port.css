@@ -29,6 +29,7 @@
   --paper-2: #f7f4e9;
   --paper-3: #ece8dc;
   --muted: #666158;
+  --brown: #4a3428;
   --line: rgba(17, 17, 17, 0.2);
   --line-light: rgba(255, 255, 248, 0.2);
   --orange: #a00000;
@@ -101,6 +102,7 @@
   --measure-margin-in-figure: 40%;
   --measure-gutter-in-figure: 5%;
   --measure-half-reading: 27.5%;
+  --measure-reading-lane: 32rem;
   --measure-note-in-reading: 50%;
   --measure-note-offset: -60%;
   --measure-side-figure-in-reading: var(--measure-note-in-reading);
@@ -525,7 +527,10 @@ body.tufte-site main .paper-frontmatter-section > p {
 }
 body.tufte-site main .paper-frontmatter-section > p:last-child { margin-bottom: 0; }
 
-.intro-proof-overview { margin-top: 2.5rem; }
+.paper-abstract > .formal-statement-pair {
+  margin-top: 1.35rem;
+  margin-bottom: 1.35rem;
+}
 
 .chapter-pagination {
   width: var(--measure-reading);
@@ -852,6 +857,8 @@ body.tufte-site main section > .math-statement,
 .math-statement-body > :first-child { margin-top: 0 !important; }
 .math-statement-body > :last-child { margin-bottom: 0 !important; }
 .math-statement-body :is(h2, h3) { margin: 0 0 1rem; }
+.math-statement-body .statement-equation-stack { margin: 1rem 0; }
+.math-statement-body .statement-equation-stack > .tex-display { margin: .2rem 0; }
 body.tufte-site main .math-statement-body p,
 body.tufte-site main .math-statement-body li {
   width: 100%;
@@ -859,12 +866,6 @@ body.tufte-site main .math-statement-body li {
   color: var(--ink);
   font-size: var(--type-proof) !important;
   line-height: var(--leading-proof);
-}
-body.tufte-site main .math-statement-body > p.math-statement-title {
-  margin-bottom: .75rem;
-  font-family: var(--font-prose);
-  font-style: normal;
-  font-weight: var(--weight-emphasis);
 }
 .math-statement-problem .math-statement-body p,
 .math-statement-question .math-statement-body p,
@@ -1199,9 +1200,6 @@ body.tufte-site main .schiffer-mode-heading h4 {
 }
 .schiffer-mode-panel canvas { background: var(--paper); border: 0; }
 .schiffer-mode-controls { border: 0; border-top: 0; }
-.membrane-model-note { padding: .75rem 0 0; }
-.membrane-model-note { font-style: italic; }
-
 .phase-derivation-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 
 /* A reusable prose-with-margin-figure primitive. Content authors choose the
@@ -1466,14 +1464,24 @@ body.tufte-site main details.lean-statement > .lean-statement-body {
 }
 .lean-semantic-term {
   border-radius: .12rem;
-  box-shadow: inset 0 -.32em 0 rgba(160, 0, 0, .12);
   cursor: help;
   outline: 0;
-  transition: color .12s ease, box-shadow .12s ease;
+  text-decoration: none;
+  transition: color .12s ease, background-color .12s ease;
 }
 .lean-semantic-term:is(:hover, :focus-visible, .is-lean-selected) {
   color: var(--orange);
-  box-shadow: inset 0 -.5em 0 rgba(160, 0, 0, .2);
+  background: rgba(160, 0, 0, .075);
+}
+.lean-mathlib-term {
+  border-radius: .12rem;
+  color: inherit !important;
+  text-decoration: none !important;
+  transition: color .12s ease, background-color .12s ease;
+}
+.lean-mathlib-term:is(:hover, :focus-visible) {
+  color: var(--teal) !important;
+  background: rgba(40, 123, 123, .1);
 }
 body.tufte-site main .lean-statement-caption {
   width: 100%;
@@ -1549,6 +1557,7 @@ body.tufte-site main .lean-formalization-remark > p {
 .lean-paper-term {
   cursor: help;
   outline: 0;
+  text-decoration: none;
 }
 .lean-paper-term:focus-visible {
   background: rgba(160, 0, 0, .075);
@@ -4319,6 +4328,47 @@ body.tufte-site main .geometry-laboratory > .geometry-controls {
   background: rgba(255, 255, 248, .94) !important;
   border: 1px solid var(--line) !important;
 }
+body.tufte-site main .probe-figure > :is(.probe-domain-controls, .probe-motion-controls) {
+  align-self: start;
+  width: clamp(10rem, 25%, 13rem);
+  max-height: calc(100% - 1.5rem);
+  margin-top: .75rem;
+  overflow: visible;
+}
+body.tufte-site main .probe-figure > .probe-domain-controls {
+  justify-self: start;
+  margin-left: .75rem;
+}
+body.tufte-site main .probe-figure > .probe-motion-controls {
+  justify-self: end;
+  margin-right: .75rem;
+  margin-left: 0;
+}
+body.tufte-site main .probe-figure .probe-motion-controls .geometry-scrub:first-child { margin-top: 0; }
+body.tufte-site main .probe-figure .probe-motion-controls .geometry-scrub + .geometry-scrub {
+  margin-top: 1rem;
+  padding-top: .8rem;
+  border-top: 1px solid var(--line);
+}
+body.tufte-site main .probe-dilation-track { position: relative; }
+body.tufte-site main .probe-dilation-track input { position: relative; z-index: 1; width: 100%; }
+body.tufte-site main .probe-dilation-track i {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 50%;
+  width: 2px;
+  height: .8rem;
+  background: var(--teal);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+body.tufte-site main .probe-dilation-control[data-snapped="true"] output { color: var(--teal); }
+body.tufte-site main .probe-integral-label {
+  color: var(--ink) !important;
+  font-family: var(--font-caption);
+}
+body.tufte-site main .probe-integral-label .katex { font-size: var(--type-caption) !important; }
 body.tufte-site main .geometry-laboratory .geometry-stages button {
   grid-template-columns: 1.55rem minmax(0, 1fr);
   gap: .35rem;
@@ -5026,8 +5076,8 @@ body.tufte-site main .range-scale { color: var(--muted); }
 .route-comparison-continuations a { color: var(--ink); }
 
 .proof-atlas {
-  width: var(--measure-reading);
-  max-width: var(--measure-reading);
+  width: var(--measure-folio);
+  max-width: var(--measure-folio);
   container: proof-atlas / inline-size;
   margin: 4.25rem 0 5rem;
   padding: 1.4rem 0 0;
@@ -5082,17 +5132,21 @@ body.tufte-site main .proof-atlas-heading > p:last-child {
 .proof-atlas-root .proof-node-card { max-width: 32rem; margin: .55rem auto 0; }
 .proof-atlas-lanes {
   display: grid;
-  grid-template-columns: repeat(2, minmax(32rem, 1fr));
+  grid-template-columns: repeat(2, minmax(0, var(--measure-reading-lane)));
+  justify-content: space-between;
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
 }
-.proof-atlas-lane { min-width: 0; padding: 1.2rem; }
+.proof-atlas-lane { box-sizing: border-box; min-width: 0; padding: 1.2rem; }
 .proof-atlas-lane + .proof-atlas-lane { border-left: 1px solid var(--line); }
 
-/* The lanes share the prose measure and collapse when the component itself
-   no longer has room for two compact dependency columns. */
+/* Each lane uses the shared compact reading measure; the component itself
+   decides when two such lanes no longer fit and stacks them before overflow. */
 @container proof-atlas (max-width: 64rem) {
-  .proof-atlas-lanes { grid-template-columns: minmax(0, 1fr); }
+  .proof-atlas-lanes {
+    width: min(100%, var(--measure-reading-lane));
+    grid-template-columns: minmax(0, 1fr);
+  }
   .proof-atlas-lane + .proof-atlas-lane {
     border-top: 1px solid var(--ink);
     border-left: 0;
@@ -5218,6 +5272,7 @@ body.tufte-site main .proof-atlas-lane > header h4 {
 }
 .proof-atlas-detail {
   width: 100%;
+  max-width: var(--measure-reading-lane);
   min-height: 10rem;
   margin: 1.25rem auto;
   padding: 1rem 1.15rem;
@@ -5259,7 +5314,7 @@ body.tufte-site main .proof-atlas-detail p {
   display: block;
   width: 100%;
   height: auto;
-  color: var(--muted);
+  color: var(--brown);
   overflow: visible;
 }
 .proof-fork-mark > path {
@@ -5267,7 +5322,7 @@ body.tufte-site main .proof-atlas-detail p {
   stroke: currentColor;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-width: 1.25;
+  stroke-width: 2.2;
   vector-effect: non-scaling-stroke;
 }
 .proof-fork-mark marker path { fill: currentColor; }
@@ -5279,9 +5334,9 @@ body.tufte-site main .proof-atlas-detail p {
 body.tufte-site main .proof-fork-options a {
   display: block;
   padding: .5rem .4rem;
-  color: var(--ink);
+  color: var(--brown);
   font-family: var(--font-heading);
-  font-size: var(--type-note);
+  font-size: var(--type-proof);
   font-weight: var(--weight-regular);
   line-height: 1.35;
   text-align: center;

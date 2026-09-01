@@ -13,15 +13,9 @@
         "abbrev Plane := ℂ",
         "abbrev RigidMotion := AffineIsometryEquiv ℝ Plane Plane",
         "",
-        "/-- The measurement map for a set `Ω` takes a continuous function",
-        "`f ∈ C⁰(Plane, ℝ)` to its integrals over the rigid-motion images",
-        "of `Ω`. -/",
         "def MeasurementMap (Ω : Set Plane) (f : C(Plane, ℝ)) :",
         "    RigidMotion → ℝ :=",
         "  fun E ↦ ∫ x in E '' Ω, f x",
-        "",
-        "/-- A set `Ω` has the **Pompeiu property** if its measurement map",
-        "is injective. -/",
         "",
         "def HasPompeiuProperty (Ω : Set (Plane)) : Prop :=",
         "  (MeasurementMap Ω).Injective",
@@ -31,8 +25,7 @@
       title: "DiskNotPompeiu",
       source: [
         "lemma DiskNotPompeiu (c : Plane) (r : ℝ) (hr : r > 0) :",
-        "    ¬ HasPompeiuProperty (Metric.ball c r) := by",
-        "  sorry",
+        "    ¬ HasPompeiuProperty (Metric.ball c r)",
       ].join("\n"),
     }),
     "schiffer-property": Object.freeze({
@@ -40,7 +33,6 @@
       source: [
         "open Gradient Laplacian",
         "",
-        "-- By rescaling the domain we may assume λ = 1.",
         "def IsSchifferDomain (Ω : Set (Plane)) : Prop :=",
         "  ∃ (u : Plane → ℝ),",
         "    ContDiff ℝ 2 u ∧",
@@ -56,22 +48,18 @@
         "    {Ω : Set Plane}",
         "    (hbounded : IsBounded Ω)",
         "    (hC2 : HasC2Boundary Ω) :",
-        "    IsSchifferDomain Ω ↔ ¬ HasPompeiuProperty Ω := by",
-        "  sorry",
+        "    IsSchifferDomain Ω ↔ ¬ HasPompeiuProperty Ω",
       ].join("\n"),
     }),
     "schiffer-star-shaped": Object.freeze({
       title: "Schiffer_Star_Shaped",
       alignmentScope: "primary-declaration",
-      caption: "The Lean statement records C² boundary regularity. Williams’s theorem says that every planar Lipschitz counterexample has real-analytic, hence smooth, boundary; that regularity upgrade is not yet formalized.",
+      caption: "The Lean statement records C² boundary regularity. Williams’s theorem says that every planar Lipschitz counterexample has real-analytic, hence smooth, boundary; that regularity upgrade is not formalized in this work.",
       captionCitation: Object.freeze({
         href: "https://doi.org/10.1512/iumj.1981.30.30028",
         label: "Williams (1981)",
       }),
       source: [
-        "/-- A regular `C²` super-level set.",
-        "The set `Ω` is open because its",
-        "defining function is continuous. -/",
         "def HasC2Boundary",
         "    (Ω : Set Plane) : Prop :=",
         "  ∃ (F : Plane → ℝ),",
@@ -80,8 +68,12 @@
         "    ∀ x, F x = 0 →",
         "      ∇ F x ≠ 0",
         "",
-        "/-- An ordinary open Euclidean disk,",
-        "with arbitrary centre and radius. -/",
+        "def IsSchifferDomain (Ω : Set Plane) : Prop :=",
+        "  ∃ (u : Plane → ℝ), ContDiff ℝ 2 u ∧",
+        "    (∀ x ∈ Ω, -(Δ u) x = u x) ∧",
+        "    (∀ x ∈ frontier Ω, u x = 1) ∧",
+        "    (∀ x ∈ frontier Ω, ∇ u x = 0)",
+        "",
         "def IsEuclideanDisk",
         "    (Ω : Set Plane) : Prop :=",
         "  ∃ (c : Plane) (r : ℝ),",
@@ -104,8 +96,7 @@
         "    IsBounded Ω ∧ Nonempty Ω ∧",
         "    StarConvex ℝ 0 Ω ∧ HasC2Boundary Ω ∧",
         "    ¬ IsEuclideanDisk Ω ∧",
-        "    ¬ HasPompeiuProperty Ω := by",
-        "  sorry",
+        "    ¬ HasPompeiuProperty Ω",
       ].join("\n"),
     }),
     "uniform-cone-bifurcation": Object.freeze({
@@ -116,9 +107,6 @@
         "",
         "open Set BesselFunction",
         "",
-        "/-- `Cone.Crossing` packages the coincidence `J 1 ρ = 0` and",
-        "`J R ρ = 0`.  All sufficiently large crossings in the spectral",
-        "window `[2, 3]` carry a uniformly controlled `C³` branch. -/",
         "theorem exists_uniformConeBranch (sreg : ℕ) :",
         "  ∃ u : Cone.UniformCollarData, ∃ R₀ s₀ C : ℝ,",
         "    ∃ hbase : u.R₀ ≤ R₀,",
@@ -129,8 +117,7 @@
         "          s₀ < b.amplitudeRadius ∧",
         "          ContDiff ℝ 3 b.radius ∧",
         "          ∀ j ≤ 3, ∀ s ∈ Set.Icc (-s₀) s₀,",
-        "            ‖iteratedDeriv j b.radius s‖ ≤ C := by",
-        "  sorry",
+        "            ‖iteratedDeriv j b.radius s‖ ≤ C",
       ].join("\n"),
     }),
     "near-integer-crossings": Object.freeze({
@@ -141,9 +128,6 @@
         "",
         "open BesselFunction",
         "",
-        "/-- Here `J : ℝ → ℝ → ℝ` is the Bessel function of the first kind,",
-        "with real order and real argument.  Bessel coincidences occur",
-        "arbitrarily close above arbitrarily large integer orders. -/",
         "theorem exists_nearIntegerCrossing",
         "    (δ : ℝ) (hδ : 0 < δ) (Nmin : ℕ) :",
         "    ∃ (N : ℕ) (R ρ : ℝ),",
@@ -151,15 +135,14 @@
         "      (N : ℝ) < R ∧ R < (N : ℝ) + δ ∧",
         "      0 < ρ ∧",
         "      J 1 ρ = 0 ∧ J R ρ = 0 ∧",
-        "      2 < ρ ^ 2 / R ^ 2 ∧ ρ ^ 2 / R ^ 2 < 3 := by",
-        "  sorry",
+        "      2 < ρ ^ 2 / R ^ 2 ∧ ρ ^ 2 / R ^ 2 < 3",
       ].join("\n"),
     }),
   });
 
   const regularityRemark = Object.freeze({
     noteTitle: "Formalization remark",
-    note: "The Schiffer conjecture is generally stated for Lipschitz domains. A C² boundary is Lipschitz, and S. A. Williams proved that a planar Lipschitz domain without the Pompeiu property has real-analytic boundary. Thus the Lean theorem reaches the conjecture’s usual regularity class, while the upgrade to the paper’s smooth statement remains unformalized.",
+    note: "The Schiffer conjecture is usually posed for Lipschitz domains. S. A. Williams proved that a planar Lipschitz counterexample has real-analytic boundary. A C² boundary is Lipschitz, so the Lean theorem reaches the conjecture’s usual regularity class; the upgrade used to match the paper’s word “smooth” is not formalized in this work.",
     sources: Object.freeze([
       Object.freeze({
         href: "https://doi.org/10.1512/iumj.1981.30.30028",
@@ -192,7 +175,43 @@
       href: "https://leanprover-community.github.io/mathlib4_docs/Mathlib/Analysis/Convex/Star.html#StarConvex",
       label: "Mathlib docs",
     }),
+    contDiff: Object.freeze({
+      href: "https://leanprover-community.github.io/mathlib4_docs/Mathlib/Analysis/Calculus/ContDiff/Defs.html#ContDiff",
+      label: "ContDiff · Mathlib",
+    }),
+    metricBall: Object.freeze({
+      href: "https://leanprover-community.github.io/mathlib4_docs/Mathlib/Topology/MetricSpace/Pseudo/Defs.html#Metric.ball",
+      label: "Metric.ball · Mathlib",
+    }),
+    affineIsometryEquiv: Object.freeze({
+      href: "https://leanprover-community.github.io/mathlib4_docs/Mathlib/Analysis/Normed/Affine/Isometry.html#AffineIsometryEquiv",
+      label: "AffineIsometryEquiv · Mathlib",
+    }),
+    frontier: Object.freeze({
+      href: "https://leanprover-community.github.io/mathlib4_docs/Mathlib/Topology/Defs/Basic.html#frontier",
+      label: "frontier · Mathlib",
+    }),
+    gradient: Object.freeze({
+      href: "https://leanprover-community.github.io/mathlib4_docs/Mathlib/Analysis/Calculus/Gradient/Basic.html#gradient",
+      label: "gradient · Mathlib",
+    }),
+    laplacian: Object.freeze({
+      href: "https://leanprover-community.github.io/mathlib4_docs/Mathlib/Analysis/Distribution/DerivNotation.html#Laplacian",
+      label: "Laplacian · Mathlib",
+    }),
+    iteratedDeriv: Object.freeze({
+      href: "https://leanprover-community.github.io/mathlib4_docs/Mathlib/Analysis/Calculus/IteratedDeriv/Defs.html#iteratedDeriv",
+      label: "iteratedDeriv · Mathlib",
+    }),
   });
+
+  const mathlibTerms = Object.freeze([
+    Object.freeze({ token: "ContDiff", documentation: mathlibDocumentation.contDiff }),
+    Object.freeze({ token: "Metric.ball", documentation: mathlibDocumentation.metricBall }),
+    Object.freeze({ token: "AffineIsometryEquiv", documentation: mathlibDocumentation.affineIsometryEquiv }),
+    Object.freeze({ token: "frontier", documentation: mathlibDocumentation.frontier }),
+    Object.freeze({ token: "iteratedDeriv", documentation: mathlibDocumentation.iteratedDeriv }),
+  ]);
 
   const boundedAlignment = Object.freeze({
     token: "IsBounded",
@@ -205,7 +224,6 @@
     token: "Nonempty",
     concept: "nonempty",
     paper: "nonempty",
-    explanation: "Here Ω is coerced to its subtype, so Nonempty Ω means that Ω contains a point",
   });
   const planeAlignment = Object.freeze({
     token: "Plane",
@@ -224,7 +242,8 @@
     token: "IsEuclideanDisk",
     concept: "not-disk",
     paper: "not a disk",
-    explanation: "This project-local predicate means that Ω is an open metric ball; the theorem negates it",
+    explanation: "This project-local predicate says that Ω is an ordinary open Euclidean disk, with arbitrary centre and radius; the theorem negates it",
+    documentation: mathlibDocumentation.metricBall,
   });
 
   /* Each entry names a Lean token, its paper-level meaning, and the semantic
@@ -250,30 +269,52 @@
         token: "Metric.ball",
         concept: "disk",
         paper: "disk",
+        documentation: mathlibDocumentation.metricBall,
       }),
       Object.freeze({
         token: "HasPompeiuProperty",
         concept: "fails",
         paper: "fails the Pompeiu property",
-        noteTitle: "Formalization remark",
-        note: "The displayed Lean declaration records the theorem statement. The Bessel-function witness and proof are still represented by sorry.",
       }),
     ]),
     "schiffer-property": Object.freeze([
+      Object.freeze({
+        token: "ContDiff",
+        concept: "regularity",
+        paper: "a C² function",
+        explanation: "Mathlib’s predicate that the field has continuous derivatives through order two",
+        documentation: mathlibDocumentation.contDiff,
+      }),
       Object.freeze({
         token: "IsSchifferDomain",
         concept: "schiffer-system",
         paper: "the Schiffer system",
       }),
       Object.freeze({
+        token: "Δ u",
+        concept: "schiffer-system",
+        paper: "the Schiffer system",
+        explanation: "The Laplacian term in the normalized Helmholtz equation",
+        documentation: mathlibDocumentation.laplacian,
+      }),
+      Object.freeze({
+        token: "frontier Ω",
+        concept: "boundary",
+        paper: "the boundary ∂Ω",
+        explanation: "Mathlib’s topological boundary of Ω",
+        documentation: mathlibDocumentation.frontier,
+      }),
+      Object.freeze({
         token: "∇ u",
         concept: "gradient",
         paper: "the equivalent boundary condition ∇u = 0",
+        documentation: mathlibDocumentation.gradient,
       }),
       Object.freeze({
-        token: "λ = 1",
+        token: "= u x",
         concept: "normalization",
         paper: "normalizing the eigenvalue to λ = 1",
+        explanation: "The unit coefficient of u fixes the normalized eigenvalue at λ = 1",
         noteTitle: "Formalization remark",
         note: "The paper keeps λ visible; the Lean predicate rescales the domain and fixes λ = 1. The equivalence of these conventions is explained in the prose but not proved in this excerpt.",
       }),
@@ -284,7 +325,8 @@
         token: "HasC2Boundary",
         concept: "regularity",
         paper: "smooth boundary",
-        explanation: "A project-local predicate requiring the domain to be a regular C² super-level set",
+        explanation: "A project-local predicate expressing the domain as a regular C² super-level set. The defining function is continuous, so the super-level set is open",
+        documentation: mathlibDocumentation.contDiff,
         ...regularityRemark,
       }),
       Object.freeze({
@@ -297,8 +339,6 @@
         token: "HasPompeiuProperty",
         concept: "pompeiu",
         paper: "fails the Pompeiu property",
-        noteTitle: "Formalization remark",
-        note: "The equivalence is stated with the paper hypotheses, but its proof is still represented by sorry.",
       }),
     ]),
     "schiffer-star-shaped": Object.freeze([
@@ -310,7 +350,8 @@
         token: "HasC2Boundary",
         concept: "regularity",
         paper: "smooth",
-        explanation: "A project-local predicate requiring Ω to be a regular C² super-level set",
+        explanation: "A project-local predicate expressing Ω as a regular C² super-level set. The defining function is continuous, so Ω is open",
+        documentation: mathlibDocumentation.contDiff,
         ...regularityRemark,
       }),
       euclideanDiskAlignment,
@@ -318,11 +359,7 @@
         token: "IsSchifferDomain",
         concept: "schiffer",
         paper: "solves the Schiffer problem",
-        explanation: "The project-local predicate for the normalized Schiffer boundary-value problem; its definition appears",
-        reference: Object.freeze({
-          href: "#lean-statement-schiffer-property",
-          label: "below",
-        }),
+        explanation: "The displayed project-local predicate for the normalized Schiffer boundary-value problem",
       }),
     ]),
     "pompeiu-star-shaped": Object.freeze([
@@ -334,7 +371,8 @@
         token: "HasC2Boundary",
         concept: "regularity",
         paper: "regular C² boundary",
-        explanation: "A project-local predicate requiring Ω to be a regular C² super-level set",
+        explanation: "A project-local predicate expressing Ω as a regular C² super-level set. The defining function is continuous, so Ω is open",
+        documentation: mathlibDocumentation.contDiff,
         ...regularityRemark,
       }),
       euclideanDiskAlignment,
@@ -342,8 +380,6 @@
         token: "HasPompeiuProperty",
         concept: "pompeiu",
         paper: "does not have the Pompeiu property",
-        noteTitle: "Formalization remark",
-        note: "The corollary’s statement is encoded, while its deduction from the Schiffer theorem and Williams’s equivalence is still represented by sorry.",
       }),
     ]),
     "uniform-cone-bifurcation": Object.freeze([
@@ -357,7 +393,21 @@
         concept: "uniform-control",
         paper: "one branch interface with crossing-independent control",
         noteTitle: "Formalization remark",
-        note: "The excerpt records the intended public interface. The project-specific cone structures and the analytic bifurcation proof are not part of Mathlib, and the proof remains sorry.",
+        note: "The excerpt records the intended public interface. The cone structures and uniform branch package are project-specific rather than Mathlib definitions.",
+      }),
+      Object.freeze({
+        token: "ContDiff",
+        concept: "uniform-control",
+        paper: "crossing-independent C³ control",
+        explanation: "Mathlib’s predicate expressing the branch’s C³ regularity",
+        documentation: mathlibDocumentation.contDiff,
+      }),
+      Object.freeze({
+        token: "iteratedDeriv",
+        concept: "uniform-control",
+        paper: "uniform bounds for the first three derivatives",
+        explanation: "Mathlib’s iterated one-variable derivative",
+        documentation: mathlibDocumentation.iteratedDeriv,
       }),
     ]),
     "near-integer-crossings": Object.freeze([
@@ -381,7 +431,7 @@
         concept: "window",
         paper: "the frequency constrained by 2 < ρ²/R² < 3",
         noteTitle: "Formalization remark",
-        note: "The quantified conclusion is encoded. The McMahon–Debye phase alignment and equidistribution argument are not yet formalized; the proof remains sorry.",
+        note: "The quantified conclusion is encoded. The McMahon–Debye phase alignment and equidistribution argument are not formalized in this work.",
       }),
     ]),
   });
@@ -516,7 +566,7 @@
     let consumed = 0;
     let node = walker.nextNode();
     while (node) {
-      const parentTerm = node.parentElement?.closest(".lean-semantic-term");
+      const parentTerm = node.parentElement?.closest(".lean-semantic-term, .lean-mathlib-term");
       if (!parentTerm) {
         let fromIndex = Math.max(0, minimumOffset - consumed);
         let index = node.data.indexOf(token, fromIndex);
@@ -582,16 +632,44 @@
     source.dataset.semanticAnnotated = "true";
   };
 
-  const highlight = (disclosure) => {
-    if (!disclosure.open || typeof window.hljs?.highlightElement !== "function") return;
-    const source = disclosure.querySelector(":scope > .lean-statement-body code.language-lean");
-    if (!source) return;
-    if (source.dataset.highlighted !== "yes") window.hljs.highlightElement(source);
-    const statementDefinition = statements[disclosure.dataset.statement];
-    annotateSource(disclosure, source, statementDefinition);
+  const annotateMathlibTerms = (source) => {
+    if (source.dataset.mathlibAnnotated === "true") return;
+    mathlibTerms.forEach(({ token, documentation }) => {
+      const match = findTextOccurrence(source, token);
+      if (!match) return;
+      const { index, node } = match;
+      const before = node.data.slice(0, index);
+      const after = node.data.slice(index + token.length);
+      const fragment = document.createDocumentFragment();
+      if (before) fragment.append(document.createTextNode(before));
+      const link = document.createElement("a");
+      link.className = "lean-mathlib-term";
+      link.href = documentation.href;
+      link.target = "_blank";
+      link.rel = "noreferrer";
+      link.textContent = token;
+      link.title = documentation.label;
+      link.setAttribute("aria-label", `${token}: open Mathlib documentation`);
+      fragment.append(link);
+      if (after) fragment.append(document.createTextNode(after));
+      node.replaceWith(fragment);
+    });
+    source.dataset.mathlibAnnotated = "true";
   };
 
-  const bindPaperTerms = (disclosure, key, controller) => {
+  const highlight = (disclosure) => {
+    if (!disclosure.open) return;
+    const source = disclosure.querySelector(":scope > .lean-statement-body code.language-lean");
+    if (!source) return;
+    if (source.dataset.highlighted !== "yes" && typeof window.hljs?.highlightElement === "function") {
+      window.hljs.highlightElement(source);
+    }
+    const statementDefinition = statements[disclosure.dataset.statement];
+    annotateSource(disclosure, source, statementDefinition);
+    annotateMathlibTerms(source);
+  };
+
+  const bindPaperTerms = (disclosure, key, controller, notesTarget) => {
     controller.alignments.forEach((alignment) => {
       paperTargets(key, alignment.concept).forEach((target) => {
         const concepts = target.dataset.leanAlignment.trim().split(/\s+/u);
@@ -606,6 +684,7 @@
 
         const select = () => {
           disclosure.open = true;
+          if (notesTarget) notesTarget.hidden = false;
           highlight(disclosure);
           controller.show(alignment, { pin: true });
         };
@@ -657,13 +736,16 @@
     action.textContent = "show +";
     summary.append(heading, action);
 
+    const alignments = semanticAlignments[key] || [];
     const body = document.createElement("div");
     body.className = "lean-statement-body";
     body.id = disclosure.id + "-body";
     const pre = document.createElement("pre");
     const source = document.createElement("code");
     source.className = "language-lean";
-    source.textContent = statement.source;
+    source.textContent = alignments.length
+      ? `-- Hover over terms for explanations\n-- and semantic alignment with the paper.\n\n${statement.source}`
+      : statement.source;
     pre.append(source);
     if (statement.caption) {
       const caption = document.createElement("p");
@@ -695,12 +777,11 @@
       });
       (notesTarget || body).append(sourceLinks);
     }
-    const alignments = semanticAlignments[key] || [];
     if (alignments.length) {
       const controller = createAlignmentController(key, alignments);
       alignmentControllers.set(disclosure, controller);
       (notesTarget || body).append(controller.panel);
-      bindPaperTerms(disclosure, key, controller);
+      bindPaperTerms(disclosure, key, controller, notesTarget);
     }
     disclosure.append(summary, body);
     host.replaceWith(disclosure);

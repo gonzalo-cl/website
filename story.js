@@ -1503,11 +1503,13 @@
 
   bindEncoding();
 
-  /* Move a domain over cos(x_1) and watch its integral.  For a Schiffer domain
+  /* Move a domain over sin(x_1) and watch its integral.  For a Schiffer domain
      the integral vanishes for every rigid motion, which is the Pompeiu failure
      itself.  Each domain is rescaled so that its own frequency becomes 1. */
-  const PROBE = { domain: 0, t1: 0, t2: 0, angle: 0, dragging: false, mode: "move" };
-  const PROBE_PLOT_SPAN = 12;
+  const PROBE = { domain: 0, t1: 0, t2: 0, angle: 0, dilation: 1, dragging: false, mode: "move" };
+  const PROBE_DILATION_MIN = .985;
+  const PROBE_DILATION_MAX = 1.015;
+  const PROBE_DILATION_SNAP = .00065;
 
   /* Polar Fourier coefficients of k phi(D), derived from the same thirty
      printed q_j coefficients used for the D_10 numerical centre in Section 3.
@@ -1604,7 +1606,11 @@
     if (!select("#probeCanvasWrap")) return;
     const { canvas, context, width, height } = canvasMetrics("#probeCanvas", "#probeCanvasWrap", 560);
     const domains = probeDomains();
-    const domain = domains[Math.min(PROBE.domain, domains.length - 1)];
+    const referenceDomain = domains[Math.min(PROBE.domain, domains.length - 1)];
+    const domain = {
+      ...referenceDomain,
+      radius: (theta) => PROBE.dilation * referenceDomain.radius(theta),
+    };
     context.clearRect(0, 0, width, height);
 
     const plotHeight = 92;
@@ -1624,15 +1630,15 @@
     PROBE.t1 = Math.max(-limitX, Math.min(limitX, PROBE.t1));
     PROBE.t2 = Math.max(-limitY, Math.min(limitY, PROBE.t2));
 
-    // A continuous diverging map makes the cosine visible as a smooth wave:
-    // negative and positive extrema meet at the paper colour when cos(x₁)=0.
+    // A continuous diverging map makes the sine visible as a smooth wave:
+    // negative and positive extrema meet at the paper colour when sin(x₁)=0.
     const image = context.createImageData(Math.round(width), Math.round(viewHeight));
     const pixels = image.data;
     const negativeWave = [7, 87, 96];
     const neutralWave = [255, 255, 248];
     const positiveWave = [180, 95, 6];
     for (let px = 0; px < image.width; px++) {
-      const value = Math.cos((px - cx) / scale);
+      const value = Math.sin((px - cx) / scale);
       const target = value < 0 ? negativeWave : positiveWave;
       const blend = Math.abs(value);
       for (let py = 0; py < image.height; py++) {
@@ -1663,11 +1669,26 @@
 
     const trace = [];
     const base = probeAmplitude(domain, PROBE.angle);
-    const integralAt = (shift) => Math.cos(shift) * base.re - Math.sin(shift) * base.im;
+    const integralAt = (shift) => Math.sin(shift) * base.re + Math.cos(shift) * base.im;
     const value = integralAt(PROBE.t1);
+    const amplitudeAtDilation = (dilation) => {
+      const scaledDomain = {
+        ...referenceDomain,
+        radius: (theta) => dilation * referenceDomain.radius(theta),
+      };
+      const amplitude = probeAmplitude(scaledDomain, PROBE.angle, 1000);
+      return Math.hypot(amplitude.re, amplitude.im);
+    };
+    const plotSpan = Math.max(
+      amplitudeAtDilation(PROBE_DILATION_MIN),
+      amplitudeAtDilation(PROBE_DILATION_MAX),
+      referenceDomain.vanishes ? 0 : Math.hypot(base.re, base.im),
+      1e-6,
+    ) * 1.12;
+    const plotLeft = Math.min(190, Math.max(140, width * .24));
     const traceSamples = Math.max(160, Math.round(width / 2));
     for (let i = 0; i <= traceSamples; i++) {
-      const x = i / traceSamples * width;
+      const x = plotLeft + i / traceSamples * (width - plotLeft);
       // Use the same screen-to-world map as the heat map above.  Their peaks,
       // zeros, and period therefore line up exactly in the two panels.
       const shift = (x - cx) / scale;
@@ -1675,22 +1696,25 @@
     }
     const top = viewHeight + 16, mid = top + plotHeight / 2;
     context.beginPath();
-    context.moveTo(0, mid); context.lineTo(width, mid);
+    context.moveTo(plotLeft, mid); context.lineTo(width, mid);
     context.strokeStyle = colors.grid; context.lineWidth = 1; context.stroke();
     context.beginPath();
     trace.forEach((sample, i) => {
-      const y = mid - sample.value / PROBE_PLOT_SPAN * (plotHeight / 2 - 8);
+      const y = mid - sample.value / plotSpan * (plotHeight / 2 - 8);
       if (!i) context.moveTo(sample.x, y); else context.lineTo(sample.x, y);
     });
-    context.strokeStyle = domain.vanishes ? colors.cyan : colors.orange;
+    const cancels = referenceDomain.vanishes && PROBE.dilation === 1;
+    context.strokeStyle = cancels ? colors.cyan : colors.orange;
     context.lineWidth = 2; context.stroke();
 
     const currentX = toX(PROBE.t1);
-    const currentY = mid - value / PROBE_PLOT_SPAN * (plotHeight / 2 - 8);
-    context.beginPath();
-    context.arc(currentX, currentY, 3.5, 0, TAU);
-    context.fillStyle = domain.vanishes ? colors.cyan : colors.orange;
-    context.fill();
+    const currentY = mid - value / plotSpan * (plotHeight / 2 - 8);
+    if (currentX >= plotLeft) {
+      context.beginPath();
+      context.arc(currentX, currentY, 3.5, 0, TAU);
+      context.fillStyle = cancels ? colors.cyan : colors.orange;
+      context.fill();
+    }
 
     document.querySelectorAll("[data-probe-domain]").forEach((button, index) => {
       button.classList.toggle("active", index === PROBE.domain);
@@ -1701,8 +1725,21 @@
     if (angle) angle.setAttribute("aria-valuetext", `${degrees.toFixed(1)} degrees`);
     const angleValue = select("#probeAngleValue");
     if (angleValue) angleValue.textContent = `${degrees.toFixed(0)}°`;
+    const dilation = select("#probeDilation");
+    const dilationValue = select("#probeDilationValue");
+    const dilationControl = dilation?.closest(".probe-dilation-control");
+    if (dilation) dilation.setAttribute("aria-valuetext", PROBE.dilation === 1
+      ? "correct scale, factor 1"
+      : `dilation factor ${PROBE.dilation.toFixed(4)}`);
+    if (dilationValue) dilationValue.textContent = `×${PROBE.dilation.toFixed(3)}`;
+    if (dilationControl) dilationControl.dataset.snapped = String(PROBE.dilation === 1);
+    const integralLabel = select("#probeIntegralLabel");
+    if (integralLabel) {
+      integralLabel.style.left = "12px";
+      integralLabel.style.top = `${mid - 9}px`;
+    }
     canvas.setAttribute("aria-label",
-      `${domain.name} over the plane wave cosine x one; the integral is ${value.toExponential(2)}.`);
+      `${domain.name}, dilated by ${PROBE.dilation.toFixed(4)}, over the plane wave sine x one; the integral is ${value.toExponential(2)}.`);
     PROBE.geometry = { toX, toY, scale, cx, cy, width, height, viewHeight };
   }
 
@@ -1735,13 +1772,23 @@
       slider.value = String(((PROBE.angle % TAU) + TAU) % TAU);
       fillRange(slider);
     };
+    const syncDilationSlider = () => {
+      const slider = select("#probeDilation");
+      if (!slider) return;
+      slider.value = String(PROBE.dilation);
+      fillRange(slider);
+    };
     canvas.addEventListener("pointerdown", (event) => {
       const point = planeOf(event);
       if (!point) return;
       event.preventDefault();
       canvas.setPointerCapture(event.pointerId);
       const domains = probeDomains();
-      const domain = domains[Math.min(PROBE.domain, domains.length - 1)];
+      const referenceDomain = domains[Math.min(PROBE.domain, domains.length - 1)];
+      const domain = {
+        ...referenceDomain,
+        radius: (theta) => PROBE.dilation * referenceDomain.radius(theta),
+      };
       PROBE.mode = probeInside(domain, point.x, point.y) ? "move" : "turn";
       PROBE.grab = point;
       PROBE.grabT1 = PROBE.t1; PROBE.grabT2 = PROBE.t2;
@@ -1795,11 +1842,21 @@
         renderPompeiuProbe();
       });
     }
+    const dilation = select("#probeDilation");
+    if (dilation) {
+      dilation.addEventListener("input", () => {
+        const requested = Math.max(PROBE_DILATION_MIN, Math.min(PROBE_DILATION_MAX, Number(dilation.value)));
+        PROBE.dilation = Math.abs(requested - 1) <= PROBE_DILATION_SNAP ? 1 : requested;
+        syncDilationSlider();
+        renderPompeiuProbe();
+      });
+    }
     document.querySelectorAll("[data-probe-domain]").forEach((button, index) => {
       button.addEventListener("click", () => {
         PROBE.domain = index;
-        PROBE.t1 = 0; PROBE.t2 = 0; PROBE.angle = 0;
+        PROBE.t1 = 0; PROBE.t2 = 0; PROBE.angle = 0; PROBE.dilation = 1;
         syncSlider();
+        syncDilationSlider();
         renderPompeiuProbe();
       });
     });
@@ -1811,19 +1868,25 @@
           t1: Number(PROBE.t1.toFixed(6)),
           t2: Number(PROBE.t2.toFixed(6)),
           angle: Number(PROBE.angle.toFixed(6)),
+          dilation: Number(PROBE.dilation.toFixed(6)),
         }),
         setState: (saved) => {
           const domain = Number(saved?.domain);
           const t1 = Number(saved?.t1);
           const t2 = Number(saved?.t2);
           const angleValue = Number(saved?.angle);
+          const dilationValue = saved?.dilation === undefined ? 1 : Number(saved.dilation);
           if (!Number.isInteger(domain) || domain < 0 || domain >= probeDomains().length
-              || !Number.isFinite(t1) || !Number.isFinite(t2) || !Number.isFinite(angleValue)) return;
+              || !Number.isFinite(t1) || !Number.isFinite(t2) || !Number.isFinite(angleValue)
+              || !Number.isFinite(dilationValue) || dilationValue < PROBE_DILATION_MIN
+              || dilationValue > PROBE_DILATION_MAX) return;
           PROBE.domain = domain;
           PROBE.t1 = t1;
           PROBE.t2 = t2;
           PROBE.angle = angleValue;
+          PROBE.dilation = Math.abs(dilationValue - 1) <= PROBE_DILATION_SNAP ? 1 : dilationValue;
           syncSlider();
+          syncDilationSlider();
           renderPompeiuProbe();
         },
       });
