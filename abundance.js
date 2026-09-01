@@ -477,7 +477,7 @@
       context.arc(startX, y, 2.2, 0, Math.PI * 2);
       context.fill();
       context.fillStyle = COLORS.muted;
-      context.fillText("COMPUTED CROSSINGS", startX + 8, y);
+      context.fillText("CROSSINGS", startX + 8, y);
 
       const secondX = compact ? startX : startX + 164;
       const secondY = compact ? y + 17 : y;

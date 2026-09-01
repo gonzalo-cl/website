@@ -111,8 +111,7 @@
               <div class="geometry-stages" role="group" aria-label="Choose a domain">
                 <button type="button" data-probe-domain="0" aria-pressed="true"><span>01</span><strong>disk</strong></button>
                 <button type="button" data-probe-domain="1" aria-pressed="false"><span>02</span><strong>N = 10</strong></button>
-                <button type="button" data-probe-domain="2" aria-pressed="false"><span>03</span><strong>N = 28</strong></button>
-                <button type="button" data-probe-domain="3" aria-pressed="false"><span>04</span><strong>square</strong></button>
+                <button type="button" data-probe-domain="2" aria-pressed="false"><span>03</span><strong>square</strong></button>
               </div>
             </div>
           </aside>
@@ -126,7 +125,7 @@
               <span id="probeIntegralLabel" class="canvas-tex-label probe-integral-label" aria-hidden="true">\(\int_{E(\Omega)}\sin(\omega x_1)\,dx\)</span>
             </div>
           </section>
-          <figcaption id="pompeiuProbeOverviewCaption">Move the selected footprint over the plane wave \(\sin(\omega x_1)\). The lower curve plots its integral against horizontal translation on the same spatial scale. At the marked dilation, the disk and the two constructed profiles cancel the wave for every translation and rotation; moving away from that scale restores a sinusoidal response. The square is included for comparison. Drag inside the domain to translate it and outside to rotate it; the sliders and the arrow, Shift, and bracket keys provide the same motions.</figcaption>
+          <figcaption id="pompeiuProbeOverviewCaption">Moving and rotating the footprint tests the Pompeiu measurement; changing its scale reveals the distinguished cancellation frequency traced by the lower curve.</figcaption>
         </figure>
 
         <div class="intro-copy intro-copy-wide intro-pompeiu-copy">
@@ -452,7 +451,7 @@
               \]
             </div>
             <p><a href="https://arxiv.org/abs/2608.08953" target="_blank" rel="noreferrer"><em>A computer-assisted counterexample to the planar Berenstein conjecture</em></a>, by Matthew J. Colbrook, Siavash Sadeghi and George Stepaniants, constructs a bounded simply connected non-disk with real-analytic boundary and a sign-changing eigenfunction satisfying these data. Thus the unrestricted conjecture is false; rigidity versions that impose a sign condition on \(u\) are not contradicted by this example.</p>
-            <p>The certified domain is shown in <a class="xref" data-ref="berenstein-counterexample" href="#figure-berenstein-counterexample">the Berenstein counterexample figure</a> below.</p>
+            <p>The domain is shown in <a class="xref" data-ref="berenstein-counterexample" href="#figure-berenstein-counterexample">the Berenstein counterexample figure</a> below.</p>
           </div>
         </details>
 
@@ -621,7 +620,7 @@
             </div>
             <div class="world-branch-control">
               <div><label for="cylinderBranchRange">branch parameter \(s\)</label><output id="cylinderBranchValue" for="cylinderBranchRange">\(s=0\)</output></div>
-              <svg class="branch-diagram" id="cylinderBranchDiagram" viewBox="0 0 260 104" role="img" tabindex="0" aria-label="Schematic pitchfork bifurcation diagram. Horizontal axis is the band length a and vertical axis is the amplitude s." aria-describedby="cylinderBranchKeyboard" aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown Shift+ArrowLeft Shift+ArrowRight">
+              <svg class="branch-diagram" id="cylinderBranchDiagram" viewBox="0 0 260 104" role="img" tabindex="0" aria-label="Pitchfork bifurcation diagram. Horizontal axis is the band length a and vertical axis is the amplitude s." aria-describedby="cylinderBranchKeyboard" aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown Shift+ArrowLeft Shift+ArrowRight">
                 <rect class="branch-hit" x="0" y="0" width="260" height="104" fill="transparent"/>
                 <line class="branch-axis" x1="18" y1="52" x2="248" y2="52"/>
                 <line class="branch-axis-tick" x1="150" y1="16" x2="150" y2="88"/>
@@ -680,7 +679,7 @@
             </div>
             <div class="world-branch-control">
               <div><label for="annulusBranchRange">branch parameter \(s\)</label><output id="annulusBranchValue" for="annulusBranchRange">\(s=0\)</output></div>
-              <svg class="branch-diagram" id="annulusBranchDiagram" viewBox="0 0 260 104" role="img" tabindex="0" aria-label="Schematic pitchfork bifurcation diagram. The horizontal trivial line represents round annuli and the vertical direction represents the nontrivial branch at the crossing." aria-describedby="annulusBranchKeyboard" aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown Shift+ArrowLeft Shift+ArrowRight">
+              <svg class="branch-diagram" id="annulusBranchDiagram" viewBox="0 0 260 104" role="img" tabindex="0" aria-label="Pitchfork bifurcation diagram. The horizontal trivial line represents round annuli and the vertical direction represents the nontrivial branch at the crossing." aria-describedby="annulusBranchKeyboard" aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown Shift+ArrowLeft Shift+ArrowRight">
                 <rect class="branch-hit" x="0" y="0" width="260" height="104" fill="transparent"/>
                 <line class="branch-axis" x1="18" y1="52" x2="248" y2="52"/>
                 <line class="branch-axis-tick" x1="150" y1="16" x2="150" y2="88"/>
@@ -737,7 +736,7 @@
             </div>
             <div class="world-branch-control">
               <div><label for="sphereBranchRange">branch parameter \(s\)</label><output id="sphereBranchValue" for="sphereBranchRange">\(s=0\)</output></div>
-              <svg class="branch-diagram" id="sphereBranchDiagram" viewBox="0 0 260 104" role="img" tabindex="0" aria-label="Schematic pitchfork bifurcation diagram. Horizontal axis is the polar angle of the band and vertical axis is the amplitude s." aria-describedby="sphereBranchKeyboard" aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown Shift+ArrowLeft Shift+ArrowRight">
+              <svg class="branch-diagram" id="sphereBranchDiagram" viewBox="0 0 260 104" role="img" tabindex="0" aria-label="Pitchfork bifurcation diagram. Horizontal axis is the polar angle of the band and vertical axis is the amplitude s." aria-describedby="sphereBranchKeyboard" aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown Shift+ArrowLeft Shift+ArrowRight">
                 <rect class="branch-hit" x="0" y="0" width="260" height="104" fill="transparent"/>
                 <line class="branch-axis" x1="18" y1="52" x2="248" y2="52"/>
                 <line class="branch-axis-tick" x1="150" y1="16" x2="150" y2="88"/>
@@ -1075,11 +1074,11 @@
           <h3>Fixed disk: search, encode, and certify</h3>
         </header>
         <div class="geometry-lead numerical-route-lead">
-          <label for="numerical-route-note" class="margin-toggle" aria-label="Show the certified numerical domain">&#8853;</label>
+          <label for="numerical-route-note" class="margin-toggle" aria-label="Show the fixed-disk centre">&#8853;</label>
           <input type="checkbox" id="numerical-route-note" class="margin-toggle">
           <figure class="marginnote side-figure numerical-route-aside" data-figure="numerical-continuation-centre">
-            <img src="assets/computer-assisted-domain-solution.png" width="1152" height="1152" loading="lazy" decoding="async" alt="The tenfold-symmetric numerical centre, coloured by its computed field and level curves">
-            <figcaption>The \(D_{10}\)-symmetric numerical centre at zero flux.</figcaption>
+            <img src="assets/computer-assisted-domain-solution.png" width="1152" height="1152" loading="lazy" decoding="async" alt="The tenfold-symmetric zero-flux centre, coloured by its field and level curves">
+            <figcaption>The \(D_{10}\)-symmetric zero-flux centre \(x^\circ\).</figcaption>
           </figure>
           <p>The disk has no nontrivial first-order Schiffer deformation at zero flux. The fixed-disk construction therefore relaxes the condition to \(\partial_\nu u=c\). At a higher tenfold Wronskian crossing, the relaxed linearization acquires a nontrivial kernel. That direction seeds numerical continuation of a computed noncircular branch from \(c\ne0\) to \(c=0\), producing the extremely accurate approximate Schiffer domain used as the numerical centre. Exact existence comes from the subsequent computer-assisted validation.</p>
           <p>The continuation produces an approximate solution of the boundary equations. <a class="xref" data-ref="computer-assisted-proof" href="#computer-assisted-proof">The computer-assisted proof</a> pulls the moving-domain problem back to the unit disk and builds a small ball around that approximation. A Newton-like iteration stays inside the ball and moves any two coefficient lists closer together, so it converges to one exact domain.</p>
@@ -1212,8 +1211,8 @@
           </div>
         </article>
 
-        <header id="computer-search" class="section-heading proof-strategy-subheading" data-title="A numerical centre from the relaxed problem" data-toc="proof-subsection">
-          <h3>A numerical centre from the relaxed problem</h3>
+        <header id="computer-search" class="section-heading proof-strategy-subheading" data-title="A zero-flux centre from the relaxed problem" data-toc="proof-subsection">
+          <h3>A zero-flux centre from the relaxed problem</h3>
         </header>
         <div class="computer-assisted-copy paper-copy">
           <p class="proof-step-bridge">At the higher tenfold Wronskian zero, the linearized relaxed equations acquire a nontrivial tenfold kernel. This supplies the bifurcation seed for the numerical search. Numerical continuation follows a computed noncircular branch to zero flux and constructs the centre \(x^\circ\); the validation below, not the exploratory continuation, proves exact existence.</p>
@@ -1239,7 +1238,7 @@
 
         <figure class="computer-assisted-figure interactive-plate figure-band" data-apparatus="visual-aside" data-figure="computer-assisted-search" aria-labelledby="searchFigureTitle">
           <section class="computer-assisted-canvas-panel apparatus-visual">
-            <svg id="searchCanvas" class="computer-assisted-vector" role="img" aria-label="Three-stage schematic of the numerical search, showing the tenfold boundary motion and the constant normal derivative shrinking to zero"><title>Numerical-search stages</title><desc>The selector moves from the tenfold disk direction to the zero-flux numerical centre.</desc></svg>
+            <svg id="searchCanvas" class="computer-assisted-vector" role="img" aria-label="Three stages of the numerical search, showing the tenfold boundary motion and the constant normal derivative shrinking to zero"><title>Search stages</title><desc>The selector moves from the tenfold disk direction to the zero-flux centre.</desc></svg>
           </section>
           <aside class="computer-assisted-controls paper-demo-controls apparatus-controls">
             <div class="computer-assisted-control apparatus-control">
@@ -1252,7 +1251,7 @@
             </div>
             <output id="searchStageStatus" class="computer-assisted-status" for="searchStage" aria-live="polite">At this disk frequency, the equations allow a ten-lobed first motion.</output>
           </aside>
-          <figcaption id="searchFigureTitle">A numerical continuation follows a tenfold branch of the relaxed problem to the zero-flux centre \(x^\circ\); the intermediate outline is schematic.</figcaption>
+          <figcaption id="searchFigureTitle">A continuation follows a tenfold branch of the relaxed problem to the zero-flux centre \(x^\circ\).</figcaption>
         </figure>
 
         <div class="computer-assisted-copy paper-copy">
@@ -1512,8 +1511,8 @@
           </div>
         </details>
 
-        <header id="computer-contraction" class="section-heading proof-strategy-subheading" data-title="Certified fixed-point convergence" data-toc="proof-subsection">
-          <h3>Certified fixed-point convergence</h3>
+        <header id="computer-contraction" class="section-heading proof-strategy-subheading" data-title="Fixed-point convergence" data-toc="proof-subsection">
+          <h3>Fixed-point convergence</h3>
         </header>
         <div class="computer-assisted-copy paper-copy">
           <p class="proof-step-bridge">The approximate solution \(x^\circ\) must be replaced by a true solution. Banach's fixed-point theorem supplies one if a small enough ball around \(x^\circ\) is carried into itself and distances shrink inside that ball.</p>
@@ -1577,7 +1576,7 @@
               \]
             </div>
           </div>
-          <p>for every \(h_1,h_2,h_3\in X\). The certified numerical upper bounds are:</p>
+          <p>for every \(h_1,h_2,h_3\in X\). The resulting upper bounds are:</p>
           <div class="certificate-bound-list" aria-label="Outward bounds used in the radii polynomial">
             <span><b>\(Y\)</b><small>size of first step</small><strong>\(1.59\times10^{-10}\)</strong></span>
             <span><b>\(Z\)</b><small>linear inverse defect</small><strong>\(0.621\)</strong></span>
@@ -1650,12 +1649,12 @@
             &lt;4.20\times10^{-10}.
             \]
           </div>
-          <p>The chosen radius-\(10^{-6}\) ball is therefore a certified safe region; the actual solution is forced into a much smaller neighbourhood of its centre. The two-dimensional animation below is a schematic view of this infinite-dimensional coefficient space, but its displayed distance bounds are the certified ones.</p>
+          <p>The chosen radius-\(10^{-6}\) ball is therefore mapped into itself; the actual solution is forced into a much smaller neighbourhood of its centre. The two-dimensional animation below represents this infinite-dimensional coefficient-space argument using the distance bounds stated above.</p>
         </div>
 
         <figure class="computer-assisted-figure interactive-plate figure-band" data-apparatus="visual-aside" data-figure="radii-polynomial-certificate" aria-labelledby="certificateFigureTitle">
           <section class="computer-assisted-canvas-panel apparatus-visual">
-            <svg id="certificateCanvas" class="computer-assisted-vector" role="img" aria-label="A Banach-space ball mapped inside itself, with fixed-point iterates converging to the exact zero"><title>Certified fixed-point iteration</title><desc>The two certified inequalities force every iterate to remain in the ball and move toward one fixed point.</desc></svg>
+            <svg id="certificateCanvas" class="computer-assisted-vector" role="img" aria-label="A Banach-space ball mapped inside itself, with fixed-point iterates converging to the exact zero"><title>Fixed-point iteration</title><desc>The two inequalities force every iterate to remain in the ball and move toward one fixed point.</desc></svg>
           </section>
           <aside class="computer-assisted-controls paper-demo-controls apparatus-controls">
             <div class="computer-assisted-control apparatus-control">
@@ -1689,7 +1688,7 @@
               </div>
             </div>
           </aside>
-          <figcaption id="certificateFigureTitle">The radii inequalities make \(T\) a contraction on the radius-\(10^{-6}\) ball and force a unique exact solution there. The inset and orbit are magnified schematics.</figcaption>
+          <figcaption id="certificateFigureTitle">The radii inequalities make \(T\) a contraction on the radius-\(10^{-6}\) ball and force a unique exact solution there.</figcaption>
         </figure>
 
         <section id="certificate-explorer" class="certificate-explorer" aria-labelledby="certificateExplorerTitle">
@@ -1812,7 +1811,7 @@
 
         <figure class="computer-assisted-figure interactive-plate figure-band" data-apparatus="visual-aside" data-figure="computer-assisted-reconstruction" aria-labelledby="reconstructionFigureTitle">
           <section class="computer-assisted-canvas-panel apparatus-visual">
-            <svg id="reconstructionCanvas" class="computer-assisted-vector" role="img" aria-label="Three direct geometric checks: the exact curve stays near the computed curve, the map does not fold, and a nonlinear term rules out a disk"><title>Reconstructing the final non-disk domain</title><desc>The selector shows a magnified boundary enclosure, a chord carried forward without folding, and the nonlinear term that produces the final non-disk boundary.</desc></svg>
+            <svg id="reconstructionCanvas" class="computer-assisted-vector" role="img" aria-label="Three direct geometric checks: the exact curve stays near the centre curve, the map does not fold, and a nonlinear term rules out a disk"><title>Reconstructing the final non-disk domain</title><desc>The selector shows a magnified boundary enclosure, a chord carried forward without folding, and the nonlinear term that produces the final non-disk boundary.</desc></svg>
           </section>
           <aside class="computer-assisted-controls paper-demo-controls apparatus-controls">
             <div class="computer-assisted-control apparatus-control">
@@ -1825,7 +1824,7 @@
             </div>
             <output id="reconstructionStatus" class="computer-assisted-status" for="reconstructionStage" aria-live="polite">The exact boundary is uniformly within \(7.13\times10^{-11}\) of the printed centre.</output>
           </aside>
-          <figcaption id="reconstructionFigureTitle">The coefficient bounds keep the exact boundary within \(7.13\times10^{-11}\) of the numerical centre, prevent folding, and force a noncircular domain.</figcaption>
+          <figcaption id="reconstructionFigureTitle">The coefficient bounds keep the exact boundary within \(7.13\times10^{-11}\) of \(x^\circ\), prevent folding, and force a noncircular domain.</figcaption>
         </figure>
 
         <article class="math-statement" data-kind="corollary" data-label="computer-assisted-pompeiu">
@@ -1916,7 +1915,7 @@
           <section class="computer-assisted-canvas-panel apparatus-visual berenstein-field-portrait" aria-label="Berenstein field portrait">
             <div id="berensteinFieldViewport" class="berenstein-field-viewport">
               <svg class="berenstein-field-image" data-export-primary viewBox="270 10 1348 1348" role="img" aria-labelledby="berensteinFieldImageTitle berensteinFieldImageDesc">
-                <title id="berensteinFieldImageTitle">Finite numerical centre of the Berenstein field</title>
+                <title id="berensteinFieldImageTitle">Berenstein field at the stored centre</title>
                 <desc id="berensteinFieldImageDesc">A thirteenfold domain with alternating blue and orange sign bands separated by eight plotted interior zero curves.</desc>
                 <image href="assets/berenstein-domain-solution.png" width="1890" height="1560"></image>
               </svg>
@@ -1942,8 +1941,8 @@
               <summary>Field structure and bounds</summary>
               <div class="mobile-apparatus-disclosure-body">
                 <div class="berenstein-field-guide-wrap">
-                  <span class="apparatus-label">schematic sign map</span>
-                  <svg id="berensteinFieldGuide" class="berenstein-field-guide" viewBox="0 0 280 132" role="img" aria-label="Schematic signed-field map"></svg>
+                  <span class="apparatus-label">sign map</span>
+                  <svg id="berensteinFieldGuide" class="berenstein-field-guide" viewBox="0 0 280 132" role="img" aria-label="Signed-field map"></svg>
                 </div>
                 <dl class="berenstein-field-facts">
                   <div><dt class="apparatus-label">symmetry</dt><dd>\(D_{13}\)-symmetric; the certificate also rules out central symmetry</dd></div>
@@ -1952,7 +1951,7 @@
               </div>
             </details>
           </aside>
-          <figcaption>The computed \(D_{13}\)-symmetric eigenfunction has nine alternating sign regions separated by eight plotted zero curves.</figcaption>
+          <figcaption>Nine alternating sign regions are separated by eight plotted zero curves.</figcaption>
         </figure>
 
         <div class="computer-assisted-copy paper-copy berenstein-fourier-copy">
@@ -2081,7 +2080,7 @@
 
         <figure class="computer-assisted-figure interactive-plate figure-band local-global-figure" data-apparatus="visual-aside" data-figure="local-global-solvability" aria-labelledby="localGlobalFigureTitle">
           <section class="computer-assisted-canvas-panel apparatus-visual">
-            <svg id="localGlobalCanvas" class="computer-assisted-vector" role="img" aria-label="Schematic comparison of locally prescribed boundary data with a globally solved field"><title>Local boundary data and global closure</title><desc>The controls compare Schiffer and Berenstein data first in a boundary collar and then across the full disk.</desc></svg>
+            <svg id="localGlobalCanvas" class="computer-assisted-vector" role="img" aria-label="Comparison of locally prescribed boundary data with a globally solved field"><title>Local boundary data and global closure</title><desc>The controls compare Schiffer and Berenstein data first in a boundary collar and then across the full disk.</desc></svg>
           </section>
           <aside class="computer-assisted-controls paper-demo-controls apparatus-controls">
             <div class="computer-assisted-control apparatus-control">
@@ -2323,7 +2322,7 @@
               </details>
 
             </aside>
-            <figcaption>The two views show the same computed Helmholtz field on a bifurcating half-cylinder. The controls vary \(\lambda\) and move along the branch.</figcaption>
+            <figcaption>The two views show the same Helmholtz field on a bifurcating half-cylinder as \(\lambda\) and the branch parameter vary.</figcaption>
           </figure>
 
           <p>The half-infinite cylinder is the large-\(R\) limit and supports the continuous two-parameter family visualised in <a class="xref" data-ref="half-cylinder-family" href="#figure-half-cylinder-family">the half-cylinder family figure</a>. Cao-Labora and de Dios Pont do not obtain the planar theorem by transferring this nonlinear family to cones: their proof constructs the required branches directly on finite real-\(R\) collars.</p>
@@ -3029,7 +3028,7 @@
             <div id="branchScaleCanvasWrap" class="branch-scale-canvas-wrap">
               <canvas id="branchScaleCanvas" role="img" aria-label="Bifurcation branches at integer orders fifteen to thirty" aria-describedby="branchScaleNote"></canvas>
             </div>
-            <figcaption id="branchScaleNote" aria-live="polite" aria-atomic="true"><span data-branch-scale-note>The crossing locations and two-jet curvatures come from the saved data. The shrinking classical branch lengths are illustrative: classical Crandall&ndash;Rabinowitz supplies no common lower bound. The Uniform view displays the effect of a common amplitude estimate.</span></figcaption>
+            <figcaption id="branchScaleNote" aria-live="polite" aria-atomic="true"><span data-branch-scale-note>Classical Crandall&ndash;Rabinowitz supplies no common lower bound for the branch size; the Uniform view adds one.</span></figcaption>
           </figure>
         </div>
 
@@ -3342,10 +3341,10 @@
     <script defer src="abundance-data.js"></script>
     <script defer src="dtn-data.js?v=20260831.1"></script>
     <script defer src="app.js?v=20260831.9"></script>
-    <script defer src="story.js?v=20260901.2"></script>
-    <script defer src="abundance.js?v=20260831.9"></script>
+    <script defer src="story.js?v=20260901.3"></script>
+    <script defer src="abundance.js?v=20260901.1"></script>
     <script defer src="pompeiu.js?v=20260831.8"></script>
-    <script defer src="computer-assisted.js?v=20260901.1"></script>
+    <script defer src="computer-assisted.js?v=20260901.2"></script>
     <script defer src="applet-layout.js?v=20260831.6"></script>
     <script defer src="certificate-checker.js?v=20260831.8"></script>
     <script defer src="research-guide.js?v=20260901.1"></script>

@@ -1194,12 +1194,12 @@
 
     canvas.setAttribute("aria-label", uniformMode
       ? `Uniform branches at ${rows.length} real crossings, all of the same amplitude; ${reached} reach an integer order.`
-      : `Schematic classical branches at ${rows.length} real crossings, drawn with illustrative diminishing amplitudes; ${reached} reach an integer order.`);
+      : `Classical local branches at ${rows.length} real crossings, displayed with diminishing amplitudes; ${reached} reach an integer order.`);
     const note = select("[data-branch-scale-note]");
     if (note) {
       note.textContent = uniformMode
         ? "A uniform amplitude bound lets sufficiently near-integer branches reach an integer. The displayed bends use the crossing curvatures; the Classical view omits this uniform guarantee."
-        : "Classical Crandall\u2013Rabinowitz supplies no uniform lower bound. The shrinking amplitudes are schematic possibilities not excluded by the theorem; the Uniform view displays the consequence of an R-independent bound.";
+        : "Classical Crandall\u2013Rabinowitz supplies no common lower bound for the branch size; the Uniform view adds an R-independent bound.";
     }
   }
 
@@ -1550,27 +1550,11 @@
       extent: j11 * 1.35,
     });
     list.push({
-      name: "N = 10, certified example",
+      name: "N = 10",
       vanishes: true,
       radius: d10ProbeRadius,
       extent: D10_PROBE_EXTENT,
     });
-    const data = window.CONE_NUMERICS;
-    if (data && data.records) {
-      const record = data.records.reduce((best, row) =>
-        Math.abs(row.s - data.landingS) < Math.abs(best.s - data.landingS) ? row : best);
-      const scale = Math.sqrt(record.lambda), order = record.R, h = record.h;
-      list.push({
-        name: `N = ${order}, this proof`,
-        vanishes: true,
-        radius: (theta) => {
-          let sum = 0;
-          for (let j = 0; j < h.length; j++) sum += h[j] * Math.cos(j * order * theta);
-          return scale * (order - sum);
-        },
-        extent: scale * order * 1.12,
-      });
-    }
     const side = 2 * j11;
     list.push({
       name: "square",

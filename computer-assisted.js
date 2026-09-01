@@ -593,7 +593,7 @@
     if (boundaryModes) boundaryModes.setAttribute("aria-valuetext", `${cutoff} of 30 normalized conformal-map coefficients q j`);
     boundaryCanvas.setAttribute(
       "aria-label",
-      `Exploratory computation from finite numerical data. Tenfold conformal boundary using ${cutoff} of 30 normalized coefficients q j, compared with the dashed unit circle. The newest included coefficient has size ${selectedCoefficient.toExponential(3)} and adds a ${10 * cutoff}-fold correction. The certificate later controls the omitted infinite tail. Overall radial range ${minimumRadius.toFixed(6)} to ${maximumRadius.toFixed(6)}.`,
+      `Tenfold conformal boundary at the stored centre using ${cutoff} of 30 normalized coefficients q j, compared with the dashed unit circle. The newest included coefficient has size ${selectedCoefficient.toExponential(3)} and adds a ${10 * cutoff}-fold correction. The proof later controls the omitted infinite tail. Overall radial range ${minimumRadius.toFixed(6)} to ${maximumRadius.toFixed(6)}.`,
     );
   };
 
@@ -609,15 +609,15 @@
     Object.freeze({
       label: "tenfold direction",
       title: "A ten-lobed kernel at the disk",
-      status: "Exact linear mechanism: W₁,₁₀(μ) = 0 makes the cos(10θ) displacement a kernel direction in the relaxed problem.",
+      status: "The identity W₁,₁₀(μ) = 0 makes the cos(10θ) displacement a kernel direction in the relaxed problem.",
       amplitude: 0,
       flux: .82,
       showDirection: true,
     }),
     Object.freeze({
       label: "relaxed solutions",
-      title: "A schematic continuation route",
-      status: "The intermediate silhouette is schematic, not sampled continuation data. The search varies field, shape, frequency and the constant c.",
+      title: "Continuation through relaxed solutions",
+      status: "The search varies the field, shape, frequency, and constant c along the branch.",
       amplitude: .52,
       flux: .48,
       trail: Object.freeze([.26]),
@@ -625,7 +625,7 @@
     Object.freeze({
       label: "zero-flux centre",
       title: "The stored zero-flux centre",
-      status: "Exploratory computation: at c = 0 the stored endpoint is the numerical centre x°. The later contraction proves existence independently.",
+      status: "At c = 0 the stored endpoint becomes the centre x° used by the contraction argument.",
       amplitude: 1,
       flux: 0,
       trail: Object.freeze([.50]),
@@ -750,7 +750,7 @@
       });
     }
     if (selectedSearchStage === 1) {
-      drawLabel(context, "schematic continuation path", domainCenterX, 60, {
+      drawLabel(context, "continuation path", domainCenterX, 60, {
         align: "center",
         color: colors.gold,
         size: compact ? 11 : 13,
@@ -777,7 +777,7 @@
       size: 14,
       weight: 700,
     });
-    drawLabel(context, stage.endpoint ? "numerical centre x°" : selectedSearchStage === 0 ? "disk · c ≠ 0" : "relaxed solution", domainCenterX, domainCenterY + 4, {
+    drawLabel(context, stage.endpoint ? "centre x°" : selectedSearchStage === 0 ? "disk · c ≠ 0" : "relaxed solution", domainCenterX, domainCenterY + 4, {
       align: "center",
       color: stage.endpoint ? colors.accent : colors.muted,
       size: 14,
@@ -786,7 +786,7 @@
 
     searchCanvas.setAttribute(
       "aria-label",
-      `Numerical-search stage ${selectedSearchStage + 1} of 3: ${stage.label}. ${stage.status} Equal teal arrows represent the constant normal derivative on the whole boundary; hollow boundary markers at the stored numerical centre represent zero normal derivative. Only the endpoint uses the thirty printed numerical coefficients.`,
+      `Search stage ${selectedSearchStage + 1} of 3: ${stage.label}. ${stage.status} Equal teal arrows represent the constant normal derivative on the whole boundary; hollow boundary markers at the stored centre represent zero normal derivative. The endpoint is drawn from the thirty printed coefficients.`,
     );
   };
 
@@ -1321,7 +1321,7 @@
     const pTop = diagram.y + diagram.height * .72;
     const pHeight = Math.max(30, diagram.height * .13);
 
-    drawLabel(context, compact ? "index regions · not to scale" : "index regions schematic · not to scale", diagram.x, diagram.y + 10, {
+    drawLabel(context, "index regions · not to scale", diagram.x, diagram.y + 10, {
       color: colors.muted,
       size: compact ? 11 : 13,
       weight: 700,
@@ -1513,7 +1513,7 @@
     }
     tailCanvas.setAttribute(
       "aria-label",
-      `Certificate-structure schematic, not to scale. Layer ${selectedTailStage + 1} of 5: ${tailStages[selectedTailStage].label}. The two-dimensional field array g and the one-dimensional shape-and-frequency list p are shown separately. ${tailStages[selectedTailStage].status} There is no unchecked gap between the explicitly enumerated near region and the remote decreasing bound.`,
+      `Coefficient-index structure, not to scale. Layer ${selectedTailStage + 1} of 5: ${tailStages[selectedTailStage].label}. The two-dimensional field array g and the one-dimensional shape-and-frequency list p are shown separately. ${tailStages[selectedTailStage].status} There is no unchecked gap between the explicitly enumerated near region and the remote decreasing bound.`,
     );
   };
 
@@ -1735,7 +1735,7 @@
     );
     const enclosureRadius = ballRadius * data.enclosureRatio;
 
-    drawLabel(context, compact ? "certified fixed-point ball" : "Rigorous enclosure · schematic geometry", width / 2, 27, {
+    drawLabel(context, "fixed-point ball and image enclosure", width / 2, 27, {
       align: "center",
       color: colors.heading,
       size: compact ? 13 : 15,
@@ -1780,7 +1780,7 @@
       size: 12,
       weight: 700,
     });
-    drawLabel(context, compact ? "T(Bᵣ) fits inside Bᵣ" : "certified T(Bᵣ) enclosure lies inside Bᵣ", center.x, center.y + ballRadius + 22, {
+    drawLabel(context, "T(Bᵣ) lies inside Bᵣ", center.x, center.y + ballRadius + 22, {
       align: "center",
       color: colors.teal,
       size: 14,
@@ -1916,8 +1916,8 @@
     certificateCanvas.setAttribute(
       "aria-label",
       selectedCertificateView === "radius"
-        ? "Rigorous certificate. Logarithmic radius chart of the normalized radii-polynomial margin R of t divided by t and the contraction margin q of t minus one. Both are negative at the marked proof radius ten to the minus six. The exact-fraction checker gives image enclosure ratio at most 0.621281000000012 and contraction factor at most 0.621244000000036."
-        : "Rigorous certificate shown with schematic two-dimensional geometry. The outer circle is the ball B r about x degree. A dashed teal circle is a certified enclosure containing T of the ball, with radius ratio at most 0.621281000000012; it is not the literal image set. The exact-solution enclosure has radius ratio below 0.000420 and is subpixel in the main view. A roughly six-hundred-times magnified inset shows an illustrative orbit; only the distance factor q to the n is certified.",
+        ? "Logarithmic radius chart of the normalized radii-polynomial margin R of t divided by t and the contraction margin q of t minus one. Both are negative at the marked proof radius ten to the minus six. The exact-fraction checker gives image enclosure ratio at most 0.621281000000012 and contraction factor at most 0.621244000000036."
+        : "The outer circle is the ball B r about x degree. A dashed teal circle encloses T of the ball with radius ratio at most 0.621281000000012; it is not the literal image set. The exact-solution enclosure has radius ratio below 0.000420 and is subpixel in the main view. A roughly six-hundred-times magnified inset visualizes the distance bound q to the n.",
     );
   };
 
@@ -1936,7 +1936,7 @@
       return;
     }
     if (state === "running") {
-      certificateIteration.textContent = "Running schematic orbit; certified distance bound is qⁿ.";
+      certificateIteration.textContent = "Running orbit; qⁿ bounds the distance.";
       return;
     }
     if (state === "finished") {
@@ -1945,7 +1945,7 @@
         + " of the start.";
       return;
     }
-    certificateIteration.textContent = "Ready — the inset path is schematic; the bound qⁿ is rigorous.";
+    certificateIteration.textContent = "Ready — the inset visualizes the distance bound qⁿ.";
   };
 
   const finishCertificateAnimation = (data) => {
@@ -2076,13 +2076,13 @@
       lineWidth: 2.3,
       fill: colors.tealLight,
     });
-    drawLabel(context, "finite numerical centre", centerX, centerY - radius - 16, {
+    drawLabel(context, "centre x°", centerX, centerY - radius - 16, {
       align: "center",
       color: colors.heading,
       size: 14,
       weight: 700,
     });
-    drawLabel(context, "certified tube · enlarged", centerX, centerY + radius + 22, {
+    drawLabel(context, "boundary enclosure · enlarged", centerX, centerY + radius + 22, {
       align: "center",
       color: colors.accent,
       size: 14,
@@ -2106,7 +2106,7 @@
     context.strokeStyle = colors.ruleDark;
     context.lineWidth = 1.2;
     context.strokeRect(inset.x + .5, inset.y + .5, inset.width - 1, inset.height - 1);
-    drawLabel(context, "certified tube ≤ 7.13 × 10⁻¹¹", inset.x + inset.width / 2, inset.y + 22, {
+    drawLabel(context, "enclosure ≤ 7.13 × 10⁻¹¹", inset.x + inset.width / 2, inset.y + 22, {
       align: "center",
       color: colors.heading,
       size: compact ? 12 : 14,
@@ -2157,7 +2157,7 @@
     context.stroke();
     context.setLineDash([]);
 
-    drawLabel(context, "computed boundary", lineLeft, lineCenterY - tubeHalfWidth - 9, {
+    drawLabel(context, "boundary at x°", lineLeft, lineCenterY - tubeHalfWidth - 9, {
       color: colors.accent,
       size: compact ? 12 : 14,
       weight: 700,
@@ -2209,7 +2209,7 @@
       size: 14,
       weight: 700,
     });
-    drawLabel(context, compact ? "mapped domain" : "numerical centre map shown", domainCenter.x, domainCenter.y - radius - (compact ? 16 : 20), {
+    drawLabel(context, compact ? "mapped domain" : "map at x°", domainCenter.x, domainCenter.y - radius - (compact ? 16 : 20), {
       align: "center",
       color: colors.heading,
       size: 14,
@@ -2684,7 +2684,7 @@
     const stage = berensteinEndpointStages[selectedBerensteinEndpointStage];
     berensteinBoundaryCanvas.setAttribute(
       "aria-label",
-      "Local normal-profile schematic. " + stage.label + ". " + stage.status + " The normalized profiles are not reconstructed eigenfunctions; inside means negative signed normal coordinate, the boundary is zero, and outside is positive.",
+      "Local normal-profile comparison. " + stage.label + ". " + stage.status + " The normalized profiles are not reconstructed eigenfunctions; inside means negative signed normal coordinate, the boundary is zero, and outside is positive.",
     );
   };
 
@@ -2986,7 +2986,7 @@
     );
     localGlobalCanvas.setAttribute(
       "aria-label",
-      "Schematic mechanism. " + state.label + " boundary data " + state.data + ". "
+      "Boundary-data comparison. " + state.label + " boundary data " + state.data + ". "
         + (isGlobal
           ? "The whole disk is filled to show global closure: all interior equations, boundary or compatibility equations, and infinite-tail equations hold simultaneously. The rendering is conceptual, not a computed field."
           : "Only a boundary collar is filled. Local analytic Cauchy theory supplies this collar but leaves the centre unresolved and therefore does not by itself produce a counterexample."),
@@ -3055,15 +3055,15 @@
     }),
     Object.freeze({
       title: "One point means two functions",
-      note: "The unknown lives in a Banach space X of function pairs. One point x = (g,p) contains a function g describing the transformed Helmholtz field and a function p describing the conformal shape. The two displayed directions are only a schematic slice through X: moving in the g direction changes the interior field, while moving in the p direction changes the boundary. The exact solution will be one special point x*.",
-      noteMath: "The unknown lives in a Banach space \\(X\\) of function pairs. One point \\(x=(g,p)\\) contains a function \\(g\\) describing the transformed Helmholtz field and a function \\(p\\) describing the conformal shape. The two displayed directions are only a schematic slice through \\(X\\): moving in the \\(g\\) direction changes the interior field, while moving in the \\(p\\) direction changes the boundary. The exact solution will be one special point \\(x^*\\).",
+      note: "The unknown lives in a Banach space X of function pairs. One point x = (g,p) contains a function g describing the transformed Helmholtz field and a function p describing the conformal shape. The two displayed directions form only a two-dimensional slice through X: moving in the g direction changes the interior field, while moving in the p direction changes the boundary. The exact solution will be one special point x*.",
+      noteMath: "The unknown lives in a Banach space \\(X\\) of function pairs. One point \\(x=(g,p)\\) contains a function \\(g\\) describing the transformed Helmholtz field and a function \\(p\\) describing the conformal shape. The two displayed directions form only a two-dimensional slice through \\(X\\): moving in the \\(g\\) direction changes the interior field, while moving in the \\(p\\) direction changes the boundary. The exact solution will be one special point \\(x^*\\).",
       animation: 3200,
       hold: 3800,
     }),
     Object.freeze({
       title: "Prove convergence",
-      note: "At r = 10⁻⁶, the certified bound ‖T(x) − x°‖ ≤ Y + Zr + C₂r² + C₃r³ < 0.622r holds for every x in the ball. Here Y bounds the error at the centre, Z the linear change, and C₂,C₃ the nonlinear change. Every Newton step therefore stays inside the ball. A second estimate shows that T shrinks distances there by a factor less than 0.622, so its iterates converge to one exact zero x*.",
-      noteMath: "At \\(r=10^{-6}\\), the certified bound \\(\\lVert T(x)-x^\\circ\\rVert\\le Y+Zr+C_2r^2+C_3r^3<0.622r\\) holds for every \\(x\\) in the ball. Here \\(Y\\) bounds the error at the centre, \\(Z\\) the linear change, and \\(C_2,C_3\\) the nonlinear change. Every Newton step therefore stays inside the ball. A second estimate shows that \\(T\\) shrinks distances there by a factor less than \\(0.622\\), so its iterates converge to one exact zero \\(x^*\\).",
+      note: "At r = 10⁻⁶, the bound ‖T(x) − x°‖ ≤ Y + Zr + C₂r² + C₃r³ < 0.622r holds for every x in the ball. Here Y bounds the error at the centre, Z the linear change, and C₂,C₃ the nonlinear change. Every Newton step therefore stays inside the ball. A second estimate shows that T shrinks distances there by a factor less than 0.622, so its iterates converge to one exact zero x*.",
+      noteMath: "At \\(r=10^{-6}\\), the bound \\(\\lVert T(x)-x^\\circ\\rVert\\le Y+Zr+C_2r^2+C_3r^3<0.622r\\) holds for every \\(x\\) in the ball. Here \\(Y\\) bounds the error at the centre, \\(Z\\) the linear change, and \\(C_2,C_3\\) the nonlinear change. Every Newton step therefore stays inside the ball. A second estimate shows that \\(T\\) shrinks distances there by a factor less than \\(0.622\\), so its iterates converge to one exact zero \\(x^*\\).",
       animation: 2800,
       hold: 4000,
     }),
