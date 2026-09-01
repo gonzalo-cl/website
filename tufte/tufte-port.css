@@ -89,6 +89,8 @@
      chooses widths. */
   --measure-reading: 55%;
   --measure-reading-page: 55cqw;
+  --measure-folio-page: 87.5cqw;
+  --measure-gutter-page: 5cqw;
   --measure-margin: 40%;
   --measure-gutter: 5%;
   /* Native Tufte marginalia occupy half the reading measure: 27.5% of the
@@ -498,7 +500,6 @@ body.tufte-site main #experiment > .modes-experiment { padding-bottom: 0; }
 
 .intro-bottom { width: var(--measure-reading); }
 .intro-bottom p { width: 100%; max-width: none; margin: 1.4rem 0; }
-.intro-main-result { margin-top: 2rem !important; margin-bottom: 2rem !important; }
 .intro-route-overview { margin-top: .25rem; }
 
 .chapter-pagination {
@@ -858,6 +859,34 @@ body.tufte-site main .formal-statement-pair > .lean-statement {
   max-width: 100%;
 }
 body.tufte-site main .formal-statement-pair > .math-statement { margin: 0; }
+
+/* The headline theorem and its formal counterpart occupy the canonical prose
+   and aside columns. The disclosure remains collapsed until requested, so the
+   aside does not create empty vertical space in the reading column. */
+body.tufte-site main .formal-statement-pair-aside {
+  width: var(--measure-folio-page);
+  max-width: var(--measure-folio-page);
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(18rem, 1fr);
+  column-gap: var(--measure-gutter-page);
+  align-items: start;
+}
+body.tufte-site main .formalization-aside {
+  min-width: 0;
+  margin: 0;
+}
+body.tufte-site main .formalization-aside > details.lean-statement {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+}
+body.tufte-site main .formalization-aside .lean-statement-body {
+  padding: .8rem .85rem .9rem;
+}
+body.tufte-site main .formalization-aside .lean-statement pre code {
+  font-size: var(--type-label);
+  line-height: 1.55;
+}
 
 /* Displayed mathematics in Tufte CSS is part of the text block, not a
    coloured application card. */
@@ -1400,9 +1429,18 @@ body.tufte-site main details.lean-statement > .lean-statement-body {
   outline: 0;
   transition: color .12s ease, box-shadow .12s ease;
 }
-.lean-semantic-term:is(:hover, :focus-visible) {
+.lean-semantic-term:is(:hover, :focus-visible, .is-lean-selected) {
   color: var(--orange);
   box-shadow: inset 0 -.5em 0 rgba(160, 0, 0, .2);
+}
+body.tufte-site main .lean-statement-caption {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 0 .85rem;
+  color: var(--muted);
+  font-family: var(--font-prose);
+  font-size: var(--type-note) !important;
+  line-height: var(--leading-caption);
 }
 .lean-semantic-alignment {
   margin: 1rem 0 0;
@@ -1453,11 +1491,11 @@ body.tufte-site main .lean-formalization-remark > p {
   font-size: var(--type-caption) !important;
   line-height: var(--leading-caption);
 }
-.lean-formalization-remark > a {
-  display: inline-block;
+.lean-formalization-sources {
   margin-top: .45rem;
   font-size: var(--type-note);
 }
+.lean-formalization-sources[hidden] { display: none; }
 [data-lean-alignment] {
   border-radius: .08rem;
   transition: background-color .12s ease, box-shadow .12s ease;
@@ -1465,6 +1503,14 @@ body.tufte-site main .lean-formalization-remark > p {
 [data-lean-alignment].is-lean-aligned {
   background: rgba(160, 0, 0, .075);
   box-shadow: 0 0 0 2px rgba(160, 0, 0, .075);
+}
+.lean-paper-term {
+  cursor: help;
+  outline: 0;
+}
+.lean-paper-term:focus-visible {
+  background: rgba(160, 0, 0, .075);
+  box-shadow: 0 0 0 2px rgba(160, 0, 0, .16);
 }
 
 /* The laboratories share one composition contract: numerical image on the
@@ -3881,6 +3927,8 @@ body > footer {
     width: 100%;
     max-width: 100%;
   }
+  body.tufte-site main .formal-statement-pair-aside { display: block; }
+  body.tufte-site main .formalization-aside { margin-top: 1rem; }
   body.tufte-site main details.lean-statement {
     width: 100%;
     max-width: 100%;
@@ -5240,8 +5288,8 @@ body.tufte-site main .proof-atlas-detail p {
   box-sizing: border-box;
   width: var(--measure-reading);
   max-width: var(--measure-reading);
-  margin: 4.5rem 0 1.5rem;
-  padding: 1.25rem 0 0;
+  margin: 3.5rem 0 1.5rem;
+  padding: .9rem 0 0;
   border-top: 1px solid var(--line);
 }
 .proof-fork-mark {
@@ -5254,7 +5302,9 @@ body.tufte-site main .proof-atlas-detail p {
 .proof-fork-mark > path {
   fill: none;
   stroke: currentColor;
-  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.25;
   vector-effect: non-scaling-stroke;
 }
 .proof-fork-mark marker path { fill: currentColor; }
@@ -5265,20 +5315,21 @@ body.tufte-site main .proof-atlas-detail p {
 }
 body.tufte-site main .proof-fork-options a {
   display: block;
-  padding: .8rem 0;
+  padding: .5rem .4rem;
   color: var(--ink);
-  border-bottom: 1px solid var(--line);
   font-family: var(--font-heading);
   font-size: var(--type-note);
-  font-weight: var(--weight-emphasis);
+  font-weight: var(--weight-regular);
   line-height: 1.35;
   text-align: center;
-  text-decoration: none;
+  text-decoration-color: var(--line);
+  text-decoration-thickness: 1px;
+  text-underline-offset: .22em;
 }
 body.tufte-site main .proof-fork-options a:is(:hover, :focus-visible),
 body.tufte-site main .proof-fork-options a[aria-current="location"] {
   color: var(--orange);
-  border-bottom-color: var(--orange);
+  text-decoration-color: currentColor;
 }
 
 .certificate-explorer {

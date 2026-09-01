@@ -17,11 +17,11 @@
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js" integrity="sha384-bjyGPfbij8/NDKJhSGZNP/khQVgtHUE5exjm4Ydllo42FwIgYsdLO2lXGmRBf5Mz" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.12.0/highlight.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/highlightjs-lean@1.2.0/dist/lean.min.js"></script>
-    <script defer src="lean-statements.js?v=20260831.8"></script>
+    <script defer src="lean-statements.js?v=20260831.9"></script>
     <script defer src="math.js?v=20260830.1"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tufte-css@1.9.0/tufte.min.css">
     <link rel="stylesheet" href="styles.css?v=20260831.15">
-    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260831.16">
+    <link rel="stylesheet" href="tufte/tufte-port.css?v=20260831.17">
   </head>
   <body class="tufte-site">
     <a class="skip-link" href="#top">Skip to the exposition</a>
@@ -59,7 +59,7 @@
         <h1>Constructing Noncircular Schiffer Domains</h1>
         <p class="intro-authors">Exposition by <a href="https://people.epfl.ch/gonzalo.caolabora" target="_blank" rel="noreferrer">Gonzalo Cao-Labora</a>, <a href="https://www.damtp.cam.ac.uk/user/mjc249/home.html" target="_blank" rel="noreferrer">Matthew J. Colbrook</a>, <a href="https://jaume.dedios.cat/" target="_blank" rel="noreferrer">Jaume de Dios Pont</a>, and <a href="https://georgestepaniants.com/" target="_blank" rel="noreferrer">George Stepaniants</a>.</p>
         <p id="research-sources" class="intro-sources"><span>Based on</span> <a href="https://arxiv.org/abs/2608.01579" target="_blank" rel="noreferrer"><em>A computer-assisted counterexample to the planar Pompeiu and Schiffer conjectures</em></a>, <a href="https://arxiv.org/abs/2608.05114" target="_blank" rel="noreferrer"><em>Counterexamples to Schiffer’s Conjecture</em></a>, and <a href="https://arxiv.org/abs/2608.08953" target="_blank" rel="noreferrer"><em>A computer-assisted counterexample to the planar Berenstein conjecture</em></a>.</p>
-        <div class="formal-statement-pair">
+        <div class="formal-statement-pair formal-statement-pair-aside">
           <article id="statement-main-result" class="math-statement math-statement-theorem intro-main-result" data-kind="theorem" data-label="main-result" aria-labelledby="mainResultTitle">
             <header class="math-statement-header"><span>Theorem</span><small>Main result</small></header>
             <div class="math-statement-body">
@@ -67,7 +67,9 @@
               <p>There is a <span data-lean-alignment="schiffer-star-shaped:bounded">bounded</span>, <span data-lean-alignment="schiffer-star-shaped:nonempty">nonempty</span>, <span data-lean-alignment="schiffer-star-shaped:regularity">smooth</span> planar domain, <span data-lean-alignment="schiffer-star-shaped:star-shaped">star-shaped with respect to the origin</span>, which is <span data-lean-alignment="schiffer-star-shaped:not-disk">not a disk</span> and <span data-lean-alignment="schiffer-star-shaped:schiffer">solves the Schiffer problem</span>.</p>
             </div>
           </article>
-          <lean-statement data-statement="schiffer-star-shaped"></lean-statement>
+          <aside class="formalization-aside" aria-label="Lean formalization of the main theorem">
+            <lean-statement data-statement="schiffer-star-shaped"></lean-statement>
+          </aside>
         </div>
 
         <nav id="research-entry" class="research-entry" aria-labelledby="researchEntryTitle">
@@ -1160,15 +1162,15 @@
         </figure>
 
         <nav class="proof-fork" aria-label="Choose which proof to read">
-          <svg class="proof-fork-mark" viewBox="0 0 600 120" role="img" aria-label="One path splitting into two proof routes">
+          <svg class="proof-fork-mark" viewBox="0 0 600 64" role="img" aria-label="One path splitting into two proof routes">
             <defs>
-              <marker id="proofForkArrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
-                <path d="M0 0L10 5L0 10Z"></path>
+              <marker id="proofForkArrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto" markerUnits="strokeWidth">
+                <path d="M0 0L6 3L0 6Z"></path>
               </marker>
             </defs>
-            <path d="M300 4V43"></path>
-            <path d="M300 43C300 71 150 71 150 112" marker-end="url(#proofForkArrow)"></path>
-            <path d="M300 43C300 71 450 71 450 112" marker-end="url(#proofForkArrow)"></path>
+            <path d="M300 3V23"></path>
+            <path d="M300 23L150 57" marker-end="url(#proofForkArrow)"></path>
+            <path d="M300 23L450 57" marker-end="url(#proofForkArrow)"></path>
           </svg>
           <div class="proof-fork-options">
             <a href="#computer-assisted-proof" data-proof-route="computer-assisted" data-proof-target="#computer-assisted-proof">The computer-assisted proof</a>

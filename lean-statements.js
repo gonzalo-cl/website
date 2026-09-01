@@ -62,26 +62,37 @@
     }),
     "schiffer-star-shaped": Object.freeze({
       title: "Schiffer_Star_Shaped",
+      alignmentScope: "primary-declaration",
+      caption: "Regularity mismatch: the formalized theorem asserts a regular C² boundary, whereas the paper states “smooth.” The upgrade from Lipschitz to smooth has not been formalized here.",
       source: [
-        "/-- `Ω` is a regular `C²` super-level set. In particular, `Ω` is open,",
-        "because a `C²` defining function is continuous. -/",
-        "def HasC2Boundary (Ω : Set Plane) : Prop :=",
+        "/-- A regular `C²` super-level",
+        "set. The set `Ω` is open because",
+        "its defining function is",
+        "continuous. -/",
+        "def HasC2Boundary",
+        "    (Ω : Set Plane) : Prop :=",
         "  ∃ (F : Plane → ℝ),",
         "    ContDiff ℝ 2 F ∧",
         "    Ω = {x | 0 < F x} ∧",
-        "    ∀ x, F x = 0 → ∇ F x ≠ 0",
+        "    ∀ x, F x = 0 →",
+        "      ∇ F x ≠ 0",
         "",
-        "/-- `Ω` is an ordinary open Euclidean disk, with arbitrary center",
-        "and radius. -/",
-        "def IsEuclideanDisk (Ω : Set Plane) : Prop :=",
-        "  ∃ (c : Plane) (r : ℝ), Ω = Metric.ball c r",
+        "/-- An ordinary open Euclidean",
+        "disk, with arbitrary centre and",
+        "radius. -/",
+        "def IsEuclideanDisk",
+        "    (Ω : Set Plane) : Prop :=",
+        "  ∃ (c : Plane) (r : ℝ),",
+        "    Ω = Metric.ball c r",
         "",
-        "-- See below for the definition of `IsSchifferDomain` used here.",
+        "-- `IsSchifferDomain` is defined",
+        "-- in the later Lean excerpt below.",
         "",
         "theorem Schiffer_Star_Shaped :",
         "  ∃ (Ω : Set Plane),",
         "    IsBounded Ω ∧ Nonempty Ω ∧",
-        "    StarConvex ℝ 0 Ω ∧ HasC2Boundary Ω ∧",
+        "    StarConvex ℝ 0 Ω ∧",
+        "    HasC2Boundary Ω ∧",
         "    ¬ IsEuclideanDisk Ω ∧",
         "    IsSchifferDomain Ω := by",
         "  sorry",
@@ -151,9 +162,24 @@
   const regularityRemark = Object.freeze({
     noteTitle: "Formalization remark",
     note: "The Lean predicate records a regular C² boundary, while the paper states the resulting counterexample as smooth. A C² boundary is Lipschitz; S. A. Williams proved that a planar Lipschitz domain without the Pompeiu property has real-analytic boundary. That regularity upgrade has not been formalized here.",
-    sourceHref: "https://doi.org/10.1512/iumj.1981.30.30028",
-    sourceLabel: "Williams (1981)",
+    sources: Object.freeze([
+      Object.freeze({
+        href: "https://doi.org/10.1512/iumj.1981.30.30028",
+        label: "Williams (1981)",
+      }),
+    ]),
   });
+
+  const comparatorSources = Object.freeze([
+    Object.freeze({
+      href: "https://github.com/jaumededios/Schiffer",
+      label: "Schiffer repository",
+    }),
+    Object.freeze({
+      href: "https://github.com/jaumededios/Schiffer/blob/lean/Schiffer/Challenge.lean",
+      label: "Comparator challenge file",
+    }),
+  ]);
 
   /* Each entry names a Lean token, its paper-level meaning, and the semantic
      concept marked in the nearby prose. New formal counterparts extend this
@@ -234,7 +260,7 @@
     "schiffer-star-shaped": Object.freeze([
       Object.freeze({ token: "IsBounded", concept: "bounded", paper: "bounded" }),
       Object.freeze({ token: "Nonempty", concept: "nonempty", paper: "nonempty" }),
-      Object.freeze({ token: "StarConvex", concept: "star-shaped with respect to the origin", paper: "star-shaped with respect to the origin" }),
+      Object.freeze({ token: "StarConvex", concept: "star-shaped", paper: "star-shaped with respect to the origin" }),
       Object.freeze({
         token: "HasC2Boundary",
         concept: "regularity",
@@ -247,13 +273,14 @@
         concept: "schiffer",
         paper: "solves the Schiffer problem",
         noteTitle: "Formalization remark",
-        note: "This excerpt exposes the theorem’s logical shape. The existence proof is still represented by sorry.",
+        note: "IsSchifferDomain is defined in the later Lean excerpt below. This display uses sorry to expose the theorem’s semantic shape without reproducing its proof. The repository publishes the trusted public statement in Comparator challenge style: the challenge records the statement, and Comparator checks the completed development against it.",
+        sources: comparatorSources,
       }),
     ]),
     "pompeiu-star-shaped": Object.freeze([
       Object.freeze({ token: "IsBounded", concept: "bounded", paper: "bounded" }),
       Object.freeze({ token: "Nonempty", concept: "nonempty", paper: "nonempty" }),
-      Object.freeze({ token: "StarConvex", concept: "star-shaped with respect to the origin", paper: "star-shaped with respect to the origin" }),
+      Object.freeze({ token: "StarConvex", concept: "star-shaped", paper: "star-shaped with respect to the origin" }),
       Object.freeze({
         token: "HasC2Boundary",
         concept: "regularity",
@@ -342,21 +369,27 @@
     remark.hidden = true;
     const remarkTitle = document.createElement("strong");
     const remarkBody = document.createElement("p");
-    const remarkSource = document.createElement("a");
-    remarkSource.target = "_blank";
-    remarkSource.rel = "noreferrer";
-    remark.append(remarkTitle, remarkBody, remarkSource);
+    const remarkSources = document.createElement("div");
+    remarkSources.className = "lean-formalization-sources";
+    remark.append(remarkTitle, remarkBody, remarkSources);
     panel.append(label, statement, remark);
 
+    const termsByConcept = new Map();
     let activeTargets = [];
-    const clearTargets = () => {
+    let activeTerms = [];
+    let pinnedAlignment = null;
+    const clearSelection = () => {
       activeTargets.forEach((target) => target.classList.remove("is-lean-aligned"));
+      activeTerms.forEach((term) => term.classList.remove("is-lean-selected"));
       activeTargets = [];
+      activeTerms = [];
     };
-    const show = (alignment) => {
-      clearTargets();
+    const display = (alignment) => {
+      clearSelection();
       activeTargets = paperTargets(key, alignment.concept);
+      activeTerms = termsByConcept.get(alignment.concept) || [];
       activeTargets.forEach((target) => target.classList.add("is-lean-aligned"));
+      activeTerms.forEach((term) => term.classList.add("is-lean-selected"));
       statement.textContent = "";
       const code = document.createElement("code");
       code.textContent = alignment.token;
@@ -365,38 +398,85 @@
       if (alignment.note) {
         remarkTitle.textContent = alignment.noteTitle || "Formalization remark";
         remarkBody.textContent = alignment.note;
-        if (alignment.sourceHref) {
-          remarkSource.hidden = false;
-          remarkSource.href = alignment.sourceHref;
-          remarkSource.textContent = (alignment.sourceLabel || "Source") + " ↗";
-        } else {
-          remarkSource.hidden = true;
-          remarkSource.removeAttribute("href");
-          remarkSource.textContent = "";
-        }
+        remarkSources.textContent = "";
+        (alignment.sources || []).forEach((source, index) => {
+          if (index) remarkSources.append(document.createTextNode(" · "));
+          const link = document.createElement("a");
+          link.href = source.href;
+          link.target = "_blank";
+          link.rel = "noreferrer";
+          link.textContent = (source.label || "Source") + " ↗";
+          remarkSources.append(link);
+        });
+        remarkSources.hidden = !remarkSources.childNodes.length;
       }
     };
+    const show = (alignment, { pin = false } = {}) => {
+      if (pin) pinnedAlignment = alignment;
+      display(alignment);
+    };
     const reset = () => {
-      clearTargets();
-      statement.textContent = "Hover or focus a highlighted Lean term to see its paper-level meaning.";
+      if (pinnedAlignment) {
+        display(pinnedAlignment);
+        return;
+      }
+      clearSelection();
+      statement.textContent = "Select a highlighted term in the paper or Lean statement to compare them.";
       remark.hidden = true;
     };
+    const clear = () => {
+      pinnedAlignment = null;
+      reset();
+    };
+    const registerTerm = (alignment, term) => {
+      const terms = termsByConcept.get(alignment.concept) || [];
+      terms.push(term);
+      termsByConcept.set(alignment.concept, terms);
+    };
     reset();
-    return { alignments, panel, reset, show };
+    return { alignments, clear, panel, registerTerm, reset, show };
   };
 
-  const annotateSource = (disclosure, source) => {
+  const findTextOccurrence = (source, token, minimumOffset = 0) => {
+    const walker = document.createTreeWalker(source, NodeFilter.SHOW_TEXT);
+    let consumed = 0;
+    let node = walker.nextNode();
+    while (node) {
+      const parentTerm = node.parentElement?.closest(".lean-semantic-term");
+      if (!parentTerm) {
+        let fromIndex = Math.max(0, minimumOffset - consumed);
+        let index = node.data.indexOf(token, fromIndex);
+        while (index !== -1) {
+          if (consumed + index >= minimumOffset) return { index, node };
+          fromIndex = index + token.length;
+          index = node.data.indexOf(token, fromIndex);
+        }
+      }
+      consumed += node.data.length;
+      node = walker.nextNode();
+    }
+    return null;
+  };
+
+  const annotateSource = (disclosure, source, statementDefinition) => {
     if (source.dataset.semanticAnnotated === "true") return;
+    const key = disclosure.dataset.statement;
     const controller = alignmentControllers.get(disclosure);
     if (!controller) return;
 
-    controller.alignments.forEach((alignment) => {
-      const walker = document.createTreeWalker(source, NodeFilter.SHOW_TEXT);
-      let node = walker.nextNode();
-      while (node && !node.data.includes(alignment.token)) node = walker.nextNode();
-      if (!node) return;
+    const primaryDeclarationOffset = statementDefinition.alignmentScope === "primary-declaration"
+      ? source.textContent.indexOf(statementDefinition.title)
+      : 0;
 
-      const index = node.data.indexOf(alignment.token);
+    controller.alignments.forEach((alignment) => {
+      const match = findTextOccurrence(
+        source,
+        alignment.token,
+        Math.max(0, primaryDeclarationOffset),
+      );
+      if (!match) return;
+
+      const { index, node } = match;
       const before = node.data.slice(0, index);
       const after = node.data.slice(index + alignment.token.length);
       const fragment = document.createDocumentFragment();
@@ -405,9 +485,17 @@
       term.className = "lean-semantic-term";
       term.tabIndex = 0;
       term.textContent = alignment.token;
+      term.dataset.leanAlignment = key + ":" + alignment.concept;
       term.setAttribute("aria-describedby", controller.panel.id);
       term.addEventListener("pointerenter", () => controller.show(alignment));
       term.addEventListener("focus", () => controller.show(alignment));
+      term.addEventListener("click", () => controller.show(alignment, { pin: true }));
+      term.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        event.preventDefault();
+        controller.show(alignment, { pin: true });
+      });
+      controller.registerTerm(alignment, term);
       fragment.append(term);
       if (after) fragment.append(document.createTextNode(after));
       node.replaceWith(fragment);
@@ -425,7 +513,44 @@
     const source = disclosure.querySelector(":scope > .lean-statement-body code.language-lean");
     if (!source) return;
     if (source.dataset.highlighted !== "yes") window.hljs.highlightElement(source);
-    annotateSource(disclosure, source);
+    const statementDefinition = statements[disclosure.dataset.statement];
+    annotateSource(disclosure, source, statementDefinition);
+  };
+
+  const bindPaperTerms = (disclosure, key, controller) => {
+    controller.alignments.forEach((alignment) => {
+      paperTargets(key, alignment.concept).forEach((target) => {
+        const concepts = target.dataset.leanAlignment.trim().split(/\s+/u);
+        const nestedControl = target.closest("a, button, summary");
+        if (concepts.length !== 1 || nestedControl) return;
+
+        target.classList.add("lean-paper-term");
+        target.tabIndex = 0;
+        target.setAttribute("role", "button");
+        target.setAttribute("aria-controls", disclosure.id);
+        target.title = "Show the matching term in the formalized statement";
+
+        const select = () => {
+          disclosure.open = true;
+          highlight(disclosure);
+          controller.show(alignment, { pin: true });
+        };
+        target.addEventListener("pointerenter", () => {
+          if (disclosure.open) controller.show(alignment);
+        });
+        target.addEventListener("pointerleave", controller.reset);
+        target.addEventListener("focus", () => {
+          if (disclosure.open) controller.show(alignment);
+        });
+        target.addEventListener("blur", controller.reset);
+        target.addEventListener("click", select);
+        target.addEventListener("keydown", (event) => {
+          if (event.key !== "Enter" && event.key !== " ") return;
+          event.preventDefault();
+          select();
+        });
+      });
+    });
   };
 
   const render = (host) => {
@@ -440,12 +565,13 @@
     const disclosure = document.createElement("details");
     disclosure.className = "lean-statement";
     disclosure.dataset.statement = key;
+    disclosure.id = "lean-statement-" + key;
     disclosure.open = host.hasAttribute("open");
 
     const summary = document.createElement("summary");
     const heading = document.createElement("span");
     const label = document.createElement("small");
-    label.textContent = "Lean statement";
+    label.textContent = "Formalized statement";
     const title = document.createElement("code");
     title.textContent = statement.title;
     heading.append(label, title);
@@ -461,17 +587,30 @@
     source.className = "language-lean";
     source.textContent = statement.source;
     pre.append(source);
+    if (statement.caption) {
+      const caption = document.createElement("p");
+      caption.className = "lean-statement-caption";
+      caption.textContent = statement.caption;
+      body.append(caption);
+    }
     body.append(pre);
     const alignments = semanticAlignments[key] || [];
     if (alignments.length) {
       const controller = createAlignmentController(key, alignments);
       alignmentControllers.set(disclosure, controller);
       body.append(controller.panel);
+      bindPaperTerms(disclosure, key, controller);
     }
     disclosure.append(summary, body);
     host.replaceWith(disclosure);
 
-    disclosure.addEventListener("toggle", () => highlight(disclosure));
+    disclosure.addEventListener("toggle", () => {
+      if (disclosure.open) {
+        highlight(disclosure);
+      } else {
+        alignmentControllers.get(disclosure)?.clear();
+      }
+    });
     highlight(disclosure);
   };
 
